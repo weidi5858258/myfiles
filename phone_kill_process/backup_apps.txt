@@ -1,0 +1,8 @@
+###@@@com.baidu.input@@@Baidu输入法
+###@@@com.UCMobile@@@UC
+###@@@com.evernote@@@印象笔记
+###@@@com.kugou.android@@@酷狗音乐
+###@@@com.taobao.taobao@@@手机淘宝
+###@@@com.tencent.mm@@@微信
+###@@@com.tencent.mobileqq@@@QQ
+###@@@com.eg.android.AlipayGphone@@@支付宝

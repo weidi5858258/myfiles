@@ -1,0 +1,23 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+Error:Execution failed for task ':app:transformNativeLibsWithStripDebugSymbolForDebug'.
+> java.lang.NullPointerException (no error message)
+
+Error:Execution failed for task ':app:compileDebugNdk'.
+> com.android.ide.common.process.ProcessException: Error while executing process D:\Tools\AndroidSDK\windows\AndroidSDK\ndk-bundle\ndk-build.cmd with arguments {NDK_PROJECT_PATH=null APP_BUILD_SCRIPT=D:\workspace\jni\app\build\intermediates\ndk\debug\Android.mk APP_PLATFORM=android-25 NDK_OUT=D:\workspace\jni\app\build\intermediates\ndk\debug\obj NDK_LIBS_OUT=D:\workspace\jni\app\build\intermediates\ndk\debug\lib APP_ABI=all}
+
+用ndk-build命令编译时遇到的问题
+Android NDK: WARNING: APP_PLATFORM android-17 is higher than android:minSdkVersion 1 in D:/workspace/jni/app/src/main/AndroidManifest.xml. NDK binaries will *not* be comptible with devices older than android-17. See https://android.googlesource.com/platform/ndk/+/master/docs/user/common_problems.md for more information.
+解决方法：
+在AndroidManifest.xml中指定<uses-sdk android:minSdkVersion="17"/>
+最小版本
+
+make: *** No rule to make target `D:/Tools/AndroidSDK/windows/AndroidSDK/ndk-bundle/build//../build/core/com_weidi_jni_JniUtils.c', needed by `D:/workspace/jni/app/src/main/obj/local/arm64-v8a/objs/test_exe/com_weidi_jni_JniUtils.o'.  Stop.
+
+
+ndk-build NDK_PROJECT_PATH=./ APP_BUILD_SCRIPT=./Android.mk NDK_APPLICATION_MK=./Application.mk
+
+Error:Execution failed for task ':app:clean'.
+> Unable to delete directory: D:\workspace\jni\app\build\intermediates\classes\debug
+

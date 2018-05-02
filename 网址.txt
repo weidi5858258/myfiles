@@ -1,0 +1,105 @@
+http://edu.csdn.net/courses/o230_s333/pu 全部Android课程 - CSDN学院 - CSDN
+https://developer.android.google.cn/distribute/google-play/about.html  Google Play 蕴藏的机会 | Android Developers
+https://source.android.com/source/downloading Android Open Source Project
+http://man.linuxde.net/ Linux命令大全(手册)_Linux常用命令行实例详解_Linux命令学习手册
+http://mail.sina.com.cn/?logout 新浪邮箱
+https://evernote.com/intl/zh-cn/logged-out/?logout&uid=129387234 感谢使用Evernote | Evernote
+http://geek.csdn.net/forum/65 Android开发者  - 极客头条  - CSDN.NET
+http://c.biancheng.net/ C语言中文网：c语言程序设计门户网站(入门教程、编程软件)
+http://www.cnblogs.com/sprying/p/3864631.html vim命令汇总 - 小方。 - 博客园
+http://android.jobbole.com/category/product/ 产品设计 - 安卓 - 伯乐在线
+http://bbs.chinaunix.net/ 论坛-ChinaUnix.net
+http://www.2cto.com/kf/yidong/Android/news/12.html Android移动开发技术文章_手机开发 - 红黑联盟
+https://developer.android.com/about/versions/nougat/android-7.0.html#data_saver Android 7.0 开发者版本 | Android Developers
+http://www.96boards.net/ 开源社区 -  96Boards
+http://android.jobbole.com/82409/?utm_source=group.jobbole.com&utm_medium=relatedArticles 理解Android安全机制 - 安卓 - 伯乐在线
+http://www.feifanjsq.com/usercenter.php 非凡加速器
+http://blog.csdn.net/androidsecurity/article/details/9124747 Android设备管理器漏洞
+http://blog.csdn.net/column/details/security-android.html Android安全及病毒分析
+http://cn.jide.com/remixpro Remix Pro - 技德科技官网
+https://www.youtube.com/ YouTube
+http://hubingforever.blog.163.com/blog/static/1710405792011656434982/ Android.mk编译APK范例 - hubingforever的日志 - 网易博客
+http://www.androiddevtools.cn/ AndroidDevTools Android SDK下载 Android Studio下载 Gradle下载 SDK Tools下载
+https://developer.android.com/studio/install.html 安装 Android Studio
+http://cn.uptodown.com/ubuntu 下载Ubuntu应用程序-下载，恢复，在Uptodown分享
+http://www.mamicode.com/info-detail-1172799.html KOTLIN开发语言文档（官方文档）
+https://android-developers.googleblog.com/2017/05/android-announces-support-for-kotlin.html Android Developers Blog
+https://www.kotlincn.net/ Kotlin 语言中文站
+http://www.jianshu.com/p/780658b79227 关于Android分享的目录 - 送给读者的一份礼物 - 简书
+https://try.kotlinlang.org/#/Kotlin%20in%20Action/Chapter%202/2.1/4_1_StringTemplates.kt Try Kotlin
+http://android.jobbole.com/84069/ Android 资源大全
+http://blog.csdn.net/guolin_blog/article/details/50451259 Android安全攻防战，反编译与混淆技术完全解析（下）
+http://android.jobbole.com/83489/ Android常用Manager
+http://blog.csdn.net/androidsecurity/article/details/8639973 Android Bander设计与实现 - 设计篇
+http://blog.csdn.net/androidsecurity/article/details/9179749 【Android病毒分析报告】 - Usbcleaver
+http://android.jobbole.com/82027/ Gradle 脚本基础全攻略
+https://developer.xamarin.com/api/type/Android.Media.MediaPlayer/ MediaPlayer Class - Xamarin
+https://ke.qq.com/ 腾讯课堂
+https://ke.qq.com/course/196665 嵌入式高级C编程
+http://www.cplusplus.com/reference/ Reference - C++ Reference
+http://www.cocos.com/ Cocos官网
+https://packages.ubuntu.com/ Ubuntu Packages Search
+http://www.icoolxue.com/album/show/282 丁林松QT高级编程视频教程
+http://pan.baidu.com/share/link?shareid=142094013&uk=2854712361 QT
+http://www.androidchina.net/ Android开发中文站
+http://www.linuxprobe.com/chapter-02.html 《Linux就该这么学》
+http://blog.csdn.net/column/details/androidfengsehngshui.html 介绍和Android安全相关的知识，主要是android的安全基础保护知识和漏洞挖掘的知识。
+http://frank-zhu.github.io/android/2015/01/16/android-recyclerview-part-1/ RecyclerView使用详解
+https://source.android.com/source/initializing#setting-up-ccache 搭建编译环境
+http://www.hcoder.net/course/info_211.html MUI 视频教程 - app开发
+http://hukai.me/android-training-course-in-chinese/basics/index.html Android入门基础：从这里开始
+http://www.mobile-open.com/2016/980948.html 阳和移动开发
+http://blog.csdn.net/anhenzhufeng/article/details/50209117 自定义RecycleView实现TV应用上的item焦点获取以及设置当前选中的item居中
+http://91mjw.com/ 学英语，看美剧
+http://www.linuxprobe.com/chapter-00.html 《Linux就该这么学》
+http://hukai.me/android-training-course-in-chinese/ Android官方培训课程中文版(v0.9.7)
+http://blog.csdn.net/tumuzhuanjia/article/details/39555445/ adb logcat 命令行用法
+http://www.cplusplus.com/reference/list/list/ list - C++ Reference
+https://answers.microsoft.com/zh-hans/windows/forum/windows_10-update/windows/9944e6c3-8589-40fe-8252-4a21a6b08d07?tm=1441848056262&auth=1 Windows 10中制作系统修复U盘以及利用U盘修复系统的具体步骤
+http://student.ecustmde.com/student/netclassroom/index.asp 华东理工大学
+http://android.jobbole.com/all-posts/ 伯乐在线
+http://edu.csdn.net/courses/o280_s281/pu/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E6%A1%86%E6%9E%B6_CC 
+http://blog.csdn.net/column/details/androidfengsehngshui.html
+http://zh.cppreference.com/w/cpp/io/c
+http://www.meiwangle.com/?m=vod-detail-id-58932.html 性
+http://www.5ifxw.com/vip/ 爱奇艺vip 乐视 腾讯优酷vip视频在线解析
+https://blog.csdn.net/jingxia2008/article/details/50763757
+http://www.qmaile.com/ 全民vip视频在线解析
+
+
+
+
+
+http://www.ttwanda.com/tv/ustv/1769.html?Play=ac_15
+https://ke.qq.com/webcourse/index.html#course_id=130901&term_id=100146035&taid=1404948227161941
+
+
+
+
+
+
+
+
+
+
+http://edu.51cto.com/center/orders/order/get-order-list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

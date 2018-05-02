@@ -1,0 +1,95 @@
+=================================================================
+grep
+使用方法：
+grep 选项 正则 文件
+
+--version / -V  grep的版本
+
+--color 把匹配到的字符用颜色显示出来
+grep --color 'a' log.txt
+
+-o   只显示匹配的字符
+-b   可以打印出匹配的字符串相对于其所在的行的起始位置的偏移量（从0开始），通常配合-o使用
+echo "1234567890" | grep -b -o '4'
+echo "1234567890" | grep -b -o '456'
+3:4（要搜索的这个“4”在第“3”个位置上，外国人喜欢从“0”开始算位置）
+
+-c   只打印匹配模式的行数
+head -n 5 log.txt | grep -c 'Setting TCP values: \[0\]'
+
+-e   使用多个正则表达式
+grep -e 'a' -e '1' test.txt
+
+-i   不区分大小写, 默认情况区分大小写（单个字符）
+head -n 5 log.txt | grep -n -i 'dhwef'（只对字符"d"进行匹配）
+ 
+-I   区分大小写
+head -n 5 log.txt | grep -n -I 'dhwef'
+
+-h   查询多个文件时不显示文件名,只显示查询到的结果，与“-l”同时使用时显示文件名
+grep -h 'Setting TCP values:' log.txt ssh.sh ssh5.sh
+
+-r / -R  递归查询目录下文件
+grep -r '(No such file or directory)' *
+grep -R '(No such file or directory)' *
+grep -r '(No such file or directory)' ./*
+
+-l   只列出匹配的文件名
+grep -l 'Setting TCP values:' * 
+(* : current folder, 如果当前目录有文件夹，那么要加上参数-r)
+grep -l 'Setting TCP values:' ./*
+grep -l 'Setting TCP values:' log.txt ssh.sh ssh5.sh
+
+-L   列出不匹配的文件名
+grep -L 'Setting TCP values:' *
+grep -L 'Setting TCP values:' ./*
+grep -L 'Setting TCP values:' log.txt ssh.sh ssh5.sh
+
+-m number  最多打印匹配到的N行后停止打印
+grep -m 2 'a' test.txt（如果有多行匹配的话，最多打印2行）
+
+-n   在每行前显示其行编号
+head -n 15 log.txt | grep -n 'Setting TCP values: \[0\]\-'
+
+-s   不显示不存在或无匹配文本的错误信息（如要查找的文件不存在原先会显示错误信息，加了这个参数后就不会显示了）
+grep -s 'E/ConnectivityService' l.txt
+
+-v   显示不匹配模式的行
+head -n 15 log.txt | grep -n -v 'Setting TCP values: \[0\]'
+
+-x   只显示完全匹配模式的行
+cat log.txt | grep -x '(No such file or directory)'
+一行之中只有"(No such file or directory)"这个字符串，其他行即使包括这个字符串也是不匹配的
+
+-f FILEA FILEB  FILEA在FILEAB中的匹配
+grep -f test.txt test1.txt
+
+-q   进入静默模式，该模式下，grep命令运行目的仅仅是执行一个条件测试，通常在脚本中使用。
+     通过检查其返回值进行下一步操作。如果在命令行下使用了这个参数，那么不会输出任何内容。
+grep -q 'dev' log.txt
+
+-w   只匹配整个单词，而不是字符串的一部分（如匹配‘magic’，而不是‘magical’）
+head -n 15 log.txt | grep -w 'Service'
+
+-A number : after number line
+-B number : before number line
+-C number : 显示匹配到的行的前[number]行和后[number]行，当然匹配到的内容也是要输出的
+head -n 15 log.txt | grep -n -C 2 'Setting TCP values:'
+
+-E   使用扩展正则表达式
+grep -E 'as{4,5}'
+grep 'as\{4,5\}'
+grep -E '219|216' data.doc
+     (? + |)这样三个符号要加“-E”
+head -n 5 log.txt | grep -n '[123]'(搜索“1”或“2”或“3”，“123”之间加了空格后输出来的结果就不一样了)
+
+{"aid":45,"path":"attachment/Mon_1112/2_1_5728040df3ab346.jpg"}
+grep -o -E '"aid":[1-9]*' tmp.txt | awk -F ':' '{print $2}'
+
+-P
+
+grep '^$'过滤空行
+
+grep pattern1 | pattern2 files ：显示匹配 pattern1 或 pattern2的行
+grep pattern1 files | grep pattern2 ：显示既匹配 pattern1 又匹配pattern2 的行
+=================================================================

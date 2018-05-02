@@ -1,0 +1,4 @@
+C:\mydev\tools\CLion_Windows\bin\cmake\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" D:\workspace_c\CLionProjects\tcp_ip_client
+-- Configuring done
+-- Generating done
+-- Build files have been written to: D:/workspace_c/CLionProjects/tcp_ip_client/cmake-build-debug

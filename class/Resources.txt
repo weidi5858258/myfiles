@@ -1,0 +1,3 @@
+final Resources res = mContext.getResources();
+int thumbWidth = res.getDimensionPixelSize(R.dimen.live_wallpaper_thumbnail_width);
+int thumbHeight = res.getDimensionPixelSize(R.dimen.live_wallpaper_thumbnail_height);

@@ -1,0 +1,2 @@
+final Resources res = mContext.getResources();
+BitmapDrawable galleryIcon = (BitmapDrawable) res.getDrawable(R.drawable.livewallpaper_placeholder);

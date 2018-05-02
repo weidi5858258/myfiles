@@ -1,0 +1,17 @@
+电脑上配置后分享文件，其他设备通过dlna方式读取文件
+手机上配置后分享文件，其他设备通过dlna方式读取文件
+run:79, SSDPSearchResponseSocket (org.cybergarage.upnp.ssdp)
+searchResponseReceived:572, ControlPoint (org.cybergarage.upnp)
+addDevice:301, ControlPoint (org.cybergarage.upnp)
+performAddDeviceListener:538, ControlPoint (org.cybergarage.upnp)
+deviceAdded:42, ControlService (com.geniusgithub.mediaplayer.dlna.control)
+
+MainFrameActivity
+点击按钮：
+Search
+Reset
+Stop
+实现在MainPresenter中
+onStart(): mAllShareProxy.startSearch();--->startService
+onRestart(): mAllShareProxy.resetSearch();
+onStop(): mAllShareProxy.exitSearch();

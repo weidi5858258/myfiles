@@ -1,0 +1,33 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/make" "cmTC_5c76d/fast"
+/usr/local/bin/make -f CMakeFiles/cmTC_5c76d.dir/build.make CMakeFiles/cmTC_5c76d.dir/build
+make[1]: Entering directory `/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_5c76d.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_5c76d.dir/CheckSymbolExists.c.o   -c /root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_5c76d
+/root/mydev/tools/clion/bin/cmake/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5c76d.dir/link.txt --verbose=1
+/usr/bin/cc      CMakeFiles/cmTC_5c76d.dir/CheckSymbolExists.c.o  -o cmTC_5c76d 
+CMakeFiles/cmTC_5c76d.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+make[1]: *** [cmTC_5c76d] Error 1
+make[1]: Leaving directory `/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/CMakeFiles/CMakeTmp'
+make: *** [cmTC_5c76d/fast] Error 2
+
+File /root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+

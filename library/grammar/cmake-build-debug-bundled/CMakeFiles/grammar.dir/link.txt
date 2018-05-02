@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=gnu++11 -g   CMakeFiles/grammar.dir/main.cpp.o CMakeFiles/grammar.dir/wd_grammar.cpp.o CMakeFiles/grammar.dir/linuxhttp/LinuxSocket.cpp.o CMakeFiles/grammar.dir/mylog/MyLog.cpp.o CMakeFiles/grammar.dir/method/Method.cpp.o  -o grammar -pthread 

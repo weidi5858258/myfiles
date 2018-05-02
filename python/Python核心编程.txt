@@ -1,0 +1,408 @@
+Python3迭代器
+it=iter(字符串or列表or元组or字典)
+print(next(it))
+使用next(it)时如果下一个元素没有值了,那么会发生异常
+import sys
+while True:
+    try:
+        print(next(it), end=" ")
+    except StopIteration:
+        sys.exit()
+
+Python只支持AF_UNIX,AF_NETLINK,AF_TIPC和AF_INET家族.
+在所有的地址家族中,目前AF_INET是使用得最广泛的.
+面向连接的套接字与无连接的套接字
+1.面向连接的套接字(TCP)
+在进行通信之前必须先建立一个连接,这种类型的通信也称为虚拟电路或流套接字.
+为了创建TCP套接字,必须使用SOCK_STREAM作为套接字类型.
+TCP套接字的名字SOCK_STREAM基于流套接字的其中一种表示.
+因为这些套接字(AF_INET)的网络版本使用因特网协议(IP)
+来搜寻网络中的主机,所以整个系统通常结合这两种协议(TCP和IP)
+来进行(当然,也可以使用TCP和本地[非网络的AF_LOCAL/AF_UNIX]套接字,很明显此时并没有使用IP).
+2.无连接的套接字(UDP)
+为了创建UDP套接字,必须使用SOCK_DGRAM作为套接字类型.
+这些套接字也使用因特网协议来寻找网络中的主机,
+所以这个系统也有一个更加普通的名字,即这两种协议(UDP和IP)
+的组合名字,或UDP/IP.
+
+Python中的网络编程
+主要使用到的模块是socket模块,
+在这个模块中可以找到socket()函数,
+该函数用于创建套接字对象.
+套接字也有自己的方法集,这些方法可以实现基于套接字的网络通信.
+
+1.
+socket()模块函数
+socket(socket_family, socket_type, protocol=0)
+socket_family:AF_UNIX或AF_INET
+socket_type:SOCK_STREAM或SOCK_DGRAM
+protocol通常省略,默认为0
+from module import *
+tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+或
+from socket import *
+tcpSocket = socket(AF_INET, SOCK_STREAM)
+
+2.
+套接字对象(内置)方法
+使用这些网络套接字的方法与使用本地(不联网)的套接字时有类似的含义.
+名称				描述
+服务器套接字方法
+s.bind()			将地址(主机名,端口号对)绑定到套接字上
+s.listen()			设置并启动TCP监听器
+s.accept()			被动接受TCP客户端连接,一直等待直到连接到达(阻塞)
+客户端套接字方法 
+s.connect()			主动发起TCP服务器连接
+s.connect_ex()			connect()的扩展版本,此时会以错误码的形式返回问题,而不是抛出一个异常
+普通套接字方法
+s.recv()			接收TCP消息
+s.recv_into()			接收TCP消息到指定的缓冲区
+s.send()			发送TCP消息
+s.sendall()			完整地发送TCP消息
+s.recvfrom()			接收UDP消息
+s.recvfrom_into()		接收UDP消息到指定的缓冲区
+s.sendto()			发送UDP消息
+s.getpeername()			连接到套接字(TCP)的远程地址
+s.getsockname()			当前套接字的地址
+s.getsockopt()			返回给定套接字选项的值
+s.setsockopt()			设置给定套接字选项的值
+s.shutdown()			关闭连接
+s.close()			关闭套接字
+s.detach()			在未关闭文件描述符的情况下关闭套接字,返回文件描述符
+s.ioctl()			控制套接字的模式(仅支持Windows,POSIX 系统可以使用 functl 模块函数)
+面向阻塞套接字方法 
+s.setblocking()			设置套接字的阻塞或非阻塞模式 
+s.settimeout()			设置阻塞套接字操作的超时时间 
+s.gettimeout()			获取阻塞套接字操作的超时时间
+面向文件套接字方法
+s.fileno()			套接字的文件描述符
+s.makefile()			创建与套接字关联的文件对象
+数据属性
+s.family()			套接字家族
+s.type()			套接字类型
+s.proto()			套接字协议
+
+3.
+创建TCP服务器
+from socket import *
+from time import ctime
+
+# 表示可以使用任何可用的地址
+HOST = ""
+PORT = 21567
+BUFSIZE = 1024
+ADDR = (HOST, PORT)
+MAX_LISTEN = 5
+
+# AF_INET(IPv4) AF_INET6(IPv6)
+tcpSerSock = socket(AF_INET, SOCK_STREAM)
+tcpSerSock.bind(ADDR)
+# 在连接被转接或拒绝之前,传入连接请求的最大数
+tcpSerSock.listen(MAX_LISTEN)
+
+while 1:
+	print("waiting for connection...")
+	tcpCliSock, addr = tcpSerSock.accept()
+	print("...connected from: ", addr)
+
+	while 1:
+		data = tcpCliSock.recv(BUFSIZE)
+		if not data:
+			break
+		tcpCliSock.send("[%s] %s" % (bytes(ctime(), "utf-8"), data))
+	
+	tcpCliSock.close()
+
+tcpSerSock.close()
+
+4.
+创建TCP客户端
+from socket import *
+
+# HOST = "localhost"
+HOST = "127.0.0.1"
+PORT = 21567
+BUFSIZE = 1024
+ADDR = (HOST, PORT)
+
+tcpCliSock = socket(AF_INET, SOCK_STREAM)
+tcpCliSock.connect(ADDR)
+
+while 1:
+	data = input("> ")
+	if not data:
+		break
+	tcpCliSock.send(data)
+	data = tcpCliSock.recv(BUFSIZE)
+	if not data:
+		break
+	print(data.decode("utf-8"))
+
+tcpCliSock.close()
+
+5.
+创建UDP服务器
+from socket import *
+from time import ctime
+
+HOST = ""
+PORT = 21567
+BUFSIZE = 1024
+ADDR = (HOST, PORT)
+
+udpSerSock = socket(AF_INET, SOCK_DGRAM)
+udpSerSock.bind(ADDR)
+
+while 1:
+	print("waiting for message...")
+	data, addr = udpSerSock.recvfrom(BUFSIZE)
+	udpSerSock.sendto(data)
+	print("...received from and returned to: ", addr)
+
+udpSerSock.close()
+
+6.
+创建UDP客户端
+from socket import *
+
+HOST = "localhost"
+PORT = 21567
+BUFSIZE = 1024
+ADDR = (HOST, PORT)
+
+udpCliSock = socket(AF_INET, SOCK_DGRAM)
+
+while 1:
+	data = input("> ")
+	if not data:
+		break
+	udpCliSock.sendto(data, ADDR)
+	data, addr = udpCliSock.recvfrom(BUFSIZE)
+	if not data:
+		break
+	print(data.decode("utf-8"))
+
+udpCliSock.close()
+
+7.
+socket模块属性
+属性名称				描述
+数据属性
+AF_UNIX,AF_INET,AF_INET6,
+AF_NETLINK,AF_TIPC		Python中支持的套接字的地址家族
+SOCK_STREAM,SOCK_DGRAM		套接字类型
+has_ipv6			指示是否支持IPv6的布尔标记
+异常
+error				套接字相关错误 
+herror				主机和地址相关错误
+gaierror			地址相关错误
+timeout				超时时间
+函数
+socket()			以给定的地址家族,套接字类型和协议类型(可选)创建一个套接字对象
+socketpair()			以给定的地址家族,套接字类型和协议类型(可选)创建一个套接字对象
+create_connection()		常规函数,它接收一个地址(主机名,端口号)对,返回套接字对象
+fromfd()			以一个打开的文件描述符创建一个套接字对象
+ssl()				通过套接字启动一个安全套接字层连接;不执行证书验证
+getaddrinfo()			获取一个五元组序形式的地址信息
+getnameinfo()			给定一个套接字地址,返回(主机名,端口号)二元组
+getfqdn()			返回完整的域名
+gethostname()			返回当前主机名
+gethostbyname()			将一个主机名映射到它的IP地址
+gethostbyname_ex()		gethostbyname()的扩展版本,它返回主机名,别名主机集合和IP地址列表
+gethostbyaddr()			将一个地址映射到DNS信息;返回与gethostname_ex()相同的3元组
+getprotobyname()		将一个协议名(如"tcp")映射到一个数字
+getservbyname()/getservbyport()	将一个服务名映射到一个端口号,或者反过来;对于任何一个函数来说,协议名都是可选的
+ntohl()/ntohs()			将来自网络的整数转换为主机字节顺序
+htonl()/htons()			将来自主机的整数转换为网络字节顺序
+inet_aton()/inet_ntoa()		将IP地址八进制字符串转换成３２位的包格式,或者反过来(仅用于IPv４地址)
+inet_pton()/inet_ntop()		将IP地址字符串转换成打包的二进制格式,或者反过来(同时适用于IPv４和IPv６地址)
+getdefaulttimeout()		以秒(浮点数)为单位返回默认套接字超时时间
+setdefaulttimeout()		以秒(浮点数)为单位设置默认套接字超时时间
+
+ＳocketＳerver模块
+
+
+
+threading模块
+threading模块的对象
+对象			描述
+Thread			表示一个执行线程的对象
+Lock			锁原语对象(和thread模块中的锁一样)
+RLock			可重入锁对象,使单一线程可以(再次)获得已持有的锁(递归锁)
+Condition		条件变量对象,使得一个线程等待另一个线程满足特定的"条件",比如改变状态或某个数据值
+Event			条件变量的通用版本,任意数量的线程等待某个事件的发生,在该事件发生后所有线程将被激活
+Semaphore		为线程间共享的有限资源提供了一个"计数器",如果没有可用资源时会被阻塞
+BoundedSemaphore	与Ｓemaphore相似,不过它不允许超过初始值　
+Timer			与Ｔhread相似,不过它要在运行前等待一段时间
+Barrier			创建一个"障碍",必须达到指定数量的线程后才可以继续
+
+threading模块的Ｔhread类是主要的执行对象.
+Thread对象的属性和方法
+属性			描述
+Thread对象数据属性
+name 			线程名
+ident			线程的标识符
+daemon			布尔标志,表示这个线程是否是守护线程
+Thread对象方法
+__init__(		实例化一个线程对象,需要有一个可调用的target,以及其参数args或kwargs.
+group=None, 		还可以传递name或group参数,不过后者还未实现.
+target=None, 		此外,verbose标志也是可接受的.
+name=None,		而daemon的值将会设定thread.daemon属性/标志.
+args=(),
+kwargs={},
+verbose=None,
+daemon=None)
+start()			开始执行该线程
+run()			定义线程功能的方法(通常在子类中被应用开发者重写)
+join(timeout=None)	直至启动的线程终止之前一直挂起;除非给出了timeout(秒),否则会一直阻塞
+
+使用Thread类,可以有很多方法来创建线程.
+主要有三种方法:
+１)创建Thread的实例,传给它一个函数名.
+２)创建Thread的实例,传给它一个可调用的类实例.
+３)派生Thread的子类,并创建子类的实例.
+一般我们使用第一,第三种方法.
+
+#　创建Thread的实例,传给它一个函数名
+import threading
+from time import sleep, ctime
+
+loops = [4, 2]
+
+def loop(nloop, nsec):
+	print("start loop ", nloop, "at:　", ctime())
+	sleep(nsec)
+	print("loop ", nloop, "done at: ", ctime())
+
+def main():
+	print("starting at: ", ctime())
+	threads = []
+	nloops = range(len(loops))
+
+	for i in nloops:
+		t = threading.Thread(target=loop,args=(i, loops[i]))
+		threads.append(t)
+
+	for i in nloops:
+		threads[i].start()
+
+	for i in nloops:
+		thread[i].join()
+
+	print("all DONE at: ", ctime())
+
+if __name__ == "__main__":
+	main()
+
+join()方法将等待线程结束,或者在提供了超时时间的情况下,达到超时时间.
+对于join()方法而言,其另一个重要方面是其实它根本不需要调用.
+一旦线程启动,它们就会一直执行,直到给定的函数完成后退出.
+如果主线程还有其他事情要去做,而不是等待这些线程完成,
+就可以不调用join()方法.join()方法只有在你需要等待线程完成的时候才是有用的.
+
+#　创建Thread的实例,传给它一个可调用的类实例
+import threading 
+from time import sleep, ctime
+
+loops = [4, 2]
+
+class ThreadFunc(object):
+	
+	def __init__(self, func, args, name=""):
+		self.name = name
+		self.func = func
+		self.args = args
+
+	def __call__(self):
+		self.func(*self.args)
+
+def loop(nloop, nsec):
+	print("start loop ", nloop, "at: ", ctime())
+	sleep(nsec)
+	print("loop ", nloop, "done at: ", ctime())
+
+def main():
+	print("starting at: ", ctime())
+	threads = []
+	nloops = range(len(loops))
+
+	for i in nloops:
+		t = threading.Thread(target=ThreadFunc(loop, (i, loops[i]), loop.__name__))
+		threads.append(t)
+
+	for i in nloops:
+		threads[i].start()
+
+	for i in nloops:
+		threads[i].join()
+
+	print("all DONE at: ", ctime())
+
+if __name__ == "__main__":
+	main()
+	
+#　派生Thread的子类,并创建子类的实例
+import threading
+from time import ctime
+
+class MyThread(threading.Thread):
+	
+	def __init__(self, func, args, name=""):
+		threading.Thread.__init__(self)
+		self.name = name
+		self.func = func
+		self.args = args
+
+	def getResult(self):
+		return self.res
+
+	def run(self):
+		print("starting ", self.name, "at: ", ctime())
+		self.res = self.func(*self.args)
+		print(self.name, "finished at: ", ctime())
+
+def loop(nloop, nsec):
+	print("start loop ", nloop, "at: ", ctime())
+	sleep(nsec)
+	print("loop ", nloop, "done at: ", ctime())
+
+threading模块的函数
+函数			描述
+currentThread()		返回当前的Thread对象
+current_thread		
+enumerate()		返回当前活动的Thread对象列表	
+settrace(func)		为所有线程设置一个trace函数	
+setprofile(func)	为所有线程设置一个profile函数
+stack_size(size=0)	返回新创建线程的栈大小;或为后续创建的线程设定栈的大小为size
+
+python运行shell命令
+import os
+ret = os.popen("date").read()
+print(ret)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

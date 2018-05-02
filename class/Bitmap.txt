@@ -1,0 +1,1 @@
+Bitmap thumbnail = Bitmap.createBitmap(thumbWidth, thumbHeight, Bitmap.Config.ARGB_8888);

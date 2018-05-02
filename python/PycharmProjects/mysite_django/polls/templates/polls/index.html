@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+{% if latest_poll_list %}
+    <ul>
+        {% for poll in latest_poll_list %}
+            <li><a href="{% url 'detail' poll.id %}">{{ poll.question }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+
+</body>
+</html>
+{% comment %}
+
+如果{% url 'detail' poll.id %}(含引号)不能运行,
+但是{% url detail poll.id %}(不含引号)却能运行,那么意味着你使用的
+Djang	低于	<	1.5	版。这样的话,你需要在模板文件的顶部添加如下的声明::
+{% load	url from future %}
+
+{% endcomment %}

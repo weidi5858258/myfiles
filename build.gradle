@@ -1,0 +1,72 @@
+buildscript {
+    System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.2'
+    }
+}
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        debug {
+            keyAlias ''
+            keyPassword ''
+            storeFile file('/mydev/tool/SignTool/debug.keystore')
+            storePassword ''
+        }
+    }
+    compileSdkVersion 19
+    buildToolsVersion '23.0.1'
+    defaultConfig {
+        applicationId "com.sonyericsson.album"
+        minSdkVersion 19
+        targetSdkVersion 23
+        signingConfig signingConfigs.debug
+    }
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+    }
+    sourceSets {
+        main {
+            def folder = './'
+            def src = [folder + 'src']
+            def resFolder = [folder + 'res']
+            def assetsFolder = [src + 'assets']
+            def libsFolder = [folder + 'libs']
+            def aidlFolder = [folder + 'aidl']
+            def jniFolder = [folder + 'jni']
+
+            manifest.srcFile file('./AndroidManifest.xml')
+            java.srcDirs = src
+            res.srcDirs = resFolder
+            assets.srcDirs = assetsFolder
+            jniLibs.srcDirs = libsFolder
+            aidl.srcDirs = aidlFolder
+            jni.srcDirs = jniFolder
+        }// main
+
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+    }// sourceSets
+    sourceSets.main.jni.srcDirs = []
+    sourceSets.main.jniLibs.srcDir 'libs'
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+}// android
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':album-plugins')
+    compile project(':social-engine:core')
+    compile project(':social-engine/plugins:common')
+    compile files('libs-dynamic/maps.jar')
+    compile files('libs-sdk/NpAccountManagerAPI.jar')
+    compile files('libs/spflib.jar')
+}// dependencies

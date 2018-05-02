@@ -1,0 +1,20 @@
+#! /bin/bash
+
+#let命令是bash中用于计算的工具，提供常用运算符还提供了方幂**运算符。在变量的房屋计算中不需要加上$来表示变量，如果表达式的值是非0，那么返回的状态值是0；否则，返回的状态值是1。
+
+来自: http://man.linuxde.net/let
+let no++
+let no--
+let ++no
+let --no
+let no+=10
+let no-=10
+a=0
+for((i=0;i<10;++i))
+do
+	let ++a;
+	echo $a;
+done
+
+let "t1=((a=5+3,b=7-1,c=15-4))"
+echo "t1=$t1, a=$a, b=$b"

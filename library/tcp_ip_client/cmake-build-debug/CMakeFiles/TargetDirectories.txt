@@ -1,0 +1,3 @@
+D:/workspace_c/CLionProjects/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir
+D:/workspace_c/CLionProjects/tcp_ip_client/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/workspace_c/CLionProjects/tcp_ip_client/cmake-build-debug/CMakeFiles/rebuild_cache.dir

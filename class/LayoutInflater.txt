@@ -1,0 +1,2 @@
+LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+View convertView = mInflater.inflate(R.layout.live_wallpaper_entry, parent, false);

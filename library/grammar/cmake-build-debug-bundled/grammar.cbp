@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="grammar"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="grammar">
+				<Option output="/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/grammar" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/include/c++/4.7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.7/."/>
+					<Add directory="/usr/include/c++/4.7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 grammar"/>
+					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="grammar/fast">
+				<Option output="/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/grammar" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/include/c++/4.7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.7/."/>
+					<Add directory="/usr/include/c++/4.7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 grammar/fast"/>
+					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/grammar/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/root/mydev/myfiles/library/grammar/linuxhttp/LinuxSocket.cpp">
+			<Option target="grammar"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/grammar/linuxhttp/LinuxSocket.h">
+			<Option target="grammar"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/grammar/main.cpp">
+			<Option target="grammar"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/grammar/method/Method.cpp">
+			<Option target="grammar"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/grammar/method/Method.h">
+			<Option target="grammar"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/grammar/mylog/MyLog.cpp">
+			<Option target="grammar"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/grammar/mylog/MyLog.h">
+			<Option target="grammar"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/grammar/wd_grammar.cpp">
+			<Option target="grammar"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/grammar/wd_grammar.h">
+			<Option target="grammar"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/grammar/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
