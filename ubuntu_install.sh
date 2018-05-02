@@ -1,15 +1,15 @@
 #! /bin/bash
 
-sudo apt-get update 
+echo "y" | sudo apt-get update 
 echo "y" | sudo apt-get upgrade 
 echo "y" | sudo apt-get dist-upgrade 
 
-sudo apt-get update
+echo "y" | sudo apt-get update
 echo "y" | sudo apt-get install update-manager-core
 echo "y" | sudo do-release-upgrade
 
-sudo dpkg --add-architecture i386
-sudo apt-get update
+echo "y" | sudo dpkg --add-architecture i386
+echo "y" | sudo apt-get update
 
 echo "y" | sudo apt-get install git
 echo "y" | sudo apt-get install cifs-utils
@@ -180,10 +180,10 @@ echo "y" | sudo apt-get install python3-tk
 echo "Y" | sudo apt-get install sip-dev
 echo "Y" | sudo apt-get install pyqt5*
 echo "Y" | sudo apt-get install mono-complete
-echo "Y" | update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  
-echo "Y" | update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20  
-echo "Y" | update-alternatives --config gcc 
-echo "Y" | update-alternatives --config g++
+echo "Y" | sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  
+echo "Y" | sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20  
+echo "Y" | sudo update-alternatives --config gcc 
+echo "Y" | sudo update-alternatives --config g++
 
 sudo ln -s /usr/bin/fromdos /usr/bin/dos2unix
 sudo ln -s /usr/bin/todos /usr/bin/unix2dos
