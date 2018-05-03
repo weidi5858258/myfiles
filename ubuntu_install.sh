@@ -10,6 +10,7 @@ echo "y" | sudo do-release-upgrade
 
 echo "y" | sudo dpkg --add-architecture i386
 echo "y" | sudo apt-get update
+echo "y" | sudo apt-get install openssh-server
 
 echo "y" | sudo apt-get install git
 echo "y" | sudo apt-get install cifs-utils
@@ -185,10 +186,21 @@ echo "Y" | sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 
 echo "Y" | sudo update-alternatives --config gcc 
 echo "Y" | sudo update-alternatives --config g++
 
+if [ -e "/usr/bin/dos2unix" ]
+then
+	rm -rf /usr/bin/dos2unix
+fi
+if [ -e "/usr/bin/unix2dos" ]
+then
+	rm -rf /usr/bin/unix2dos
+fi
 sudo ln -s /usr/bin/fromdos /usr/bin/dos2unix
 sudo ln -s /usr/bin/todos /usr/bin/unix2dos
 
-sudo mkdir -p /mnt/scm/15/sakura
+if [ ! -e "/mnt/scm/15/sakura" ]
+then
+	sudo mkdir -p /mnt/scm/15/sakura
+fi
 
 echo "y" | sudo apt-get install libc6-dev-i386 
 echo "y" | sudo apt-get install zlib1g-dev:i386
