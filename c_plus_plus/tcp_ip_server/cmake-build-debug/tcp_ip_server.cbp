@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="tcp_ip_server"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tcp_ip_server">
+				<Option output="/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/tcp_ip_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/mingw32/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/msys/1.0/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/install-tools/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/share/doc/gcc/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/share/doc/gdb/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/cygwin64/usr/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/cygwin64/usr/include/bash"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/D:/ubuntu/head_files/usr/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/D:/ubuntu/head_files/usr/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/include/c++/4.7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.7/."/>
+					<Add directory="/usr/include/c++/4.7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 tcp_ip_server"/>
+					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tcp_ip_server/fast">
+				<Option output="/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/tcp_ip_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/mingw32/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/msys/1.0/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/install-tools/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/share/doc/gcc/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/MinGW/share/doc/gdb/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/cygwin64/usr/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/C:/cygwin64/usr/include/bash"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/D:/ubuntu/head_files/usr/include"/>
+					<Add directory="/root/mydev/myfiles/library/tcp_ip_server/D:/ubuntu/head_files/usr/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/include/c++/4.7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.7/."/>
+					<Add directory="/usr/include/c++/4.7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 tcp_ip_server/fast"/>
+					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/root/mydev/myfiles/library/tcp_ip_server/linuxhttp/LinuxSocket.cpp">
+			<Option target="tcp_ip_server"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/tcp_ip_server/linuxhttp/LinuxSocket.h">
+			<Option target="tcp_ip_server"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/tcp_ip_server/main.cpp">
+			<Option target="tcp_ip_server"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/tcp_ip_server/signal/HandleSignal.cpp">
+			<Option target="tcp_ip_server"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/tcp_ip_server/signal/HandleSignal.h">
+			<Option target="tcp_ip_server"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/tcp_ip_server/sqlite/SQLiteOpenHelper.cpp">
+			<Option target="tcp_ip_server"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/tcp_ip_server/sqlite/SQLiteOpenHelper.h">
+			<Option target="tcp_ip_server"/>
+		</Unit>
+		<Unit filename="/root/mydev/myfiles/library/tcp_ip_server/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
