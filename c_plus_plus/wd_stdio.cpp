@@ -111,7 +111,7 @@ void wd_getc(void){
 }
 
 /***
- int getchar ( void );
+ int getchar(void);
  */
 void wd_getchar(void){
     int c;
@@ -125,7 +125,7 @@ void wd_getchar(void){
 }
 
 /***
- char* gets ( char* str );
+ char* gets(char* str);
  这个运行不了
  */
 void wd_gets(void){
@@ -159,6 +159,7 @@ void wd_putchar(void){
     for(c='A';c<='Z';c++){
         putchar(c);
     }
+    putchar('\n');
 }
 
 /***
@@ -202,18 +203,48 @@ void wd_ungetc(void){
 
 /***
  总结：
-    1.fgetc,fgets,fputc,fputs都是相对于文件流进行的操作，
+    1.
+    fgetc,fgets,fputc,fputs都是相对于文件流进行的操作，
     前两个是从文件流中读取内容，后两个是把内容写进文件流中去。
-    2.读文件必须要有“r”的属性，写文件必须要有“w”的属性。
-    3.操作fgets和fputs这两个函数时必须定义一个字符数组，不能是字符指针。
-    4.用fgets函数从文件流中读取数据时，读取的长度（第二个参数值）不能
+    2.
+    读文件必须要有“r”的属性，写文件必须要有“w”的属性。
+    3.
+    操作fgets和fputs这两个函数时必须定义一个字符数组，不能是字符指针。
+    4.
+    用fgets函数从文件流中读取数据时，读取的长度（第二个参数值）不能
     超过定义的字符数组长度。
-    5.getc与fgetc的参数和返回值都相同，用法也相同。
-    6.getchar这个函数可以接收一大串的字符，包括空格，遇到回车就截断
-    输入。输入时是一个字符一个字符进行输出的。
-    7.putchar这个函数是一个字符一个字符往输出设备进行输出。
-    8.putc这个函数是一个字符一个字符往文件流中输入。
-    9.puts这个函数是整个字符串往输出设备进行输出。
+    5.
+    getc与fgetc的参数和返回值都相同，用法也相同。
+    6.
+    getchar这个函数可以接收一大串的字符，包括空格，
+    遇到回车就截断输入。输入时是一个字符一个字符进行输入的。
+    7.
+    putchar这个函数是一个字符一个字符往输出设备进行输出。
+    8.
+    putc这个函数是一个字符一个字符往文件流中输入。
+    9.
+    puts这个函数是整个字符串往输出设备进行输出。
+
+    char content[1024];
+    fgets(content, 1024, stdin);
+    fputs(content, stdout);
+
+    int     fgetc(FILE* stream);
+    int     fputc(int character, FILE* stream);
+
+    使用这两个方法就可以了
+    char*   fgets(char* str, int num, FILE* stream);
+    int     fputs(const char* str, FILE* stream);
+    
+    int     getc(FILE* stream);
+    int     putc(int character, FILE* stream);
+
+    int     getchar(void);
+    int     putchar(int character);
+
+    char*   gets(char* str);(废弃不用,使用fgets代替,stream换成stdin就可以了)
+    int     puts(const char* str);
+    int     ungetc(int character, FILE* stream);
  */
 
 /***

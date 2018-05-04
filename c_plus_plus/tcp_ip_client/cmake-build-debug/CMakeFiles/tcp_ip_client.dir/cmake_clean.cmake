@@ -1,10 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/tcp_ip_client.dir/main.cpp.obj"
-  "CMakeFiles/tcp_ip_client.dir/LinuxSocket.cpp.obj"
+  "CMakeFiles/tcp_ip_client.dir/main.cpp.o"
+  "CMakeFiles/tcp_ip_client.dir/LinuxSocket.cpp.o"
   "tcp_ip_client.pdb"
-  "tcp_ip_client.exe"
-  "tcp_ip_client.exe.manifest"
-  "libtcp_ip_client.dll.a"
+  "tcp_ip_client"
 )
 
 # Per-language clean rules from dependency scanning.

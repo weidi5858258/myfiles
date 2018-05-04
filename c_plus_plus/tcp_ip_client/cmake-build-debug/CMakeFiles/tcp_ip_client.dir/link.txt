@@ -1,3 +1,1 @@
-C:\mydev\tools\CLion_Windows\bin\cmake\bin\cmake.exe -E remove -f CMakeFiles\tcp_ip_client.dir/objects.a
-C:\MinGW\bin\ar.exe cr CMakeFiles\tcp_ip_client.dir/objects.a @CMakeFiles\tcp_ip_client.dir\objects1.rsp
-C:\MinGW\bin\g++.exe  -std=gnu++11 -g   -Wl,--whole-archive CMakeFiles\tcp_ip_client.dir/objects.a -Wl,--no-whole-archive  -o tcp_ip_client.exe -Wl,--out-implib,libtcp_ip_client.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\tcp_ip_client.dir\linklibs.rsp
+/usr/bin/c++   -std=gnu++11 -g   CMakeFiles/tcp_ip_client.dir/main.cpp.o CMakeFiles/tcp_ip_client.dir/LinuxSocket.cpp.o  -o tcp_ip_client 

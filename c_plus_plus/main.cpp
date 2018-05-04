@@ -9,6 +9,7 @@
 // #incldue <stdlib.h>
 
 #include "wd_string.h"
+#include "wd_stdio.h"
 #include "wd_opencv.h"
 #include "socket.h"
 #include "wd_grammar.h"
