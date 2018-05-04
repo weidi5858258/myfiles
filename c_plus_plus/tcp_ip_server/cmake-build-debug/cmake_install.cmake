@@ -1,4 +1,4 @@
-# Install script for directory: /root/mydev/myfiles/library/tcp_ip_server
+# Install script for directory: /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

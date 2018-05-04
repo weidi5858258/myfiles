@@ -43,10 +43,10 @@ RM = /root/mydev/tools/clion/bin/cmake/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/mydev/myfiles/library/tcp_ip_server
+CMAKE_SOURCE_DIR = /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug
+CMAKE_BINARY_DIR = /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/tcp_ip_server.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/tcp_ip_server.dir/flags.make
 
 CMakeFiles/tcp_ip_server.dir/main.cpp.o: CMakeFiles/tcp_ip_server.dir/flags.make
 CMakeFiles/tcp_ip_server.dir/main.cpp.o: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tcp_ip_server.dir/main.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tcp_ip_server.dir/main.cpp.o -c /root/mydev/myfiles/library/tcp_ip_server/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tcp_ip_server.dir/main.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tcp_ip_server.dir/main.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/main.cpp
 
 CMakeFiles/tcp_ip_server.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/tcp_ip_server.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/mydev/myfiles/library/tcp_ip_server/main.cpp > CMakeFiles/tcp_ip_server.dir/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/main.cpp > CMakeFiles/tcp_ip_server.dir/main.cpp.i
 
 CMakeFiles/tcp_ip_server.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/tcp_ip_server.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/mydev/myfiles/library/tcp_ip_server/main.cpp -o CMakeFiles/tcp_ip_server.dir/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/main.cpp -o CMakeFiles/tcp_ip_server.dir/main.cpp.s
 
 CMakeFiles/tcp_ip_server.dir/main.cpp.o.requires:
 
@@ -83,16 +83,16 @@ CMakeFiles/tcp_ip_server.dir/main.cpp.o.provides.build: CMakeFiles/tcp_ip_server
 
 CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.o: CMakeFiles/tcp_ip_server.dir/flags.make
 CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.o: ../linuxhttp/LinuxSocket.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.o -c /root/mydev/myfiles/library/tcp_ip_server/linuxhttp/LinuxSocket.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/linuxhttp/LinuxSocket.cpp
 
 CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/mydev/myfiles/library/tcp_ip_server/linuxhttp/LinuxSocket.cpp > CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/linuxhttp/LinuxSocket.cpp > CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.i
 
 CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/mydev/myfiles/library/tcp_ip_server/linuxhttp/LinuxSocket.cpp -o CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/linuxhttp/LinuxSocket.cpp -o CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.s
 
 CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.o.requires:
 
@@ -107,16 +107,16 @@ CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.o.provides.build: CMakeFi
 
 CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o: CMakeFiles/tcp_ip_server.dir/flags.make
 CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o: ../signal/HandleSignal.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o -c /root/mydev/myfiles/library/tcp_ip_server/signal/HandleSignal.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/signal/HandleSignal.cpp
 
 CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/mydev/myfiles/library/tcp_ip_server/signal/HandleSignal.cpp > CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/signal/HandleSignal.cpp > CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.i
 
 CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/mydev/myfiles/library/tcp_ip_server/signal/HandleSignal.cpp -o CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/signal/HandleSignal.cpp -o CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.s
 
 CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o.requires:
 
@@ -131,16 +131,16 @@ CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o.provides.build: CMakeFile
 
 CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.o: CMakeFiles/tcp_ip_server.dir/flags.make
 CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.o: ../sqlite/SQLiteOpenHelper.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.o -c /root/mydev/myfiles/library/tcp_ip_server/sqlite/SQLiteOpenHelper.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/sqlite/SQLiteOpenHelper.cpp
 
 CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/mydev/myfiles/library/tcp_ip_server/sqlite/SQLiteOpenHelper.cpp > CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/sqlite/SQLiteOpenHelper.cpp > CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.i
 
 CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/mydev/myfiles/library/tcp_ip_server/sqlite/SQLiteOpenHelper.cpp -o CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/sqlite/SQLiteOpenHelper.cpp -o CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.s
 
 CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.o.requires:
 
@@ -169,7 +169,7 @@ tcp_ip_server: CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o
 tcp_ip_server: CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.o
 tcp_ip_server: CMakeFiles/tcp_ip_server.dir/build.make
 tcp_ip_server: CMakeFiles/tcp_ip_server.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable tcp_ip_server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable tcp_ip_server"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/tcp_ip_server.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -189,6 +189,6 @@ CMakeFiles/tcp_ip_server.dir/clean:
 .PHONY : CMakeFiles/tcp_ip_server.dir/clean
 
 CMakeFiles/tcp_ip_server.dir/depend:
-	cd /root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/mydev/myfiles/library/tcp_ip_server /root/mydev/myfiles/library/tcp_ip_server /root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug /root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug /root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/CMakeFiles/tcp_ip_server.dir/DependInfo.cmake --color=$(COLOR)
+	cd /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug /root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug/CMakeFiles/tcp_ip_server.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/tcp_ip_server.dir/depend
 

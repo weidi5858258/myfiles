@@ -4,10 +4,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/root/mydev/myfiles/library/tcp_ip_server/linuxhttp/LinuxSocket.cpp" "/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.o"
-  "/root/mydev/myfiles/library/tcp_ip_server/main.cpp" "/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/CMakeFiles/tcp_ip_server.dir/main.cpp.o"
-  "/root/mydev/myfiles/library/tcp_ip_server/signal/HandleSignal.cpp" "/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o"
-  "/root/mydev/myfiles/library/tcp_ip_server/sqlite/SQLiteOpenHelper.cpp" "/root/mydev/myfiles/library/tcp_ip_server/cmake-build-debug/CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.o"
+  "/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/linuxhttp/LinuxSocket.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug/CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.o"
+  "/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/main.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug/CMakeFiles/tcp_ip_server.dir/main.cpp.o"
+  "/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/signal/HandleSignal.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug/CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o"
+  "/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/sqlite/SQLiteOpenHelper.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_server/cmake-build-debug/CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
