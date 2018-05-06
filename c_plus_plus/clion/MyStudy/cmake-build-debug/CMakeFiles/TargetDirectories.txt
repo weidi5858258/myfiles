@@ -1,0 +1,3 @@
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/rebuild_cache.dir

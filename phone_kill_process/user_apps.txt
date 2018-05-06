@@ -118,4 +118,5 @@
 118@@@com.nfyg.hsbb@@@花生地铁wifi
 119@@@com.jianshu.haruki@@@简书App
 120@@@com.alibaba.android.rimet@@@钉钉
+121@@@com.jingdong.app.mall@@@京东
 

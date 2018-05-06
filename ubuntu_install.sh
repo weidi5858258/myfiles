@@ -8,7 +8,7 @@ echo "y" | sudo apt-get update
 echo "y" | sudo apt-get install update-manager-core
 echo "y" | sudo do-release-upgrade
 
-echo "y" | sudo dpkg --add-architecture i386
+# echo "y" | sudo dpkg --add-architecture i386
 echo "y" | sudo apt-get update
 echo "y" | sudo apt-get install openssh-server
 
