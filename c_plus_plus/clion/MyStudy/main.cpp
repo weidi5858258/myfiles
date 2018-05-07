@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
     Test t;
-    cout<<t.getData()<<endl;
+    cout << t.getData() << endl;
     Test t2(10);
     Test t3(t2);
     Test t4 = t2;
@@ -448,22 +448,101 @@ ostream& operator<<(ostream &out){
 
 5.4.8 static方法与const方法
 
+模板是标准C++实现代码复用的有力工具，特别是有关数据结构的算法。
 5.4.9 函数模板
+1.
+定义模板：
 template<typename Type>
 Type max(Type a, Type b){
     cout<<typeid(Type).name()<<endl;
     return a > b ? a : b;
 }
+使用：
 max(1, (int)2.3);
 max((double)1, 2.3);
 max<int>(1, 2.3);
+2.
+定义模板：
 template<typename Type1, typename Type2>
 Type1 max(Type1 a, Type2 b){
      return a > b ? a : b;
 }
 
 5.4.10 类模板
+例子：
+// 声明类模板
+template<typename Type>
+class List;
 
+template<typename Type>
+class ListNode {
+    friend class List<Type>;
+
+public:
+    ListNode() :
+            data(Type()), next(NULL) {}
+
+    ListNode(Type d, ListNode<Type> *n = NULL) :
+            data(d), next(n) {}
+
+    ~ListNode() {}
+
+private:
+    Type data;
+    ListNode<Type> *next;
+};
+
+template<typename Type>
+class List {
+public:
+    List();
+
+    bool push_back(Type x);
+
+private:
+    ListNode<Type> *first;
+    ListNode<Type> *last;
+    size_t size;
+};
+
+template<typename Type>
+List<Type>::List() {
+    first = last = (ListNode<Type> *) malloc(sizeof(ListNode<Type>));
+    last->next = NULL;
+    size = 0;
+}
+
+template<typename Type>
+bool List<Type>::push_back(Type x) {
+    ListNode<Type> *s = (ListNode<Type> *) malloc(sizeof(ListNode<Type>));
+    if (s == NULL) {
+        return false;
+    }
+    s->data = x;
+    s->next = NULL;
+
+    last->data = s;
+    last = s;
+    size++;
+    return true;
+}
+
+void main() {
+    List<int> intList;
+    for (int i = 1; i <= 10; ++i) {
+        intList.push_back(i);
+    }
+}
+
+动态内存开辟new_delete
+堆内存的分配与释放
+堆对象与构造函数
+深拷贝与浅拷贝
+int *p = (int*)malloc(sizeof(int) * SIZE);
+if(p == NULL) exit(1);
+free(p);
+int *q = new int[10];
+delete []q;
 
 
 
