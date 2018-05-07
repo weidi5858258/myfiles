@@ -468,6 +468,7 @@ Type1 max(Type1 a, Type2 b){
 
 
 
+
 字符串
 字符串是以空字符结尾的字符数组.
 char型字符串

@@ -1,9 +1,10 @@
 .git
 .gitmodules
-library/grammar/.idea
-library/grammar/cmake-build-debug
-library/tcp_ip_server/.idea
-library/tcp_ip_server/cmake-build-debug
+c_plus_plus/grammar/.idea
+c_plus_plus/grammar/cmake-build-debug
+c_plus_plus/tcp_ip_server/.idea
+c_plus_plus/tcp_ip_server/cmake-build-debug
+c_plus_plus/clion/MyStudy/.idea
 ShellScript/.gradle
 ShellScript/.idea
 ShellScript/build

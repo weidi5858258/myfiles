@@ -1,1 +1,0 @@
-/usr/bin/c++   -std=gnu++11 -g   CMakeFiles/tcp_ip_server.dir/main.cpp.o CMakeFiles/tcp_ip_server.dir/linuxhttp/LinuxSocket.cpp.o CMakeFiles/tcp_ip_server.dir/signal/HandleSignal.cpp.o CMakeFiles/tcp_ip_server.dir/sqlite/SQLiteOpenHelper.cpp.o  -o tcp_ip_server 
