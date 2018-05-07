@@ -2075,6 +2075,9 @@ if [ "$#" -eq 1 ]; then
 	esac
 fi
 
+pushd /root/mydev/myfiles
+// doSomething
+popd
 
 
 

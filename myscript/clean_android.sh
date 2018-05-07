@@ -3,25 +3,25 @@
 function init(){
 	pathCount=0
 	spaceFlag=50
-	# currentDir=`pwd`
+	currentDir=`pwd`
 	# /storage/emulated/0/data/local/artifact
 	# currentDir="/storage/emulated/0"
-	currentDir="/"
+	# currentDir="/"
 
-	ignorePathArray[0]="/storage/emulated/0/Android"
-	ignorePathArray[1]="/storage/emulated/0/Android/data"
-	ignorePathArray[2]="/storage/emulated/0/Android/data/com.tencent.mobileqq"
-	ignorePathArray[3]="/storage/emulated/0/DCIM"
-	ignorePathArray[4]="/storage/emulated/0/DCIM/Camera"
-	ignorePathArray[5]="/storage/emulated/0/Record"
-	ignorePathArray[6]="/storage/emulated/0/Record/PhoneRecord"
-	ignorePathArray[7]="/storage/emulated/0/Tencent"
-	ignorePathArray[8]="/storage/emulated/0/Tencent/MicroMsg"
-	ignorePathArray[9]="/storage/emulated/0/Tencent/MobileQQ"
-	ignorePathArray[10]="/storage/emulated/0/TitaniumBackup"
-	ignorePathArray[11]="/storage/emulated/0/alipay"
-	ignorePathArray[12]="/storage/emulated/0/kgmusic"
-	ignorePathArray[13]="/storage/emulated/0/kgmusic/download"
+	# ignorePathArray[0]="/storage/emulated/0/Android"
+	# ignorePathArray[1]="/storage/emulated/0/Android/data"
+	# ignorePathArray[2]="/storage/emulated/0/Android/data/com.tencent.mobileqq"
+	# ignorePathArray[3]="/storage/emulated/0/DCIM"
+	# ignorePathArray[4]="/storage/emulated/0/DCIM/Camera"
+	# ignorePathArray[5]="/storage/emulated/0/Record"
+	# ignorePathArray[6]="/storage/emulated/0/Record/PhoneRecord"
+	# ignorePathArray[7]="/storage/emulated/0/Tencent"
+	# ignorePathArray[8]="/storage/emulated/0/Tencent/MicroMsg"
+	# ignorePathArray[9]="/storage/emulated/0/Tencent/MobileQQ"
+	# ignorePathArray[10]="/storage/emulated/0/TitaniumBackup"
+	# ignorePathArray[11]="/storage/emulated/0/alipay"
+	# ignorePathArray[12]="/storage/emulated/0/kgmusic"
+	# ignorePathArray[13]="/storage/emulated/0/kgmusic/download"
 
 	# for ignPath in "${ignorePathArray[@]}"
 	# do
