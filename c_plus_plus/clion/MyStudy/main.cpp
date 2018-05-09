@@ -665,6 +665,282 @@ str1.insert(2, str2, 0, 4);
 output: str1 = 123456789
 
 string型字符串的删除
+string s("give me");
+// 第1个参数表示从哪个位置开始删除，第2个参数表示删除几个
+s.erase(2, 2);
+output: s = gi me
+// 表示从哪个位置开始删除
+s.erase(2);
+output: s = gi
+// 参数默认值为0，则从0开始往后的字符全部删除
+s.erase();
+output: s = 没有内容
+
+string型字符串的查找
+char ch1[15];
+char *p, c = 'w';
+strcpy(ch1, "hello world");
+p = strchr(ch1, c);
+
+string str1("hello world");
+// “w”表示要搜索的字符，0表示从str1的第1个字符开始搜索
+int f = str1.find("w", 0);
+if(f != string::npos){
+    cout<<f<<endl;
+}else{
+    cout<<"not find"<<endl;
+}
+npos是string类提供的一个常量，用来表示不存在的位置，
+许多平台中npos的值都不一样。因此它的值由平台决定，
+一般是-1，不管什么平台，npos的值都不能用作数组的下标。
+find_first_not_of(): 查找第一个与value中的某值不相等的字符
+find_first_of(): 查找第一个与value中的某值相等的字符
+find_last_of(): 查找最后一个与value中的某值相等的字符
+find_last_not_of(): 查找最后一个与value中的所有值都不相等的字符
+rfind(): 查找最后一个与value相等的字符（逆向查找）
+
+string型字符串的比较
+string s1 = "155";
+string s2 = "52";
+char c[] = "34";
+int i,j,k,l,m,n;
+// 将s1与s2比较，返回0为相等，返回1为s1大于s2，返回-1为s1小于s2
+i = s1.compare(s2);
+// 将char型字符串c与s2比较
+j = s2.compare(c);
+// 取s1前两个字符与s2比较，参数1表示位置，参数2表示取的个数
+k = s1.compare(0, 2, s2);
+// 
+l = s1.compare(1, 1, s2, 0, 1);
+// 
+m = s1.compare(1, 1, c, 0, 1);
+// 
+n = s1.compare(1, 1, c, 1);
+
+string型字符串是否为空
+string str = "";
+if(str.empty()){
+    cout<<"str is empty"<<endl;
+}
+
+字符串的使用
+swap()交换两个字符串的内容
+交换两个char型字符串的函数swab()，只能交换字符串中的相信的
+偶数字节和奇数字节的位置。
+char ch1[15] = "ofru";
+char ch2[15] = "";
+swab(ch1, ch2, strlen(ch1));
+output: ch1 = ofru ch2 = four
+
+string str1 = "give me";
+string str2 = "a cup";
+str1.swap(str2);
+output: str1 = a cup str2 = give me
+
+将string型字符串转为char型字符串
+string类的成员函数c_str()可以返回一个指向char型字符串的const指针,
+该指针指向调用该函数的string型字符串对象.
+string str = "hello world";
+const char *ch;
+ch = str.c_str();
+output: ch = hello world
+
+char型字符串与函数
+char型字符串就是C风格的字符串,它由一串字符组成,结尾为字符串结束
+标志"\0".字符串名是第1个字符的地址,因此我们将字符串名作为参数
+传递到函数中时,其实就是将地址传递到函数中去.
+int get(const char p[])
+int get(const char *p){
+    int count = 0;
+    while(*p){
+        count++;
+        p++;
+    }
+    return count;
+}
+char ch[15] = "hello world";
+char *p = "very well";
+int a = get(ch);
+int b = get(p);
+output: a = 10 b = 9
+
+字符串有3种表达方式,如下:
+1. char c[12] = "study";// char型数组
+2. "study"              // 未命名数组
+3. char *p = "study";   // 指向char型数组的指针
+由于这3种表达方式才是以指针的方式来保存字符串中第1个字符的
+内存地址,因此都可作为参数传递到函数中去.
+
+函数如何返回字符串
+char *get(char *str){
+    char *p = new char(strlen(str) + 1);
+    strcpy(p, str);
+    return p;
+}
+char c[10];
+char *ch;
+cin>>c;
+ch = get(c);
+cout<<ch<<endl;
+delete []ch;
+ch = get("Jack");
+cout<<ch<<endl;
+delete []ch;
+char *ch2 = "Mike";
+ch = get(ch2);
+cout<<ch<<endl;
+delete []ch;
+
+结构体
+结构体是C时代的产物,到了C++之后结构体有了巨大的变化,可以增加
+函数,可以设置成员的公有,私有和保护属性,可以从别的类继承,也
+可以被别的类继承,可以有虚函数.唯一与类不同之后是结构体定义中
+默认情况下的成员是public,而类定义中默认情况下的成员是private.
+struct A{
+public:// 有没有是一样的
+    int get(){return x;}  
+    void set(int i){x = i;}
+private:
+    int x;
+};
+使用:
+A a;
+set(9);
+cout<<a.get()<<endl;
+
+struct people{
+  double weight;
+  double tall;
+  int age;
+  char *name;
+  char *native;
+  bool sex;  
+};
+prople Jack={
+  180.5,
+  179.3,
+  34,
+  "Jack",
+  "济南",
+  1
+};
+cout<<Jack.name<<endl;
+cout<<Jack.native<<endl;
+cout<<Jack.tall<<endl;
+cout<<Jack.weight<<endl;
+cout<<Jack.age<<endl;
+
+结构体中使用string
+struct people{
+  people(double t_weight, double t_tall, int t_age, 
+         string t_name, char *t_native, bool t_sex);
+  double weight;
+  double tall;
+  int age;
+  string name;
+  char *native;
+  bool sex;
+};
+people::people(double t_weight, double t_tall, int t_age, 
+         string t_name, char *t_native, bool t_sex){
+  weight = t_weight;
+  tall = t_tall;
+  age = t_age;
+  name = t_name;
+  native = t_native;
+  sex = t_sex;
+};
+people Jack(180.5, 179.3, 34, "Jack", "济南", 1);
+由于是调用构造函数对Jack中的数据成员进行初始化,因此Jack后面没有
+加赋值符(=),并且用括号替代了双引号.
+
+结构体的赋值
+既然结构是一种数据类型,那么我们就可以像对变量那样进行赋值操作,
+不过前提是两个结构必须都是同类型的.
+struct people{
+  double weight;
+  double tall;  
+};
+people Mike = {185.2, 178.1};
+people Jack = {65.4, 165.2};
+Mike = Jack;
+output: 两者输出是一样的
+
+结构体与函数
+struct time{
+  int hour;
+  int minute;  
+};
+const int perhour = 60;
+time sum(time t1, time t2){
+    time total;
+    total.minute = (t1.minute + t2.minute) % perhour;
+    total.hour = t1.hour + t2.hour + (t1.minute + t2.minute)/perhour;
+    return total;
+}
+void show(time t){
+    cout<<t.hour<<":"<<t.minute<<endl;
+}
+time one = {8, 15};
+time two = {6, 55};
+time day = sum(one, two);
+show(day);
+time day3 = {9, 35};
+
+time &sum(time t1, time t2){
+    time *total = new time;
+    total.minute = (t1.minute + t2.minute) % perhour;
+    total.hour = t1.hour + t2.hour + (t1.minute + t2.minute)/perhour;
+    return *total;
+}
+time *day = &sum(one, two);
+show(*day);
+time day2 = {9, 35};
+time *p1 = &sum(*day, day2);
+show(*p1);
+delete day;
+delete p1;
+
+结构体与string
+void show(const string p){
+    cout<<p<<endl;
+}
+string str = "hello world";
+show(str);
+
+void show(const string &p){
+    cout<<p<<endl;
+}
+show(str);
+
+string数组与函数
+假如要传递多个字符串,那么可以声明一个string对象数组,然后
+将数组传递函数中.
+void show(const string str[], int n){
+    for(int i=0;i<n;i++){
+        cout<<i+1<<":"<<str[i]<<endl;
+    }
+}
+const int length = 5;
+string str[length];
+for(int i=0;i<length;i++){
+    cout<<i+1<<":";
+    cin>>str[i];
+}
+show(str, length);
+
+string str[5];
+char str[][5];
+string对象数组与二维char型数组差不多.不同的是,string对象数组有
+自动调节数组大小的功能,而二维char型数组却没有,因此使用二维char
+型数组时,必须将数组定义得足够大,以避免数组越界.
+
+流的使用
+把控制数据流动的cin和cout叫做输入输出流.凡是跟输入输出流
+有关系的类叫做流类,凡是实现流类功能的成员函数全部合并在一个
+库中,该库叫做流类库.
+
+
 
 
 
