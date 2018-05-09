@@ -151,6 +151,12 @@
 			<Option target="lib_test"/>
 			<Option target="MyStudy"/>
 		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/epoll.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/epoll.h">
+			<Option target="MyStudy"/>
+		</Unit>
 		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

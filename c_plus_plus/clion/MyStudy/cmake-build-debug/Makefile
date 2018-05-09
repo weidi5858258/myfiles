@@ -193,6 +193,33 @@ src/Test.cpp.s:
 	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/src/Test.cpp.s
 .PHONY : src/Test.cpp.s
 
+src/epoll.o: src/epoll.cpp.o
+
+.PHONY : src/epoll.o
+
+# target to build an object file
+src/epoll.cpp.o:
+	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/src/epoll.cpp.o
+.PHONY : src/epoll.cpp.o
+
+src/epoll.i: src/epoll.cpp.i
+
+.PHONY : src/epoll.i
+
+# target to preprocess a source file
+src/epoll.cpp.i:
+	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/src/epoll.cpp.i
+.PHONY : src/epoll.cpp.i
+
+src/epoll.s: src/epoll.cpp.s
+
+.PHONY : src/epoll.s
+
+# target to generate assembly for a file
+src/epoll.cpp.s:
+	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/src/epoll.cpp.s
+.PHONY : src/epoll.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -209,6 +236,9 @@ help:
 	@echo "... src/Test.o"
 	@echo "... src/Test.i"
 	@echo "... src/Test.s"
+	@echo "... src/epoll.o"
+	@echo "... src/epoll.i"
+	@echo "... src/epoll.s"
 .PHONY : help
 
 

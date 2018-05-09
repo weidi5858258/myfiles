@@ -7,8 +7,8 @@ add_executable(MyStudy
         main.cpp
         src/Test.cpp
         include/Test.h
-        MyHead.h
-        )
+        include/MyHead.h
+        src/epoll.cpp include/epoll.h)
 
 ################################################################
 

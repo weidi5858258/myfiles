@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/main.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/main.cpp.o"
   "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Test.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/src/Test.cpp.o"
+  "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/epoll.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/src/epoll.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

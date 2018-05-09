@@ -2,7 +2,7 @@
 // Created by weidi on 2018/5/5.
 //
 
-#include "../MyHead.h"
+#include "MyHead.h"
 
 Test::Test() {
     std::cout << "Create Test() Object: " << this << std::endl;
