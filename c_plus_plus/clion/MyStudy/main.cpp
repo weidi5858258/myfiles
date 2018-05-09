@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <iostream>
-
 #include "MyHead.h"
-
-using namespace std;
 
 int main(int argc, char *argv[]) {
     printf("\n");
@@ -573,6 +568,174 @@ char man[4] = {'J','a','c','k'};
 只有为其添加"\0"这个结束标志后,这个char型数组man才转化为字符串.如
 char man[4] = {'J','a','c','k', '\0'};
 "\0"
+
+string型字符串的赋值
+char型字符串无法直接赋值.如:
+char ch1[] = "give me";
+char ch2[] = "a cup";
+ch1 = ch2;
+这样是错误的,不能将一个数组名直接赋给另一个数组名.
+可以用strcpy拷贝函数实现赋值的目的.
+char ch1[] = "give me";
+char ch2[] = "a cup";
+strcpy(ch1, ch2);
+必须保证ch1的空间足够大,以便能够容纳ch2的字符串.
+strcpy会将ch2中的所有字符,包括结束标志"\0"一起复制到ch1中去.
+第一种方式赋值
+#include <string>
+string str1 = "what's your name";
+string str2 = "my name is Jack";
+str1 = str2;
+output: str1 = my name is Jack
+第二种方式赋值
+string str1 = " gh ";
+string str2 = " abcdef ";
+str1.assign(str2, 3, 1);
+output: d
+
+string型字符串的合并
+对两个char型字符串进行合并要用到strcat函数,strcat函数
+将第2个字符串合并到第1个字符串中,因此第1个字符串必须保证能容纳两个字符串的长度.
+char ch1[] = "what's your name";
+char ch2[] = "my name is Jack";
+strcat(ch1, ch2);
+运行后就会立即崩溃,这是因为ch1的空间不够造成的.
+string str1 = "what's your name";
+string str2 = "my name is Jack";
+str1 = str1 + str2;
+
+string型字符串的部分合并
+char ch1[10] = "ab";
+char ch2[] = "abcdef";
+strncat(ch1, ch2, 3);
+output: ch1 = ababc
+
+string str1 = "ab";
+string str2 = "abcdef";
+str1.append(str2, 2, 3);
+output: str1 = abcde
+
+string型字符串的替换
+char ch1[10] = "gh";
+char ch2[] = "abcdef";
+strncpy(ch1, ch2, 3);
+output: ch1 = abc
+
+string str1 = "gh";
+string str2 = "abcdef";
+str1.replace(0, 1, str2, 4, 2);
+output: str1 = efh
+
+basic_string &replace(size_type index, size_type num, const basic_string &str);
+从本字符串的index开始,用str中的所有字符替换本字符串中的num个字符.
+basic_string &replace(size_type index, size_type num, const char *str);
+从本字符串的index开始,用str中的所有字符替换本字符串中的num个字符.
+basic_string &replace(size_type index1, size_type num1, const basic_string &str, size_type index2, size_type num2);
+用str中的num2个字符(从index2开始)替换本字符串中的字符,从index1开始,最多有num1个字符.
+basic_string &replace(size_type index, size_type num1, const char *str, size_type num2);
+用str中的num2个字符本字符串中的字符,从index开始,共num1个字符.
+basic_string &replace(size_type index, size_type num1, size_type num2, char ch);
+用num2个ch字符替换本字符串中的字符,从index开始,fugai num1个字符.
+basic_string &replace(iterator start, iterator end, const basic_string &str);
+用str中的字符替换本字符串中的字符,迭代器start和end指示范围.
+basic_string &replace(iterator start, iterator end, const char *str);
+用str中的字符替换本字符串中的字符,迭代器start和end指示范围.
+basic_string &replace(iterator start, iterator end, const char *str, size_type num);
+用str中的num个字符替换本字符串中的内容,迭代器start和end指示范围.
+basic_string &replace(iterator start, iterator end, size_type num, char ch);
+用num个ch字符替换本字符串中的内容,迭代器start和end指示范围.
+
+string型字符串的复制
+char ch1[15] = "abcdefghijklmn";
+char ch2[] = "1234567890";
+memmove(ch1, ch2, 10);
+output: ch1 = 1234567890klmn
+
+从string型字符中复制到char型字符串的copy函数
+string str = "abcd";
+char ch[] = "1234";
+int n = str.copy(ch, 4, 0);
+output: n = 4, ch = abcd
+
+string型字符串的插入
+str.insert(index1, str1, index2, num);
+string str1 = "12789";
+string str2 = "3456";
+str1.insert(2, str2, 0, 4);
+output: str1 = 123456789
+
+string型字符串的删除
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

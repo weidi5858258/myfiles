@@ -5,6 +5,12 @@
 #ifndef MYSTUDY_MYHEAD_H
 #define MYSTUDY_MYHEAD_H
 
-#include "Test.h"
+#include <stdio.h>
+#include <iostream>
+#include <string>
+
+#include "include/Test.h"
+
+using namespace std;
 
 #endif //MYSTUDY_MYHEAD_H

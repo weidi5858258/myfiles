@@ -6,5 +6,5 @@ CXX_FLAGS =  -std=c++11 -g   -std=gnu++11
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/include -I/usr/local/include/opencv -I/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include 
+CXX_INCLUDES = -isystem /usr/local/include -isystem /usr/local/include/opencv -I/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include 
 
