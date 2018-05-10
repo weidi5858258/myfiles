@@ -1,8 +1,34 @@
-/root/mydev/tools/clion/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy
--- OpenCV library status:
---     version: 3.3.0
---     libraries: opencv_calib3d;opencv_core;opencv_dnn;opencv_features2d;opencv_flann;opencv_highgui;opencv_imgcodecs;opencv_imgproc;opencv_ml;opencv_objdetect;opencv_photo;opencv_shape;opencv_stitching;opencv_superres;opencv_video;opencv_videoio;opencv_videostab
---     include path: /usr/local/include;/usr/local/include/opencv
--- Configuring done
--- Generating done
--- Build files have been written to: /root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug
+C:\mydev\tools\CLion_Windows\bin\cmake\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" D:\workspace_github\myfiles\c_plus_plus\clion\MyStudy
+-- The C compiler identification is GNU 6.3.0
+-- The CXX compiler identification is GNU 6.3.0
+-- Check for working C compiler: C:/MinGW/bin/gcc.exe
+-- Check for working C compiler: C:/MinGW/bin/gcc.exe -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: C:/MinGW/bin/g++.exe
+-- Check for working CXX compiler: C:/MinGW/bin/g++.exe -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+CMake Error at CMakeLists.txt:33 (find_package):
+  By not providing "FindOpenCV.cmake" in CMAKE_MODULE_PATH this project has
+  asked CMake to find a package configuration file provided by "OpenCV", but
+  CMake did not find one.
+
+  Could not find a package configuration file provided by "OpenCV" with any
+  of the following names:
+
+    OpenCVConfig.cmake
+    opencv-config.cmake
+
+  Add the installation prefix of "OpenCV" to CMAKE_PREFIX_PATH or set
+  "OpenCV_DIR" to a directory containing one of the above files.  If "OpenCV"
+  provides a separate development package or SDK, be sure it has been
+  installed.
+
+
+-- Configuring incomplete, errors occurred!
+See also "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/CMakeOutput.log".

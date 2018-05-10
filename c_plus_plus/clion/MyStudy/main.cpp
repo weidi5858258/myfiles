@@ -939,6 +939,59 @@ string对象数组与二维char型数组差不多.不同的是,string对象数�
 把控制数据流动的cin和cout叫做输入输出流.凡是跟输入输出流
 有关系的类叫做流类,凡是实现流类功能的成员函数全部合并在一个
 库中,该库叫做流类库.
+重载输出运算符<<
+class A{
+  public:
+    A(int x, int y)  {rx = x; ry = y}
+  public:
+    int rx;
+    int ry;
+};
+ostream &operator<<(ostream &s, const A &a){
+    s<<a.rx;// A的成员变量必须定义为public
+    s<<a.ry;
+    return s;
+}
+
+友元的方式重载输出运算符
+class A{
+  public:
+    A(int x, int y)  {rx = x; ry = y;}
+    friend ostream &operator<<(ostream &s, const A &a){
+        s<<a.rx;
+        s<<a.ry;
+        return s;
+    }
+  private:
+    int rx;
+    int ry;
+};
+A a(3, 4), b(5, 6);
+cout<<a<<b<<endl;
+
+重载输入运算符>>
+class A{
+  public:
+    A(int i)  {x = i;}
+    friend istream &operator>>(istream &in, A &a){
+        in>>a.x;
+        return in;
+    }
+    friend ostream &operator<<(ostream &o, const A &a){
+        o<<a.x;
+        return o;
+    }
+  private:
+    int x;
+};
+A a(3), b(4);
+cin>>a>>b;
+cout<<a<<b;
+
+异常和错误处理
+try{
+    wrong();
+}
 
 
 
