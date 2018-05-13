@@ -12,7 +12,7 @@
 第二步：epoll_ctl()系统调用。通过此调用向epoll对象中添加、删除、修改感兴趣的事件，返回0标识成功，返回-1表示失败。
 第三部：epoll_wait()系统调用。通过此调用收集收集在epoll监控中已经发生的事件。
  */
-#include "MyHead.h"
+#include "../include/MyHead.h"
 
 struct myevent_s {
     int fd;

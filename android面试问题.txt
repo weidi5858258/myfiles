@@ -1,0 +1,35 @@
+android面试问题
+1.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+system/core/init/init.cpp这个代码是运行在init进程中的,
+system/core/init/init.cpp的main方法里会根据init.rc文件
+解析每一条命令,其中有一条是这样的
+service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
+意思是通过执行/system/bin/app_process这个命令行的可执行文件,
+创建一个名为"zygote"的进程,传给/system/bin/app_process
+这个命令行的可执行文件的参数是"-Xzygote /system/bin --zygote --start-system-server".
+/system/bin/app_process这个命令行的可执行文件是由
+frameworks/base/cmds/app_process/app_main.cpp
+这个源文件编译出来的.
+这样anndroid的故事就从这个zygote进程展开了.
+
+
+
+

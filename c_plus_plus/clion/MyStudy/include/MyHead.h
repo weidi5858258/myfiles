@@ -8,17 +8,16 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
-#include <sys/socket.h>
-#include <sys/epoll.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+//#include <sys/socket.h>
+//#include <sys/epoll.h>
+//#include <netinet/in.h>
+//#include <arpa/inet.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
 
 #include "Test.h"
-#include "epoll.h"
 
 using namespace std;
 

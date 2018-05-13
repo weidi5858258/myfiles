@@ -1,11 +1,78 @@
-#include "MyHead.h"
+#include "./include/MyHead.h"
+
+static const char ZYGOTE_NICE_NAME[] = "zygote64";
+class B0 {
+public:
+    B0() {
+        cout << "B0 object is created." << endl;
+    }
+
+    ~B0() {
+        cout << "B0 object is deleted." << endl;
+    }
+
+public:
+    int b0 = 1;
+};
+
+class B1 : public B0 {
+public:
+    B1() {
+        cout << "B1 object is created." << endl;
+    }
+
+    ~B1() {
+        cout << "B1 object is deleted." << endl;
+    }
+
+public:
+    int m = 100;
+    int b1 = 10;
+};
+
+class B2 : virtual public B0 {
+public:
+    B2() {
+        cout << "B2 object is created." << endl;
+    }
+
+    ~B2() {
+        cout << "B2 object is deleted." << endl;
+    }
+
+public:
+    int m = 200;
+    int b2 = 20;
+};
+
+class C : public B1, public B2 {
+public:
+    C() {
+        cout << "C object is created." << endl;
+    }
+
+    ~C() {
+        cout << "C object is deleted." << endl;
+    }
+
+public:
+    int c = 30;
+};
+
+class Base{
+public:
+    Base(){}
+    ~Base(){}
+private:
+    int x = 0;
+};
 
 int main(int argc, char *argv[]) {
     printf("\n");
     printf("argc = %d\n", argc);
-    int i;
-    for (i = 0; i < argc; i++) {
-        printf("%s\n", argv[i]);
+    int j = 0;
+    for (j = 0; j < argc; j++) {
+        printf("%s\n", argv[j]);
     }
     printf("The run result:\n");
     printf("------------------------------------------\n");
@@ -15,6 +82,13 @@ int main(int argc, char *argv[]) {
     Test t3(t2);
     Test t4 = t2;
 
+    C c;
+    // c.B0::b0 = 100;error
+    c.B1::b0 = 100;
+    c.B2::b0 = 200;
+    cout<<c.B1::m<<endl;
+    cout<<c.B2::m<<endl;
+    cout<<c.c<<endl;
     printf("------------------------------------------\n");
     printf("\n");
     return 0;
@@ -529,6 +603,40 @@ void main() {
     }
 }
 
+派生类与基类
+在任何需要基类对象的地方都可以用公有派生类的对象来代替,
+这条规则称为赋值兼容规则.它包括以下情况:
+1.
+派生类的对象可以赋值给基类的对象,这时是把派生类对象中
+从对应基类中继承来的隐藏对象赋值给基类对象.反过来赋值就
+不行,因为派生类的新成员无值可赋.
+2.
+可以将一个派生类的对象的地址赋给基类的指针变量,但只能通过
+这个指针访问类中由基类继承来的隐藏对象,不能访问派生类中的
+新成员.同样也不能反过来做.
+3.
+派生类对象可以初始化基类的引用.引用是别名,但这个别名只能包含
+派生类对象中的由基类继承来的隐藏对象.
+
+基类指针或引用访问子类中的方法:
+把子类的地址赋给基类的指针或者把子类赋给基类的引用,
+此时用这个基类的指针或者引用去访问基类与子类都有的方法时,
+结果访问的是基类中的方法,不会是子类中的方法;如果想要访问
+子类中的方法,那么需要把基类中的方法加上virtual.
+基类对象访问子类中的方法:
+把子类对象赋给基类对象后,用基类对象访问子类中的方法时,
+访问的还是基类中的方法.(前提是基类与子类都有相同的方法)
+
+达到多态的条件:
+1.
+有继承关系
+2.
+有相同的方法名,返回值类型,参数列表
+3.
+基类方法加上virtual
+4.
+子类对象赋给基类的指针或者基类的引用
+
 动态内存开辟new_delete
 堆内存的分配与释放
 堆对象与构造函数
@@ -559,6 +667,40 @@ priority queue（优先级队列）   最高优先级元素问题第一个出列
 
 
 字符串
+字符串
+char占用一个字节的空间
+char man[4] = {'J', 'a', 'c', 'k'};
+然而该char型数组man却不是一个字符串，因为它没有的结束
+标志---“\0”.只有我们为其添加“\0”这个结束标志后，这个char
+型数组man才能转化为字符串。如：
+char man[4] = {'J', 'a', 'c', 'k', '\0'};
+“\0”是一个空字符标志，它的ASCII码为0，C++有好多处理字符串的函数，
+它们都以“\0”为结束标志，也就是以空字符为结束标志，如cin和cout，
+它们也是以空字符为结束标志，它们在碰到空字符后将会停止输入或输出。
+char man[12];
+cin>>man;如果没有下面的代码，那么遇到空格就结束输入
+cin.get(man, 12);遇到空格也会存入，并输出到屏幕上
+cin.get的结束标志是“\n”,也就是换行，因此语句遇到空格不会结束，而是
+把空格也看做一个字符，同时在输入结束后，也就是用户输入一个回车后，
+cin.get自动为当前接受输入的数组添加字符串结束标志“\n”，因此它实际
+保存的有效字符是它的第2个参数减1，即11个字符。
+同样，输出也是这样，假如我们在一行字符串的中间存放了0，
+那么0之后（包括0）的内容都不会输出。
+数字0跟字符'\0'的效果是一样的。
+空字符的ASCII码为0，编译器会根据ASCII码来寻找字符，ASCII码为0的字符
+是NULL，也就是空字符，cout遇到空字符就会停止输出。
+char man[12] = {"Hello world"};
+用双引号包括起来的字符串隐含了字符串结束标志“\0”，因此不用手动去添加它。
+也可以省略定义字符串的长度，而把这个任务交给编译器去完成。
+如：char man[] = {"Hello world"};
+
+strlen函数与sizeof函数的区别
+strlen函数返回的是字符串结束标志“\0”之前的字符串长度，而不是数组长度；
+而sizeof函数返回的是数组的长度，也就是该数组共有多少个元素。
+char man[12] = {"Hello world"};
+strlen(man): 11
+sizeof(man): 12
+
 字符串是以空字符结尾的字符数组.
 char型字符串
 char占用一个字节的空间.
