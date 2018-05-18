@@ -50,6 +50,7 @@ g++ \
 ${codeFiles} \
 -lsqlite3 \
 -lpthread \
+#-rdynamic -lpthread -levent -lcrypt -ldl
 
 if [[ -e ${currentDir}"/"run_me ]]; then
 	# run

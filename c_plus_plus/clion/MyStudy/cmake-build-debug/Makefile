@@ -123,6 +123,33 @@ MyStudy/fast:
 	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/build
 .PHONY : MyStudy/fast
 
+TestLibJpegTurbo2.o: TestLibJpegTurbo2.cpp.o
+
+.PHONY : TestLibJpegTurbo2.o
+
+# target to build an object file
+TestLibJpegTurbo2.cpp.o:
+	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/TestLibJpegTurbo2.cpp.o
+.PHONY : TestLibJpegTurbo2.cpp.o
+
+TestLibJpegTurbo2.i: TestLibJpegTurbo2.cpp.i
+
+.PHONY : TestLibJpegTurbo2.i
+
+# target to preprocess a source file
+TestLibJpegTurbo2.cpp.i:
+	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/TestLibJpegTurbo2.cpp.i
+.PHONY : TestLibJpegTurbo2.cpp.i
+
+TestLibJpegTurbo2.s: TestLibJpegTurbo2.cpp.s
+
+.PHONY : TestLibJpegTurbo2.s
+
+# target to generate assembly for a file
+TestLibJpegTurbo2.cpp.s:
+	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/TestLibJpegTurbo2.cpp.s
+.PHONY : TestLibJpegTurbo2.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -186,6 +213,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... MyStudy"
+	@echo "... TestLibJpegTurbo2.o"
+	@echo "... TestLibJpegTurbo2.i"
+	@echo "... TestLibJpegTurbo2.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

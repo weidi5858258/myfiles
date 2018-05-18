@@ -13,6 +13,11 @@ echo "y" | sudo apt-get update
 echo "y" | sudo apt-get install openssh-server
 
 echo "y" | sudo apt-get install git
+echo "y" | sudo apt-get install libtool
+echo "y" | sudo apt-get install texinfo
+echo "y" | sudo apt-get install autoconf
+echo "y" | sudo apt-get install autoconf
+echo "y" | sudo apt-get install nasm
 echo "y" | sudo apt-get install cifs-utils
 echo "y" | sudo apt-get install git-core
 echo "y" | sudo apt-get install g++-multilib

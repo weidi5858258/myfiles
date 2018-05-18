@@ -84,6 +84,9 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/TestLibJpegTurbo2.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
 		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h">
 			<Option target="MyStudy"/>
 		</Unit>

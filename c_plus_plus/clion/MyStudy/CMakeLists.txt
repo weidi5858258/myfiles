@@ -8,9 +8,31 @@ add_executable(MyStudy
         src/Test.cpp
         include/Test.h
         include/MyHead.h
-        )
+        TestLibJpegTurbo2.cpp)
 
 ################################################################
+
+#add_library(libjpeg
+#        libturbojpeg
+#        STATIC
+#        IMPORTED
+#        )
+#set_target_properties(libjpeg
+#        libturbojpeg
+#        PROPERTIES IMPORTED_LOCATION
+#        /opt/libjpeg-turbo/lib32/libjpeg.a
+#        /opt/libjpeg-turbo/lib32/libturbojpeg.a
+#        )
+
+link_libraries(
+        /opt/libjpeg-turbo/lib32/libjpeg.a
+        /opt/libjpeg-turbo/lib32/libturbojpeg.a
+)
+
+#link_directories(
+#        /opt/libjpeg-turbo/lib32/libjpeg.a
+#        /opt/libjpeg-turbo/lib32/libturbojpeg.a
+#)
 
 # 设置c++编译器
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")

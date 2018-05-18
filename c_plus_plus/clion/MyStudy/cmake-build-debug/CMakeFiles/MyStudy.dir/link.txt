@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/MyStudy.dir/main.cpp.o CMakeFiles/MyStudy.dir/src/Test.cpp.o  -o MyStudy 
+/usr/bin/c++  -g   CMakeFiles/MyStudy.dir/main.cpp.o CMakeFiles/MyStudy.dir/src/Test.cpp.o CMakeFiles/MyStudy.dir/TestLibJpegTurbo2.cpp.o  -o MyStudy 

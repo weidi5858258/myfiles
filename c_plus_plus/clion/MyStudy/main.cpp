@@ -1,6 +1,7 @@
 #include "./include/MyHead.h"
 
 static const char ZYGOTE_NICE_NAME[] = "zygote64";
+
 class B0 {
 public:
     B0() {
@@ -59,15 +60,17 @@ public:
     int c = 30;
 };
 
-class Base{
+class Base {
 public:
-    Base(){}
-    ~Base(){}
+    Base() { }
+
+    ~Base() { }
+
 private:
     int x = 0;
 };
 
-int main(int argc, char *argv[]) {
+int main2(int argc, char *argv[]) {
     printf("\n");
     printf("argc = %d\n", argc);
     int j = 0;
@@ -86,9 +89,10 @@ int main(int argc, char *argv[]) {
     // c.B0::b0 = 100;error
     c.B1::b0 = 100;
     c.B2::b0 = 200;
-    cout<<c.B1::m<<endl;
-    cout<<c.B2::m<<endl;
-    cout<<c.c<<endl;
+    cout << c.B1::m << endl;
+    cout << c.B2::m << endl;
+    cout << c.c << endl;
+
     printf("------------------------------------------\n");
     printf("\n");
     return 0;
@@ -1221,3 +1225,66 @@ try{
 
 
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

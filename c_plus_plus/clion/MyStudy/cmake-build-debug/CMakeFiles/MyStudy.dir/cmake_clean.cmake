@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/MyStudy.dir/main.cpp.o"
   "CMakeFiles/MyStudy.dir/src/Test.cpp.o"
+  "CMakeFiles/MyStudy.dir/TestLibJpegTurbo2.cpp.o"
   "MyStudy.pdb"
   "MyStudy"
 )

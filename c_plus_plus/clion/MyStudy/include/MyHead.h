@@ -17,7 +17,20 @@
 #include <errno.h>
 #include <string.h>
 
+#include <setjmp.h>
+#include <stdlib.h>
+#include <opencv2/opencv.hpp>
+
+extern "C" {
+#include <jconfig.h>
+#include <jerror.h>
+#include <jmorecfg.h>
+#include <jpeglib.h>
+#include <turbojpeg.h>
+}
+
 #include "Test.h"
+
 
 using namespace std;
 
