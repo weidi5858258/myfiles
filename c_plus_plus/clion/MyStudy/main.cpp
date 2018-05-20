@@ -1,76 +1,16 @@
 #include "./include/MyHead.h"
+#include "./src/B0.cpp"
+#include "./src/Pointer.cpp"
+#include "./src/TestLibJpegTurbo.cpp"
 
-static const char ZYGOTE_NICE_NAME[] = "zygote64";
+void test();
 
-class B0 {
-public:
-    B0() {
-        cout << "B0 object is created." << endl;
-    }
-
-    ~B0() {
-        cout << "B0 object is deleted." << endl;
-    }
-
-public:
-    int b0 = 1;
-};
-
-class B1 : public B0 {
-public:
-    B1() {
-        cout << "B1 object is created." << endl;
-    }
-
-    ~B1() {
-        cout << "B1 object is deleted." << endl;
-    }
-
-public:
-    int m = 100;
-    int b1 = 10;
-};
-
-class B2 : virtual public B0 {
-public:
-    B2() {
-        cout << "B2 object is created." << endl;
-    }
-
-    ~B2() {
-        cout << "B2 object is deleted." << endl;
-    }
-
-public:
-    int m = 200;
-    int b2 = 20;
-};
-
-class C : public B1, public B2 {
-public:
-    C() {
-        cout << "C object is created." << endl;
-    }
-
-    ~C() {
-        cout << "C object is deleted." << endl;
-    }
-
-public:
-    int c = 30;
-};
-
-class Base {
-public:
-    Base() { }
-
-    ~Base() { }
-
-private:
-    int x = 0;
-};
-
-int main2(int argc, char *argv[]) {
+/***
+ * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
+ * @param argv
+ * @return
+ */
+int main(int argc, char *argv[]) {
     printf("\n");
     printf("argc = %d\n", argc);
     int j = 0;
@@ -79,23 +19,173 @@ int main2(int argc, char *argv[]) {
     }
     printf("The run result:\n");
     printf("------------------------------------------\n");
+
+
+
+
+    // test();
+    printf("------------------------------------------\n");
+    printf("\n");
+    return 0;
+}
+
+/***
+ 要测试的代码放在main函数中,测试后放到这个函数中
+ */
+void test() {
     Test t;
     cout << t.getData() << endl;
     Test t2(10);
     Test t3(t2);
     Test t4 = t2;
 
-    C c;
-    // c.B0::b0 = 100;error
-    c.B1::b0 = 100;
-    c.B2::b0 = 200;
-    cout << c.B1::m << endl;
-    cout << c.B2::m << endl;
-    cout << c.c << endl;
+    C co;
+    // error
+    // c.B0::b0 = 100;
+    co.B1::b0 = 100;
+    co.B2::b0 = 200;
+    cout << co.B1::m << endl;
+    cout << co.B2::m << endl;
+    cout << co.c << endl;
+    co.print();
+    B1 *pb = &co;
+    pb->print();
 
-    printf("------------------------------------------\n");
-    printf("\n");
-    return 0;
+    // 指针
+    Pointer pt;
+    pt.point();
+
+    char name[] = "ueventc";
+    cout << strcmp(basename(name), "ueventd") << endl;
+    size_t key_len = strlen("PATH");
+    cout << "key_len = " << key_len << endl;// 4
+    cout << "key_len = " << sizeof("PATH") << endl;// 5
+
+    char ch = '!';
+    printf("%d = %c.\n", ch, ch);
+    int ich = 127;
+    printf("%d = %c.\n", ich, ich);
+
+    int tmp[5] = {1, 2, 3, 4, 5};
+    int *p = tmp;
+    cout << sizeof(tmp) << endl;// tmp数组占用空间大小
+    cout << sizeof(tmp) / sizeof(int) << endl;// tmp数组元素个数
+
+    cout << tmp << endl;
+    cout << &tmp[0] << endl;
+    cout << p << endl;
+
+    cout << *tmp << endl;
+    // cout << *(tmp++) << endl;// error
+    cout << *(&tmp[0]) << endl;
+    int j;
+    for (j = 0; j < 5; ++j) {
+        cout << *(p++) << endl;
+    }
+
+    cout << sizeof(char) << endl;// 1
+    cout << sizeof(wchar_t) << endl;// 4
+    cout << sizeof(int) << endl;// 4
+    cout << sizeof(short) << endl;// 2
+    cout << sizeof(float) << endl;// 4
+    cout << sizeof(double) << endl;// 8
+    cout << sizeof(long) << endl;// 8
+    cout << sizeof(long long) << endl;// 8
+    cout << sizeof(long long int) << endl;// 8
+    cout << sizeof(long double) << endl;// 16
+
+    cout << endl;
+
+    cout << sizeof(signed char) << endl;// 1
+    cout << sizeof(unsigned char) << endl;// 1
+    cout << sizeof(unsigned wchar_t) << endl;// 4
+    cout << sizeof(unsigned int) << endl;// 4
+    cout << sizeof(unsigned short) << endl;// 2
+    cout << sizeof(unsigned long) << endl;// 8
+    cout << sizeof(unsigned long long) << endl;// 8
+    cout << sizeof(unsigned long long int) << endl;// 8
+
+    cout << endl;
+
+    cout << CHAR_MIN << endl;
+    cout << CHAR_MAX << endl;
+    cout << INT_MIN << endl;
+    cout << INT_MAX << endl;
+    cout << LONG_MIN << endl;
+    cout << LONG_MAX << endl;
+
+    // char与signed char取值范围都是 -128 到 127(有符号位)
+    // unsigned char取值范围是 0 到 255
+    // 如果定义的变量的值在此范围内,那么输出的值就是当前值
+    // 正常边界,正常输出
+    char a = -128;
+    signed char b = 127;
+    unsigned char c = 0;
+    unsigned char d = 255;
+    printf("a=%d, b=%d, c=%d, d=%d\n", a, b, c, d);// -128 127 0
+    printf("a=%c, b=%c, c=%c, d=%d\n", a, b, c, d);//
+    // 超出边界,反向输出
+    a = -129;
+    b = 128;
+    c = -1;
+    d = 256;
+    printf("a=%d, b=%d, c=%d, d=%d\n", a, b, c, d);// 127 -128 255 0
+
+    cout << endl;
+
+    FILE *fp;
+    size_t size = 0;
+    char *ar;
+    // 二进制方式打开文件
+    fp = fopen("src/B0.cpp", "rb");
+    if (NULL == fp) {
+        printf("Error:Open input.c file fail!\n");
+        return;
+    }
+    fseek(fp, 0, SEEK_END);
+    // 求得文件的大小
+    size = ftell(fp);
+    rewind(fp);
+    // 申请一块能装下整个文件的空间
+    ar = (char *) malloc(sizeof(char) * size);
+    // 读文件
+    // fread(ar, 1, size, fp);//每次读一个，共读size次
+    fread(ar, size, 1, fp);
+    // 内容的首地址
+    printf("%p\n", ar);
+    // 输出文件内容
+    printf("%s\n", ar);
+    fclose(fp);
+    free(ar);
+    ar = NULL;
+
+    cout << endl;
+
+    const char *path = "/data";
+    printf("path = %s\n", path);
+
+    const unsigned char image[] = "abcd\0efg";
+    //  const unsigned char image[] = "";
+    const unsigned char *pImage = image;
+    size = sizeof(pImage);// 包括结尾隐藏的\0
+    cout << size << endl;// 8 固定长度,用于存放指针地址的
+    size = sizeof(image);
+    cout << size << endl;// 9
+    for (int i = 0; i < size; ++i) {
+        // 这个例子说明了可以用pImage[i]这种方式一个字符一个字符的输出
+        printf("%c\n", pImage[i]);
+        if (pImage[i] == 0) {
+            printf("遇到\\0换行\n");
+        }
+    }
+
+    double tmpArray[] = {1, 2, 3, 4, 5};
+    cout << sizeof(tmpArray) << endl;
+    for (int i = 0; i < 5; i++) {
+        printf("%f\t%f\t%f\t%p\t%p\n",
+               tmpArray[i], *(&tmpArray[i]), *(tmpArray + i),
+               &tmpArray[i], (tmpArray + i));
+    }
 }
 
 /***
@@ -106,8 +196,26 @@ int main2(int argc, char *argv[]) {
 析构函数
 用户自己不重写上面的函数时，系统会自动生成这样的函数
 
- 写成员函数时，有返回值的先把成员函数写在最前面，然后
- 才是“类名::成员函数”
+关于继承的一些结论:
+1.
+当父类与子类有相同的函数(包括返回值,函数名,参数列名都相同),
+父类的指针指向子类对象的地址,然后用这个指向调用这个函数时,
+如果父类的这个函数没有用virtual修饰,那么调用的是父类的函数;
+否则调用的是子类的函数.
+2.
+父类中有多个函数重载,可是子类却只有一个函数覆写了父类的函数,
+那么当子类对象调用父类的重载函数时,只有自己的类中有的函数才可以调用,
+其他的父类的重载函数不能调用,在子类中已经被同名隐藏了.
+3.
+3-1.
+B1,B2才是普通继承B0,然后C顺次继承B1,B2,则创建C对象时,依次为B0,B1,B0,B2,C
+3-2.
+B1普通继承B0,B2使用virtual继承B0,然后C顺次继承B1,B2,则创建C对象时,依次为B0,B0,B1,B2,C
+3-3.
+B1普通继承B0,B2使用virtual继承B0,然后C顺次继承B1,virtual B2,则创建C对象时,依次为B0,B2,B0,B1,C
+
+写成员函数时，有返回值的先把成员函数写在最前面，然后
+才是“类名::成员函数”
 
 引用与拷贝构造函数
 5.4.1 引用

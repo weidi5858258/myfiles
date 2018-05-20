@@ -8,7 +8,10 @@ add_executable(MyStudy
         src/Test.cpp
         include/Test.h
         include/MyHead.h
-        TestLibJpegTurbo2.cpp)
+        src/B0.cpp
+        src/Pointer.cpp
+        src/TestLibJpegTurbo.cpp
+        )
 
 ################################################################
 

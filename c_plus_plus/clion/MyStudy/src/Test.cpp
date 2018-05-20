@@ -31,6 +31,7 @@ Test::~Test() {
 }
 
 int Test::getData() {
+    printf("Test:%s\n", __FUNCTION__);
     return data;
 }
 

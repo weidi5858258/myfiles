@@ -1,16 +1,16 @@
 #! /bin/bash
 
-echo "y" | sudo apt-get update 
-echo "y" | sudo apt-get upgrade 
-echo "y" | sudo apt-get dist-upgrade 
+# echo "y" | sudo apt-get update 
+# echo "y" | sudo apt-get upgrade 
+# echo "y" | sudo apt-get dist-upgrade 
 
-echo "y" | sudo apt-get update
-echo "y" | sudo apt-get install update-manager-core
-echo "y" | sudo do-release-upgrade
+# echo "y" | sudo apt-get update
+# echo "y" | sudo apt-get install update-manager-core
+# echo "y" | sudo do-release-upgrade
 
 # echo "y" | sudo dpkg --add-architecture i386
-echo "y" | sudo apt-get update
-echo "y" | sudo apt-get install openssh-server
+# echo "y" | sudo apt-get update
+# echo "y" | sudo apt-get install openssh-server
 
 echo "y" | sudo apt-get install git
 echo "y" | sudo apt-get install libtool

@@ -6,12 +6,14 @@
 
 #IncludeRegexTransform: 
 
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
 stdio.h
 -
 iostream
 -
 string
+-
+string.h
 -
 fcntl.h
 -
@@ -19,39 +21,27 @@ unistd.h
 -
 errno.h
 -
-string.h
--
 setjmp.h
 -
 stdlib.h
 -
-opencv2/opencv.hpp
--
-jconfig.h
--
-jerror.h
--
-jmorecfg.h
--
-jpeglib.h
--
-turbojpeg.h
--
 Test.h
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/Test.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/Test.h
 
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/Test.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/Test.h
 
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/TestLibJpegTurbo2.cpp
-./include/MyHead.h
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./src/B0.cpp
+../include/MyHead.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
 
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
 stdio.h
 -
 iostream
 -
 string
+-
+string.h
 -
 fcntl.h
 -
@@ -59,32 +49,20 @@ unistd.h
 -
 errno.h
 -
-string.h
--
 setjmp.h
 -
 stdlib.h
 -
-opencv2/opencv.hpp
--
-jconfig.h
--
-jerror.h
--
-jmorecfg.h
--
-jpeglib.h
--
-turbojpeg.h
--
 Test.h
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/Test.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/Test.h
 
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/Test.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/Test.h
 
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/main.cpp
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/main.cpp
 ./include/MyHead.h
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
+./src/B0.cpp
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./src/B0.cpp
 list
 -
 stack
@@ -92,7 +70,11 @@ stack
 string
 -
 
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Test.cpp
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/B0.cpp
 ../include/MyHead.h
-/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
+
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Test.cpp
+../include/MyHead.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
 
