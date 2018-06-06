@@ -4,11 +4,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/main.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/main.cpp.obj"
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/B0.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/src/B0.cpp.obj"
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Pointer.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj"
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Test.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/src/Test.cpp.obj"
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/TestLibJpegTurbo.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/src/TestLibJpegTurbo.cpp.obj"
+  "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/main.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/main.cpp.o"
+  "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/B0.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/src/B0.cpp.o"
+  "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Pointer.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/src/Pointer.cpp.o"
+  "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Test.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug/CMakeFiles/MyStudy.dir/src/Test.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

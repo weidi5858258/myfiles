@@ -2,7 +2,7 @@
 // Created by root on 18-5-18.
 //
 
-#include "../include/MyHead.h"
+#include "./include/MyHead.h"
 
 int tjpeg2yuv(unsigned char *jpeg_buffer, int jpeg_size, unsigned char **yuv_buffer, int *yuv_size, int *yuv_type) {
     tjhandle handle = NULL;

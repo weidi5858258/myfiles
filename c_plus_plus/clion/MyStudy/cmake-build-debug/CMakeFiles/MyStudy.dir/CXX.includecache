@@ -6,14 +6,18 @@
 
 #IncludeRegexTransform: 
 
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
 stdio.h
+-
+stdlib.h
 -
 iostream
 -
 string
 -
 string.h
+-
+limits.h
 -
 fcntl.h
 -
@@ -23,25 +27,49 @@ errno.h
 -
 setjmp.h
 -
-stdlib.h
+libgen.h
+-
+cstddef
+-
+jconfig.h
+-
+jerror.h
+-
+jmorecfg.h
+-
+jpeglib.h
+-
+turbojpeg.h
 -
 Test.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/Test.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/Test.h
 
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/Test.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/Test.h
 
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./src/B0.cpp
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./src/B0.cpp
 ../include/MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
 
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./src/Pointer.cpp
+../include/MyHead.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
+
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./src/TestLibJpegTurbo.cpp
+../include/MyHead.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
+
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
 stdio.h
+-
+stdlib.h
 -
 iostream
 -
 string
 -
 string.h
+-
+limits.h
 -
 fcntl.h
 -
@@ -51,18 +79,34 @@ errno.h
 -
 setjmp.h
 -
-stdlib.h
+libgen.h
+-
+cstddef
+-
+jconfig.h
+-
+jerror.h
+-
+jmorecfg.h
+-
+jpeglib.h
+-
+turbojpeg.h
 -
 Test.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/Test.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/Test.h
 
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/Test.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/Test.h
 
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/main.cpp
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/main.cpp
 ./include/MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
 ./src/B0.cpp
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./src/B0.cpp
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./src/B0.cpp
+./src/Pointer.cpp
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./src/Pointer.cpp
+./src/TestLibJpegTurbo.cpp
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./src/TestLibJpegTurbo.cpp
 list
 -
 stack
@@ -70,11 +114,19 @@ stack
 string
 -
 
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/B0.cpp
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/B0.cpp
 ../include/MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
 
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Test.cpp
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Pointer.cpp
 ../include/MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
+
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Test.cpp
+../include/MyHead.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
+
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/TestLibJpegTurbo.cpp
+../include/MyHead.h
+/root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
 

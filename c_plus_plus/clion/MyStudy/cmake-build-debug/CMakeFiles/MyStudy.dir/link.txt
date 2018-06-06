@@ -1,3 +1,1 @@
-C:\mydev\tools\CLion_Windows\bin\cmake\bin\cmake.exe -E remove -f CMakeFiles\MyStudy.dir/objects.a
-C:\MinGW\bin\ar.exe cr CMakeFiles\MyStudy.dir/objects.a @CMakeFiles\MyStudy.dir\objects1.rsp
-C:\MinGW\bin\g++.exe -g   -Wl,--whole-archive CMakeFiles\MyStudy.dir/objects.a -Wl,--no-whole-archive  -o MyStudy.exe -Wl,--out-implib,libMyStudy.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\MyStudy.dir\linklibs.rsp
+/usr/bin/c++  -g   CMakeFiles/MyStudy.dir/main.cpp.o CMakeFiles/MyStudy.dir/src/B0.cpp.o CMakeFiles/MyStudy.dir/src/Test.cpp.o CMakeFiles/MyStudy.dir/src/Pointer.cpp.o  -o MyStudy 

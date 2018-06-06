@@ -31,12 +31,13 @@ extern "C" {
     #include <turbojpeg.h>
 }
 
-#include "Test.h"
-
 using namespace std;
 
 #define MAX_EVENTS 500
 
 static const char ZYGOTE_NICE_NAME[] = "zygote64";
+
+#include "Test.h"
+
 
 #endif //MYSTUDY_MYHEAD_H

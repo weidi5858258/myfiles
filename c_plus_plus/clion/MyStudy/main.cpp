@@ -1,7 +1,6 @@
 #include "./include/MyHead.h"
 #include "./src/B0.cpp"
 #include "./src/Pointer.cpp"
-#include "./src/TestLibJpegTurbo.cpp"
 
 void test();
 
