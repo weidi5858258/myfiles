@@ -23,13 +23,13 @@
 #include <cstddef>
 //#include <opencv2/opencv.hpp>
 
-extern "C" {
-    #include <jconfig.h>
-    #include <jerror.h>
-    #include <jmorecfg.h>
-    #include <jpeglib.h>
-    #include <turbojpeg.h>
-}
+//extern "C" {
+//    #include <jconfig.h>
+//    #include <jerror.h>
+//    #include <jmorecfg.h>
+//    #include <jpeglib.h>
+//    #include <turbojpeg.h>
+//}
 
 using namespace std;
 
