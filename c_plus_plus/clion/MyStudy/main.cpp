@@ -19,6 +19,22 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
+    /***
+     STL的主要组件
+     container(容器)
+     algorithm(算法)
+     iterator(迭代器)
+     function object(函数对象)
+     */
+    const int N = 5;
+    vector<int> s(N);// 容器
+    for (int i = 0; i < N; i++) {
+        cin >> s[i];
+    }
+
+    transform(s.begin(), s.end(), ostream_iterator<int>(cout, " "), negate<int>());
+
+    cout << endl;
 
 
 

@@ -31,6 +31,12 @@
 //    #include <turbojpeg.h>
 //}
 
+// STL
+#include <vector>
+#include <iterator>
+#include <algorithm>
+#include <functional>
+
 using namespace std;
 
 #define MAX_EVENTS 500
