@@ -19,23 +19,6 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-    /***
-     STL的主要组件
-     container(容器)
-     algorithm(算法)
-     iterator(迭代器)
-     function object(函数对象)
-     */
-    const int N = 5;
-    vector<int> s(N);// 容器
-    for (int i = 0; i < N; i++) {
-        cin >> s[i];
-    }
-
-    transform(s.begin(), s.end(), ostream_iterator<int>(cout, " "), negate<int>());
-
-    cout << endl;
-
 
 
     // test();
@@ -201,9 +184,74 @@ void test() {
                tmpArray[i], *(&tmpArray[i]), *(tmpArray + i),
                &tmpArray[i], (tmpArray + i));
     }
+
+    // 下面的代码在这个工具中无法编译通过
+    /*// 在栈上开辟一维数组
+    int *pOne = (int[]){0};
+    // 在栈上开辟二维数组
+    int ab[3][4];
+    int (*pTwo)[4] = (int[][4]){0};
+    // 在栈上开辟三维数组
+    int (*pThree)[3][4] = (int[][3][4]){0};*/
+
 }
 
 /***
+ 用typedef重定义类型名
+ typedef 原类型名 新类型名;
+ 则以后可以用这个"新类型名"来代替"原类型名"进行使用了.
+ 注意:用typedef类型重定义只是给原类型取一个别名,没有创造新的类型.
+ typedef unsigned int size_t;// 用于内存字节计算
+ typedef char NAME[20];
+ NAME a1,a2,a3;
+ 等效于
+ char a1[20],a2[20],a3[20];
+
+ typedef与#define的区别
+ 用"#define"一般用于表示常量的比较多.
+ 定义方式不同:typedef是用后面的名称来表示前面的类型,#define是用前面的名称来表示后面的内容(数据类型,常量)
+ 用typedef能实现的,用#define有可能出错.如:
+ #define INTP int*;
+ INTP p,q;其等价于int* p,q;// 实际只有p是指向整型的指针变量,而q仅仅是整型变量.
+ typedef int* INTP;
+ INTP p,q;// p,q都是指向整型的指针变量.
+
+ C++中函数的高级用法
+ 内联函数: 内联函数的声明和定义必须放在一个文件里,
+ inline关键字是建议C++编译器将该函数设定为内联函数,
+ 但没有决定权;当函数里面有循环语句,复杂的条件语句,递归等时,
+ 则C++编译器无视inline关键字,将该函数作为普通函数处理.
+ 函数重载: 满足函数重载的条件是 有相同的函数名,不同的形参列表;与函数的返回值无关.
+ 递归函数: 自己调用自己的函数,注意必须要有退出函数的条件判断.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 “C++中的四少”：
 构造函数
 拷贝构造函数

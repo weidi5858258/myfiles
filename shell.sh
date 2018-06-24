@@ -1421,9 +1421,9 @@ let mute8=$((${mute4}*60*1000+${mute6}*1000+${mute7}))
 sed 's/setosa/iris-setosa/g' iris.csv > output.csv
 
 ${varible##*string} 从左向右截取最后一个string后的字符串
-${varible#*string}从左向右截取第一个string后的字符串
-${varible%%string*}从右向左截取最后一个string后的字符串
-${varible%string*}从右向左截取第一个string后的字符串
+${varible#*string}  从左向右截取第一个string后的字符串
+${varible%%string*} 从右向左截取最后一个string后的字符串
+${varible%string*}  从右向左截取第一个string后的字符串
 “*”只是一个通配符有时可以不要
 例子：
 $ MYVAR=foodforthought.jpg

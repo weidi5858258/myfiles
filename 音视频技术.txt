@@ -1,10 +1,11 @@
 Android音视频的编解码
 
-
-	
-
-
-
+android_atomic_inc()原子操作函数
+android_atomic_add()
+const_cast<RefBase*>
+Android中提出了一套类似Java垃圾回收机制的智能指针，采用强指针sp（Strong Pointer）和弱指针wp（Weak Pointer）对目标对象进行应用，实现对象的自动回收。
+对象可以分为全局对象、局部对象、静态全局对象和静态局部对象。
+Android设计了强引用sp和弱引用wp，故实际对象的释放，可分为强引用控制和弱引用控制。所谓强引用控制，指的是强引用数mStrong为0时，释放实际对象；弱引用控制，则指的是弱引用数mWeak为0时，才释放实际对象。
 
 
 

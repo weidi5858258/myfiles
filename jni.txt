@@ -164,9 +164,42 @@ sem_post(&mController);
 sem_destroy(&mController);
 
 
+struct fields_t {
+    jfieldID context;
 
+    jmethodID cryptoInfoSetID;
+};
+static fields_t gFields;
 
+// FindClass
+jclass clazz = env->FindClass("android/media/MediaExtractor");
+CHECK(clazz != NULL);
+// GetFieldID
+gFields.context = env->GetFieldID(clazz, "mNativeContext", "J");
+CHECK(gFields.context != NULL); 
+clazz = env->FindClass("android/media/MediaCodec$CryptoInfo");
+CHECK(clazz != NULL);
+// GetMethodID
+gFields.cryptoInfoSetID = env->GetMethodID(clazz, "set", "(I[I[I[B[BI)V");
 
+jobject obj的解释:
+如果native方法不是static的话，这个obj就代表这个native方法的类实例
+如果native方法是static的话，这个obj就代表这个native方法的类的class对象实例(static方法不需要类实例的，所以就代表这个类的class对象)
+// 使用"jobject thiz"这个参数得到java端的Class对象
+jclass clazz = env->GetObjectClass(thiz);
+CHECK(clazz != NULL);
+jclass mClass = (jclass) env->NewGlobalRef(clazz);
+jweak mObject = env->NewWeakGlobalRef(thiz);
+// 析构
+env->DeleteWeakGlobalRef(mObject);
+mObject = NULL;
+env->DeleteGlobalRef(mClass);
+mClass = NULL;
+// 创建一个强引用对象
+sp<JMediaExtractor> extractor = new JMediaExtractor(env, thiz);
+if (extractor != NULL) {
+    extractor->incStrong(thiz);
+}
 
 
 
