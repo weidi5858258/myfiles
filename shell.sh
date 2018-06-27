@@ -2079,6 +2079,10 @@ pushd /root/mydev/myfiles
 // doSomething
 popd
 
+# 解压test.jar到dir目录
+unzip test.jar -d dir
+# 反编译dir/**/*.class文件到dir/src
+jad -o -r -s java -d dir/src dir/**/*.class
 
 
 

@@ -1,7 +1,6 @@
 #! /bin/bash
 
 currentDir=`pwd`
-
 # echo ${currentDir}
 
 function init() {
@@ -21,7 +20,7 @@ function digui() {
 				# doSomething
 				# echo "It's not directory." 
 				if [[ ! ${tempDir} =~ "cmake-build-debug" ]] && \
-					 [[ ${tempDir} =~ ".c" || ${tempDir} =~ ".cpp" ]]; then
+					 [[ ${tempDir} =~ ".c" || ${tempDir} =~ ".cc" || ${tempDir} =~ ".cpp" ]]; then
 
 					if [[ ${tempDir} =~ ${currentDir} ]]; then
 						tempDir=${tempDir#*${currentDir}}
@@ -34,7 +33,8 @@ function digui() {
 	fi
 }
 
-# start
+                   # start #
+###############################################
 if [[ -e ${currentDir}"/"run_me ]]; then
 	rm -rf ${currentDir}"/"run_me
 fi
@@ -57,6 +57,48 @@ if [[ -e ${currentDir}"/"run_me ]]; then
 	# run
 	./run_me
 fi
+###############################################
+
+# 下面的代码是编译出一个可以在android手机上运行的可执行文件run_me
+# "adb push"到手机上后使用"./run_me"命令就可以行动了
+# "-static"不能少,少了就运行不了
+###############################################
+
+#arm-cortexa9-linux-gnueabihf-g++ \
+#-x c++ \
+#-o run_me \
+#-static \
+#-g -Wall -std=c++11 \
+#${codeFiles} \
+#-lpthread \
+
+###############################################
+
+###############################################
+#Ubuntu上安装交叉编译环境(arm-linux-gcc 4.9.3)
+#首先下载并解压编译器:
+#1，git clone https://github.com/friendlyarm/prebuilts.git
+#得到prebuilts文件夹
+#2，mkdir -p /opt/FriendlyARM/toolschain
+#3，把prebuilts/gcc-x64/arm-cortexa9-linux-gnueabihf-4.9.3.tar.xz
+#这个文件复制到上面建好的文件夹下，
+#解压：tar xf arm-cortexa9-linux-gnueabihf-4.9.3.tar.xz
+#4，gedit /etc/profile
+#在最后面加上：
+#export ARM_LINUX_GCC=/mydev/tool/opt/FriendlyARM/toolschain/4.9.3
+#export PATH=$ARM_LINUX_GCC/bin:$PATH
+#下面这个没有试
+#export PATH=/opt/FriendlyARM/toolchain/4.9.3/bin:$PATH
+#export GCC_COLORS=auto
+#5，使环境生效
+#source /etc/profile
+#测试是否成功，如果输出有版本号信息，那么说明安装成功
+#arm-linux-gcc -v
+###############################################
+
+
+
+
 
 #把C/C++代码编译成动态库的过程
 #1.
