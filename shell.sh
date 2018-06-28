@@ -2084,9 +2084,12 @@ unzip test.jar -d dir
 # 反编译dir/**/*.class文件到dir/src
 jad -o -r -s java -d dir/src dir/**/*.class
 
+ffmpeg -i input.mp4 output.mp4
+ffplay aaaa.mp4
+ffprobe -v quiet -print_format json -show_format -show_streams aaaaa.mp4 >> aaaaa.mp4.txt
 
-
-
+# 查看SDL2的位置
+locate SDL2
 
 
 

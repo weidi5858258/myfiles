@@ -67,6 +67,8 @@ https://blog.csdn.net/jingxia2008/article/details/50763757
 http://www.qmaile.com/ 全民vip视频在线解析
 http://androidxref.com/ 安卓源码在线查看
 https://blog.csdn.net/seanwang_25/article/details/20702751 Linux下g++编译与使用静态库和动态库
+https://segmentfault.com/a/1190000008413814 最纯粹的Android直播技术实战01-FFmpeg的编译与运行
+https://blog.csdn.net/leixiaohua1020/article/details/44220151 FFmpeg源代码结构图 
 
 
 

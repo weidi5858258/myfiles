@@ -23,6 +23,14 @@
 #include <cstddef>
 //#include <opencv2/opencv.hpp>
 
+// ffmpeg and SDL
+extern "C" {// 不能少
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
+#include <SDL2/SDL.h>
+};
+
 //extern "C" {
 //    #include <jconfig.h>
 //    #include <jerror.h>

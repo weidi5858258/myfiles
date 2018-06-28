@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 project(MyStudy)
 
 set(CMAKE_CXX_STANDARD 11)
+#add_definitions(-std=c++11)
 
 add_executable(MyStudy
         main.cpp
@@ -10,7 +11,53 @@ add_executable(MyStudy
         src/B0.cpp
         src/Test.cpp
         src/Pointer.cpp
+        src/simplest_ffmpeg_player.cpp
         )
+
+set(FFMPEG_DLL
+        C:/mydev/tools/ffmpeg-dev/lib
+)
+
+link_directories(
+        libs/libSDL2.a
+        libs/libSDL2main.a
+#        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib
+)
+
+
+set(prefix "/home/weidi")
+set(exec_prefix "${prefix}")
+set(libdir "${exec_prefix}/lib")
+set(SDL2_PREFIX "/home/weidi")
+set(SDL2_EXEC_PREFIX "/home/weidi")
+set(SDL2_LIBDIR "${exec_prefix}/lib")
+set(SDL2_INCLUDE_DIRS "${prefix}/include/SDL2")
+set(SDL2_LIBRARIES "-L${SDL2_LIBDIR}  -lmingw32 -lSDL2main -lSDL2  -mwindows")
+string(STRIP "${SDL2_LIBRARIES}" SDL2_LIBRARIES)
+
+
+
+#target_link_libraries(MyStudy
+#        ${PROJECT_SOURCE_DIR}/libs
+#        )
+
+#find_library(MyStudy
+#        ${FFMPEG_DLL}/libSDL2.dll.a
+#        ${FFMPEG_DLL}/libSDL2main.dll.a
+#        ${FFMPEG_DLL}/libavformat.dll.a
+#        ${FFMPEG_DLL}/libavcodec.dll.a
+#        ${FFMPEG_DLL}/libavutil.dll.a
+#        ${FFMPEG_DLL}/libswscale.dll.a
+#)
+
+#target_link_libraries(MyStudy
+#        -lSDL2.dll
+#        -lSDL2main.dll
+#        -lavformat.dll
+#        -lavcodec.dll
+#        -lavutil.dll
+#        -lswscale.dll
+#        )
 
 ################################################################
 
@@ -90,6 +137,15 @@ add_executable(MyStudy
 #        )
 
 ######################################################
+
+set(ANDROID_INCLUDE_PATH
+        /root/mydev/android)
+
+include_directories(
+        C:/mydev/tools/ffmpeg-dev/include
+        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include
+        /usr/include/SDL2
+        )
 
 #set(ANDROID_INCLUDE_PATH
 #        /root/mydev/android)

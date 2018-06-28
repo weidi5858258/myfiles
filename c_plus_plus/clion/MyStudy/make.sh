@@ -43,15 +43,16 @@ init
 
 digui ${currentDir}
 
+#-l动态库名称
 # echo ${codeFiles}
 g++ \
 -x c++ \
 -o run_me \
 -g -Wall -std=c++11 \
--L. -ljpeg -lturbojpeg \
 ${codeFiles} \
 -lsqlite3 \
 -lpthread \
+-lSDL2 -lSDL2main -lavformat -lavcodec -lavutil -lswscale \
 
 if [[ -e ${currentDir}"/"run_me ]]; then
 	# run
@@ -98,7 +99,24 @@ fi
 
 
 
+# 引用SDL2库编译自己的程序
+# gcc -o myprogram myprogram.c `sdl2-config --cflags --libs`
 
+#backup
+#g++ \
+#-x c++ \
+#-o run_me \
+#-g -Wall -std=c++11 \
+#-L. -ljpeg -lturbojpeg \
+#${codeFiles} \
+#-lsqlite3 \
+#-lpthread \
+#-L/usr/lib/x86_64-linux-gnu -lSDL2 \
+#-L/usr/lib/x86_64-linux-gnu -lSDL2main \
+#-L/usr/lib/x86_64-linux-gnu -lavformat \
+#-L/usr/lib/x86_64-linux-gnu -lavcodec \
+#-L/usr/lib/x86_64-linux-gnu -lavutil \
+#-L/usr/lib/x86_64-linux-gnu -lswscale \
 
 #把C/C++代码编译成动态库的过程
 #1.

@@ -19,7 +19,18 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-
+    SDL_Window* window =0;
+    SDL_Renderer* render=0;
+    SDL_Init(SDL_INIT_EVERYTHING);
+    window=SDL_CreateWindow("hello",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,640,480,SDL_WINDOW_SHOWN);
+    render=SDL_CreateRenderer(window,-1,0);
+    SDL_SetRenderDrawColor(render,0,255,0,255);
+    SDL_RenderClear(render);
+    SDL_RenderPresent(render);
+    SDL_Delay(3000);
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(render);
+    SDL_Quit();
 
     // test();
     printf("------------------------------------------\n");
@@ -194,6 +205,26 @@ void test() {
     // 在栈上开辟三维数组
     int (*pThree)[3][4] = (int[][3][4]){0};*/
 
+    // 下面代码使用SDL2简单显示一个窗口
+    /*SDL_Window *window = NULL;
+    SDL_Surface *screenSurface = NULL;
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+    } else {
+        window = SDL_CreateWindow(
+                "SDL Tutorial",
+                SDL_WINDOWPOS_UNDEFINED,
+                SDL_WINDOWPOS_UNDEFINED,
+                640,
+                480,
+                SDL_WINDOW_SHOWN);
+        screenSurface = SDL_GetWindowSurface(window);
+        SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
+        SDL_UpdateWindowSurface(window);
+        SDL_Delay(5000);
+    }
+    SDL_DestroyWindow(window);
+    SDL_Quit();*/
 }
 
 /***
