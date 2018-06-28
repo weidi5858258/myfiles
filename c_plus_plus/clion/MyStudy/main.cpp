@@ -9,7 +9,7 @@ void test();
  * @param argv
  * @return
  */
-int main(int argc, char *argv[]) {
+int main2(int argc, char *argv[]) {
     printf("\n");
     printf("argc = %d\n", argc);
     int j = 0;
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     SDL_SetRenderDrawColor(render,0,255,0,255);
     SDL_RenderClear(render);
     SDL_RenderPresent(render);
-    SDL_Delay(3000);
+    SDL_Delay(10000);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(render);
     SDL_Quit();

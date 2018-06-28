@@ -26,7 +26,7 @@
 //Output YUV420P data as a file 
 #define OUTPUT_YUV420P 0
 
-int main2(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     AVFormatContext *pFormatCtx;
     AVCodecContext *pCodecCtx;
     AVCodec *pCodec;
@@ -40,7 +40,7 @@ int main2(int argc, char *argv[]) {
 
     //char filepath[] = "bigbuckbunny_480x272.h265";
 //    char filepath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
-    char filepath[] = "D:\\Tools\\apache-tomcat-8.5.23\\webapps\\ROOT\\video\\kingsman.mp4";
+    char filepath[] = "/mnt/d/Tools/apache-tomcat-8.5.23/webapps/ROOT/video/kingsman.mp4";
     //SDL---------------------------
     int screen_w = 0, screen_h = 0;
     SDL_Window *screen;
