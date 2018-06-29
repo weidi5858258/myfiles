@@ -56,7 +56,7 @@ ${codeFiles} \
 
 if [[ -e ${currentDir}"/"run_me ]]; then
 	# run
-	display ./run_me
+	./run_me
 fi
 ###############################################
 

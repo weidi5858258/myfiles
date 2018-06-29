@@ -4,12 +4,16 @@
 
 void test();
 
+int simplest_ffmpeg_player();
+
+int simplest_ffmpeg_player_sdl2();
+
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
  * @param argv
  * @return
  */
-int main2(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     printf("\n");
     printf("argc = %d\n", argc);
     int j = 0;
@@ -19,18 +23,8 @@ int main2(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-    SDL_Window* window =0;
-    SDL_Renderer* render=0;
-    SDL_Init(SDL_INIT_EVERYTHING);
-    window=SDL_CreateWindow("hello",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,640,480,SDL_WINDOW_SHOWN);
-    render=SDL_CreateRenderer(window,-1,0);
-    SDL_SetRenderDrawColor(render,0,255,0,255);
-    SDL_RenderClear(render);
-    SDL_RenderPresent(render);
-    SDL_Delay(10000);
-    SDL_DestroyWindow(window);
-    SDL_DestroyRenderer(render);
-    SDL_Quit();
+    // simplest_ffmpeg_player();
+    simplest_ffmpeg_player_sdl2();
 
     // test();
     printf("------------------------------------------\n");
@@ -225,6 +219,383 @@ void test() {
     }
     SDL_DestroyWindow(window);
     SDL_Quit();*/
+
+    /*SDL_Window *window = NULL;
+    SDL_Renderer *renderer = 0;
+    SDL_Init(SDL_INIT_EVERYTHING);
+    window = SDL_CreateWindow(
+            "hello",
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
+            640,
+            480,
+            SDL_WINDOW_SHOWN);
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
+    SDL_Delay(10000);
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+    SDL_Quit();*/
+}
+
+int simplest_ffmpeg_player() {
+    int i, videoIndex = -1;
+    uint8_t *out_buffer;
+    int result, got_picture_ptr;
+
+    char filePath[] = "http://192.168.0.131:8080/video/aaaaa.mp4";
+//    char filePath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
+//    char filePath[] = "/mnt/d/Tools/apache-tomcat-8.5.23/webapps/ROOT/video/kingsman.mp4";
+
+    // 屏幕宽高
+    int screen_w = 0, screen_h = 0;
+
+    SDL_Window *window = NULL;
+    SDL_Renderer *renderer = NULL;
+    SDL_Texture *texture = NULL;
+    SDL_Rect sdlRect;
+
+    AVFormatContext *avFormatContext = NULL;
+    AVCodecContext *avCodecContext = NULL;
+    AVCodec *avCodec = NULL;
+    AVFrame *avFrame = NULL, *avFrameYUV = NULL;
+    AVPacket *avPacket = NULL;
+    struct SwsContext *img_convert_ctx;
+
+    // 注册FFmpeg所有编解码器
+    av_register_all();
+    avformat_network_init();
+    avFormatContext = avformat_alloc_context();
+
+    // 打开文件
+    if (avformat_open_input(&avFormatContext, filePath, NULL, NULL)) {
+        printf("Couldn't open input stream.\n");
+        return -1;
+    }
+
+    if (avformat_find_stream_info(avFormatContext, NULL) < 0) {
+        printf("Couldn't find stream information.\n");
+        return -1;
+    }
+
+    printf("avFormatContext->nb_streams = %d\n", avFormatContext->nb_streams);
+    for (i = 0; i < avFormatContext->nb_streams; i++) {
+        AVMediaType type = avFormatContext->streams[i]->codec->codec_type;
+        printf("type = %d\n", type);
+        if (type == AVMEDIA_TYPE_VIDEO) {
+            videoIndex = i;
+            // break;
+        }
+    }
+    if (videoIndex == -1) {
+        printf("Didn't find a video stream.\n");
+        return -1;
+    }
+
+    printf("videoIndex = %d\n", videoIndex);// 1
+    avCodecContext = avFormatContext->streams[videoIndex]->codec;
+    avCodec = avcodec_find_decoder(avCodecContext->codec_id);
+    if (avCodec == NULL) {
+        printf("Codec not found.\n");
+        return -1;
+    }
+    if (avcodec_open2(avCodecContext, avCodec, NULL) < 0) {
+        printf("Could not open codec.\n");
+        return -1;
+    }
+
+    avFrame = av_frame_alloc();
+    avFrameYUV = av_frame_alloc();
+    out_buffer = (uint8_t *) av_malloc(
+            avpicture_get_size(PIX_FMT_YUV420P, avCodecContext->width, avCodecContext->height));
+    avpicture_fill((AVPicture *) avFrameYUV, out_buffer, PIX_FMT_YUV420P, avCodecContext->width,
+                   avCodecContext->height);
+    avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+    img_convert_ctx = sws_getContext(avCodecContext->width, avCodecContext->height,
+                                     avCodecContext->pix_fmt,
+                                     avCodecContext->width, avCodecContext->height,
+                                     PIX_FMT_YUV420P, SWS_BICUBIC,
+                                     NULL, NULL, NULL);
+
+    screen_w = avCodecContext->width;// 1280
+    screen_h = avCodecContext->height;// 720
+    printf("screen_w = %d, screen_h = %d\n", screen_w, screen_h);
+
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
+        printf("Could not initialize SDL - %s\n", SDL_GetError());
+        return -1;
+    }
+    window = SDL_CreateWindow("Simplest ffmpeg player's Window",
+                              SDL_WINDOWPOS_UNDEFINED,
+                              SDL_WINDOWPOS_UNDEFINED,
+                              screen_w, screen_h,
+                              SDL_WINDOW_OPENGL);
+    // 如果返回"0"就表示失败
+    if (!window) {
+        printf("SDL: could not create window - exiting:%s\n", SDL_GetError());
+        return -1;
+    }
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    //IYUV: Y + U + V  (3 planes)
+    //YV12: Y + V + U  (3 planes)
+    texture = SDL_CreateTexture(renderer,
+                                SDL_PIXELFORMAT_IYUV,
+                                SDL_TEXTUREACCESS_STREAMING,
+                                avCodecContext->width,
+                                avCodecContext->height);
+
+    sdlRect.x = 0;
+    sdlRect.y = 0;
+    sdlRect.w = screen_w;
+    sdlRect.h = screen_h;
+
+    while (av_read_frame(avFormatContext, avPacket) >= 0) {
+        // 只取视频数据
+        if (avPacket->stream_index == videoIndex) {
+            result = avcodec_decode_video2(avCodecContext, avFrame, &got_picture_ptr, avPacket);
+            if (result < 0) {
+                printf("Decode Error.\n");
+                return -1;
+            } else if (result == 0) {
+                printf("End of file.\n");
+                return 0;
+            }
+            // printf("ret1 = %d\n", result);
+            // 前十次为0,后面一直为1
+            printf("got_picture_ptr = %d\n", got_picture_ptr);
+            if (got_picture_ptr) {
+                sws_scale(img_convert_ctx,
+                          (const uint8_t *const *) avFrame->data,
+                          avFrame->linesize,
+                          0,
+                          avCodecContext->height,
+                          avFrameYUV->data,
+                          avFrameYUV->linesize);
+
+                SDL_UpdateYUVTexture(texture,
+                                     &sdlRect,
+                                     avFrameYUV->data[0], avFrameYUV->linesize[0],
+                                     avFrameYUV->data[1], avFrameYUV->linesize[1],
+                                     avFrameYUV->data[2], avFrameYUV->linesize[2]);
+                SDL_RenderClear(renderer);
+                SDL_RenderCopy(renderer, texture, NULL, &sdlRect);
+                SDL_RenderPresent(renderer);
+
+                //Delay 40ms
+                SDL_Delay(40);
+            }
+        }
+        av_free_packet(avPacket);
+    }
+
+
+    SDL_Quit();
+
+    sws_freeContext(img_convert_ctx);
+    av_frame_free(&avFrameYUV);
+    av_frame_free(&avFrame);
+    avcodec_close(avCodecContext);
+    avformat_close_input(&avFormatContext);
+
+    return 0;
+}
+
+// Refresh Event
+#define REFRESH_EVENT  (SDL_USEREVENT + 1)
+
+#define BREAK_EVENT  (SDL_USEREVENT + 2)
+
+int thread_exit = 0;
+
+int refresh_video(void *opaque) {
+    thread_exit = 0;
+    while (!thread_exit) {
+        SDL_Event event;
+        event.type = REFRESH_EVENT;
+        SDL_PushEvent(&event);
+        SDL_Delay(40);
+    }
+    thread_exit = 0;
+    // Break
+    SDL_Event event;
+    event.type = BREAK_EVENT;
+    SDL_PushEvent(&event);
+    return 0;
+}
+
+int simplest_ffmpeg_player_sdl2() {
+    int i, videoIndex = -1;
+    uint8_t *out_buffer;
+    int result, got_picture_ptr;
+
+    char filePath[] = "http://192.168.0.131:8080/video/aaaaa.mp4";
+
+    // 屏幕宽高
+    int screen_w = 0, screen_h = 0;
+
+    SDL_Window *window = NULL;
+    SDL_Renderer *renderer = NULL;
+    SDL_Texture *texture = NULL;
+    SDL_Rect sdlRect;
+
+    AVFormatContext *avFormatContext = NULL;
+    AVCodecContext *avCodecContext = NULL;
+    AVCodec *avCodec = NULL;
+    AVFrame *avFrame = NULL, *avFrameYUV = NULL;
+    AVPacket *avPacket = NULL;
+    struct SwsContext *img_convert_ctx;
+
+    // 注册FFmpeg所有编解码器
+    av_register_all();
+    avformat_network_init();
+    avFormatContext = avformat_alloc_context();
+
+    // 打开文件
+    if (avformat_open_input(&avFormatContext, filePath, NULL, NULL)) {
+        printf("Couldn't open input stream.\n");
+        return -1;
+    }
+
+    if (avformat_find_stream_info(avFormatContext, NULL) < 0) {
+        printf("Couldn't find stream information.\n");
+        return -1;
+    }
+
+    printf("avFormatContext->nb_streams = %d\n", avFormatContext->nb_streams);
+    for (i = 0; i < avFormatContext->nb_streams; i++) {
+        AVMediaType type = avFormatContext->streams[i]->codec->codec_type;
+        printf("type = %d\n", type);
+        if (type == AVMEDIA_TYPE_VIDEO) {
+            videoIndex = i;
+            // break;
+        }
+    }
+    if (videoIndex == -1) {
+        printf("Didn't find a video stream.\n");
+        return -1;
+    }
+
+    printf("videoIndex = %d\n", videoIndex);// 1
+    avCodecContext = avFormatContext->streams[videoIndex]->codec;
+    avCodec = avcodec_find_decoder(avCodecContext->codec_id);
+    if (avCodec == NULL) {
+        printf("Codec not found.\n");
+        return -1;
+    }
+    if (avcodec_open2(avCodecContext, avCodec, NULL) < 0) {
+        printf("Could not open codec.\n");
+        return -1;
+    }
+
+    avFrame = av_frame_alloc();
+    avFrameYUV = av_frame_alloc();
+    out_buffer = (uint8_t *) av_malloc(
+            avpicture_get_size(PIX_FMT_YUV420P, avCodecContext->width, avCodecContext->height));
+    avpicture_fill((AVPicture *) avFrameYUV, out_buffer, PIX_FMT_YUV420P,
+                   avCodecContext->width,
+                   avCodecContext->height);
+    avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+    img_convert_ctx = sws_getContext(avCodecContext->width, avCodecContext->height,
+                                     avCodecContext->pix_fmt,
+                                     avCodecContext->width, avCodecContext->height,
+                                     PIX_FMT_YUV420P, SWS_BICUBIC,
+                                     NULL, NULL, NULL);
+
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
+        printf("Could not initialize SDL - %s\n", SDL_GetError());
+        return -1;
+    }
+    window = SDL_CreateWindow("Simplest ffmpeg player's Window",
+                              SDL_WINDOWPOS_UNDEFINED,
+                              SDL_WINDOWPOS_UNDEFINED,
+                              screen_w, screen_h,
+                              SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    // 如果返回"0"就表示失败
+    if (!window) {
+        printf("SDL: could not create window - exiting:%s\n", SDL_GetError());
+        return -1;
+    }
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    //IYUV: Y + U + V  (3 planes)
+    //YV12: Y + V + U  (3 planes)
+    texture = SDL_CreateTexture(renderer,
+                                SDL_PIXELFORMAT_IYUV,
+                                SDL_TEXTUREACCESS_STREAMING,
+                                avCodecContext->width,
+                                avCodecContext->height);
+
+    SDL_Thread *refresh_thread = SDL_CreateThread(refresh_video, NULL, NULL);
+    // SDL_Rect sdlRect;
+    SDL_Event event;
+    while (1) {
+        // Wait
+        SDL_WaitEvent(&event);
+        if (event.type == REFRESH_EVENT) {
+            if (av_read_frame(avFormatContext, avPacket) < 0) {
+                break;
+            }
+            // 只取视频数据
+            if (avPacket->stream_index == videoIndex) {
+                result = avcodec_decode_video2(avCodecContext, avFrame, &got_picture_ptr, avPacket);
+                if (result < 0) {
+                    printf("Decode Error.\n");
+                    return -1;
+                } else if (result == 0) {
+                    printf("End of file.\n");
+                    return 0;
+                }
+                sdlRect.x = 0;
+                sdlRect.y = 0;
+                sdlRect.w = screen_w;
+                sdlRect.h = screen_h;
+                // printf("ret1 = %d\n", result);
+                // 前十次为0,后面一直为1
+                printf("got_picture_ptr = %d\n", got_picture_ptr);
+                if (got_picture_ptr) {
+                    sws_scale(img_convert_ctx,
+                              (const uint8_t *const *) avFrame->data,
+                              avFrame->linesize,
+                              0,
+                              avCodecContext->height,
+                              avFrameYUV->data,
+                              avFrameYUV->linesize);
+
+                    SDL_UpdateYUVTexture(texture,
+                                         &sdlRect,
+                                         avFrameYUV->data[0], avFrameYUV->linesize[0],
+                                         avFrameYUV->data[1], avFrameYUV->linesize[1],
+                                         avFrameYUV->data[2], avFrameYUV->linesize[2]);
+                    SDL_RenderClear(renderer);
+                    SDL_RenderCopy(renderer, texture, NULL, &sdlRect);
+                    SDL_RenderPresent(renderer);
+
+                    //Delay 40ms
+                    SDL_Delay(40);
+                }
+            }
+            av_free_packet(avPacket);
+
+        } else if (event.type == SDL_WINDOWEVENT) {
+            //If Resize
+            SDL_GetWindowSize(window, &screen_w, &screen_h);
+        } else if (event.type == SDL_QUIT) {
+            thread_exit = 1;
+        } else if (event.type == BREAK_EVENT) {
+            break;
+        }
+    }
+
+    SDL_Quit();
+
+    sws_freeContext(img_convert_ctx);
+    av_frame_free(&avFrameYUV);
+    av_frame_free(&avFrame);
+    avcodec_close(avCodecContext);
+    avformat_close_input(&avFormatContext);
+
+    return 0;
 }
 
 /***

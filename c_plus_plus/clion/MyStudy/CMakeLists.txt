@@ -11,7 +11,6 @@ add_executable(MyStudy
         src/B0.cpp
         src/Test.cpp
         src/Pointer.cpp
-        src/simplest_ffmpeg_player.cpp
         )
 
 set(FFMPEG_DLL
