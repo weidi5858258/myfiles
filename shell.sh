@@ -1523,7 +1523,7 @@ adb -s 24292001zzzzzzz shell am start -n
 com.sony.dtv.osat.video/com.sonyericsson.
 video.browser.BrowserActivity
 adb -s 24292001zzzzzzz shell input tap 630 1210
-adb -s 24292001zzzzzzz shell input keyevent 
+adb -s 24292001zzzzzzz shell input keyevent KEYCODE_HOME
 adb shell input text "hello,world"
 KEYCODE_POWER
 KEYCODE_HOME
