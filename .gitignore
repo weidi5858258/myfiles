@@ -1,6 +1,7 @@
 .git
 .gitmodules
 c_plus_plus/grammar/.idea
+c_plus_plus/clion/MyStudy/run_me
 c_plus_plus/grammar/cmake-build-debug
 c_plus_plus/tcp_ip_server/.idea
 c_plus_plus/tcp_ip_server/cmake-build-debug
