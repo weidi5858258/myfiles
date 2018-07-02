@@ -23,8 +23,8 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-    // simplest_ffmpeg_player();
-    simplest_ffmpeg_player_sdl2();
+    simplest_ffmpeg_player();
+//    simplest_ffmpeg_player_sdl2();
 
     // test();
     printf("------------------------------------------\n");
@@ -257,16 +257,26 @@ int simplest_ffmpeg_player() {
     SDL_Texture *texture = NULL;
     SDL_Rect sdlRect;
 
+    /***
+     下面三个变量都是通过源文件得到的结构体,因此有关源信息可以通过下面变量得到
+     */
     AVFormatContext *avFormatContext = NULL;
-    AVCodecContext *avCodecContext = NULL;
-    AVCodec *avCodec = NULL;
-    AVFrame *avFrame = NULL, *avFrameYUV = NULL;
+    AVCodecContext *videoAVCodecContext = NULL;
+    AVCodec *videoAVCodecDecoder = NULL;
+    // 命名规则
+    // AVCodecContext *audioAVCodecContext = NULL;
+    // AVCodec *audioAVCodecDecoder = NULL;
+    // AVCodec *videoAVCodecEncoder = NULL;
+    // AVCodec *audioAVCodecEncoder = NULL;
+
+    AVFrame *srcAVFrame = NULL, *dstAVFrameYUV = NULL;
     AVPacket *avPacket = NULL;
-    struct SwsContext *img_convert_ctx;
+    struct SwsContext *swsContext;
 
     // 注册FFmpeg所有编解码器
     av_register_all();
     avformat_network_init();
+    // 得到AVFormatContext结构体
     avFormatContext = avformat_alloc_context();
 
     // 打开文件
@@ -282,46 +292,69 @@ int simplest_ffmpeg_player() {
 
     printf("avFormatContext->nb_streams = %d\n", avFormatContext->nb_streams);
     for (i = 0; i < avFormatContext->nb_streams; i++) {
-        AVMediaType type = avFormatContext->streams[i]->codec->codec_type;
-        printf("type = %d\n", type);
-        if (type == AVMEDIA_TYPE_VIDEO) {
+        AVMediaType avMediaType = avFormatContext->streams[i]->codec->codec_type;
+        printf("avMediaType = %d\n", avMediaType);
+        if (avMediaType == AVMEDIA_TYPE_VIDEO) {
             videoIndex = i;
             // break;
         }
     }
+    printf("videoIndex = %d\n", videoIndex);// 0
     if (videoIndex == -1) {
         printf("Didn't find a video stream.\n");
         return -1;
     }
 
-    printf("videoIndex = %d\n", videoIndex);// 1
-    avCodecContext = avFormatContext->streams[videoIndex]->codec;
-    avCodec = avcodec_find_decoder(avCodecContext->codec_id);
-    if (avCodec == NULL) {
+    // 得到AVCodecContext结构体
+    videoAVCodecContext = avFormatContext->streams[videoIndex]->codec;
+    screen_w = videoAVCodecContext->width;// 1280
+    screen_h = videoAVCodecContext->height;// 720
+    printf("screen_w = %d, screen_h = %d\n", screen_w, screen_h);
+
+    // 得到AVCodec结构体
+    // 查找解码器 相应的有查找编码器avcodec_find_encoder
+    videoAVCodecDecoder = avcodec_find_decoder(videoAVCodecContext->codec_id);
+    if (videoAVCodecDecoder == NULL) {
         printf("Codec not found.\n");
         return -1;
     }
-    if (avcodec_open2(avCodecContext, avCodec, NULL) < 0) {
+    // 打开解码器 相应的有打开编码器avcodec_open2
+    if (avcodec_open2(videoAVCodecContext, videoAVCodecDecoder, NULL) < 0) {
         printf("Could not open codec.\n");
         return -1;
     }
 
-    avFrame = av_frame_alloc();
-    avFrameYUV = av_frame_alloc();
-    out_buffer = (uint8_t *) av_malloc(
-            avpicture_get_size(PIX_FMT_YUV420P, avCodecContext->width, avCodecContext->height));
-    avpicture_fill((AVPicture *) avFrameYUV, out_buffer, PIX_FMT_YUV420P, avCodecContext->width,
-                   avCodecContext->height);
-    avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
-    img_convert_ctx = sws_getContext(avCodecContext->width, avCodecContext->height,
-                                     avCodecContext->pix_fmt,
-                                     avCodecContext->width, avCodecContext->height,
-                                     PIX_FMT_YUV420P, SWS_BICUBIC,
-                                     NULL, NULL, NULL);
+    /***
+     得到SwsContext结构体
+     struct SwsContext *sws_getContext(int srcW, int srcH,
+                                  enum AVPixelFormat srcFormat,
+                                  int dstW, int dstH,
+                                  enum AVPixelFormat dstFormat,
+                                  int flags,
+                                  SwsFilter *srcFilter,
+                                  SwsFilter *dstFilter,
+                                  const double *param);
+     */
+    swsContext = sws_getContext(screen_w, screen_h,
+                                videoAVCodecContext->pix_fmt,
+                                screen_w, screen_h,
+                                AV_PIX_FMT_YUV420P,
+                                SWS_BICUBIC,// SWS_POINT
+                                NULL, NULL, NULL);
+    if (swsContext == NULL) {
+        printf("Cannot initialize the conversion context!\n");
+        return -1;
+    }
 
-    screen_w = avCodecContext->width;// 1280
-    screen_h = avCodecContext->height;// 720
-    printf("screen_w = %d, screen_h = %d\n", screen_w, screen_h);
+    srcAVFrame = av_frame_alloc();
+    dstAVFrameYUV = av_frame_alloc();
+    out_buffer = (uint8_t *) av_malloc(avpicture_get_size(AV_PIX_FMT_YUV420P, screen_w, screen_h));
+    avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+    avpicture_fill((AVPicture *) dstAVFrameYUV,
+                   out_buffer,
+                   AV_PIX_FMT_YUV420P,
+                   screen_w,
+                   screen_h);
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
         printf("Could not initialize SDL - %s\n", SDL_GetError());
@@ -343,18 +376,20 @@ int simplest_ffmpeg_player() {
     texture = SDL_CreateTexture(renderer,
                                 SDL_PIXELFORMAT_IYUV,
                                 SDL_TEXTUREACCESS_STREAMING,
-                                avCodecContext->width,
-                                avCodecContext->height);
+                                screen_w,
+                                screen_h);
 
     sdlRect.x = 0;
     sdlRect.y = 0;
     sdlRect.w = screen_w;
     sdlRect.h = screen_h;
 
+    // 应该是读一帧视频数据的意思
     while (av_read_frame(avFormatContext, avPacket) >= 0) {
         // 只取视频数据
         if (avPacket->stream_index == videoIndex) {
-            result = avcodec_decode_video2(avCodecContext, avFrame, &got_picture_ptr, avPacket);
+            // 解码一帧视频的数据 相应的有编码一帧的数据avcodec_encode_video2
+            result = avcodec_decode_video2(videoAVCodecContext, srcAVFrame, &got_picture_ptr, avPacket);
             if (result < 0) {
                 printf("Decode Error.\n");
                 return -1;
@@ -366,19 +401,32 @@ int simplest_ffmpeg_player() {
             // 前十次为0,后面一直为1
             printf("got_picture_ptr = %d\n", got_picture_ptr);
             if (got_picture_ptr) {
-                sws_scale(img_convert_ctx,
-                          (const uint8_t *const *) avFrame->data,
-                          avFrame->linesize,
+                /***
+                 用于转换像素
+                 int sws_scale(struct SwsContext *c,
+                                const uint8_t *const srcSlice[],
+                                const int srcStride[],
+                                int srcSliceY,
+                                int srcSliceH,
+                                uint8_t *const dstSlice[],
+                                const int dstStride[]);
+                 如果不知道什麼是stride，姑且可以先把它看成是每一列的byte數。
+                 srcSliceY: 註解的意思來看，是指第一列要處理的位置；這裡我是從頭處理，所以直接填0
+                 */
+                sws_scale(swsContext,
+                          (const uint8_t *const *) srcAVFrame->data,
+                          srcAVFrame->linesize,
                           0,
-                          avCodecContext->height,
-                          avFrameYUV->data,
-                          avFrameYUV->linesize);
+                          screen_h,
+                          dstAVFrameYUV->data,
+                          dstAVFrameYUV->linesize);
 
+                // 下面代码的意思是把Y U V数据渲染到SDL容器上
                 SDL_UpdateYUVTexture(texture,
                                      &sdlRect,
-                                     avFrameYUV->data[0], avFrameYUV->linesize[0],
-                                     avFrameYUV->data[1], avFrameYUV->linesize[1],
-                                     avFrameYUV->data[2], avFrameYUV->linesize[2]);
+                                     dstAVFrameYUV->data[0], dstAVFrameYUV->linesize[0],
+                                     dstAVFrameYUV->data[1], dstAVFrameYUV->linesize[1],
+                                     dstAVFrameYUV->data[2], dstAVFrameYUV->linesize[2]);
                 SDL_RenderClear(renderer);
                 SDL_RenderCopy(renderer, texture, NULL, &sdlRect);
                 SDL_RenderPresent(renderer);
@@ -393,208 +441,102 @@ int simplest_ffmpeg_player() {
 
     SDL_Quit();
 
-    sws_freeContext(img_convert_ctx);
-    av_frame_free(&avFrameYUV);
-    av_frame_free(&avFrame);
-    avcodec_close(avCodecContext);
+    sws_freeContext(swsContext);
+    av_frame_free(&srcAVFrame);
+    av_frame_free(&dstAVFrameYUV);
+    avcodec_close(videoAVCodecContext);
     avformat_close_input(&avFormatContext);
 
     return 0;
 }
 
-// Refresh Event
-#define REFRESH_EVENT  (SDL_USEREVENT + 1)
+#define SRCFILE "foreman_cif.yuv"
+#define DSTFILE "out.yuv"
 
-#define BREAK_EVENT  (SDL_USEREVENT + 2)
+int how_to_use_sws_scale() {
+    // 設定原始 YUV 的長寬
+    const int in_width = 352;
+    const int in_height = 288;
+    // 設定目的 YUV 的長寬
+    const int out_width = 640;
+    const int out_height = 480;
 
-int thread_exit = 0;
-
-int refresh_video(void *opaque) {
-    thread_exit = 0;
-    while (!thread_exit) {
-        SDL_Event event;
-        event.type = REFRESH_EVENT;
-        SDL_PushEvent(&event);
-        SDL_Delay(40);
-    }
-    thread_exit = 0;
-    // Break
-    SDL_Event event;
-    event.type = BREAK_EVENT;
-    SDL_PushEvent(&event);
-    return 0;
-}
-
-int simplest_ffmpeg_player_sdl2() {
-    int i, videoIndex = -1;
-    uint8_t *out_buffer;
-    int result, got_picture_ptr;
-
-    char filePath[] = "http://192.168.0.131:8080/video/aaaaa.mp4";
-
-    // 屏幕宽高
-    int screen_w = 0, screen_h = 0;
-
-    SDL_Window *window = NULL;
-    SDL_Renderer *renderer = NULL;
-    SDL_Texture *texture = NULL;
-    SDL_Rect sdlRect;
-
-    AVFormatContext *avFormatContext = NULL;
-    AVCodecContext *avCodecContext = NULL;
-    AVCodec *avCodec = NULL;
-    AVFrame *avFrame = NULL, *avFrameYUV = NULL;
-    AVPacket *avPacket = NULL;
     struct SwsContext *img_convert_ctx;
+    uint8_t *inbuf[4];
+    uint8_t *outbuf[4];
+    const int read_size = in_width * in_height * 3 / 2;
+    const int write_size = out_width * out_height * 3 / 2;
+    int inlinesize[4] = {in_width, in_width / 2, in_width / 2, 0};
+    int outlinesize[4] = {out_width, out_width / 2, out_width / 2, 0};
 
-    // 注册FFmpeg所有编解码器
-    av_register_all();
-    avformat_network_init();
-    avFormatContext = avformat_alloc_context();
+    uint8_t in[352 * 288 * 3 >> 1];
+    uint8_t out[640 * 480 * 3 >> 1];
 
-    // 打开文件
-    if (avformat_open_input(&avFormatContext, filePath, NULL, NULL)) {
-        printf("Couldn't open input stream.\n");
+    FILE *fin = fopen(SRCFILE, "rb");
+    FILE *fout = fopen(DSTFILE, "wb");
+    if (fin == NULL) {
+        printf("open input file %s error.\n", SRCFILE);
+        return -1;
+    }
+    if (fout == NULL) {
+        printf("open output file %s error.\n", DSTFILE);
         return -1;
     }
 
-    if (avformat_find_stream_info(avFormatContext, NULL) < 0) {
-        printf("Couldn't find stream information.\n");
-        return -1;
-    }
+    inbuf[0] = (uint8_t *) malloc(in_width * in_height);
+    inbuf[1] = (uint8_t *) malloc(in_width * in_height >> 2);
+    inbuf[2] = (uint8_t *) malloc(in_width * in_height >> 2);
+    inbuf[3] = NULL;
 
-    printf("avFormatContext->nb_streams = %d\n", avFormatContext->nb_streams);
-    for (i = 0; i < avFormatContext->nb_streams; i++) {
-        AVMediaType type = avFormatContext->streams[i]->codec->codec_type;
-        printf("type = %d\n", type);
-        if (type == AVMEDIA_TYPE_VIDEO) {
-            videoIndex = i;
-            // break;
-        }
-    }
-    if (videoIndex == -1) {
-        printf("Didn't find a video stream.\n");
-        return -1;
-    }
+    outbuf[0] = (uint8_t *) malloc(out_width * out_height);
+    outbuf[1] = (uint8_t *) malloc(out_width * out_height >> 2);
+    outbuf[2] = (uint8_t *) malloc(out_width * out_height >> 2);
+    outbuf[3] = NULL;
 
-    printf("videoIndex = %d\n", videoIndex);// 1
-    avCodecContext = avFormatContext->streams[videoIndex]->codec;
-    avCodec = avcodec_find_decoder(avCodecContext->codec_id);
-    if (avCodec == NULL) {
-        printf("Codec not found.\n");
-        return -1;
-    }
-    if (avcodec_open2(avCodecContext, avCodec, NULL) < 0) {
-        printf("Could not open codec.\n");
-        return -1;
-    }
-
-    avFrame = av_frame_alloc();
-    avFrameYUV = av_frame_alloc();
-    out_buffer = (uint8_t *) av_malloc(
-            avpicture_get_size(PIX_FMT_YUV420P, avCodecContext->width, avCodecContext->height));
-    avpicture_fill((AVPicture *) avFrameYUV, out_buffer, PIX_FMT_YUV420P,
-                   avCodecContext->width,
-                   avCodecContext->height);
-    avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
-    img_convert_ctx = sws_getContext(avCodecContext->width, avCodecContext->height,
-                                     avCodecContext->pix_fmt,
-                                     avCodecContext->width, avCodecContext->height,
-                                     PIX_FMT_YUV420P, SWS_BICUBIC,
+    // ********* Initialize software scaling *********
+    // ********* sws_getContext **********************
+    img_convert_ctx = sws_getContext(in_width, in_height,
+                                     PIX_FMT_YUV420P,
+                                     out_width, out_height,
+                                     PIX_FMT_YUV420P,
+                                     SWS_POINT,
                                      NULL, NULL, NULL);
-
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
-        printf("Could not initialize SDL - %s\n", SDL_GetError());
+    if (img_convert_ctx == NULL) {
+        fprintf(stderr, "Cannot initialize the conversion context!\n");
         return -1;
     }
-    window = SDL_CreateWindow("Simplest ffmpeg player's Window",
-                              SDL_WINDOWPOS_UNDEFINED,
-                              SDL_WINDOWPOS_UNDEFINED,
-                              screen_w, screen_h,
-                              SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-    // 如果返回"0"就表示失败
-    if (!window) {
-        printf("SDL: could not create window - exiting:%s\n", SDL_GetError());
-        return -1;
-    }
-    renderer = SDL_CreateRenderer(window, -1, 0);
-    //IYUV: Y + U + V  (3 planes)
-    //YV12: Y + V + U  (3 planes)
-    texture = SDL_CreateTexture(renderer,
-                                SDL_PIXELFORMAT_IYUV,
-                                SDL_TEXTUREACCESS_STREAMING,
-                                avCodecContext->width,
-                                avCodecContext->height);
 
-    SDL_Thread *refresh_thread = SDL_CreateThread(refresh_video, NULL, NULL);
-    // SDL_Rect sdlRect;
-    SDL_Event event;
-    while (1) {
-        // Wait
-        SDL_WaitEvent(&event);
-        if (event.type == REFRESH_EVENT) {
-            if (av_read_frame(avFormatContext, avPacket) < 0) {
-                break;
-            }
-            // 只取视频数据
-            if (avPacket->stream_index == videoIndex) {
-                result = avcodec_decode_video2(avCodecContext, avFrame, &got_picture_ptr, avPacket);
-                if (result < 0) {
-                    printf("Decode Error.\n");
-                    return -1;
-                } else if (result == 0) {
-                    printf("End of file.\n");
-                    return 0;
-                }
-                sdlRect.x = 0;
-                sdlRect.y = 0;
-                sdlRect.w = screen_w;
-                sdlRect.h = screen_h;
-                // printf("ret1 = %d\n", result);
-                // 前十次为0,后面一直为1
-                printf("got_picture_ptr = %d\n", got_picture_ptr);
-                if (got_picture_ptr) {
-                    sws_scale(img_convert_ctx,
-                              (const uint8_t *const *) avFrame->data,
-                              avFrame->linesize,
-                              0,
-                              avCodecContext->height,
-                              avFrameYUV->data,
-                              avFrameYUV->linesize);
+    fread(in, 1, read_size, fin);
 
-                    SDL_UpdateYUVTexture(texture,
-                                         &sdlRect,
-                                         avFrameYUV->data[0], avFrameYUV->linesize[0],
-                                         avFrameYUV->data[1], avFrameYUV->linesize[1],
-                                         avFrameYUV->data[2], avFrameYUV->linesize[2]);
-                    SDL_RenderClear(renderer);
-                    SDL_RenderCopy(renderer, texture, NULL, &sdlRect);
-                    SDL_RenderPresent(renderer);
+    memcpy(inbuf[0], in, in_width * in_height);
+    memcpy(inbuf[1], in + in_width * in_height, in_width * in_height >> 2);
+    memcpy(inbuf[2], in + (in_width * in_height * 5 >> 2), in_width * in_height >> 2);
 
-                    //Delay 40ms
-                    SDL_Delay(40);
-                }
-            }
-            av_free_packet(avPacket);
+    // ********* 主要的 function ******
+    // ********* sws_scale ************
+    sws_scale(img_convert_ctx,
+              (const uint8_t *const *) inbuf,
+              inlinesize,
+              0,
+              in_height,
+              outbuf,
+              outlinesize);
 
-        } else if (event.type == SDL_WINDOWEVENT) {
-            //If Resize
-            SDL_GetWindowSize(window, &screen_w, &screen_h);
-        } else if (event.type == SDL_QUIT) {
-            thread_exit = 1;
-        } else if (event.type == BREAK_EVENT) {
-            break;
-        }
-    }
+    /***
+     extern void *memcpy (void *__restrict __dest, const void *__restrict __src, size_t __n)
+     */
+    memcpy(out, outbuf[0], out_width * out_height);
+    memcpy(out + out_width * out_height, outbuf[1], out_width * out_height >> 2);
+    memcpy(out + (out_width * out_height * 5 >> 2), outbuf[2], out_width * out_height >> 2);
 
-    SDL_Quit();
+    fwrite(out, 1, write_size, fout);
 
+    // ********* 結束的 function *******
+    // ********* sws_freeContext *******
     sws_freeContext(img_convert_ctx);
-    av_frame_free(&avFrameYUV);
-    av_frame_free(&avFrame);
-    avcodec_close(avCodecContext);
-    avformat_close_input(&avFormatContext);
 
+    fclose(fin);
+    fclose(fout);
     return 0;
 }
 

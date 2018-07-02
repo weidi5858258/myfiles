@@ -28,6 +28,7 @@ extern "C" {// 不能少
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
+#include <libavutil/pixfmt.h>
 #include <SDL2/SDL.h>
 };
 
