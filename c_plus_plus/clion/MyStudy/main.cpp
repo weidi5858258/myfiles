@@ -410,8 +410,9 @@ int simplest_ffmpeg_player() {
                                 int srcSliceH,
                                 uint8_t *const dstSlice[],
                                 const int dstStride[]);
-                 如果不知道什麼是stride，姑且可以先把它看成是每一列的byte數。
-                 srcSliceY: 註解的意思來看，是指第一列要處理的位置；這裡我是從頭處理，所以直接填0
+                 如果不知道什麼是stride,姑且可以先把它看成是每一列的byte數
+                 srcSliceY: 註解的意思來看,是指第一列要處理的位置;這裡我是從頭處理，所以直接填0
+                 将像素格式为YUV420P,分辨率为480x272的视频转换为像素格式为RGB24,分辨率为1280x720的视频
                  */
                 sws_scale(swsContext,
                           (const uint8_t *const *) srcAVFrame->data,
