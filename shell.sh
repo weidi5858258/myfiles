@@ -2091,7 +2091,12 @@ ffprobe -v quiet -print_format json -show_format -show_streams aaaaa.mp4 >> aaaa
 # 查看SDL2的位置
 locate SDL2
 
+# head.txt文件中如果不存在字符串${tempFilePath}时成立
+if [ `grep -c "${tempFilePath}" head.txt` -eq '0' ]; then
+    echo ${tempFilePath} >> head.txt
+fi
 
+# vim 只需要:set invlist即可以将不可见的字符显示出来，例如，会以^I表示一个tab符，$表示一个回车符等。
 
 
 
