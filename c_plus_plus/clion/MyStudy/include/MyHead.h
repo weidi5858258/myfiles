@@ -26,12 +26,12 @@
 // ffmpeg and SDL
 extern "C" {// 不能少
 #include <libavcodec/avcodec.h>
-//#include <libavdevice/avdevice.h>
+#include <libavdevice/avdevice.h>
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
-//#include <libavfilter/avfilter.h>
-//#include <libavfilter/buffersink.h>
-//#include <libavfilter/buffersrc.h>
+#include <libavfilter/avfilter.h>
+#include <libavfilter/buffersink.h>
+#include <libavfilter/buffersrc.h>
 #include <libavutil/mathematics.h>
 #include <libavutil/samplefmt.h>
 #include <libavutil/audio_fifo.h>
@@ -58,13 +58,9 @@ extern "C" {// 不能少
 #include <algorithm>
 #include <functional>
 
-using namespace std;
-
-#define MAX_EVENTS 500
-
-static const char ZYGOTE_NICE_NAME[] = "zygote64";
-
 #include "Test.h"
+
+using namespace std;
 
 
 #endif //MYSTUDY_MYHEAD_H

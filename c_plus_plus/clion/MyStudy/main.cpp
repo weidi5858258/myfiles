@@ -1,6 +1,6 @@
-#include "./include/MyHead.h"
-#include "./src/B0.cpp"
-#include "./src/Pointer.cpp"
+#include "include/MyHead.h"
+#include "src/B0.cpp"
+#include "src/Pointer.cpp"
 
 void test();
 
@@ -246,8 +246,8 @@ int simplest_ffmpeg_player() {
     int result, got_picture_ptr, got_picture_ptr_audio;
 
 //    char filePath[] = "http://192.168.0.131:8080/video/aaaaa.mp4";
-    char filePath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
-//    char filePath[] = "/mnt/d/Tools/apache-tomcat-8.5.23/webapps/ROOT/video/kingsman.mp4";
+//    char filePath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
+    char filePath[] = "/mnt/d/Tools/apache-tomcat-8.5.23/webapps/ROOT/video/kingsman.mp4";
 
     // 屏幕宽高
     int screen_w = 0, screen_h = 0;
@@ -502,7 +502,7 @@ int simplest_ffmpeg_player() {
                                        const AVPacket *avpkt)
             */
             // result = avcodec_decode_audio4(audioAVCodecContext, srcAVFrame, &got_picture_ptr_audio, avPacket);
-            result = avcodec_send_packet(audioAVCodecContext, avPacket);
+            /*result = avcodec_send_packet(audioAVCodecContext, avPacket);
             printf("1 result = %d, got_picture_ptr_audio = %d\n", result, got_picture_ptr_audio);
             result = avcodec_receive_frame(audioAVCodecContext, srcAVFrame);
             printf("2 result = %d, got_picture_ptr_audio = %d\n", result, got_picture_ptr_audio);
@@ -521,8 +521,8 @@ int simplest_ffmpeg_player() {
                     int16_t *ptr_l = (int16_t *) srcAVFrame->extended_data[0];
                     int16_t *ptr_r = (int16_t *) srcAVFrame->extended_data[1];
                     for (int i = 0; i < srcAVFrame->nb_samples; i++) {
-                        /*fwrite(ptr_l++, sizeof(int16_t), 1, outfile);
-                        fwrite(ptr_r++, sizeof(int16_t), 1, outfile);*/
+                        *//*fwrite(ptr_l++, sizeof(int16_t), 1, outfile);
+                        fwrite(ptr_r++, sizeof(int16_t), 1, outfile);*//*
                     }
 
                     //Audacity: big endian 32bit stereo start offset 7 (but has noise)
@@ -530,11 +530,11 @@ int simplest_ffmpeg_player() {
                     float *ptr_l = (float *) srcAVFrame->extended_data[0];
                     float *ptr_r = (float *) srcAVFrame->extended_data[1];
                     for (int i = 0; i < srcAVFrame->nb_samples; i++) {
-                        /*fwrite(ptr_l++, sizeof(float), 1, outfile);
-                        fwrite(ptr_r++, sizeof(float), 1, outfile);*/
+                        *//*fwrite(ptr_l++, sizeof(float), 1, outfile);
+                        fwrite(ptr_r++, sizeof(float), 1, outfile);*//*
                     }
                 }
-            }
+            }*/
         }
         av_free_packet(avPacket);
     }

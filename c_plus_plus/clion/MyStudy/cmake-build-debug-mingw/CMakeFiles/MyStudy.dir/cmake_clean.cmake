@@ -3,7 +3,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/MyStudy.dir/src/B0.cpp.obj"
   "CMakeFiles/MyStudy.dir/src/Test.cpp.obj"
   "CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj"
-  "CMakeFiles/MyStudy.dir/src/simplest_ffmpeg_player.cpp.obj"
   "MyStudy.pdb"
   "MyStudy.exe"
   "MyStudy.exe.manifest"

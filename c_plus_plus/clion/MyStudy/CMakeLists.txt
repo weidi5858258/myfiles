@@ -22,18 +22,6 @@ add_executable(MyStudy
 #        libs/libSDL2main.a
 ##        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib
 #)
-#
-#
-#set(prefix "/home/weidi")
-#set(exec_prefix "${prefix}")
-#set(libdir "${exec_prefix}/lib")
-#set(SDL2_PREFIX "/home/weidi")
-#set(SDL2_EXEC_PREFIX "/home/weidi")
-#set(SDL2_LIBDIR "${exec_prefix}/lib")
-#set(SDL2_INCLUDE_DIRS "${prefix}/include/SDL2")
-#set(SDL2_LIBRARIES "-L${SDL2_LIBDIR}  -lmingw32 -lSDL2main -lSDL2  -mwindows")
-#string(STRIP "${SDL2_LIBRARIES}" SDL2_LIBRARIES)
-
 
 
 #target_link_libraries(MyStudy
@@ -49,13 +37,61 @@ add_executable(MyStudy
 #        ${FFMPEG_DLL}/libswscale.dll.a
 #)
 
+link_directories(
+        C:/mydev/tools/ffmpeg-dev/lib
+        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib
+        C:/mydev/tools/ffmpeg-dev/libs
+)
+
+#link_libraries(
+#        avcodec.lib
+#        avdevice.lib
+#        avfilter.lib
+#        avformat.lib
+#        avutil.lib
+#        postproc.lib
+#        swresample.lib
+#        swscale.lib
+#        libSDL2.dll.a
+#        libSDL2main.a
+#        -LC:/mydev/tools/ffmpeg-dev/libs -lavcodec-58
+#        C:/mydev/tools/ffmpeg-dev/libs/avdevice-58.dll
+#        C:/mydev/tools/ffmpeg-dev/libs/avfilter-7.dll
+#        C:/mydev/tools/ffmpeg-dev/libs/avutil-56.dll
+#        C:/mydev/tools/ffmpeg-dev/libs/postproc-55.dll
+#        C:/mydev/tools/ffmpeg-dev/libs/swscale-5.dll
+#        C:/mydev/tools/ffmpeg-dev/libs/swresample-3.dll
+#        #        C:/mydev/tools/ffmpeg-dev/libs/SDL2main
+#        C:/mydev/tools/ffmpeg-dev/libs/SDL2.dll
+#)
+
+set(TARGET_LIB
+        "C:/mydev/tools/ffmpeg-dev/lib/avformat.lib"
+        )
+
+if(WIN32)
+    target_link_libraries(MyStudy ${TARGET_LIB})
+#    target_link_libraries(MyStudy
+#            -LC:/mydev/tools/ffmpeg-dev/lib -llibavformat
+#            -LC:/mydev/tools/ffmpeg-dev/lib -lavdevice.dll
+#            -LC:/mydev/tools/ffmpeg-dev/lib -lavcodec.dll
+#            -LC:/mydev/tools/ffmpeg-dev/lib -lavfilter.dll
+#            -LC:/mydev/tools/ffmpeg-dev/lib -lavutil.dll
+#            -LC:/mydev/tools/ffmpeg-dev/lib -lpostproc.dll
+#            -LC:/mydev/tools/ffmpeg-dev/lib -lswresample.dll
+#            -LC:/mydev/tools/ffmpeg-dev/lib -lswscale.dll
+#            -LC:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib -lSDL2.dll
+#            -LC:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib -lSDL2main
+#            )
+endif()
+
 #target_link_libraries(MyStudy
-#        -lSDL2.dll
-#        -lSDL2main.dll
-#        -lavformat.dll
-#        -lavcodec.dll
-#        -lavutil.dll
-#        -lswscale.dll
+#        ${FFMPEG_DLL_PATH}/SDL2.dll
+#        ${FFMPEG_DLL_PATH}/SDL2main.dll
+#        ${FFMPEG_DLL_PATH}/avformat.dll
+#        ${FFMPEG_DLL_PATH}/avcodec.dll
+#        ${FFMPEG_DLL_PATH}/avutil.dll
+#        ${FFMPEG_DLL_PATH}/swscale.dll
 #        )
 
 ################################################################
@@ -141,12 +177,12 @@ set(ANDROID_INCLUDE_PATH
         /root/mydev/android)
 
 include_directories(
-#        C:/mydev/tools/ffmpeg-dev/include
-#        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include
-#        /root/mydev/workspace_github/ffmpeg
+#        include
+        C:/mydev/tools/ffmpeg-dev/include
+        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include
         /usr/include/x86_64-linux-gnu
         /usr/include/SDL2
-        )
+)
 
 #set(ANDROID_INCLUDE_PATH
 #        /root/mydev/android)

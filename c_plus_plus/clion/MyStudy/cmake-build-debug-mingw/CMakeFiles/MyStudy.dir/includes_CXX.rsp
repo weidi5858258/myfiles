@@ -1,1 +1,1 @@
--IC:/mydev/tools/ffmpeg-dev/include -IC:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include -I/usr/include/SDL2 
+-IC:/mydev/tools/ffmpeg-dev/include -IC:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include -I/usr/include/x86_64-linux-gnu -I/usr/include/SDL2 

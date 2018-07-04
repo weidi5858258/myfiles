@@ -230,33 +230,6 @@ src/Test.cpp.s:
 	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/Test.cpp.s
 .PHONY : src/Test.cpp.s
 
-src/simplest_ffmpeg_player.obj: src/simplest_ffmpeg_player.cpp.obj
-
-.PHONY : src/simplest_ffmpeg_player.obj
-
-# target to build an object file
-src/simplest_ffmpeg_player.cpp.obj:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/simplest_ffmpeg_player.cpp.obj
-.PHONY : src/simplest_ffmpeg_player.cpp.obj
-
-src/simplest_ffmpeg_player.i: src/simplest_ffmpeg_player.cpp.i
-
-.PHONY : src/simplest_ffmpeg_player.i
-
-# target to preprocess a source file
-src/simplest_ffmpeg_player.cpp.i:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/simplest_ffmpeg_player.cpp.i
-.PHONY : src/simplest_ffmpeg_player.cpp.i
-
-src/simplest_ffmpeg_player.s: src/simplest_ffmpeg_player.cpp.s
-
-.PHONY : src/simplest_ffmpeg_player.s
-
-# target to generate assembly for a file
-src/simplest_ffmpeg_player.cpp.s:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/simplest_ffmpeg_player.cpp.s
-.PHONY : src/simplest_ffmpeg_player.cpp.s
-
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -278,9 +251,6 @@ help:
 	@echo ... src/Test.obj
 	@echo ... src/Test.i
 	@echo ... src/Test.s
-	@echo ... src/simplest_ffmpeg_player.obj
-	@echo ... src/simplest_ffmpeg_player.i
-	@echo ... src/simplest_ffmpeg_player.s
 .PHONY : help
 
 
