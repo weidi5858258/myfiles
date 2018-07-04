@@ -13,26 +13,26 @@ add_executable(MyStudy
         src/Pointer.cpp
         )
 
-set(FFMPEG_DLL
-        C:/mydev/tools/ffmpeg-dev/lib
-)
-
-link_directories(
-        libs/libSDL2.a
-        libs/libSDL2main.a
-#        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib
-)
-
-
-set(prefix "/home/weidi")
-set(exec_prefix "${prefix}")
-set(libdir "${exec_prefix}/lib")
-set(SDL2_PREFIX "/home/weidi")
-set(SDL2_EXEC_PREFIX "/home/weidi")
-set(SDL2_LIBDIR "${exec_prefix}/lib")
-set(SDL2_INCLUDE_DIRS "${prefix}/include/SDL2")
-set(SDL2_LIBRARIES "-L${SDL2_LIBDIR}  -lmingw32 -lSDL2main -lSDL2  -mwindows")
-string(STRIP "${SDL2_LIBRARIES}" SDL2_LIBRARIES)
+#set(FFMPEG_DLL
+#        C:/mydev/tools/ffmpeg-dev/lib
+#)
+#
+#link_directories(
+#        libs/libSDL2.a
+#        libs/libSDL2main.a
+##        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib
+#)
+#
+#
+#set(prefix "/home/weidi")
+#set(exec_prefix "${prefix}")
+#set(libdir "${exec_prefix}/lib")
+#set(SDL2_PREFIX "/home/weidi")
+#set(SDL2_EXEC_PREFIX "/home/weidi")
+#set(SDL2_LIBDIR "${exec_prefix}/lib")
+#set(SDL2_INCLUDE_DIRS "${prefix}/include/SDL2")
+#set(SDL2_LIBRARIES "-L${SDL2_LIBDIR}  -lmingw32 -lSDL2main -lSDL2  -mwindows")
+#string(STRIP "${SDL2_LIBRARIES}" SDL2_LIBRARIES)
 
 
 
@@ -141,8 +141,10 @@ set(ANDROID_INCLUDE_PATH
         /root/mydev/android)
 
 include_directories(
-        C:/mydev/tools/ffmpeg-dev/include
-        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include
+#        C:/mydev/tools/ffmpeg-dev/include
+#        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include
+#        /root/mydev/workspace_github/ffmpeg
+        /usr/include/x86_64-linux-gnu
         /usr/include/SDL2
         )
 

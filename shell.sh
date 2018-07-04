@@ -2098,9 +2098,21 @@ fi
 
 # vim 只需要:set invlist即可以将不可见的字符显示出来，例如，会以^I表示一个tab符，$表示一个回车符等。
 
+# 需要这样子操作,不能直接用$?
+result=$?
+if [[ ${result} -eq 0 ]]; then
+    echo "result = success"
+elif [[ ${result} -eq 255 ]]; then
+    echo "result = failure"
+fi
 
+# 路径中有空格时就这样使用
+IFS_old=${IFS}
+IFS=$'\n'
 
+startHere
 
+IFS=${IFS_old}
 
 
 

@@ -74,3 +74,169 @@ FFmpeg中可以通过使用av_opt_set()设置“src_range”和“dst_range”�
 					Y的取值范围是16-235，U、V的取值范围是16-240。FFmpeg中称之为“mpeg”范围。
 （2）       以JPEG为代表的标准中，Y、U、V的取值范围都是0-255。FFmpeg中称之为“jpeg” 范围。
 实际中最常见的是第1种取值范围的YUV（可以自己观察一下YUV的数据，会发现其中亮度分量没有取值为0、255这样的数值）。
+
+FFMPEG实现YUV，RGB各种图像原始数据之间的转换（swscale）
+swscale主要用于在2个AVFrame之间进行转换。
+AVFrame *srcAVFrame = NULL, *dstAVFrame = NULL;
+// 申请内存
+srcAVFrame = av_frame_alloc();
+dstAVFrame = av_frame_alloc();
+// 使用过程
+av_read_frame(avFormatContext, avPacket);
+result = avcodec_decode_video2(videoAVCodecContext, srcAVFrame, &got_picture_ptr, avPacket);
+sws_scale(swsContext,
+          (const uint8_t *const *) srcAVFrame->data,
+          srcAVFrame->linesize,
+          0,
+          screen_h,
+          dstAVFrame->data,
+          dstAVFrame->linesize);
+// 释放内存
+av_frame_free(&srcAVFrame);
+av_frame_free(&dstAVFrame);
+从代码中可以看出，解码后的视频帧数据保存在srcAVFrame变量中，然后经过swscale函数转换后，将视频帧数据保存在dstAVFrame变量中。最后将dstAVFrame中的数据写入成文件。
+最终数据想要保存成什么样的格式,在初始化的时候需要这样做:
+1.
+struct SwsContext *swsContext = 
+sws_getContext(screen_w, screen_h,
+                videoAVCodecContext->pix_fmt,
+                screen_w, screen_h,
+                AV_PIX_FMT_YUV420P,// 想要转换成什么样的格式
+                SWS_BICUBIC,// SWS_POINT
+                NULL, NULL, NULL);
+2.
+uint8_t *out_buffer = 
+(uint8_t *) av_malloc(avpicture_get_size(AV_PIX_FMT_YUV420P, // 想要转换成什么样的格式
+                                          screen_w, screen_h));
+3.
+avpicture_fill((AVPicture *) dstAVFrame,
+                   out_buffer,
+                   AV_PIX_FMT_YUV420P,// 想要转换成什么样的格式
+                   screen_w,
+                   screen_h);
+
+最后，如果想将转换后的原始数据存成文件，只需要将pFrameYUV的data指针指向的数据写入文件就可以了。
+例如，保存YUV420P格式的数据，用以下代码：
+fwrite(pFrameYUV->data[0],(pCodecCtx->width)*(pCodecCtx->height),1,output);
+fwrite(pFrameYUV->data[1],(pCodecCtx->width)*(pCodecCtx->height)/4,1,output);
+fwrite(pFrameYUV->data[2],(pCodecCtx->width)*(pCodecCtx->height)/4,1,output);
+保存RGB24格式的数据，用以下代码：
+fwrite(pFrameYUV->data[0],(pCodecCtx->width)*(pCodecCtx->height)*3,1,output);
+保存UYVY格式的数据，用以下代码：
+fwrite(pFrameYUV->data[0],(pCodecCtx->width)*(pCodecCtx->height),2,output);
+在这里又有一个问题，YUV420P格式需要写入data[0]，data[1]，data[2]；而RGB24，UYVY格式却仅仅是写入data[0]，他们的区别到底是什么呢？经过研究发现，在FFMPEG中，图像原始数据包括两种：planar和packed。planar就是将几个分量分开存，比如YUV420中，data[0]专门存Y，data[1]专门存U，data[2]专门存V。而packed则是打包存，所有数据都存在data[0]中。
+
+avcodec_decode_video2()解码视频后丢帧的问题解决
+int skipped_frame = 0;
+while (av_read_frame(ifmt_ctx, &packet) >= 0) {
+    ret = avcodec_decode_video2(video_dec_ctx, vframe, &got_frame, &packet);
+    if (got_frame) {
+        packet.pts = av_rescale_q(packet.pts, video_dec_st->time_base, video_enc_st->time_base);
+        write_video_frame(ofmt_ctx, video_enc_st, vframe);
+    } else {
+        skipped_frame++;
+    }
+}
+for (int i = skipped_frame; i > 0; i--) {
+    ret = avcodec_decode_video2(video_dec_ctx, vframe, &got_frame, &packet);
+    if (got_frame) {
+        packet.pts = av_rescale_q(packet.pts, video_dec_st->time_base, video_enc_st->time_base);
+        write_video_frame(ofmt_ctx, video_enc_st, vframe);
+    }
+}
+
+avcodec_decode_video2使用参数picture注意点
+一句话:
+解码时,当AVCodecContext的refcounted_frames字段为0,
+则frame的分配与释放由ffmpeg内部自己控制.
+那么使用是要注意不要破坏picture的数据指针.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

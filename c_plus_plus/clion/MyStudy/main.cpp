@@ -241,12 +241,12 @@ void test() {
 }
 
 int simplest_ffmpeg_player() {
-    int i, videoIndex = -1;
+    int i, videoIndex = -1, audioIndex = -1;
     uint8_t *out_buffer;
-    int result, got_picture_ptr;
+    int result, got_picture_ptr, got_picture_ptr_audio;
 
-    char filePath[] = "http://192.168.0.131:8080/video/aaaaa.mp4";
-//    char filePath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
+//    char filePath[] = "http://192.168.0.131:8080/video/aaaaa.mp4";
+    char filePath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
 //    char filePath[] = "/mnt/d/Tools/apache-tomcat-8.5.23/webapps/ROOT/video/kingsman.mp4";
 
     // 屏幕宽高
@@ -261,15 +261,18 @@ int simplest_ffmpeg_player() {
      下面三个变量都是通过源文件得到的结构体,因此有关源信息可以通过下面变量得到
      */
     AVFormatContext *avFormatContext = NULL;
+    // 颜色转换器
     AVCodecContext *videoAVCodecContext = NULL;
+    AVCodecContext *audioAVCodecContext = NULL;
     AVCodec *videoAVCodecDecoder = NULL;
+    AVCodec *audioAVCodecDecoder = NULL;
+    AVSampleFormat audioAVSampleFormat;
     // 命名规则
-    // AVCodecContext *audioAVCodecContext = NULL;
-    // AVCodec *audioAVCodecDecoder = NULL;
     // AVCodec *videoAVCodecEncoder = NULL;
     // AVCodec *audioAVCodecEncoder = NULL;
 
-    AVFrame *srcAVFrame = NULL, *dstAVFrameYUV = NULL;
+    AVFrame *srcAVFrame = NULL, *dstAVFrame = NULL;
+    // AVPacket结构体的作用是从内存中获取一个视频压缩帧,对于音频可能获取一个或者多个压缩帧.
     AVPacket *avPacket = NULL;
     struct SwsContext *swsContext;
 
@@ -290,23 +293,31 @@ int simplest_ffmpeg_player() {
         return -1;
     }
 
-    printf("avFormatContext->nb_streams = %d\n", avFormatContext->nb_streams);
-    for (i = 0; i < avFormatContext->nb_streams; i++) {
+    int nb_streams = avFormatContext->nb_streams;
+    printf("avFormatContext->nb_streams = %d\n", nb_streams);// 2
+    for (i = 0; i < nb_streams; i++) {
         AVMediaType avMediaType = avFormatContext->streams[i]->codec->codec_type;
         printf("avMediaType = %d\n", avMediaType);
         if (avMediaType == AVMEDIA_TYPE_VIDEO) {
             videoIndex = i;
             // break;
+        } else if (avMediaType == AVMEDIA_TYPE_AUDIO) {
+            audioIndex = i;
         }
     }
-    printf("videoIndex = %d\n", videoIndex);// 0
-    if (videoIndex == -1) {
+    printf("videoIndex = %d, audioIndex = %d\n", videoIndex, audioIndex);// 0
+    if (videoIndex == -1 || audioIndex == -1) {
         printf("Didn't find a video stream.\n");
         return -1;
     }
+    /*if (audioIndex == -1) {
+        printf("Didn't find a audio stream.\n");
+        return -1;
+    }*/
 
     // 得到AVCodecContext结构体
     videoAVCodecContext = avFormatContext->streams[videoIndex]->codec;
+    audioAVCodecContext = avFormatContext->streams[audioIndex]->codec;
     screen_w = videoAVCodecContext->width;// 1280
     screen_h = videoAVCodecContext->height;// 720
     printf("screen_w = %d, screen_h = %d\n", screen_w, screen_h);
@@ -314,12 +325,14 @@ int simplest_ffmpeg_player() {
     // 得到AVCodec结构体
     // 查找解码器 相应的有查找编码器avcodec_find_encoder
     videoAVCodecDecoder = avcodec_find_decoder(videoAVCodecContext->codec_id);
-    if (videoAVCodecDecoder == NULL) {
+    audioAVCodecDecoder = avcodec_find_decoder(audioAVCodecContext->codec_id);
+    if (videoAVCodecDecoder == NULL || audioAVCodecDecoder == NULL) {
         printf("Codec not found.\n");
         return -1;
     }
     // 打开解码器 相应的有打开编码器avcodec_open2
-    if (avcodec_open2(videoAVCodecContext, videoAVCodecDecoder, NULL) < 0) {
+    if (avcodec_open2(videoAVCodecContext, videoAVCodecDecoder, NULL) < 0
+        && avcodec_open2(audioAVCodecContext, audioAVCodecDecoder, NULL) < 0) {
         printf("Could not open codec.\n");
         return -1;
     }
@@ -335,24 +348,36 @@ int simplest_ffmpeg_player() {
                                   SwsFilter *dstFilter,
                                   const double *param);
      */
-    swsContext = sws_getContext(screen_w, screen_h,
-                                videoAVCodecContext->pix_fmt,
-                                screen_w, screen_h,
-                                AV_PIX_FMT_YUV420P,
-                                SWS_BICUBIC,// SWS_POINT
-                                NULL, NULL, NULL);
+    reinterpret_cast<AVSampleFormat *>(swsContext = sws_getContext(screen_w, screen_h,
+                                                                   videoAVCodecContext->pix_fmt,
+                                                                   screen_w, screen_h,
+                                                                   AV_PIX_FMT_YUV420P,// 想要转换成什么样的格式
+                                                                   SWS_BICUBIC,// SWS_POINT
+                                                                   NULL, NULL, NULL));
     if (swsContext == NULL) {
         printf("Cannot initialize the conversion context!\n");
         return -1;
     }
 
+    audioAVSampleFormat = audioAVCodecContext->sample_fmt;
     srcAVFrame = av_frame_alloc();
-    dstAVFrameYUV = av_frame_alloc();
-    out_buffer = (uint8_t *) av_malloc(avpicture_get_size(AV_PIX_FMT_YUV420P, screen_w, screen_h));
+    dstAVFrame = av_frame_alloc();
     avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
-    avpicture_fill((AVPicture *) dstAVFrameYUV,
+    /***
+     int avpicture_get_size(enum AVPixelFormat pix_fmt, int width, int height)
+     */
+    out_buffer = (uint8_t *) av_malloc(avpicture_get_size(AV_PIX_FMT_YUV420P, // 想要转换成什么样的格式
+                                                          screen_w, screen_h));
+    /***
+     int avpicture_fill(AVPicture *picture,
+                        const uint8_t *ptr,
+                        enum AVPixelFormat pix_fmt,
+                        int width,
+                        int height)
+     */
+    avpicture_fill((AVPicture *) dstAVFrame,
                    out_buffer,
-                   AV_PIX_FMT_YUV420P,
+                   AV_PIX_FMT_YUV420P,// 想要转换成什么样的格式
                    screen_w,
                    screen_h);
 
@@ -384,22 +409,56 @@ int simplest_ffmpeg_player() {
     sdlRect.w = screen_w;
     sdlRect.h = screen_h;
 
-    // 应该是读一帧视频数据的意思
+    /***
+     新版本的ffmpeg用的是av_read_frame,而老版本的是av_read_packet.
+     区别是av_read_packet读出的是包,它可能是半帧或多帧,不保证帧的完整性.
+     av_read_frame对av_read_packet进行了封装,使读出的数据总是完整的帧.
+     int av_read_frame(AVFormatContext *s, AVPacket *pkt)
+     作用: 读取码流中的音频若干帧或者视频一帧,获取一个AVPacket
+     如果返回0则说明读取正常
+     avFormatContext: 输入的AVFormatContext
+     avPacket: 输出的AVPacket
+
+     读文件注意事项:
+     av_read_frame读取视频固定是一次读取一帧,
+     但是针对音频一次可以读取若干帧音频,
+     因此在live555中fDurationInMicroseconds的赋值
+     切勿认为一次只读取一帧音频来设置该变量值,
+     而应该根据前后帧的时间戳差值来计算.
+
+     遇到的问题:
+     1.FFmpeg去连接的时候相机不在线导致avformat_open_input等函数一直死等,造成程序卡死
+     2.av_read_frame的过程中相机断开连接导致读取码流一直死等
+     3.ffmpeg取rtsp流时av_read_frame阻塞
+     */
     while (av_read_frame(avFormatContext, avPacket) >= 0) {
         // 只取视频数据
         if (avPacket->stream_index == videoIndex) {
-            // 解码一帧视频的数据 相应的有编码一帧的数据avcodec_encode_video2
-            result = avcodec_decode_video2(videoAVCodecContext, srcAVFrame, &got_picture_ptr, avPacket);
+            /***
+             解码一帧视频的数据 相应的有编码一帧的数据avcodec_encode_video2
+             int avcodec_decode_video2(AVCodecContext *avctx,
+                                        AVFrame *picture,
+                                        int *got_picture_ptr,
+                                        const AVPacket *avpkt)
+             作用: 解码一帧视频数据
+             输入一个压缩编码的结构体AVPacket,输出一个解码后的结构体AVFrame
+             got_picture_ptr: 该值为0表明没有图像可以解码，否则表明有图像可以解码；
+             */
+            result = avcodec_decode_video2(videoAVCodecContext,
+                                           srcAVFrame,// 输出
+                                           &got_picture_ptr,
+                                           avPacket);// 输入
             if (result < 0) {
-                printf("Decode Error.\n");
+                printf("Video Decode Error.\n");
                 return -1;
             } else if (result == 0) {
-                printf("End of file.\n");
+                printf("Video End of file.\n");
                 return 0;
             }
-            // printf("ret1 = %d\n", result);
+
+            // printf("result = %d\n", result);
             // 前十次为0,后面一直为1
-            printf("got_picture_ptr = %d\n", got_picture_ptr);
+            // printf("got_picture_ptr = %d\n", got_picture_ptr);
             if (got_picture_ptr) {
                 /***
                  用于转换像素
@@ -419,21 +478,62 @@ int simplest_ffmpeg_player() {
                           srcAVFrame->linesize,
                           0,
                           screen_h,
-                          dstAVFrameYUV->data,
-                          dstAVFrameYUV->linesize);
+                          dstAVFrame->data,
+                          dstAVFrame->linesize);
 
                 // 下面代码的意思是把Y U V数据渲染到SDL容器上
                 SDL_UpdateYUVTexture(texture,
                                      &sdlRect,
-                                     dstAVFrameYUV->data[0], dstAVFrameYUV->linesize[0],
-                                     dstAVFrameYUV->data[1], dstAVFrameYUV->linesize[1],
-                                     dstAVFrameYUV->data[2], dstAVFrameYUV->linesize[2]);
+                                     dstAVFrame->data[0], dstAVFrame->linesize[0],
+                                     dstAVFrame->data[1], dstAVFrame->linesize[1],
+                                     dstAVFrame->data[2], dstAVFrame->linesize[2]);
                 SDL_RenderClear(renderer);
                 SDL_RenderCopy(renderer, texture, NULL, &sdlRect);
                 SDL_RenderPresent(renderer);
 
                 //Delay 40ms
                 SDL_Delay(40);
+            }
+        } else if (avPacket->stream_index == audioIndex) {
+            /***
+             int avcodec_decode_audio4(AVCodecContext *avctx,
+                                       AVFrame *frame,
+                                       int *got_frame_ptr,
+                                       const AVPacket *avpkt)
+            */
+            // result = avcodec_decode_audio4(audioAVCodecContext, srcAVFrame, &got_picture_ptr_audio, avPacket);
+            result = avcodec_send_packet(audioAVCodecContext, avPacket);
+            printf("1 result = %d, got_picture_ptr_audio = %d\n", result, got_picture_ptr_audio);
+            result = avcodec_receive_frame(audioAVCodecContext, srcAVFrame);
+            printf("2 result = %d, got_picture_ptr_audio = %d\n", result, got_picture_ptr_audio);
+            if (result < 0 && result != AVERROR(EAGAIN) && result != AVERROR_EOF) {
+                printf("Audio Decode Error.\n");
+                return -1;
+            } else if (result == 0) {
+                printf("Audio End of file.\n");
+                return 0;
+            }
+
+
+            if (got_picture_ptr_audio) {
+                // Audacity: 16bit PCM little endian stereo
+                if (audioAVSampleFormat == AV_SAMPLE_FMT_S16P) {
+                    int16_t *ptr_l = (int16_t *) srcAVFrame->extended_data[0];
+                    int16_t *ptr_r = (int16_t *) srcAVFrame->extended_data[1];
+                    for (int i = 0; i < srcAVFrame->nb_samples; i++) {
+                        /*fwrite(ptr_l++, sizeof(int16_t), 1, outfile);
+                        fwrite(ptr_r++, sizeof(int16_t), 1, outfile);*/
+                    }
+
+                    //Audacity: big endian 32bit stereo start offset 7 (but has noise)
+                } else if (audioAVSampleFormat == AV_SAMPLE_FMT_FLTP) {
+                    float *ptr_l = (float *) srcAVFrame->extended_data[0];
+                    float *ptr_r = (float *) srcAVFrame->extended_data[1];
+                    for (int i = 0; i < srcAVFrame->nb_samples; i++) {
+                        /*fwrite(ptr_l++, sizeof(float), 1, outfile);
+                        fwrite(ptr_r++, sizeof(float), 1, outfile);*/
+                    }
+                }
             }
         }
         av_free_packet(avPacket);
@@ -444,8 +544,9 @@ int simplest_ffmpeg_player() {
 
     sws_freeContext(swsContext);
     av_frame_free(&srcAVFrame);
-    av_frame_free(&dstAVFrameYUV);
+    av_frame_free(&dstAVFrame);
     avcodec_close(videoAVCodecContext);
+    avcodec_close(audioAVCodecContext);
     avformat_close_input(&avFormatContext);
 
     return 0;
@@ -496,12 +597,12 @@ int how_to_use_sws_scale() {
 
     // ********* Initialize software scaling *********
     // ********* sws_getContext **********************
-    img_convert_ctx = sws_getContext(in_width, in_height,
+    /*img_convert_ctx = sws_getContext(in_width, in_height,
                                      PIX_FMT_YUV420P,
                                      out_width, out_height,
                                      PIX_FMT_YUV420P,
                                      SWS_POINT,
-                                     NULL, NULL, NULL);
+                                     NULL, NULL, NULL);*/
     if (img_convert_ctx == NULL) {
         fprintf(stderr, "Cannot initialize the conversion context!\n");
         return -1;
@@ -708,6 +809,236 @@ int simplest_ffmpeg_swscale() {
 
     return 0;
 }
+
+#define INBUF_SIZE 4096
+#define AUDIO_INBUF_SIZE 20480
+#define AUDIO_REFILL_THRESH 4096
+
+void video_encode_example(const char *filename, int codec_id) {
+    AVCodec *codec;
+    AVCodecContext *c = NULL;
+    int i = 0;
+    int out_size = 0;
+    int outbuf_size = 0;
+    int inbuf_size = 0;
+
+
+    FILE *f, *InputFileHead;
+    AVFrame *picture;
+    uint8_t *outbuf, *inbuf;
+    int had_output = 0;
+
+
+    int index = 0;
+
+
+    printf("Video encoding\n");
+
+
+    /* find the mpeg1 video encoder */
+    codec = avcodec_find_encoder((AVCodecID) codec_id);
+    if (!codec) {
+        fprintf(stderr, "codec not found\n");
+        exit(1);
+    }
+
+
+    c = avcodec_alloc_context3(codec);
+//    picture = avcodec_alloc_frame(); //这里分配了帧
+
+
+
+    /* put sample parameters */
+    c->bit_rate = 400000 * 2;
+    /* resolution must be a multiple of two */
+    c->width = 640;//1920;//352;
+    c->height = 480;//1080;//288;
+    /* frames per second */
+    c->time_base.num = 1; //= (AVRational){1,25};
+    c->time_base.den = 24;
+    c->gop_size = 10; /* emit one intra frame every ten frames */
+    c->max_b_frames = 1;
+    c->pix_fmt = AV_PIX_FMT_YUV420P;
+
+
+//下面的参数影响着编码出视频的质量,没有这两个参数视频会有些模糊的马赛克,加入这两个参数值就没有了
+//Q值最小值
+    c->qmin = 1;
+//Q值最大值.
+    c->qmax = 5;
+
+
+//    if (codec_id == CODEC_ID_H264)
+//        av_opt_set(c->priv_data, "preset", "slow", 0);
+
+
+    /* open it */
+    if (avcodec_open2(c, codec, NULL) < 0) {
+        fprintf(stderr, "could not open codec\n");
+        exit(1);
+    }
+
+
+    f = fopen(filename, "wb");
+    if (!f) {
+        fprintf(stderr, "could not open %s\n", filename);
+        exit(1);
+    }
+
+
+//编码一张位图图像
+    InputFileHead = fopen("C:\\a.bmp", "r"); //注意：这里的位图文件路径设置成你的文件，同时注意位图文件的宽高也作同样的修改
+
+    /* alloc image and output buffer */
+    outbuf_size = 100000 + 12 * c->width * c->height;
+    outbuf = (uint8_t *) malloc(outbuf_size);
+
+
+//分配内存大小
+    inbuf_size = c->width * c->height * 3;
+    inbuf = (uint8_t *) malloc(inbuf_size);
+
+
+    /* the image can be allocated by any means and av_image_alloc() is
+     * just the most convenient way if av_malloc() is to be used */
+    av_image_alloc(picture->data, picture->linesize,
+                   c->width, c->height, c->pix_fmt, 1);
+
+
+//----------------------------------------------------------------------------------------------
+//这里用来加载一张图片来进行编码
+    fseek(InputFileHead, 54, SEEK_SET);
+    fread(inbuf, 1, inbuf_size, InputFileHead);
+
+    struct SwsContext *sws;
+//下面的位图转完是倒立的
+    uint8_t *rgb_src[3] = {inbuf, NULL, NULL};
+    int rgb_stride[3] = {3 * c->width, 0, 0};
+
+//    sws = sws_getContext(c->width, c->height, PIX_FMT_RGB24, c->width, c->height, AV_PIX_FMT_YUV420P, 2, NULL, NULL, NULL);
+    sws_scale(sws, (const uint8_t *const *) rgb_src, rgb_stride, 0, c->height, picture->data, picture->linesize);
+
+
+//----------------------------------------------------------------------------------------------
+
+
+    /* encode 1 second of video */
+
+    while (i < 350/*feof(InputFile)*/) {
+        fflush(stdout);
+
+
+        /* encode the image */
+//        out_size = avcodec_encode_video(c, outbuf, outbuf_size, picture);
+        had_output |= out_size;
+        printf("encoding frame %3d (size=%5d)\n", i++, out_size);
+        fwrite(outbuf, 1, out_size, f);
+    }
+
+
+
+    /* get the delayed frames */
+    for (; out_size || !had_output; i++) {
+        fflush(stdout);
+
+
+//        out_size = avcodec_encode_video(c, outbuf, outbuf_size, NULL);
+        had_output |= out_size;
+        printf("write frame %3d (size=%5d)\n", i, out_size);
+        fwrite(outbuf, 1, out_size, f);
+    }
+
+
+    /* add sequence end code to have a real mpeg file */
+    outbuf[0] = 0x00;
+    outbuf[1] = 0x00;
+    outbuf[2] = 0x01;
+    outbuf[3] = 0xb7;
+    fwrite(outbuf, 1, 4, f);
+    fclose(f);
+    free(outbuf);
+
+
+    avcodec_close(c);
+    av_free(c);
+    //av_free(picture->data[0]);
+    av_free(picture);
+    printf("\n");
+}
+
+//int audio_decoder() {
+//    const char *input_filename = "";
+//    av_register_all();
+//    AVFormatContext *container = avformat_alloc_context();
+//    if (avformat_open_input(&container, input_filename, NULL, NULL) < 0) {
+//        printf("Could not open file");
+//        return -1;
+//    }
+//    if (avformat_find_stream_info(container, NULL) < 0) {
+//        printf("Could not find file info");
+//        return -1;
+//    }
+//    av_dump_format(container, 0, input_filename, false);
+//    int stream_id = -1;
+//    int i;
+//    for (i = 0; i < container->nb_streams; i++) {
+//        if (container->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+//            stream_id = i;
+//            break;
+//        }
+//    }
+//    if (stream_id == -1) {
+//        printf("Could not find Audio Stream");
+//    }
+//    AVDictionary *metadata = container->metadata;
+//    AVCodecContext *ctx = container->streams[stream_id]->codec;
+//    AVCodec *codec = avcodec_find_decoder(ctx->codec_id);
+//    if (codec == NULL) {
+//        printf("cannot find codec!");
+//    }
+//    if (avcodec_open2(ctx, codec, NULL) < 0) {
+//        printf("Codec cannot be found");
+//    }
+//    AVSampleFormat sfmt = ctx->sample_fmt;
+//    AVPacket packet;
+//    av_init_packet(&packet);
+//    AVFrame *frame = avcodec_alloc_frame();
+//    // int buffer_size = AVCODEC_MAX_AUDIO_FRAME_SIZE + FF_INPUT_BUFFER_PADDING_SIZE;
+//    int buffer_size = 64;
+//    uint8_t buffer[buffer_size];
+//    packet.data = buffer;
+//    packet.size = buffer_size;
+//    FILE *outfile = fopen("test.raw", "wb");
+//    int len;
+//    int frameFinished = 0;
+//    while (av_read_frame(container, &packet) >= 0) {
+//        if (packet.stream_index == stream_id) {
+//            //printf("Audio Frame read \n");
+//            int len = avcodec_decode_audio4(ctx, frame, &frameFinished, &packet);
+//            if (frameFinished) {
+//                if (sfmt == AV_SAMPLE_FMT_S16P) { // Audacity: 16bit PCM little endian stereo
+//                    int16_t *ptr_l = (int16_t *) frame->extended_data[0];
+//                    int16_t *ptr_r = (int16_t *) frame->extended_data[1];
+//                    for (int i = 0; i < frame->nb_samples; i++) {
+//                        fwrite(ptr_l++, sizeof(int16_t), 1, outfile);
+//                        fwrite(ptr_r++, sizeof(int16_t), 1, outfile);
+//                    }
+//                } else if (sfmt ==
+//                           AV_SAMPLE_FMT_FLTP) { //Audacity: big endian 32bit stereo start offset 7 (but has noise)
+//                    float *ptr_l = (float *) frame->extended_data[0];
+//                    float *ptr_r = (float *) frame->extended_data[1];
+//                    for (int i = 0; i < frame->nb_samples; i++) {
+//                        fwrite(ptr_l++, sizeof(float), 1, outfile);
+//                        fwrite(ptr_r++, sizeof(float), 1, outfile);
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    fclose(outfile);
+//    avformat_close_input(&container);
+//    return 0;
+//}
 
 /***
  用typedef重定义类型名

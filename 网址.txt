@@ -71,6 +71,9 @@ https://segmentfault.com/a/1190000008413814 最纯粹的Android直播技术实�
 https://blog.csdn.net/leixiaohua1020/article/details/44220151 FFmpeg源代码结构图 
 https://blog.csdn.net/weixinhum/article/details/37731011 利用FFmpge进行视频解码(从H264视频流到图像)
 https://blog.csdn.net/weixinhum/article/details/37705253 利用FFmpge进行视频压缩(从图像到H264视频流)
+https://blog.csdn.net/leixiaohua1020/article/details/12029505 ffmpeg中的sws_scale算法性能测试
+https://blog.csdn.net/coloriy/article/details/47146899 H264概念之I P B帧
+https://bbs.csdn.net/forums/Multimedia 多媒体/流媒体开发论坛
 
 
 
