@@ -44,15 +44,31 @@ init
 digui ${currentDir}
 
 #-l动态库名称
+#发现没有libpostproc.so这个动态库,因此需要像下面这样操作一下
+#ln -s libpostproc-ffmpeg.so.53.3.100 libpostproc.so
 # echo ${codeFiles}
+
+ffmpegLibPath="/root/mydev/tools/ffmpeg/lib"
+sdlLibPath="/usr/include/SDL2"
+
 g++ \
 -x c++ \
 -o run_me \
 -g -Wall -std=c++11 \
 ${codeFiles} \
+-L${sdlLibPath} -lSDL2 \
+-L${sdlLibPath} -lSDL2main \
+-L${ffmpegLibPath} -lavformat \
+-L${ffmpegLibPath} -lavdevice \
+-L${ffmpegLibPath} -lavcodec \
+-L${ffmpegLibPath} -lavutil \
+-L${ffmpegLibPath} -lavfilter \
+-L${ffmpegLibPath} -lswscale \
+-L${ffmpegLibPath} -lswresample \
+-lpostproc \
+-llzma \
 -lsqlite3 \
--lpthread \
--lSDL2 -lSDL2main -lavformat -lavcodec -lavutil -lswscale \
+-lz -lrt -lm -lpthread \
 
 if [[ -e ${currentDir}"/"run_me ]]; then
 	# run

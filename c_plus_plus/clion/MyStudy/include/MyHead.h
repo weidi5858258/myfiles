@@ -28,6 +28,7 @@ extern "C" {// 不能少
 #include <libavcodec/avcodec.h>
 #include <libavdevice/avdevice.h>
 #include <libavformat/avformat.h>
+#include "libswresample/swresample.h"
 #include <libswscale/swscale.h>
 #include <libavfilter/avfilter.h>
 #include <libavfilter/buffersink.h>
@@ -60,7 +61,10 @@ extern "C" {// 不能少
 
 #include "Test.h"
 
+#define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
+
 using namespace std;
+
 
 
 #endif //MYSTUDY_MYHEAD_H

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 project(MyStudy)
 
 set(CMAKE_CXX_STANDARD 11)
-#add_definitions(-std=c++11)
+add_definitions(-std=c++11)
 
 add_executable(MyStudy
         main.cpp
@@ -13,86 +13,44 @@ add_executable(MyStudy
         src/Pointer.cpp
         )
 
-#set(FFMPEG_DLL
-#        C:/mydev/tools/ffmpeg-dev/lib
-#)
-#
-#link_directories(
-#        libs/libSDL2.a
-#        libs/libSDL2main.a
-##        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib
-#)
+if (WIN32)
+    include_directories(
+            C:/mydev/tools/ffmpeg-dev/include
+            C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include
+    )
 
+else ()
+    #    link_directories(
+    #            /usr/include/SDL2
+    #    )
 
-#target_link_libraries(MyStudy
-#        ${PROJECT_SOURCE_DIR}/libs
-#        )
+    set(FFMPEG_LIB_PATH
+            /root/mydev/tools/ffmpeg/lib)
 
-#find_library(MyStudy
-#        ${FFMPEG_DLL}/libSDL2.dll.a
-#        ${FFMPEG_DLL}/libSDL2main.dll.a
-#        ${FFMPEG_DLL}/libavformat.dll.a
-#        ${FFMPEG_DLL}/libavcodec.dll.a
-#        ${FFMPEG_DLL}/libavutil.dll.a
-#        ${FFMPEG_DLL}/libswscale.dll.a
-#)
+    set(SDL2_LIB_PATH
+            /usr/include/SDL2)
 
-link_directories(
-        C:/mydev/tools/ffmpeg-dev/lib
-        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib
-        C:/mydev/tools/ffmpeg-dev/libs
-)
+    target_link_libraries(MyStudy
+            -L${FFMPEG_LIB_PATH} -lavformat
+            -L${FFMPEG_LIB_PATH} -lavcodec
+            -L${FFMPEG_LIB_PATH} -lavdevice
+            -L${FFMPEG_LIB_PATH} -lavfilter
+            -L${FFMPEG_LIB_PATH} -lavutil
+            -L${FFMPEG_LIB_PATH} -lswresample
+            -L${FFMPEG_LIB_PATH} -lswscale
+            -L${SDL2_LIB_PATH} -lSDL2
+            -L${SDL2_LIB_PATH} -lSDL2main
+            -llzma
+            -lsqlite3
+            -lz -lrt -lm -lpthread
+            )
 
-#link_libraries(
-#        avcodec.lib
-#        avdevice.lib
-#        avfilter.lib
-#        avformat.lib
-#        avutil.lib
-#        postproc.lib
-#        swresample.lib
-#        swscale.lib
-#        libSDL2.dll.a
-#        libSDL2main.a
-#        -LC:/mydev/tools/ffmpeg-dev/libs -lavcodec-58
-#        C:/mydev/tools/ffmpeg-dev/libs/avdevice-58.dll
-#        C:/mydev/tools/ffmpeg-dev/libs/avfilter-7.dll
-#        C:/mydev/tools/ffmpeg-dev/libs/avutil-56.dll
-#        C:/mydev/tools/ffmpeg-dev/libs/postproc-55.dll
-#        C:/mydev/tools/ffmpeg-dev/libs/swscale-5.dll
-#        C:/mydev/tools/ffmpeg-dev/libs/swresample-3.dll
-#        #        C:/mydev/tools/ffmpeg-dev/libs/SDL2main
-#        C:/mydev/tools/ffmpeg-dev/libs/SDL2.dll
-#)
+    include_directories(
+            /root/mydev/tools/ffmpeg/include
+            /usr/include/SDL2
+    )
 
-set(TARGET_LIB
-        "C:/mydev/tools/ffmpeg-dev/lib/avformat.lib"
-        )
-
-if(WIN32)
-    target_link_libraries(MyStudy ${TARGET_LIB})
-#    target_link_libraries(MyStudy
-#            -LC:/mydev/tools/ffmpeg-dev/lib -llibavformat
-#            -LC:/mydev/tools/ffmpeg-dev/lib -lavdevice.dll
-#            -LC:/mydev/tools/ffmpeg-dev/lib -lavcodec.dll
-#            -LC:/mydev/tools/ffmpeg-dev/lib -lavfilter.dll
-#            -LC:/mydev/tools/ffmpeg-dev/lib -lavutil.dll
-#            -LC:/mydev/tools/ffmpeg-dev/lib -lpostproc.dll
-#            -LC:/mydev/tools/ffmpeg-dev/lib -lswresample.dll
-#            -LC:/mydev/tools/ffmpeg-dev/lib -lswscale.dll
-#            -LC:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib -lSDL2.dll
-#            -LC:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib -lSDL2main
-#            )
-endif()
-
-#target_link_libraries(MyStudy
-#        ${FFMPEG_DLL_PATH}/SDL2.dll
-#        ${FFMPEG_DLL_PATH}/SDL2main.dll
-#        ${FFMPEG_DLL_PATH}/avformat.dll
-#        ${FFMPEG_DLL_PATH}/avcodec.dll
-#        ${FFMPEG_DLL_PATH}/avutil.dll
-#        ${FFMPEG_DLL_PATH}/swscale.dll
-#        )
+endif ()
 
 ################################################################
 
@@ -172,17 +130,6 @@ endif()
 #        )
 
 ######################################################
-
-set(ANDROID_INCLUDE_PATH
-        /root/mydev/android)
-
-include_directories(
-#        include
-        C:/mydev/tools/ffmpeg-dev/include
-        C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include
-        /usr/include/x86_64-linux-gnu
-        /usr/include/SDL2
-)
 
 #set(ANDROID_INCLUDE_PATH
 #        /root/mydev/android)
