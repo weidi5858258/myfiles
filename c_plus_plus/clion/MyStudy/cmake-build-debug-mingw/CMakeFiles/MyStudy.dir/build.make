@@ -171,7 +171,6 @@ MyStudy.exe: CMakeFiles/MyStudy.dir/src/B0.cpp.obj
 MyStudy.exe: CMakeFiles/MyStudy.dir/src/Test.cpp.obj
 MyStudy.exe: CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj
 MyStudy.exe: CMakeFiles/MyStudy.dir/build.make
-MyStudy.exe: C:/mydev/tools/ffmpeg-dev/lib/avformat.lib
 MyStudy.exe: CMakeFiles/MyStudy.dir/linklibs.rsp
 MyStudy.exe: CMakeFiles/MyStudy.dir/objects1.rsp
 MyStudy.exe: CMakeFiles/MyStudy.dir/link.txt

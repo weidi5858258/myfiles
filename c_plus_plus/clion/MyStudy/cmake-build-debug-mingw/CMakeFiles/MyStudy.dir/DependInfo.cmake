@@ -13,10 +13,9 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
+  "../include"
   "C:/mydev/tools/ffmpeg-dev/include"
   "C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include"
-  "/usr/include/x86_64-linux-gnu"
-  "/usr/include/SDL2"
   )
 
 # Targets to which this target links.

@@ -24,10 +24,9 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add directory="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include"/>
 					<Add directory="C:/mydev/tools/ffmpeg-dev/include"/>
 					<Add directory="C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include/SDL2"/>
 					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
 					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
 					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>
@@ -50,10 +49,9 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add directory="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include"/>
 					<Add directory="C:/mydev/tools/ffmpeg-dev/include"/>
 					<Add directory="C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include/SDL2"/>
 					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++"/>
 					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/mingw32"/>
 					<Add directory="c:\mingw\bin\../lib/gcc/mingw32/6.3.0/include/c++/backward"/>

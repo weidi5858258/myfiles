@@ -48,8 +48,14 @@ digui ${currentDir}
 #ln -s libpostproc-ffmpeg.so.53.3.100 libpostproc.so
 # echo ${codeFiles}
 
-ffmpegLibPath="/root/mydev/tools/ffmpeg/lib"
-sdlLibPath="/usr/include/SDL2"
+currentSystem="${1}"
+if [[ ${currentSystem} == "ubuntu" ]]; then
+    ffmpegLibPath="/root/mydev/tools/ffmpeg/lib"
+    sdlLibPath="/usr/include/SDL2"
+else
+    ffmpegLibPath="/mnt/d/mydev/ffmpeg/lib"
+    sdlLibPath="/usr/include/SDL2"
+fi
 
 g++ \
 -x c++ \
@@ -65,11 +71,11 @@ ${codeFiles} \
 -L${ffmpegLibPath} -lavfilter \
 -L${ffmpegLibPath} -lswscale \
 -L${ffmpegLibPath} -lswresample \
--lpostproc \
 -llzma \
 -lsqlite3 \
 -lz -lrt -lm -lpthread \
 
+#-lpostproc \
 if [[ -e ${currentDir}"/"run_me ]]; then
 	# run
 	./run_me

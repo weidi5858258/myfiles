@@ -80,6 +80,8 @@ CMakeFiles/MyStudy.dir/main.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil
 CMakeFiles/MyStudy.dir/main.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/rational.h
 CMakeFiles/MyStudy.dir/main.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/samplefmt.h
 CMakeFiles/MyStudy.dir/main.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/version.h
+CMakeFiles/MyStudy.dir/main.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswresample/swresample.h
+CMakeFiles/MyStudy.dir/main.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswresample/version.h
 CMakeFiles/MyStudy.dir/main.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswscale/swscale.h
 CMakeFiles/MyStudy.dir/main.cpp.obj: ../include/MyHead.h
 CMakeFiles/MyStudy.dir/main.cpp.obj: ../include/Test.h
@@ -166,6 +168,8 @@ CMakeFiles/MyStudy.dir/src/B0.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavut
 CMakeFiles/MyStudy.dir/src/B0.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/rational.h
 CMakeFiles/MyStudy.dir/src/B0.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/samplefmt.h
 CMakeFiles/MyStudy.dir/src/B0.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/version.h
+CMakeFiles/MyStudy.dir/src/B0.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswresample/swresample.h
+CMakeFiles/MyStudy.dir/src/B0.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswresample/version.h
 CMakeFiles/MyStudy.dir/src/B0.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswscale/swscale.h
 CMakeFiles/MyStudy.dir/src/B0.cpp.obj: ../include/MyHead.h
 CMakeFiles/MyStudy.dir/src/B0.cpp.obj: ../include/Test.h
@@ -250,6 +254,8 @@ CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/li
 CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/rational.h
 CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/samplefmt.h
 CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/version.h
+CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswresample/swresample.h
+CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswresample/version.h
 CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswscale/swscale.h
 CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj: ../include/MyHead.h
 CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj: ../include/Test.h
@@ -334,6 +340,8 @@ CMakeFiles/MyStudy.dir/src/Test.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libav
 CMakeFiles/MyStudy.dir/src/Test.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/rational.h
 CMakeFiles/MyStudy.dir/src/Test.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/samplefmt.h
 CMakeFiles/MyStudy.dir/src/Test.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libavutil/version.h
+CMakeFiles/MyStudy.dir/src/Test.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswresample/swresample.h
+CMakeFiles/MyStudy.dir/src/Test.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswresample/version.h
 CMakeFiles/MyStudy.dir/src/Test.cpp.obj: C:/mydev/tools/ffmpeg-dev/include/libswscale/swscale.h
 CMakeFiles/MyStudy.dir/src/Test.cpp.obj: ../include/MyHead.h
 CMakeFiles/MyStudy.dir/src/Test.cpp.obj: ../include/Test.h

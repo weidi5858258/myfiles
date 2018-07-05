@@ -254,8 +254,8 @@ int simplest_ffmpeg_player2() {
     int result, got_picture_ptr, got_picture_ptr_audio;
 
 //    char filePath[] = "http://192.168.0.131:8080/video/aaaaa.mp4";
-    char filePath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
-//    char filePath[] = "/mnt/d/Tools/apache-tomcat-8.5.23/webapps/ROOT/video/kingsman.mp4";
+//    char filePath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
+    char filePath[] = "/mnt/d/Tools/apache-tomcat-8.5.23/webapps/ROOT/video/kingsman.mp4";
 
     // 屏幕宽高
     int screen_w = 0, screen_h = 0;

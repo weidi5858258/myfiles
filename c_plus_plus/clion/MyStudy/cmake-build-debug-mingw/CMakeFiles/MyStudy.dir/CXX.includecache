@@ -932,6 +932,22 @@ C:/mydev/tools/ffmpeg-dev/include/libavutil/version.h
 macros.h
 C:/mydev/tools/ffmpeg-dev/include/libavutil/macros.h
 
+C:/mydev/tools/ffmpeg-dev/include/libswresample/swresample.h
+stdint.h
+-
+libavutil/channel_layout.h
+C:/mydev/tools/ffmpeg-dev/include/libswresample/libavutil/channel_layout.h
+libavutil/frame.h
+C:/mydev/tools/ffmpeg-dev/include/libswresample/libavutil/frame.h
+libavutil/samplefmt.h
+C:/mydev/tools/ffmpeg-dev/include/libswresample/libavutil/samplefmt.h
+libswresample/version.h
+C:/mydev/tools/ffmpeg-dev/include/libswresample/libswresample/version.h
+
+C:/mydev/tools/ffmpeg-dev/include/libswresample/version.h
+libavutil/avutil.h
+C:/mydev/tools/ffmpeg-dev/include/libswresample/libavutil/avutil.h
+
 C:/mydev/tools/ffmpeg-dev/include/libswscale/swscale.h
 stdint.h
 -
@@ -975,6 +991,8 @@ libavdevice/avdevice.h
 -
 libavformat/avformat.h
 -
+libswresample/swresample.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/libswresample/swresample.h
 libswscale/swscale.h
 -
 libavfilter/avfilter.h

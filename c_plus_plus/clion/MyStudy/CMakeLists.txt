@@ -14,7 +14,31 @@ add_executable(MyStudy
         )
 
 if (WIN32)
+    set(FFMPEG_LIB_PATH
+            C:/mydev/tools/ffmpeg-dev/lib)
+
+    set(SDL2_LIB_PATH
+            C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib)
+
+    target_link_libraries(MyStudy
+            -L${FFMPEG_LIB_PATH} -lavformat
+            -L${FFMPEG_LIB_PATH} -lavcodec
+            -L${FFMPEG_LIB_PATH} -lavdevice
+            -L${FFMPEG_LIB_PATH} -lavfilter
+            -L${FFMPEG_LIB_PATH} -lavutil
+            -L${FFMPEG_LIB_PATH} -lswresample
+            -L${FFMPEG_LIB_PATH} -lswscale
+            -L${SDL2_LIB_PATH} -lSDL2
+            -L${SDL2_LIB_PATH} -lSDL2main
+            )
+#            -L"C:/MinGW/lib" -lmingw32
+#            -lz
+#            -lm -lpthread
+#            -llzma
+#            -lrt
+
     include_directories(
+            include
             C:/mydev/tools/ffmpeg-dev/include
             C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include
     )
@@ -46,6 +70,7 @@ else ()
             )
 
     include_directories(
+            include
             /root/mydev/tools/ffmpeg/include
             /usr/include/SDL2
     )
