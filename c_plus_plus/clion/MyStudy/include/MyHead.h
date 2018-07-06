@@ -41,6 +41,7 @@ extern "C" {// 不能少
 #include <libavutil/pixfmt.h>
 #include <libavutil/fifo.h>
 #include <libavutil/opt.h>
+#include <libavutil/mem.h>
 
 #include <SDL2/SDL.h>
 };
@@ -62,6 +63,8 @@ extern "C" {// 不能少
 #include "Test.h"
 
 #define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
+#define AUDIO_INBUF_SIZE 20480
+#define AUDIO_REFILL_THRESH 4096
 
 using namespace std;
 

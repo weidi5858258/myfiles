@@ -79,6 +79,14 @@ https://www.longqi.cf/tools/2015/02/13/ffmpegcn/ ffmpeg的中文文档
 https://ffmpeg.org/doxygen/4.0/index.html FFmpeg Documentation
 https://blog.csdn.net/leixiaohua1020/article/details/50618190 最简单的基于FFmpeg的AVfilter的例子-纯净版
 https://blog.csdn.net/x_iya/article/details/52395990 FFmpeg被声明为已否决的解决方案
+https://blog.csdn.net/leixiaohua1020/article/details/40246783 最简单的视音频播放示例1：总述
+http://blog.51cto.com/ticktick/1748506 Android音频开发（1）：基础知识
+http://blog.51cto.com/ticktick/2046899 从开发小白到音视频专家
+http://www.hangge.com/blog/cache/detail_1325.html RTMP、RTSP、HTTP视频协议详解（附：直播流地址、播放软件）
+https://join.nordwebsite.net/zh/order/?gclid=EAIaIQobChMI0ofQqfaJ3AIViJiWCh3v8wKlEAEYASAAEgIihPD_BwE NordVPN
+https://blog.csdn.net/leixiaohua1020/article/details/17973587#comments 视音频编解码学习工程：TS封装格式分析器
+https://blog.csdn.net/leixiaohua1020/article/details/15811977#comments [总结]FFMPEG视音频编解码零基础学习方法
+
 
 
 

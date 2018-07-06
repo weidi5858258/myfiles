@@ -10,6 +10,12 @@ int simplest_ffmpeg_player2();
 
 int simplest_ffmpeg_player_sdl2();
 
+int simplest_audio_play_sdl2();
+
+int simplest_ffmpeg_audio_decoder();
+
+int decode_audio();
+
 void fill_audio(void *udata, Uint8 *stream, int len);
 
 /***
@@ -27,8 +33,7 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-    simplest_ffmpeg_player2();
-//    simplest_ffmpeg_player_sdl2();
+    decode_audio();
 
     // test();
     printf("------------------------------------------\n");
@@ -254,8 +259,8 @@ int simplest_ffmpeg_player2() {
     int result, got_picture_ptr, got_picture_ptr_audio;
 
 //    char filePath[] = "http://192.168.0.131:8080/video/aaaaa.mp4";
-//    char filePath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
-    char filePath[] = "/mnt/d/Tools/apache-tomcat-8.5.23/webapps/ROOT/video/kingsman.mp4";
+    char filePath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
+//    char filePath[] = "/mnt/d/Tools/apache-tomcat-8.5.23/webapps/ROOT/video/kingsman.mp4";
 
     // 屏幕宽高
     int screen_w = 0, screen_h = 0;
@@ -328,13 +333,42 @@ int simplest_ffmpeg_player2() {
     screen_h = videoAVCodecParameters->height;// 720
     printf("screen_w = %d, screen_h = %d\n", screen_w, screen_h);
 
-    printf("SDL init\n");
-
-    // SDL init
+    /***
+    extern DECLSPEC int SDLCALL SDL_Init(Uint32 flags)
+    SDL_INIT_TIMER：定时器
+    SDL_INIT_AUDIO：音频
+    SDL_INIT_VIDEO：视频
+    SDL_INIT_JOYSTICK：摇杆
+    SDL_INIT_HAPTIC：触摸屏
+    SDL_INIT_GAMECONTROLLER：游戏控制器
+    SDL_INIT_EVENTS：事件
+    SDL_INIT_NOPARACHUTE：不捕获关键信号（这个没研究过）
+    SDL_INIT_EVERYTHING：包含上述所有选项
+     */
+    printf("SDL_Init初始化SDL\n");
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
         printf("Could not initialize SDL - %s\n", SDL_GetError());
         return -1;
     }
+    /***
+    extern DECLSPEC SDL_Window * SDLCALL SDL_CreateWindow(const char *title,
+                                                          int x, int y, int w,
+                                                          int h, Uint32 flags)
+                                                          参数含义如下。
+    title  ：窗口标题
+    x       ：窗口位置x坐标。也可以设置为SDL_WINDOWPOS_CENTERED或SDL_WINDOWPOS_UNDEFINED。
+    y       ：窗口位置y坐标。同上。
+    w      ：窗口的宽
+    h       ：窗口的高
+    flags ：支持下列标识。包括了窗口的是否最大化、最小化，能否调整边界等等属性。
+           ::SDL_WINDOW_FULLSCREEN,    ::SDL_WINDOW_OPENGL,
+           ::SDL_WINDOW_HIDDEN,        ::SDL_WINDOW_BORDERLESS,
+           ::SDL_WINDOW_RESIZABLE,     ::SDL_WINDOW_MAXIMIZED,
+           ::SDL_WINDOW_MINIMIZED,     ::SDL_WINDOW_INPUT_GRABBED,
+           ::SDL_WINDOW_ALLOW_HIGHDPI.
+     返回创建完成的窗口的ID。如果创建失败则返回0。
+     */
+    printf("SDL_CreateWindow创建窗口\n");
     window = SDL_CreateWindow("Simplest ffmpeg player's Window",
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
@@ -345,14 +379,54 @@ int simplest_ffmpeg_player2() {
         printf("SDL: could not create window - exiting:%s\n", SDL_GetError());
         return -1;
     }
+    /***
+    extern DECLSPEC SDL_Renderer * SDLCALL SDL_CreateRenderer(SDL_Window * window,
+                                           int index, Uint32 flags)
+    参数含义如下。
+    window    ： 渲染的目标窗口。
+    index         ：打算初始化的渲染设备的索引。设置“-1”则初始化默认的渲染设备。
+    flags          ：支持以下值（位于SDL_RendererFlags定义中）
+        SDL_RENDERER_SOFTWARE ：使用软件渲染
+        SDL_RENDERER_ACCELERATED ：使用硬件加速
+        SDL_RENDERER_PRESENTVSYNC：和显示器的刷新率同步
+        SDL_RENDERER_TARGETTEXTURE ：不太懂
+    返回创建完成的渲染器的ID。如果创建失败则返回NULL。
+     */
+    printf("SDL_CreateRenderer基于窗口创建渲染器\n");
     renderer = SDL_CreateRenderer(window, -1, 0);
-    //IYUV: Y + U + V  (3 planes)
-    //YV12: Y + V + U  (3 planes)
+    if (renderer == NULL) {
+        printf("SDL_CreateRenderer基于窗口创建渲染器失败\n");
+        return -1;
+    }
+    /***
+    IYUV: Y + U + V  (3 planes)
+    YV12: Y + V + U  (3 planes)
+    extern DECLSPEC SDL_Texture * SDLCALL SDL_CreateTexture(SDL_Renderer * renderer,
+                                                    Uint32 format,
+                                                    int access, int w,
+                                                    int h)
+    参数的含义如下。
+    renderer：目标渲染器。
+    format      ：纹理的格式。后面会详述。
+    access      ：可以取以下值（定义位于SDL_TextureAccess中）
+        SDL_TEXTUREACCESS_STATIC           ：变化极少
+        SDL_TEXTUREACCESS_STREAMING        ：变化频繁
+        SDL_TEXTUREACCESS_TARGET           ：暂时没有理解
+    w               ：纹理的宽
+    h                ：纹理的高
+    创建成功则返回纹理的ID，失败返回0。
+    在纹理的创建过程中，需要指定纹理的格式（即第二个参数）。
+     */
+    printf("SDL_CreateTexture创建纹理\n");
     texture = SDL_CreateTexture(renderer,
                                 SDL_PIXELFORMAT_IYUV,
                                 SDL_TEXTUREACCESS_STREAMING,
                                 screen_w,
                                 screen_h);
+    if (texture == NULL) {
+        printf("SDL_CreateTexture创建纹理失败\n");
+        return -1;
+    }
     sdlRect.x = 0;
     sdlRect.y = 0;
     sdlRect.w = screen_w;
@@ -572,13 +646,39 @@ int simplest_ffmpeg_player2() {
                           dstAVFrame->linesize);
 
                 // 下面代码的意思是把Y U V数据渲染到SDL容器上
+                /***
+                 设置纹理的数据
+                 extern DECLSPEC int SDLCALL SDL_UpdateYUVTexture(SDL_Texture * texture,
+                                                                 const SDL_Rect * rect,
+                                                                 const Uint8 *Yplane, int Ypitch,
+                                                                 const Uint8 *Uplane, int Upitch,
+                                                                 const Uint8 *Vplane, int Vpitch)
+                 参数的含义如下。
+                texture：目标纹理。
+                rect：更新像素的矩形区域。设置为NULL的时候更新整个区域。
+                pixels：像素数据。
+                pitch：一行像素数据的字节数。
+                成功的话返回0，失败的话返回-1。
+                 */
                 SDL_UpdateYUVTexture(texture,
                                      &sdlRect,
                                      dstAVFrame->data[0], dstAVFrame->linesize[0],
                                      dstAVFrame->data[1], dstAVFrame->linesize[1],
                                      dstAVFrame->data[2], dstAVFrame->linesize[2]);
+                // 先使用SDL_RenderClear()清空渲染目标
+                // 实际上视频播放的时候不使用SDL_RenderClear()也是可以的，因为视频的后一帧会完全覆盖前一帧
                 SDL_RenderClear(renderer);
+                /***
+                纹理复制给渲染目标
+                参数的含义如下。
+                renderer：渲染目标。
+                texture：输入纹理。
+                srcrect：选择输入纹理的一块矩形区域作为输入。设置为NULL的时候整个纹理作为输入。
+                dstrect：选择渲染目标的一块矩形区域作为输出。设置为NULL的时候整个渲染目标作为输出。
+                成功的话返回0，失败的话返回-1。
+                 */
                 SDL_RenderCopy(renderer, texture, NULL, &sdlRect);
+                // 显示画面
                 SDL_RenderPresent(renderer);
 
                 //Delay 40ms
@@ -628,6 +728,9 @@ int simplest_ffmpeg_player2() {
                     }*/
 
                     /***
+                     解码得到的数据类型为float 4bit，
+                     而播放器播放的格式一般为S16（signed 16bit）,
+                     就需要对解码得到的数据进行转换
                      int swr_convert(struct SwrContext *s,
                                      uint8_t **out,
                                      int out_count,
@@ -640,7 +743,7 @@ int simplest_ffmpeg_player2() {
                                 (const uint8_t **) srcAVFrame->data,
                                 srcAVFrame->nb_samples);
 
-                    // printf("index:%5d\t pts:%lld\t packet size:%d\n", index, packet->pts, packet->size);
+                    printf("index:%5d\tavPacket->pts:%lld\tavPacket->size:%d\n", index, avPacket->pts, avPacket->size);
 
                     index++;
 
@@ -1670,6 +1773,380 @@ void fill_audio(void *udata, Uint8 *stream, int len) {
 //    avformat_close_input(&container);
 //    return 0;
 //}
+
+int simplest_audio_play_sdl2() {
+    //Init
+    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
+        printf("Could not initialize SDL - %s\n", SDL_GetError());
+        return -1;
+    }
+    //SDL_AudioSpec
+    SDL_AudioSpec wanted_spec;
+    wanted_spec.freq = 44100;
+    wanted_spec.format = AUDIO_S16SYS;
+    wanted_spec.channels = 2;
+    wanted_spec.silence = 0;
+    wanted_spec.samples = 1024;
+    wanted_spec.callback = fill_audio;
+
+    if (SDL_OpenAudio(&wanted_spec, NULL) < 0) {
+        printf("can't open audio.\n");
+        return -1;
+    }
+
+    FILE *fp = fopen("/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/NocturneNo2inEflat_44.1k_s16le.pcm",
+                     "rb+");
+    if (fp == NULL) {
+        printf("cannot open this file\n");
+        return -1;
+    }
+    //For YUV420P
+    int pcm_buffer_size = 4096;
+    char *pcm_buffer = (char *) malloc(pcm_buffer_size);
+    int data_count = 0;
+
+    while (1) {
+        if (fread(pcm_buffer, 1, pcm_buffer_size, fp) != pcm_buffer_size) {
+            // Loop
+            fseek(fp, 0, SEEK_SET);
+            fread(pcm_buffer, 1, pcm_buffer_size, fp);
+            data_count = 0;
+        }
+        printf("Now Playing %10d Bytes data.\n", data_count);
+        data_count += pcm_buffer_size;
+        //Set audio buffer (PCM data)
+        audio_chunk = (Uint8 *) pcm_buffer;
+        //Audio buffer length
+        audio_len = pcm_buffer_size;
+        audio_pos = audio_chunk;
+        //Play
+        SDL_PauseAudio(0);
+        while (audio_len > 0)//Wait until finish
+            SDL_Delay(1);
+    }
+
+    return 0;
+}
+
+int simplest_ffmpeg_audio_decoder() {
+    int i, audioStreamIndex = -1;
+    int result;
+
+    char filePath[] = "/root/mydev/workspace_github/simplest_ffmpeg_audio_player_2.2/simplest_audio_play_sdl2/aaa.mp3";
+    FILE *pFile = fopen(
+            "/root/mydev/workspace_github/simplest_ffmpeg_audio_player_2.2/simplest_audio_play_sdl2/output.pcm", "wb");
+
+    AVFormatContext *avFormatContext = NULL;
+    AVCodecContext *audioAVCodecContext = NULL;
+    AVCodecParameters *audioAVCodecParameters = NULL;
+    AVCodec *audioAVCodecDecoder = NULL;
+    AVSampleFormat audioAVSampleFormat;
+
+    AVFrame *srcAVFrame = NULL, *dstAVFrame = NULL;
+    // AVPacket结构体的作用是从内存中获取一个视频压缩帧,对于音频可能获取一个或者多个压缩帧.
+    AVPacket *avPacket = NULL;
+    struct SwrContext *audioSwrContext;
+
+    // 注册FFmpeg所有编解码器
+    av_register_all();
+    avformat_network_init();
+    // 得到AVFormatContext结构体
+    avFormatContext = avformat_alloc_context();
+
+    // 打开文件
+    if (avformat_open_input(&avFormatContext, filePath, NULL, NULL)) {
+        printf("Couldn't open input stream.\n");
+        return -1;
+    }
+
+    if (avformat_find_stream_info(avFormatContext, NULL) < 0) {
+        printf("Couldn't find stream information.\n");
+        return -1;
+    }
+
+    int nb_streams = avFormatContext->nb_streams;
+    printf("avFormatContext->nb_streams = %d\n", nb_streams);// 2
+    for (i = 0; i < nb_streams; i++) {
+        AVMediaType avMediaType = avFormatContext->streams[i]->codecpar->codec_type;
+        printf("avMediaType = %d\n", avMediaType);
+        if (avMediaType == AVMEDIA_TYPE_AUDIO) {
+            audioStreamIndex = i;
+            audioAVCodecParameters = avFormatContext->streams[audioStreamIndex]->codecpar;
+            break;
+        }
+    }
+    printf("audioIndex = %d\n", audioStreamIndex);// 0
+    if (audioStreamIndex == -1) {
+        printf("Didn't find a video stream.\n");
+        return -1;
+    }
+
+    // 得到AVCodec结构体
+    // 查找解码器 相应的有查找编码器avcodec_find_encoder
+    audioAVCodecDecoder = avcodec_find_decoder(audioAVCodecParameters->codec_id);
+    if (audioAVCodecDecoder == NULL) {
+        printf("Codec not found.\n");
+        return -1;
+    }
+
+    // 必须要申请内存
+    audioAVCodecContext = avcodec_alloc_context3(NULL);
+    if (audioAVCodecContext == NULL) {
+        printf("videoAVCodecContext is NULL or audioAVCodecContext is NULL.\n");
+        return -1;
+    }
+
+    if (avcodec_parameters_to_context(audioAVCodecContext, audioAVCodecParameters) < 0) {
+        printf("copy audioAVCodecParameters to context fail\n");
+        return -1;
+    }
+
+    // 打开解码器 相应的有打开编码器avcodec_open2
+    if (avcodec_open2(audioAVCodecContext, audioAVCodecDecoder, NULL) < 0) {
+        printf("Could not open codec.\n");
+        return -1;
+    }
+
+    srcAVFrame = av_frame_alloc();
+    dstAVFrame = av_frame_alloc();
+    avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+    av_init_packet(avPacket);
+
+    audioAVSampleFormat = audioAVCodecContext->sample_fmt;
+    printf("audioAVSampleFormat = %d\n", audioAVSampleFormat);
+
+    uint8_t *out_buffer = (uint8_t *) av_malloc(MAX_AUDIO_FRAME_SIZE * 2);
+    //Out Audio Param
+    uint64_t out_channel_layout = AV_CH_LAYOUT_STEREO;
+    //nb_samples: AAC-1024 MP3-1152
+    int out_nb_samples = audioAVCodecContext->frame_size;
+    AVSampleFormat out_sample_fmt = AV_SAMPLE_FMT_S16;
+    int out_sample_rate = 44100;
+    int out_nb_channels = av_get_channel_layout_nb_channels(out_channel_layout);
+    //Out Buffer Size
+    int out_buffer_size = av_samples_get_buffer_size(NULL, out_nb_channels, out_nb_samples, out_sample_fmt, 1);
+    //FIX:Some Codec's Context Information is missing
+    int64_t in_channel_layout = av_get_default_channel_layout(audioAVCodecContext->channels);
+    // Swr init
+    audioSwrContext = swr_alloc();
+    audioSwrContext = swr_alloc_set_opts(audioSwrContext,
+                                         out_channel_layout,
+                                         out_sample_fmt,
+                                         out_sample_rate,
+                                         in_channel_layout,
+                                         audioAVCodecContext->sample_fmt,
+                                         audioAVCodecContext->sample_rate,
+                                         0,
+                                         NULL);
+    swr_init(audioSwrContext);
+
+    int index = 0;
+
+    while (av_read_frame(avFormatContext, avPacket) >= 0) {
+        if (avPacket->stream_index == audioStreamIndex) {
+            result = avcodec_send_packet(audioAVCodecContext, avPacket);
+            // printf("audio result = %d\n", result);
+            switch (result) {
+                case 0:
+                    break;
+                case AVERROR(EAGAIN):
+                    printf("AUDIO AVERROR(EAGAIN)\n");
+                    return -1;
+                case AVERROR(EINVAL):
+                    printf("AUDIO AVERROR(EINVAL)\n");
+                    return -1;
+                case AVERROR(ENOMEM):
+                    printf("AUDIO AVERROR(ENOMEM)\n");
+                    return -1;
+                case AVERROR_EOF:
+                    printf("AUDIO AVERROR_EOF\n");
+                    return -1;
+                default:
+                    printf("AUDIO OTHER ERROR\n");
+                    return -1;
+            }
+            while (avcodec_receive_frame(audioAVCodecContext, srcAVFrame) >= 0) {
+                // Audacity: 16bit PCM little endian stereo
+                if (audioAVSampleFormat == AV_SAMPLE_FMT_S16P) {// 6
+                    int16_t *ptr_l = (int16_t *) srcAVFrame->extended_data[0];
+                    int16_t *ptr_r = (int16_t *) srcAVFrame->extended_data[1];
+                    for (int i = 0; i < srcAVFrame->nb_samples; i++) {
+                        /*fwrite(ptr_l++, sizeof(int16_t), 1, outfile);
+                        fwrite(ptr_r++, sizeof(int16_t), 1, outfile);*/
+                    }
+                    //Audacity: big endian 32bit stereo start offset 7 (but has noise)
+                } else if (audioAVSampleFormat == AV_SAMPLE_FMT_FLTP) {// 8
+                    swr_convert(audioSwrContext,
+                                &out_buffer,
+                                MAX_AUDIO_FRAME_SIZE,
+                                (const uint8_t **) srcAVFrame->data,
+                                srcAVFrame->nb_samples);
+                    /*swr_convert(audioSwrContext,
+                                dstAVFrame->data,
+                                MAX_AUDIO_FRAME_SIZE,
+                                (const uint8_t **) srcAVFrame->data,
+                                srcAVFrame->nb_samples);*/
+
+                    printf("index:%5d\tavPacket->pts:%lld\tavPacket->size:%d\n", index, avPacket->pts, avPacket->size);
+                    //Write PCM
+                    fwrite(out_buffer, 1, out_buffer_size, pFile);
+                    index++;
+                }
+            }
+        }
+        av_packet_unref(avPacket);
+    }
+
+    swr_free(&audioSwrContext);
+    swr_close(audioSwrContext);
+    av_frame_free(&srcAVFrame);
+    av_frame_free(&dstAVFrame);
+    avcodec_close(audioAVCodecContext);
+    avcodec_parameters_free(&audioAVCodecParameters);
+    avformat_close_input(&avFormatContext);
+
+    return 0;
+}
+
+static void decode(AVCodecContext *dec_ctx,
+                   AVPacket *pkt,
+                   AVFrame *frame,
+                   FILE *outfile) {
+    int i, ch;
+    int ret, data_size;
+
+    /* send the packet with the compressed data to the decoder */
+    ret = avcodec_send_packet(dec_ctx, pkt);
+    if (ret < 0) {
+        fprintf(stderr, "Error submitting the packet to the decoder\n");
+        exit(1);
+    }
+
+    /* read all the output frames (in general there may be any number of them */
+    while (ret >= 0) {
+        ret = avcodec_receive_frame(dec_ctx, frame);
+        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+            return;
+        else if (ret < 0) {
+            fprintf(stderr, "Error during decoding\n");
+            exit(1);
+        }
+        data_size = av_get_bytes_per_sample(dec_ctx->sample_fmt);
+        if (data_size < 0) {
+            /* This should not occur, checking just for paranoia */
+            fprintf(stderr, "Failed to calculate data size\n");
+            exit(1);
+        }
+        for (i = 0; i < frame->nb_samples; i++)
+            for (ch = 0; ch < dec_ctx->channels; ch++)
+                fwrite(frame->data[ch] + data_size * i, 1, data_size, outfile);
+    }
+}
+
+int decode_audio() {
+    const char *outfilename, *filename;
+    const AVCodec *codec;
+    AVCodecContext *c = NULL;
+    AVCodecParserContext *parser = NULL;
+    int len, ret;
+    FILE *f, *outfile;
+    uint8_t inbuf[AUDIO_INBUF_SIZE + AV_INPUT_BUFFER_PADDING_SIZE];
+    uint8_t *data;
+    size_t data_size;
+    AVPacket *pkt;
+    AVFrame *decoded_frame = NULL;
+
+    filename = "/root/mydev/workspace_github/simplest_ffmpeg_audio_player_2.2/simplest_audio_play_sdl2/aaa.mp3";
+    outfilename = "/root/mydev/workspace_github/simplest_ffmpeg_audio_player_2.2/simplest_audio_play_sdl2/output.pcm";
+
+    pkt = av_packet_alloc();
+
+    /* find the MPEG audio decoder */
+    codec = avcodec_find_decoder(AV_CODEC_ID_MP2);
+    if (!codec) {
+        fprintf(stderr, "Codec not found\n");
+        exit(1);
+    }
+
+    parser = av_parser_init(codec->id);
+    if (!parser) {
+        fprintf(stderr, "Parser not found\n");
+        exit(1);
+    }
+
+    c = avcodec_alloc_context3(codec);
+    if (!c) {
+        fprintf(stderr, "Could not allocate audio codec context\n");
+        exit(1);
+    }
+
+    /* open it */
+    if (avcodec_open2(c, codec, NULL) < 0) {
+        fprintf(stderr, "Could not open codec\n");
+        exit(1);
+    }
+
+    f = fopen(filename, "rb");
+    if (!f) {
+        fprintf(stderr, "Could not open %s\n", filename);
+        exit(1);
+    }
+    outfile = fopen(outfilename, "wb");
+    if (!outfile) {
+        av_free(c);
+        exit(1);
+    }
+
+    /* decode until eof */
+    data = inbuf;
+    data_size = fread(inbuf, 1, AUDIO_INBUF_SIZE, f);
+
+    while (data_size > 0) {
+        if (!decoded_frame) {
+            if (!(decoded_frame = av_frame_alloc())) {
+                fprintf(stderr, "Could not allocate audio frame\n");
+                exit(1);
+            }
+        }
+
+        ret = av_parser_parse2(parser, c, &pkt->data, &pkt->size,
+                               data, data_size,
+                               AV_NOPTS_VALUE, AV_NOPTS_VALUE, 0);
+        if (ret < 0) {
+            fprintf(stderr, "Error while parsing\n");
+            exit(1);
+        }
+        data += ret;
+        data_size -= ret;
+
+        if (pkt->size)
+            decode(c, pkt, decoded_frame, outfile);
+
+        if (data_size < AUDIO_REFILL_THRESH) {
+            memmove(inbuf, data, data_size);
+            data = inbuf;
+            len = fread(data + data_size, 1,
+                        AUDIO_INBUF_SIZE - data_size, f);
+            if (len > 0)
+                data_size += len;
+        }
+    }
+
+    /* flush the decoder */
+    pkt->data = NULL;
+    pkt->size = 0;
+    decode(c, pkt, decoded_frame, outfile);
+
+    fclose(outfile);
+    fclose(f);
+
+    avcodec_free_context(&c);
+    av_parser_close(parser);
+    av_frame_free(&decoded_frame);
+    av_packet_free(&pkt);
+
+    return 0;
+}
 
 /***
  用typedef重定义类型名
