@@ -86,6 +86,7 @@ http://www.hangge.com/blog/cache/detail_1325.html RTMP、RTSP、HTTP视频协议
 https://join.nordwebsite.net/zh/order/?gclid=EAIaIQobChMI0ofQqfaJ3AIViJiWCh3v8wKlEAEYASAAEgIihPD_BwE NordVPN
 https://blog.csdn.net/leixiaohua1020/article/details/17973587#comments 视音频编解码学习工程：TS封装格式分析器
 https://blog.csdn.net/leixiaohua1020/article/details/15811977#comments [总结]FFMPEG视音频编解码零基础学习方法
+https://blog.csdn.net/leixiaohua1020/article/details/50466201 修改了一个YUV/RGB播放器
 
 
 
