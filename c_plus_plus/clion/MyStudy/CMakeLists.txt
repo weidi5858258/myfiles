@@ -11,7 +11,7 @@ add_executable(MyStudy
         src/B0.cpp
         src/Test.cpp
         src/Pointer.cpp
-        )
+        src/StudyFFmpeg.cpp src/Study.cpp)
 
 if (WIN32)
     set(FFMPEG_LIB_PATH

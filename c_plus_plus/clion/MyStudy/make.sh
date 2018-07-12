@@ -61,6 +61,7 @@ g++ \
 -x c++ \
 -o run_me \
 -g -Wall -std=c++11 \
+-I"/mnt/d/mydev/ffmpeg/include"
 ${codeFiles} \
 -L${sdlLibPath} -lSDL2 \
 -L${sdlLibPath} -lSDL2main \

@@ -60,13 +60,14 @@ extern "C" {// 不能少
 #include <algorithm>
 #include <functional>
 
-#include "Test.h"
+using namespace std;
 
 #define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
 #define AUDIO_INBUF_SIZE 20480
 #define AUDIO_REFILL_THRESH 4096
 
-using namespace std;
+#include "Test.h"
+
 
 
 
