@@ -10,12 +10,19 @@
 #include "../src/StudyFFmpeg.cpp"
 #endif //MYSTUDY_STUDY_FFMPEG
 
+#ifndef MYSTUDY_FFMPEG
+#define MYSTUDY_FFMPEG
+#include "ffmpeg.cpp"
+#endif //MYSTUDY_FFMPEG
+
 
 void test();
 
 int simplest_ffmpeg_player();
 
 int simplest_ffmpeg_player2();
+
+int simplest_ffmpeg_player3();
 
 int simplest_ffmpeg_player_sdl2();
 
@@ -25,7 +32,7 @@ int simplest_ffmpeg_audio_decoder();
 
 int decode_audio();
 
-void fill_audio(void *udata, Uint8 *stream, int len);
+int recorderScreen();
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -42,9 +49,8 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-    simplest_ffmpeg_player2();
+    simplest_ffmpeg_player3();
 
-    // test();
     printf("------------------------------------------\n");
     printf("\n");
     return 0;
