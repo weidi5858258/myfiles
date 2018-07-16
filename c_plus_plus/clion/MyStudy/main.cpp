@@ -71,6 +71,8 @@ int gen_allcolor_video();
 
 int yuv_2_h264();
 
+int pcm2mp3(char* inPath, char* outPath);
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -92,7 +94,8 @@ int main(int argc, char *argv[]) {
 //    simplest_ffmpeg_audio_encoder();
     simplest_ffmpeg_audio_encoder_pure();
 //    decode_audio("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.mp2");
-//    encode_audio("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.mp2");
+//    encode_audio("/root/音乐/tdjm.pcm", "/root/音乐/temp.aac");
+//    pcm2mp3("/root/音乐/tdjm.pcm", "/root/音乐/tdjm.mp3");
 
     printf("------------------------------------------\n");
     printf("\n");

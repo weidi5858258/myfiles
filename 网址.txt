@@ -91,6 +91,9 @@ https://blog.csdn.net/qq_28057541/article/details/51723914 安装ubuntu失败，
 http://yasm.tortall.net/Download.html Yasm Downloads and Releases
 https://www.nasm.us/ NASM
 https://blog.csdn.net/liu3364575/article/details/78395442 ffmpeg开发之旅(1)：视频直播YUV颜色格式完全解析
+https://blog.csdn.net/bjrxyz/article/details/73435407 使用libmp3lame库编码mp3
+
+
 
 
 

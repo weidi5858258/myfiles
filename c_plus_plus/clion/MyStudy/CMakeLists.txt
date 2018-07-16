@@ -74,12 +74,14 @@ else ()
             -lxcb
             -lsqlite3
             -lz -lrt -lm -lpthread
+            -ldl
             )
 
     include_directories(
             include
             /root/mydev/tools/ffmpeg/include
             /usr/include/SDL2
+            /usr/local/include/lame
     )
 
 endif ()

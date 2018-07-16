@@ -44,14 +44,37 @@ ffmpeg提供了av_rescale_q_rnd函数进行转换。
 av_rescale_q_rnd(int64_t a, int64_t b, int64_t c, enum AVRounding rnd)
 此函数主要用于对于不同时间戳的转换。具体来说是将原来以 "时间基b" 表示的 数值a 转换成以 "时间基c" 来表示的新值。AVRounding表示取整的策略
 
+ffmpeg -i /media/1.WAV -acodec libmp3lame /media/1.MP3
+ffmpeg -i apple.mp4 -f mp3 -vn apple.mp3
+参数解释：
+-i 表示input，即输入文件
+-f 表示format，即输出格式
+-vn表示vedio not，即输出不包含视频
+对比源视频文件和提取得到的音频文件大小，可以看到源视频文件为约23M，而提取出来的音频文件大小为3M。
+
+FFmpeg还提供了很多有用的工具可以查看和处理音视频文件，如：
+查看视频文件的音视频编解码格式，视频时长，比特率等，如下：
+dennis@ubuntu:~$ ffmpeg -i apple.mp4
+
+ffmpeg -i test.mp4 -vcodec libx264 -b:v 1200k -r 25 -acodec mp3 -ab 128k -ar 44100 output.mp4
+
+ffmpeg -codecs
+ffmpeg -codecs | grep aac
+
+[whb@jcwkyl introduction_to_algorithm]$ ffmpeg -i Lecture_1.flv -f mp2 -vn Lecture_1.mp3
+这条命令中，-i表示input file，-f表示输出格式，-vn表示“vedio not"，即禁止视频输出，最后转换后的文件是Lecture_1.mp3。
+转换完成后，使用file命令查看Lecture_1.mp3的文件格式：
+[whb@jcwkyl introduction_to_algorithm]$ file Lecture_1.mp3
+Lecture_1.mp3: MPEG ADTS, layer II, v2,  64 kBits, 22.05 kHz, Stereo
+转换前后文件大小对比：
+[whb@jcwkyl introduction_to_algorithm]$ du -hs Lecture_1.*
+153M    Lecture_1.flv
+37M     Lecture_1.mp3
+使用播放器播放Lecture_1.mp3，完全正常。
 
 
 
-
-
-
-
-
+avCodec = avcodec_find_encoder_by_name("libfdk_aac");
 
 
 

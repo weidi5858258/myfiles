@@ -45,6 +45,8 @@ extern "C" {// 不能少
 #include <libavutil/opt.h>
 #include <libavutil/mem.h>
 
+#include <lame.h>
+
 #include <SDL2/SDL.h>
 };
 
@@ -69,6 +71,9 @@ using namespace std;
 #define AUDIO_REFILL_THRESH 4096
 #define OUTPUT_YUV420P 0
 #define OUTPUT_IMAGE 1
+
+#define INBUFSIZE 4096
+#define MP3BUFSIZE (int) (1.25 * INBUFSIZE) + 7200
 /***
  现在不能单独使用音频,必须先初始化视频,此后才能处理音频.
  因为在初始化视频时需要初始化dstAVFrame,dstAVFrame在

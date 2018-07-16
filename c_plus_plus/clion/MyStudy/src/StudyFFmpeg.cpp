@@ -3132,7 +3132,7 @@ int simplest_ffmpeg_audio_encoder_pure() {
 
     int endocedFrameCount = 0;
 
-    char filename_in[] = "/root/音乐/output.pcm";
+    char filename_in[] = "/root/音乐/tdjm.pcm";
 
     char filename_out[] = "/root/音乐/temp.mp2";
 
@@ -3237,6 +3237,75 @@ int simplest_ffmpeg_audio_encoder_pure() {
     av_free(audioAVCodecContext);
 
     return 0;
+}
+
+int pcm2mp3(char *inPath, char *outPath) {
+    int status = 0;
+    lame_global_flags *gfp;
+    int ret_code;
+    FILE *infp;
+    FILE *outfp;
+    short *input_buffer;
+    int input_samples;
+    unsigned char *encoded_mp3_buffer;
+    int mp3_bytes;
+
+    gfp = lame_init();
+    if (gfp == NULL) {
+        printf("lame_init failed\n");
+        status = -1;
+        goto exit;
+    }
+
+    ret_code = lame_init_params(gfp);
+    if (ret_code < 0) {
+        printf("lame_init_params returned %d\n", ret_code);
+        status = -1;
+        goto close_lame;
+    }
+
+    infp = fopen(inPath, "rb");
+    outfp = fopen(outPath, "wb");
+
+    input_buffer = (short *) malloc(INBUFSIZE * 2);
+    encoded_mp3_buffer = (unsigned char *) malloc(MP3BUFSIZE);
+
+    do {
+        input_samples = fread(input_buffer, 2, INBUFSIZE, infp);
+        printf("input_samples is %d.\n", input_samples);
+        //fprintf(stderr, "input_samples is %d./n", input_samples);
+        mp3_bytes = lame_encode_buffer_interleaved(gfp,
+                                                   input_buffer,
+                                                   input_samples / 2,
+                                                   encoded_mp3_buffer,
+                                                   MP3BUFSIZE);
+        //fprintf(stderr, "mp3_bytes is %d./n", mp3_bytes);
+        if (mp3_bytes < 0) {
+            printf("lame_encode_buffer_interleaved returned %d\n", mp3_bytes);
+            status = -1;
+            goto free_buffers;
+        } else if (mp3_bytes > 0) {
+            fwrite(encoded_mp3_buffer, 1, mp3_bytes, outfp);
+        }
+    } while (input_samples == INBUFSIZE);
+
+    mp3_bytes = lame_encode_flush(gfp, encoded_mp3_buffer, sizeof(encoded_mp3_buffer));
+    if (mp3_bytes > 0) {
+        printf("writing %d mp3 bytes\n", mp3_bytes);
+        fwrite(encoded_mp3_buffer, 1, mp3_bytes, outfp);
+    }
+
+    free_buffers:
+    free(encoded_mp3_buffer);
+    free(input_buffer);
+
+    fclose(outfp);
+    fclose(infp);
+    close_lame:
+    lame_close(gfp);
+
+    exit:
+    return status;
 }
 
 
