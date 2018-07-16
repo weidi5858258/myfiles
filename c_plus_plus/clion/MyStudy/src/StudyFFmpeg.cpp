@@ -1555,8 +1555,7 @@ int simplest_audio_play_sdl2() {
         return -1;
     }
 
-    FILE *fp = fopen("/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/NocturneNo2inEflat_44.1k_s16le.pcm",
-                     "rb+");
+    FILE *fp = fopen("/root/音乐/GALAYoungForYou.mp3", "rb+");
     if (fp == NULL) {
         printf("cannot open this file\n");
         return -1;
@@ -1953,7 +1952,1292 @@ int initOutputEncoder(AVFormatContext *avFormatContext,
     return 0;
 }
 
+int yuv420p_2_rgb24() {
+    //Parameters
+    FILE *src_file = fopen("/root/视频/sintel_480x272_yuv420p.yuv", "rb");
+    const int src_w = 480, src_h = 272;
+    AVPixelFormat src_pixfmt = AV_PIX_FMT_YUV420P;
+    int src_bpp = av_get_bits_per_pixel(av_pix_fmt_desc_get(src_pixfmt));
+    printf("源视频每个像素占用的比特数:   %d\n", src_bpp);
 
+    FILE *dst_file = fopen("/root/视频/sintel_1280x720_rgb24.rgb", "wb");
+    const int dst_w = 1280, dst_h = 720;
+    AVPixelFormat dst_pixfmt = AV_PIX_FMT_RGB24;
+    int dst_bpp = av_get_bits_per_pixel(av_pix_fmt_desc_get(dst_pixfmt));
+    printf("目标视频每个像素占用的比特数: %d\n", dst_bpp);
+
+    //Structures
+    uint8_t *src_data[4];
+    int src_linesize[4];
+
+    uint8_t *dst_data[4];
+    int dst_linesize[4];
+
+    struct SwsContext *videoSwsContext;
+    uint8_t *temp_buffer = (uint8_t *) malloc(src_w * src_h * src_bpp / 8);
+
+    int ret = 0;
+    ret = av_image_alloc(src_data, src_linesize, src_w, src_h, src_pixfmt, 1);
+    if (ret < 0) {
+        printf("Could not allocate source image\n");
+        return -1;
+    }
+    ret = av_image_alloc(dst_data, dst_linesize, dst_w, dst_h, dst_pixfmt, 1);
+    if (ret < 0) {
+        printf("Could not allocate destination image\n");
+        return -1;
+    }
+
+    printf("SwsContext init start.\n");
+    // Init Method 1 方法一是不成功的
+    videoSwsContext = sws_alloc_context();
+    // Show AVOption 这一步出错,不能使用stdout
+    // av_opt_show2(img_convert_ctx, stdout, AV_OPT_FLAG_VIDEO_PARAM, 0);
+    // 打印出一些信息
+    av_opt_show2(videoSwsContext, NULL, AV_OPT_FLAG_VIDEO_PARAM, 0);
+    // Set Value
+    av_opt_set_int(videoSwsContext, "sws_flags", SWS_BICUBIC | SWS_PRINT_INFO, 0);
+    av_opt_set_int(videoSwsContext, "srcw", src_w, 0);
+    av_opt_set_int(videoSwsContext, "srch", src_h, 0);
+    av_opt_set_int(videoSwsContext, "src_format", src_pixfmt, 0);
+    // '0' for MPEG (Y:0-235);'1' for JPEG (Y:0-255)
+    av_opt_set_int(videoSwsContext, "src_range", 1, 0);
+    av_opt_set_int(videoSwsContext, "dstw", dst_w, 0);
+    av_opt_set_int(videoSwsContext, "dsth", dst_h, 0);
+    av_opt_set_int(videoSwsContext, "dst_format", dst_pixfmt, 0);
+    av_opt_set_int(videoSwsContext, "dst_range", 1, 0);
+    sws_init_context(videoSwsContext, NULL, NULL);
+    printf("SwsContext init end.\n");
+
+    /*printf("SwsContext init start.\n");
+    //Init Method 2 能够正常运行
+    img_convert_ctx = sws_getContext(src_w, src_h, src_pixfmt,
+                                     dst_w, dst_h, dst_pixfmt,
+                                     SWS_BICUBIC,
+                                     NULL, NULL, NULL);
+    //Colorspace
+    ret = sws_setColorspaceDetails(img_convert_ctx, sws_getCoefficients(SWS_CS_ITU601), 0,
+                                   sws_getCoefficients(SWS_CS_ITU709), 0,
+                                   0, 1 << 16, 1 << 16);
+    if (ret == -1) {
+        printf("Colorspace not support.\n");
+        return -1;
+    }
+    printf("SwsContext init end.\n");*/
+
+    int frame_idx = 0;
+    while (1) {
+        if (fread(temp_buffer, 1, src_w * src_h * src_bpp / 8, src_file) != src_w * src_h * src_bpp / 8) {
+            printf("fread(...) failure.\n");
+            break;
+        }
+
+        switch (src_pixfmt) {
+            case AV_PIX_FMT_GRAY8: {
+                memcpy(src_data[0], temp_buffer, src_w * src_h);
+                break;
+            }
+            case AV_PIX_FMT_YUV420P: {
+                memcpy(src_data[0], temp_buffer, src_w * src_h);                    //Y
+                memcpy(src_data[1], temp_buffer + src_w * src_h, src_w * src_h / 4);      //U
+                memcpy(src_data[2], temp_buffer + src_w * src_h * 5 / 4, src_w * src_h / 4);  //V
+                break;
+            }
+            case AV_PIX_FMT_YUV422P: {
+                memcpy(src_data[0], temp_buffer, src_w * src_h);                    //Y
+                memcpy(src_data[1], temp_buffer + src_w * src_h, src_w * src_h / 2);      //U
+                memcpy(src_data[2], temp_buffer + src_w * src_h * 3 / 2, src_w * src_h / 2);  //V
+                break;
+            }
+            case AV_PIX_FMT_YUV444P: {
+                memcpy(src_data[0], temp_buffer, src_w * src_h);                    //Y
+                memcpy(src_data[1], temp_buffer + src_w * src_h, src_w * src_h);        //U
+                memcpy(src_data[2], temp_buffer + src_w * src_h * 2, src_w * src_h);      //V
+                break;
+            }
+            case AV_PIX_FMT_YUYV422: {
+                memcpy(src_data[0], temp_buffer, src_w * src_h * 2);                  //Packed
+                break;
+            }
+            case AV_PIX_FMT_RGB24: {
+                memcpy(src_data[0], temp_buffer, src_w * src_h * 3);                  //Packed
+                break;
+            }
+            default: {
+                printf("Not Support Input Pixel Format.\n");
+                break;
+            }
+        }
+
+        sws_scale(videoSwsContext, (const uint8_t *const *) src_data, src_linesize, 0, src_h, dst_data, dst_linesize);
+        printf("Finish process frame %5d\n", frame_idx);
+        frame_idx++;
+
+        switch (dst_pixfmt) {
+            case AV_PIX_FMT_GRAY8: {
+                fwrite(dst_data[0], 1, dst_w * dst_h, dst_file);
+                break;
+            }
+            case AV_PIX_FMT_YUV420P: {
+                fwrite(dst_data[0], 1, dst_w * dst_h, dst_file);                 //Y
+                fwrite(dst_data[1], 1, dst_w * dst_h / 4, dst_file);               //U
+                fwrite(dst_data[2], 1, dst_w * dst_h / 4, dst_file);               //V
+                break;
+            }
+            case AV_PIX_FMT_YUV422P: {
+                fwrite(dst_data[0], 1, dst_w * dst_h, dst_file);                    //Y
+                fwrite(dst_data[1], 1, dst_w * dst_h / 2, dst_file);                //U
+                fwrite(dst_data[2], 1, dst_w * dst_h / 2, dst_file);                //V
+                break;
+            }
+            case AV_PIX_FMT_YUV444P: {
+                fwrite(dst_data[0], 1, dst_w * dst_h, dst_file);                 //Y
+                fwrite(dst_data[1], 1, dst_w * dst_h, dst_file);                 //U
+                fwrite(dst_data[2], 1, dst_w * dst_h, dst_file);                 //V
+                break;
+            }
+            case AV_PIX_FMT_YUYV422: {
+                fwrite(dst_data[0], 1, dst_w * dst_h * 2, dst_file);               //Packed
+                break;
+            }
+            case AV_PIX_FMT_RGB24: {
+                fwrite(dst_data[0], 1, dst_w * dst_h * 3, dst_file);               //Packed
+                break;
+            }
+            default: {
+                printf("Not Support Output Pixel Format.\n");
+                break;
+            }
+        }
+    }
+
+    sws_freeContext(videoSwsContext);
+
+    free(temp_buffer);
+    fclose(dst_file);
+    av_freep(&src_data[0]);
+    av_freep(&dst_data[0]);
+
+    return 0;
+}
+
+static void encode(AVCodecContext *enc_ctx,
+                   AVFrame *frame,
+                   AVPacket *pkt,
+                   FILE *outfile) {
+    int ret;
+
+    /* send the frame to the encoder */
+    if (frame)
+        printf("Send frame %3"PRId64"\n", frame->pts);
+
+    ret = avcodec_send_frame(enc_ctx, frame);
+    if (ret < 0) {
+        fprintf(stderr, "Error sending a frame for encoding\n");
+        exit(1);
+    }
+
+    while (ret >= 0) {
+        ret = avcodec_receive_packet(enc_ctx, pkt);
+        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+            return;
+        else if (ret < 0) {
+            fprintf(stderr, "Error during encoding\n");
+            exit(1);
+        }
+
+        printf("Write packet %3"PRId64" (size=%5d)\n", pkt->pts, pkt->size);
+        fwrite(pkt->data, 1, pkt->size, outfile);
+        av_packet_unref(pkt);
+    }
+}
+
+// 需要引入独立的x264 库：先下载x264的源码，编译之后；然后configure ffmpeg时加上enable x264 的选
+int yuv_2_h264() {
+    const char *filename, *codec_name;
+    const AVCodec *codec;
+    AVCodecContext *videoAVCodecContext = NULL;
+    int i, ret, x, y;
+    FILE *f;
+    AVFrame *frame;
+    AVPacket *pkt;
+    uint8_t endcode[] = {0, 0, 1, 0xb7};
+
+    filename = "/root/视频/sintel_480x272_yuv420p.yuv";
+    codec_name = "libx264";
+
+    av_register_all();
+
+    /* find the mpeg1video encoder */
+//    codec = avcodec_find_encoder_by_name(codec_name);
+    codec = avcodec_find_encoder(AV_CODEC_ID_H264);
+    if (!codec) {
+        fprintf(stderr, "Codec '%s' not found\n", codec_name);
+        exit(1);
+    }
+
+    videoAVCodecContext = avcodec_alloc_context3(codec);
+    if (!videoAVCodecContext) {
+        fprintf(stderr, "Could not allocate video codec context\n");
+        exit(1);
+    }
+
+    pkt = av_packet_alloc();
+    if (!pkt)
+        exit(1);
+
+    /* put sample parameters */
+    videoAVCodecContext->bit_rate = 400000;
+    /* resolution must be a multiple of two */
+    videoAVCodecContext->width = 352;
+    videoAVCodecContext->height = 288;
+    /* frames per second */
+    videoAVCodecContext->time_base = (AVRational) {1, 25};
+    videoAVCodecContext->framerate = (AVRational) {25, 1};
+
+    /* emit one intra frame every ten frames
+     * check frame pict_type before passing frame
+     * to encoder, if frame->pict_type is AV_PICTURE_TYPE_I
+     * then gop_size is ignored and the output of encoder
+     * will always be I frame irrespective to gop_size
+     */
+    videoAVCodecContext->gop_size = 10;
+    videoAVCodecContext->max_b_frames = 1;
+    videoAVCodecContext->pix_fmt = AV_PIX_FMT_YUV420P;
+
+    if (codec->id == AV_CODEC_ID_H264)
+        av_opt_set(videoAVCodecContext->priv_data, "preset", "slow", 0);
+
+    /* open it */
+    ret = avcodec_open2(videoAVCodecContext, codec, NULL);
+    if (ret < 0) {
+        //fprintf(stderr, "Could not open codec: %s\n", av_err2str(ret));
+        exit(1);
+    }
+
+    f = fopen(filename, "wb");
+    if (!f) {
+        fprintf(stderr, "Could not open %s\n", filename);
+        exit(1);
+    }
+
+    frame = av_frame_alloc();
+    if (!frame) {
+        fprintf(stderr, "Could not allocate video frame\n");
+        exit(1);
+    }
+    frame->format = videoAVCodecContext->pix_fmt;
+    frame->width = videoAVCodecContext->width;
+    frame->height = videoAVCodecContext->height;
+
+    ret = av_frame_get_buffer(frame, 32);
+    if (ret < 0) {
+        fprintf(stderr, "Could not allocate the video frame data\n");
+        exit(1);
+    }
+
+    /* encode 1 second of video */
+    for (i = 0; i < 25; i++) {
+        fflush(stdout);
+
+        /* make sure the frame data is writable */
+        ret = av_frame_make_writable(frame);
+        if (ret < 0)
+            exit(1);
+
+        /* prepare a dummy image */
+        /* Y */
+        for (y = 0; y < videoAVCodecContext->height; y++) {
+            for (x = 0; x < videoAVCodecContext->width; x++) {
+                frame->data[0][y * frame->linesize[0] + x] = x + y + i * 3;
+            }
+        }
+
+        /* Cb and Cr */
+        for (y = 0; y < videoAVCodecContext->height / 2; y++) {
+            for (x = 0; x < videoAVCodecContext->width / 2; x++) {
+                frame->data[1][y * frame->linesize[1] + x] = 128 + y + i * 2;
+                frame->data[2][y * frame->linesize[2] + x] = 64 + x + i * 5;
+            }
+        }
+
+        frame->pts = i;
+
+        /* encode the image */
+        encode(videoAVCodecContext, frame, pkt, f);
+    }
+
+    /* flush the encoder */
+    encode(videoAVCodecContext, NULL, pkt, f);
+
+    /* add sequence end code to have a real MPEG file */
+    fwrite(endcode, 1, sizeof(endcode), f);
+    fclose(f);
+
+    avcodec_free_context(&videoAVCodecContext);
+    av_frame_free(&frame);
+    av_packet_free(&pkt);
+
+    return 0;
+}
+
+/***
+    调用:
+    //All picture's resolution is 1280x720
+    //Gray Bar, from 16 to 235
+    gen_yuv420p_graybar(1280,720,10,16,235);
+    //Color Bar
+    gen_rgb24_colorbar(1280,720);
+    //10 bars, RGB changed from 255,0,0 to 0,0,255
+    gen_rgb24_rgbgradient_bar(1280,720,10,255,0,0,0,0,255);
+    //10 bars, RGB changed from 0,0,0 to 128,128,128
+    gen_yuv420p_yuvgradient_bar(1280,720,10,0,0,0,128,128,128);
+    //RGB24 to BMP
+    rgb24_to_bmp("colorbar_1280x720_rgb24.rgb","colorbar_1280x720_rgb24.bmp",1280,720);
+    //Red stripe
+    gen_rgb24_stripe(1280,720,255,0,0);
+    //Gen color video
+    gen_allcolor_video();
+ */
+
+/**
+ * Generate Picture contains Stripe in RGB24 Format
+ *
+ * @param width		the width of picture.
+ * @param height	the height of picture.
+ * @param r			Red component of stripe
+ * @param g			Green component of stripe
+ * @param b			Blue component of stripe
+ * @return 0 if finished, -1 if there are errors.
+ */
+int gen_rgb24_stripe(int width,
+                     int height,
+                     unsigned char r,
+                     unsigned char g,
+                     unsigned char b) {
+
+    unsigned char *data = NULL;
+    char filename[100] = {0};
+    FILE *fp = NULL;
+    int i = 0, j = 0;
+
+    //Check
+    if (width <= 0 || height <= 0) {
+        printf("Error: Width, Height cannot be 0 or negative number!\n");
+        printf("Default Param is used.\n");
+        width = 640;
+        height = 480;
+    }
+
+    data = (unsigned char *) malloc(width * height * 3);
+
+    sprintf(filename, "rgbstripe_%dx%d_rgb24.rgb", width, height);
+    if ((fp = fopen(filename, "wb+")) == NULL) {
+        printf("Error: Cannot create file!");
+        return -1;
+    }
+
+    for (j = 0; j < height; j++) {
+        for (i = 0; i < width; i++) {
+            if (i % 2 != 0) {
+                data[(j * width + i) * 3 + 0] = r;
+                data[(j * width + i) * 3 + 1] = g;
+                data[(j * width + i) * 3 + 2] = b;
+            } else {//White
+                data[(j * width + i) * 3 + 0] = 255;
+                data[(j * width + i) * 3 + 1] = 255;
+                data[(j * width + i) * 3 + 2] = 255;
+            }
+        }
+    }
+    fwrite(data, width * height * 3, 1, fp);
+    fclose(fp);
+    free(data);
+    printf("Finish generate %s!\n", filename);
+    return 0;
+}
+
+
+/**
+ * Generate Picture contains Gray Bar changing from Black to White in YUV420P Format
+ *
+ * @param width		the width of picture.
+ * @param height	the height of picture.
+ * @param barnum	the number of Bars in the picture.
+ * @param ymin		the minimum value of luminance.
+ * @param ymax		the maximum value of luminance.
+ * @return 0 if finished, -1 if there are errors.
+ */
+int gen_yuv420p_graybar(int width,
+                        int height,
+                        int barnum,
+                        unsigned char ymin,
+                        unsigned char ymax) {
+
+    int barwidth;
+    float lum_inc;
+    unsigned char lum_temp;
+    int uv_width, uv_height;
+    FILE *fp = NULL;
+    unsigned char *data_y = NULL;
+    unsigned char *data_u = NULL;
+    unsigned char *data_v = NULL;
+    int t = 0, i = 0, j = 0;
+    char filename[100] = {0};
+
+    //Check
+    if (width <= 0 || height <= 0 || barnum <= 0) {
+        printf("Error: Width, Height or Bar Number cannot be 0 or negative number!\n");
+        printf("Default Param is used.\n");
+        width = 640;
+        height = 480;
+        barnum = 10;
+    }
+    if (width % barnum != 0) {
+        printf("Warning: Width cannot be divided by Bar Number without remainder!\n");
+    }
+    barwidth = width / barnum;
+    lum_inc = ((float) (ymax - ymin)) / ((float) (barnum - 1));
+    uv_width = width / 2;
+    uv_height = height / 2;
+
+    data_y = (unsigned char *) malloc(width * height);
+    data_u = (unsigned char *) malloc(uv_width * uv_height);
+    data_v = (unsigned char *) malloc(uv_width * uv_height);
+
+    sprintf(filename, "graybar_%dx%d_yuv420p.yuv", width, height);
+    if ((fp = fopen(filename, "wb+")) == NULL) {
+        printf("Error: Cannot create file!");
+        return -1;
+    }
+
+    //Output Info
+    printf("Y, U, V value from picture's left to right:\n");
+    for (t = 0; t < (width / barwidth); t++) {
+        lum_temp = ymin + (char) (t * lum_inc);
+        printf("%3d, 128, 128\n", lum_temp);
+    }
+    //Gen Data
+    for (j = 0; j < height; j++) {
+        for (i = 0; i < width; i++) {
+            t = i / barwidth;
+            lum_temp = ymin + (char) (t * lum_inc);
+            data_y[j * width + i] = lum_temp;
+        }
+    }
+    for (j = 0; j < uv_height; j++) {
+        for (i = 0; i < uv_width; i++) {
+            data_u[j * uv_width + i] = 128;
+        }
+    }
+    for (j = 0; j < uv_height; j++) {
+        for (i = 0; i < uv_width; i++) {
+            data_v[j * uv_width + i] = 128;
+        }
+    }
+    fwrite(data_y, width * height, 1, fp);
+    fwrite(data_u, uv_width * uv_height, 1, fp);
+    fwrite(data_v, uv_width * uv_height, 1, fp);
+    fclose(fp);
+    free(data_y);
+    free(data_u);
+    free(data_v);
+    printf("Finish generate %s!\n", filename);
+}
+
+/**
+ * Generate Picture contains standard Color Bar in RGB24 Format
+ *
+ * @param width		the width of picture.
+ * @param height	the height of picture.
+ * @return 0 if finished, -1 if there are errors.
+ */
+int gen_rgb24_colorbar(int width, int height) {
+
+    unsigned char *data = NULL;
+    int barwidth;
+    char filename[100] = {0};
+    FILE *fp = NULL;
+    int i = 0, j = 0;
+    int lum;
+    float r_coeff = 0.299, g_coeff = 0.587, b_coeff = 0.114;
+
+    //Check
+    if (width <= 0 || height <= 0) {
+        printf("Error: Width, Height cannot be 0 or negative number!\n");
+        printf("Default Param is used.\n");
+        width = 640;
+        height = 480;
+    }
+    if (width % 8 != 0)
+        printf("Warning: Width cannot be divided by Bar Number without remainder!\n");
+
+    data = (unsigned char *) malloc(width * height * 3);
+    barwidth = width / 8;
+
+    sprintf(filename, "colorbar_%dx%d_rgb24.rgb", width, height);
+    if ((fp = fopen(filename, "wb+")) == NULL) {
+        printf("Error: Cannot create file!");
+        return -1;
+    }
+
+    printf("Luminance (Y) component value of colors from left to right:\n");
+    lum = r_coeff * 255.0 + g_coeff * 255.0 + b_coeff * 255.0;
+    printf("[White]  \tR,G,B=255,255,255\t Y=%.3f*R+%.3f*G+%.3f*B=%3d\n",
+           r_coeff, g_coeff, b_coeff, lum);
+    lum = r_coeff * 255.0 + g_coeff * 255.0 + b_coeff * 0.0;
+    printf("[Yellow] \tR,G,B=255,255,  0\t Y=%.3f*R+%.3f*G+%.3f*B=%3d\n",
+           r_coeff, g_coeff, b_coeff, lum);
+    lum = r_coeff * 0.0 + g_coeff * 255.0 + b_coeff * 255.0;
+    printf("[Cyan]   \tR,G,B=  0,255,255\t Y=%.3f*R+%.3f*G+%.3f*B=%3d\n",
+           r_coeff, g_coeff, b_coeff, lum);
+    lum = r_coeff * 0.0 + g_coeff * 255.0 + b_coeff * 0.0;
+    printf("[Green]  \tR,G,B=  0,255,  0\t Y=%.3f*R+%.3f*G+%.3f*B=%3d\n",
+           r_coeff, g_coeff, b_coeff, lum);
+    lum = r_coeff * 255.0 + g_coeff * 0.0 + b_coeff * 255.0;
+    printf("[Magenta]\tR,G,B=255,  0,255\t Y=%.3f*R+%.3f*G+%.3f*B=%3d\n",
+           r_coeff, g_coeff, b_coeff, lum);
+    lum = r_coeff * 255.0 + g_coeff * 0.0 + b_coeff * 0.0;
+    printf("[Red]    \tR,G,B=255,  0,  0\t Y=%.3f*R+%.3f*G+%.3f*B=%3d\n",
+           r_coeff, g_coeff, b_coeff, lum);
+    lum = r_coeff * 0.0 + g_coeff * 0.0 + b_coeff * 255.0;
+    printf("[Blue]   \tR,G,B=  0,  0,255\t Y=%.3f*R+%.3f*G+%.3f*B=%3d\n",
+           r_coeff, g_coeff, b_coeff, lum);
+    lum = r_coeff * 0.0 + g_coeff * 0.0 + b_coeff * 0.0;
+    printf("[Black]  \tR,G,B=  0,  0,  0\t Y=%.3f*R+%.3f*G+%.3f*B=%3d\n",
+           r_coeff, g_coeff, b_coeff, lum);
+
+    for (j = 0; j < height; j++) {
+        for (i = 0; i < width; i++) {
+            int barnum = i / barwidth;
+            switch (barnum) {
+                case 0: {
+                    data[(j * width + i) * 3 + 0] = 255;
+                    data[(j * width + i) * 3 + 1] = 255;
+                    data[(j * width + i) * 3 + 2] = 255;
+                    break;
+                }
+                case 1: {
+                    data[(j * width + i) * 3 + 0] = 255;
+                    data[(j * width + i) * 3 + 1] = 255;
+                    data[(j * width + i) * 3 + 2] = 0;
+                    break;
+                }
+                case 2: {
+                    data[(j * width + i) * 3 + 0] = 0;
+                    data[(j * width + i) * 3 + 1] = 255;
+                    data[(j * width + i) * 3 + 2] = 255;
+                    break;
+                }
+                case 3: {
+                    data[(j * width + i) * 3 + 0] = 0;
+                    data[(j * width + i) * 3 + 1] = 255;
+                    data[(j * width + i) * 3 + 2] = 0;
+                    break;
+                }
+                case 4: {
+                    data[(j * width + i) * 3 + 0] = 255;
+                    data[(j * width + i) * 3 + 1] = 0;
+                    data[(j * width + i) * 3 + 2] = 255;
+                    break;
+                }
+                case 5: {
+                    data[(j * width + i) * 3 + 0] = 255;
+                    data[(j * width + i) * 3 + 1] = 0;
+                    data[(j * width + i) * 3 + 2] = 0;
+                    break;
+                }
+                case 6: {
+                    data[(j * width + i) * 3 + 0] = 0;
+                    data[(j * width + i) * 3 + 1] = 0;
+                    data[(j * width + i) * 3 + 2] = 255;
+
+                    break;
+                }
+                case 7: {
+                    data[(j * width + i) * 3 + 0] = 0;
+                    data[(j * width + i) * 3 + 1] = 0;
+                    data[(j * width + i) * 3 + 2] = 0;
+                    break;
+                }
+            }
+
+        }
+    }
+    fwrite(data, width * height * 3, 1, fp);
+    fclose(fp);
+    free(data);
+    printf("Finish generate %s!\n", filename);
+}
+
+/**
+ * Generate Picture contains Color Bar Changing from source color
+ * to destination color in RGB24 Format
+ *
+ * @param width		the width of picture.
+ * @param height	the height of picture.
+ * @param barnum	the number of Bars in the picture.
+ * @param src_r		Red component of source color.
+ * @param src_g		Green component of source color.
+ * @param src_b		Blue component of source color.
+ * @param dst_r		Red component of destination color.
+ * @param dst_g		Green component of destination color.
+ * @param dst_b		Blue component of destination color.
+ * @return 0 if finished, -1 if there are errors.
+ */
+int gen_rgb24_rgbgradient_bar(int width, int height, int barnum,
+                              unsigned char src_r,
+                              unsigned char src_g,
+                              unsigned char src_b,
+                              unsigned char dst_r,
+                              unsigned char dst_g,
+                              unsigned char dst_b) {
+
+    unsigned char *data = NULL;
+    int barwidth;
+    float r_inc, g_inc, b_inc;
+    unsigned char r_temp, g_temp, b_temp;
+    char filename[100] = {0};
+    FILE *fp = NULL;
+    int t = 0, i = 0, j = 0;
+
+    //Check
+    if (width <= 0 || height <= 0 || barnum <= 0) {
+        printf("Error: Width, Height or Bar Number cannot be 0 or negative number!\n");
+        printf("Default Param is used.\n");
+        width = 640;
+        height = 480;
+    }
+    if (width % barnum != 0)
+        printf("Warning: Width cannot be divided by Bar Number without remainder!\n");
+
+
+    data = (unsigned char *) malloc(width * height * 3);
+    barwidth = width / barnum;
+    r_inc = ((float) (dst_r - src_r)) / ((float) (barnum - 1));
+    g_inc = ((float) (dst_g - src_g)) / ((float) (barnum - 1));
+    b_inc = ((float) (dst_b - src_b)) / ((float) (barnum - 1));
+
+    sprintf(filename, "rgbgradientbar_%dx%d_rgb24.rgb", width, height);
+    if ((fp = fopen(filename, "wb+")) == NULL) {
+        printf("Error: Cannot create file!");
+        return -1;
+    }
+
+    //Output Info
+    printf("R, G, B value from picture's left to right:\n");
+    for (t = 0; t < (width / barwidth); t++) {
+        r_temp = src_r + (char) (t * r_inc);
+        g_temp = src_g + (char) (t * g_inc);
+        b_temp = src_b + (char) (t * b_inc);
+        printf("%3d, %3d, %3d\n", r_temp, g_temp, b_temp);
+    }
+
+    for (j = 0; j < height; j++) {
+        for (i = 0; i < width; i++) {
+            t = i / barwidth;
+            r_temp = src_r + (char) (t * r_inc);
+            g_temp = src_g + (char) (t * g_inc);
+            b_temp = src_b + (char) (t * b_inc);
+            data[(j * width + i) * 3 + 0] = r_temp;
+            data[(j * width + i) * 3 + 1] = g_temp;
+            data[(j * width + i) * 3 + 2] = b_temp;
+        }
+    }
+    fwrite(data, width * height * 3, 1, fp);
+    fclose(fp);
+    free(data);
+    printf("Finish generate %s!\n", filename);
+    return 0;
+}
+
+/**
+ * Generate Picture contains Color Bar Changing from source color
+ * to destination color in YUV420P Format
+ *
+ * @param width		the width of picture.
+ * @param height	the height of picture.
+ * @param barnum	the number of Bars in the picture.
+ * @param src_y		Luma component of source color.
+ * @param src_u		U component of source color.
+ * @param src_v		V component of source color.
+ * @param dst_y		Luma component of destination color.
+ * @param dst_u		U component of destination color.
+ * @param dst_v		V component of destination color.
+ * @return 0 if finished, -1 if there are errors.
+ */
+int gen_yuv420p_yuvgradient_bar(int width, int height, int barnum,
+                                unsigned char src_y,
+                                unsigned char src_u,
+                                unsigned char src_v,
+                                unsigned char dst_y,
+                                unsigned char dst_u,
+                                unsigned char dst_v) {
+
+    int uv_width, uv_height;
+    unsigned char *data_y = NULL;
+    unsigned char *data_u = NULL;
+    unsigned char *data_v = NULL;
+    FILE *fp = NULL;
+    int barwidth, uv_barwidth;
+    float y_inc, u_inc, v_inc = 0;
+    unsigned char y_temp, u_temp, v_temp = 0;
+    char filename[100] = {0};
+    int t = 0, i = 0, j = 0;
+    //Check
+    if (width <= 0 || height <= 0 || barnum <= 0) {
+        printf("Error: Width, Height or Bar Number cannot be 0 or negative number!\n");
+        printf("Default Param is used.\n");
+        width = 640;
+        height = 480;
+    }
+    if (width % barnum != 0)
+        printf("Warning: Width cannot be divided by Bar Number without remainder!\n");
+
+    uv_width = width / 2;
+    uv_height = height / 2;
+    data_y = (unsigned char *) malloc(width * height);
+    data_u = (unsigned char *) malloc(uv_width * uv_height);
+    data_v = (unsigned char *) malloc(uv_width * uv_height);
+    barwidth = width / barnum;
+    uv_barwidth = barwidth / (width / uv_width);
+    y_inc = ((float) (dst_y - src_y)) / ((float) (barnum - 1));
+    u_inc = ((float) (dst_u - src_u)) / ((float) (barnum - 1));
+    v_inc = ((float) (dst_v - src_v)) / ((float) (barnum - 1));
+
+    sprintf(filename, "yuvgradientbar_%dx%d_yuv420p.yuv", width, height);
+    if ((fp = fopen(filename, "wb+")) == NULL) {
+        printf("Error: Cannot create file!");
+        return -1;
+    }
+
+    //Output Info
+    printf("Y, U, V value from picture's left to right:\n");
+    for (t = 0; t < (width / barwidth); t++) {
+        y_temp = src_y + (char) (t * y_inc);
+        u_temp = src_u + (char) (t * u_inc);
+        v_temp = src_v + (char) (t * v_inc);
+        printf("%3d, %3d, %3d\n", y_temp, u_temp, v_temp);
+    }
+
+    //Gen Data
+    for (j = 0; j < height; j++) {
+        for (i = 0; i < width; i++) {
+            t = i / barwidth;
+            y_temp = src_y + (char) (t * y_inc);
+            data_y[j * width + i] = y_temp;
+        }
+    }
+    for (j = 0; j < uv_height; j++) {
+        for (i = 0; i < uv_width; i++) {
+            t = i / uv_barwidth;
+            u_temp = src_u + (char) (t * u_inc);
+            data_u[j * uv_width + i] = u_temp;
+        }
+    }
+    for (j = 0; j < uv_height; j++) {
+        for (i = 0; i < uv_width; i++) {
+            t = i / uv_barwidth;
+            v_temp = src_v + (char) (t * v_inc);
+            data_v[j * uv_width + i] = v_temp;
+        }
+    }
+    fwrite(data_y, width * height, 1, fp);
+    fwrite(data_u, uv_width * uv_height, 1, fp);
+    fwrite(data_v, uv_width * uv_height, 1, fp);
+    fclose(fp);
+    free(data_y);
+    free(data_u);
+    free(data_v);
+    printf("Finish generate %s!\n", filename);
+    return 0;
+}
+
+/**
+ * Convert RGB24 format to BMP format
+ *
+ * @param rgb24path		path of input RGB24 file.
+ * @param bmppath		path of output BMP file
+ * @param width			the width of picture.
+ * @param height		the height of picture.
+ * @return 0 if finished, -1 if there are errors.
+ */
+int rgb24_to_bmp(char *rgb24path, char *bmppath, int width, int height) {
+    typedef struct {
+        long imageSize;
+        long blank;
+        long startPosition;
+    } BmpHead;
+
+    typedef struct {
+        long Length;
+        long width;
+        long height;
+        unsigned short colorPlane;
+        unsigned short bitColor;
+        long zipFormat;
+        long realSize;
+        long xPels;
+        long yPels;
+        long colorUse;
+        long colorImportant;
+    } InfoHead;
+
+    int i = 0, j = 0;
+    BmpHead m_BMPHeader = {0};
+    InfoHead m_BMPInfoHeader = {0};
+    char bfType[2] = {'B', 'M'};
+    int header_size = sizeof(bfType) + sizeof(BmpHead) + sizeof(InfoHead);
+    unsigned char *rgb24_buffer = NULL;
+    FILE *fp_rgb24 = NULL, *fp_bmp = NULL;
+
+    if ((fp_rgb24 = fopen(rgb24path, "rb")) == NULL) {
+        printf("Error: Cannot open input RGB24 file.\n");
+        return -1;
+    }
+    if ((fp_bmp = fopen(bmppath, "wb")) == NULL) {
+        printf("Error: Cannot open output BMP file.\n");
+        return -1;
+    }
+
+    rgb24_buffer = (unsigned char *) malloc(width * height * 3);
+    fread(rgb24_buffer, 1, width * height * 3, fp_rgb24);
+
+    m_BMPHeader.imageSize = 3 * width * height + header_size;
+    m_BMPHeader.startPosition = header_size;
+
+    m_BMPInfoHeader.Length = sizeof(InfoHead);
+    m_BMPInfoHeader.width = width;
+    //BMP storage pixel data in opposite direction of Y-axis (from bottom to top).
+    m_BMPInfoHeader.height = -height;
+    m_BMPInfoHeader.colorPlane = 1;
+    m_BMPInfoHeader.bitColor = 24;
+    m_BMPInfoHeader.realSize = 3 * width * height;
+
+    fwrite(bfType, 1, sizeof(bfType), fp_bmp);
+    fwrite(&m_BMPHeader, 1, sizeof(m_BMPHeader), fp_bmp);
+    fwrite(&m_BMPInfoHeader, 1, sizeof(m_BMPInfoHeader), fp_bmp);
+
+    //BMP save R1|G1|B1,R2|G2|B2 as B1|G1|R1,B2|G2|R2
+    //It saves pixel data in Little Endian
+    //So we change 'R' and 'B'
+    for (j = 0; j < height; j++) {
+        for (i = 0; i < width; i++) {
+            char temp = rgb24_buffer[(j * width + i) * 3 + 2];
+            rgb24_buffer[(j * width + i) * 3 + 2] = rgb24_buffer[(j * width + i) * 3 + 0];
+            rgb24_buffer[(j * width + i) * 3 + 0] = temp;
+        }
+    }
+    fwrite(rgb24_buffer, 3 * width * height, 1, fp_bmp);
+    fclose(fp_rgb24);
+    fclose(fp_bmp);
+    free(rgb24_buffer);
+    printf("Finish generate %s!\n", bmppath);
+    return 0;
+}
+
+
+/**
+ * Generate a video in 256x256 and has 256 frames that contains all the colors.
+ * Each color is shown in 1 pixel. They are mapped as follows:
+ * In RGB24
+ * R component's value is increasing with the growth of width (X-axis);
+ * G component's value is increasing with the growth of height (Y-axis);
+ * B component's value is increasing with the growth of frame number (Z-axis).
+ * In YUV444P
+ * U component's value is increasing with the growth of width (X-axis);
+ * V component's value is increasing with the growth of height (Y-axis);
+ * Y component's value is increasing with the growth of frame number (Z-axis).
+ *
+ * This function now support to draw YUV444P/RGB24 format pixel.
+ *
+ * @return 0 if finished, -1 if there are errors.
+ */
+int gen_allcolor_video() {
+
+    unsigned char *data = NULL;
+    char filename[100] = {0};
+    FILE *fp = NULL;
+    int width = 256, height = 256, frames = 256;
+    int i = 0, j = 0, k = 0;
+
+    //From left to right (width, X-axis),R increasing from 0 to255
+    //From Top to bottom (height, Y-axis),G increasing from 0 to255
+    //From 0 to 255 frames (time, Z-axis),B increasing from 0 to255
+    data = (unsigned char *) malloc(width * height * 3);
+    sprintf(filename, "allcolor_xr_yg_zb_%dx%d_rgb24.rgb", width, height);
+    if ((fp = fopen(filename, "wb+")) == NULL) {
+        printf("Error: Cannot create file!");
+        return -1;
+    }
+    for (k = 0; k < frames; k++) {
+        for (j = 0; j < height; j++) {
+            for (i = 0; i < width; i++) {
+                data[(j * width + i) * 3 + 0] = i;
+                data[(j * width + i) * 3 + 1] = j;
+                data[(j * width + i) * 3 + 2] = k;
+            }
+        }
+        fwrite(data, width * height * 3, 1, fp);
+        printf("Finish generate frame %d!\n", k);
+    }
+    fclose(fp);
+    free(data);
+    printf("Finish generate %s!\n", filename);
+
+    //From left to right (width, X-axis),U increasing from 0 to255
+    //From Top to bottom (height, Y-axis),V increasing from 0 to255
+    //From 0 to 255 frames (time, Z-axis),Y increasing from 0 to255
+    data = (unsigned char *) malloc(width * height);
+    sprintf(filename, "allcolor_xu_yv_zy_%dx%d_yuv444p.yuv", width, height);
+    if ((fp = fopen(filename, "wb+")) == NULL) {
+        printf("Error: Cannot create file!");
+        return -1;
+    }
+    for (k = 0; k < frames; k++) {
+        for (j = 0; j < height; j++) {//Y
+            for (i = 0; i < width; i++) {
+                data[j * width + i] = k;
+            }
+        }
+        fwrite(data, width * height, 1, fp);
+        for (j = 0; j < height; j++) {//U
+            for (i = 0; i < width; i++) {
+                data[j * width + i] = i;
+            }
+        }
+        fwrite(data, width * height, 1, fp);
+        for (j = 0; j < height; j++) {//V
+            for (i = 0; i < width; i++) {
+                data[j * width + i] = j;
+            }
+        }
+        fwrite(data, width * height, 1, fp);
+        printf("Finish generate frame %d!\n", k);
+    }
+    fclose(fp);
+    free(data);
+    printf("Finish generate %s!\n", filename);
+
+    return 0;
+}
+
+int flush_encoder(AVFormatContext *fmt_ctx, unsigned int stream_index) {
+    int ret;
+    int got_frame;
+    AVPacket enc_pkt;
+    /*if (!(fmt_ctx->streams[stream_index]->codec->codec->capabilities &
+          CODEC_CAP_DELAY))
+        return 0;*/
+    while (1) {
+        enc_pkt.data = NULL;
+        enc_pkt.size = 0;
+        av_init_packet(&enc_pkt);
+        ret = avcodec_encode_audio2(fmt_ctx->streams[stream_index]->codec, &enc_pkt,
+                                    NULL, &got_frame);
+        av_frame_free(NULL);
+        if (ret < 0)
+            break;
+        if (!got_frame) {
+            ret = 0;
+            break;
+        }
+        printf("Flush Encoder: Succeed to encode 1 frame!\tsize:%5d\n", enc_pkt.size);
+        /* mux encoded frame */
+        ret = av_write_frame(fmt_ctx, &enc_pkt);
+        if (ret < 0)
+            break;
+    }
+    return ret;
+}
+
+/***
+ pcm ---> aac
+ 不成功
+ */
+int simplest_ffmpeg_audio_encoder() {
+    AVFormatContext *pFormatCtx;
+    AVOutputFormat *fmt;
+    AVStream *audio_st;
+    AVCodecContext *pCodecCtx;
+    AVCodec *pCodec;
+
+    uint8_t *frame_buf;
+    AVFrame *pFrame;
+    AVPacket pkt;
+
+    int got_frame = 0;
+    int ret = 0;
+    int size = 0;
+
+    FILE *in_file = NULL;                            //Raw PCM data
+    int framenum = 1000;                          //Audio frame number
+    const char *out_file = "/root/音乐/tdjm.aac";          //Output URL
+    int i;
+
+    in_file = fopen("/root/音乐/tdjm.pcm", "rb");
+
+    av_register_all();
+
+    //Method 1.
+//    pFormatCtx = avformat_alloc_context();
+//    fmt = av_guess_format(NULL, out_file, NULL);
+//    pFormatCtx->oformat = fmt;
+
+    //Method 2.
+    avformat_alloc_output_context2(&pFormatCtx, NULL, NULL, out_file);
+    fmt = pFormatCtx->oformat;
+
+    //Open output URL
+    if (avio_open(&pFormatCtx->pb, out_file, AVIO_FLAG_READ_WRITE) < 0) {
+        printf("Failed to open output file!\n");
+        return -1;
+    }
+
+    audio_st = avformat_new_stream(pFormatCtx, 0);
+    if (audio_st == NULL) {
+        return -1;
+    }
+    pCodecCtx = audio_st->codec;
+    pCodecCtx->codec_id = fmt->audio_codec;
+    pCodecCtx->codec_type = AVMEDIA_TYPE_AUDIO;
+    pCodecCtx->sample_fmt = AV_SAMPLE_FMT_S16;
+    pCodecCtx->sample_rate = 44100;
+    pCodecCtx->channel_layout = AV_CH_LAYOUT_STEREO;
+    pCodecCtx->channels = av_get_channel_layout_nb_channels(pCodecCtx->channel_layout);
+    pCodecCtx->bit_rate = 64000;
+
+    //Show some information
+    av_dump_format(pFormatCtx, 0, out_file, 1);
+
+    pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
+    if (!pCodec) {
+        printf("Can not find encoder!\n");
+        return -1;
+    }
+    if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
+        printf("Failed to open encoder!\n");
+        return -1;
+    }
+    pFrame = av_frame_alloc();
+    pFrame->nb_samples = pCodecCtx->frame_size;
+    pFrame->format = pCodecCtx->sample_fmt;
+
+    size = av_samples_get_buffer_size(NULL, pCodecCtx->channels, pCodecCtx->frame_size, pCodecCtx->sample_fmt, 1);
+    frame_buf = (uint8_t *) av_malloc(size);
+    avcodec_fill_audio_frame(pFrame, pCodecCtx->channels, pCodecCtx->sample_fmt, (const uint8_t *) frame_buf, size, 1);
+
+    //Write Header
+    avformat_write_header(pFormatCtx, NULL);
+
+    av_new_packet(&pkt, size);
+
+    for (i = 0; i < framenum; i++) {
+        //Read PCM
+        if (fread(frame_buf, 1, size, in_file) <= 0) {
+            printf("Failed to read raw data! \n");
+            return -1;
+        } else if (feof(in_file)) {
+            break;
+        }
+        pFrame->data[0] = frame_buf;  //PCM Data
+
+        pFrame->pts = i * 100;
+        got_frame = 0;
+        //Encode
+        ret = avcodec_encode_audio2(pCodecCtx, &pkt, pFrame, &got_frame);
+        if (ret < 0) {
+            printf("Failed to encode!\n");
+            return -1;
+        }
+        if (got_frame == 1) {
+            printf("Succeed to encode 1 frame! \tsize:%5d\n", pkt.size);
+            pkt.stream_index = audio_st->index;
+            ret = av_write_frame(pFormatCtx, &pkt);
+            av_free_packet(&pkt);
+        }
+    }
+
+    //Flush Encoder
+    ret = flush_encoder(pFormatCtx, 0);
+    if (ret < 0) {
+        printf("Flushing encoder failed\n");
+        return -1;
+    }
+
+    //Write Trailer
+    av_write_trailer(pFormatCtx);
+
+    //Clean
+    if (audio_st) {
+        avcodec_close(audio_st->codec);
+        av_free(pFrame);
+        av_free(frame_buf);
+    }
+    avio_close(pFormatCtx->pb);
+    avformat_free_context(pFormatCtx);
+
+    fclose(in_file);
+
+    return 0;
+}
+
+int encode(AVCodecContext *audioAVCodecContext,
+           AVFrame *needToEncodedAVFrame,
+           AVPacket *encodedAVPacket,
+           FILE *outputFile,
+           int &endocedFrameCount) {
+    int result = avcodec_send_frame(audioAVCodecContext, needToEncodedAVFrame);
+    // printf("audio result = %d\n", result);
+    switch (result) {
+        case 0:
+            break;
+        case AVERROR(EAGAIN):
+            printf("AUDIO AVERROR(EAGAIN)\n");
+            return -1;
+        case AVERROR(EINVAL):
+            printf("AUDIO AVERROR(EINVAL)\n");
+            return -1;
+        case AVERROR(ENOMEM):
+            printf("AUDIO AVERROR(ENOMEM)\n");
+            return -1;
+        case AVERROR_EOF:
+            printf("AUDIO AVERROR_EOF\n");
+            return -1;
+        default:
+            printf("AUDIO OTHER ERROR\n");
+            return -1;
+    }
+    // 一般情况下while循环也只执行一次
+    while (avcodec_receive_packet(audioAVCodecContext, encodedAVPacket) >= 0) {
+        printf("Succeed to encode frame: %5d\tsize:%5d\n", ++endocedFrameCount, (*encodedAVPacket).size);
+        fwrite((*encodedAVPacket).data, 1, (*encodedAVPacket).size, outputFile);
+        av_packet_unref(encodedAVPacket);
+    }
+    return 0;
+}
+
+/***
+ 使用这个方法进行编码
+ 只能对pcm文件进行编码
+ */
+int simplest_ffmpeg_audio_encoder_pure() {
+    AVCodec *audioAVCodecEncoder = NULL;
+    AVCodecContext *audioAVCodecContext = NULL;
+    AVFrame *needToEncodedAVFrame = NULL;
+    AVPacket *avPacket = NULL;
+    FILE *inputFile = NULL;
+    FILE *outputFile = NULL;
+    uint8_t *frame_buf = NULL;
+
+    int endocedFrameCount = 0;
+
+    char filename_in[] = "/root/音乐/output.pcm";
+
+    char filename_out[] = "/root/音乐/temp.mp2";
+
+    AVCodecID codec_id = AV_CODEC_ID_MP2;
+    audioAVCodecEncoder = avcodec_find_encoder(codec_id);
+    if (!audioAVCodecEncoder) {
+        printf("Codec not found\n");
+        return -1;
+    }
+
+    audioAVCodecContext = avcodec_alloc_context3(audioAVCodecEncoder);
+    if (!audioAVCodecContext) {
+        printf("Could not allocate video codec context\n");
+        return -1;
+    }
+    audioAVCodecContext->codec_id = codec_id;
+    audioAVCodecContext->codec_type = AVMEDIA_TYPE_AUDIO;
+    // 比特率降低后,音频体积也会降低
+    audioAVCodecContext->bit_rate = 64000;// 64kb/s
+    audioAVCodecContext->sample_fmt = AV_SAMPLE_FMT_S16;
+    // 下面几个参数的设置参照官方sample
+    audioAVCodecContext->sample_rate = 44100;// 44100Hz
+    audioAVCodecContext->channel_layout = AV_CH_LAYOUT_STEREO;// 立体声
+    // 双声道
+    audioAVCodecContext->channels = av_get_channel_layout_nb_channels(audioAVCodecContext->channel_layout);
+    printf("audioAVCodecContext->channel_layout = %ld\n", audioAVCodecContext->channel_layout);
+    printf("audioAVCodecContext->channels = %d\n", audioAVCodecContext->channels);
+
+    // 打开编码器
+    if (avcodec_open2(audioAVCodecContext, audioAVCodecEncoder, NULL) < 0) {
+        printf("Could not open codec\n");
+        return -1;
+    }
+
+    needToEncodedAVFrame = av_frame_alloc();
+    if (!needToEncodedAVFrame) {
+        fprintf(stderr, "Could not allocate audio frame\n");
+        exit(1);
+    }
+    needToEncodedAVFrame->nb_samples = audioAVCodecContext->frame_size;
+    needToEncodedAVFrame->format = audioAVCodecContext->sample_fmt;
+    needToEncodedAVFrame->channel_layout = audioAVCodecContext->channel_layout;
+    int samples_get_buffer_size = av_samples_get_buffer_size(NULL,
+                                                             audioAVCodecContext->channels,
+                                                             audioAVCodecContext->frame_size,
+                                                             audioAVCodecContext->sample_fmt,
+                                                             1);
+    printf("samples_get_buffer_size = %d\n", samples_get_buffer_size);
+    printf("audioAVCodecContext->frame_size = %d\n", audioAVCodecContext->frame_size);
+    frame_buf = (uint8_t *) av_malloc(samples_get_buffer_size);
+    avcodec_fill_audio_frame(needToEncodedAVFrame,
+                             audioAVCodecContext->channels,
+                             audioAVCodecContext->sample_fmt,
+                             (const uint8_t *) frame_buf,
+                             samples_get_buffer_size,
+                             1);
+
+    //Input raw data
+    inputFile = fopen(filename_in, "rb");
+    if (!inputFile) {
+        printf("Could not open %s\n", filename_in);
+        return -1;
+    }
+    //Output bitstream
+    outputFile = fopen(filename_out, "wb");
+    if (!outputFile) {
+        printf("Could not open %s\n", filename_out);
+        return -1;
+    }
+
+    /* packet for holding encoded output */
+    avPacket = av_packet_alloc();
+    if (!avPacket) {
+        fprintf(stderr, "could not allocate the packet\n");
+        exit(1);
+    }
+
+    //Encode
+    for (;;) {
+        /*av_init_packet(&avPacket);
+        avPacket.data = NULL;    // packet data will be allocated by the encoder
+        avPacket.size = 0;*/
+        //Read raw data(raw:未经加工的)
+        if (fread(frame_buf, 1, samples_get_buffer_size, inputFile) <= 0) {
+            printf("Failed to read raw data! \n");
+            return -1;
+        } else if (feof(inputFile)) {
+            break;
+        }
+
+        encode(audioAVCodecContext, needToEncodedAVFrame, avPacket, outputFile, endocedFrameCount);
+    }
+
+    encode(audioAVCodecContext, NULL, avPacket, outputFile, endocedFrameCount);
+
+    fclose(outputFile);
+    av_free(frame_buf);
+    av_freep(&needToEncodedAVFrame->data[0]);
+    av_frame_free(&needToEncodedAVFrame);
+    av_packet_free(&avPacket);
+    avcodec_close(audioAVCodecContext);
+    av_free(audioAVCodecContext);
+
+    return 0;
+}
 
 
 #endif //MYSTUDY_STUDY_FFMPEG

@@ -2,17 +2,23 @@
 
 #ifndef MYSTUDY_STUDY
 #define MYSTUDY_STUDY
-#include "../src/Study.cpp"
+
+#include "src/Study.cpp"
+
 #endif //MYSTUDY_STUDY
 
 #ifndef MYSTUDY_STUDY_FFMPEG
 #define MYSTUDY_STUDY_FFMPEG
-#include "../src/StudyFFmpeg.cpp"
+
+#include "src/StudyFFmpeg.cpp"
+
 #endif //MYSTUDY_STUDY_FFMPEG
 
 #ifndef MYSTUDY_FFMPEG
 #define MYSTUDY_FFMPEG
+
 #include "ffmpeg.cpp"
+
 #endif //MYSTUDY_FFMPEG
 
 
@@ -22,7 +28,7 @@ int simplest_ffmpeg_player();
 
 int simplest_ffmpeg_player2();
 
-int simplest_ffmpeg_player3();
+int decoderVideoFrameToImage();
 
 int simplest_ffmpeg_player_sdl2();
 
@@ -30,9 +36,41 @@ int simplest_audio_play_sdl2();
 
 int simplest_ffmpeg_audio_decoder();
 
+int simplest_ffmpeg_audio_encoder();
+
+int simplest_ffmpeg_audio_encoder_pure();
+
 int decode_audio();
 
+int decode_audio(const char *infilename, const char *outfilename);
+
+int encode_audio(const char *infilename, const char *outfilename);
+
 int recorderScreen();
+
+int yuv420p_2_rgb24();
+
+int gen_rgb24_stripe(int width, int height,
+                     unsigned char r, unsigned char g, unsigned char b);
+
+int gen_yuv420p_graybar(int width, int height, int barnum, unsigned char ymin, unsigned char ymax);
+
+int gen_rgb24_colorbar(int width, int height);
+
+int gen_rgb24_rgbgradient_bar(int width, int height, int barnum,
+                              unsigned char src_r, unsigned char src_g, unsigned char src_b,
+                              unsigned char dst_r, unsigned char dst_g, unsigned char dst_b);
+
+int gen_yuv420p_yuvgradient_bar(int width, int height, int barnum,
+                                unsigned char src_y, unsigned char src_u, unsigned char src_v,
+                                unsigned char dst_y, unsigned char dst_u, unsigned char dst_v);
+
+int rgb24_to_bmp(char *rgb24path, char *bmppath, int width, int height);
+
+int gen_allcolor_video();
+
+int yuv_2_h264();
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -49,7 +87,12 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-    simplest_ffmpeg_player3();
+//    decoderVideoFrameToImage();
+//    simplest_audio_play_sdl2();
+//    simplest_ffmpeg_audio_encoder();
+    simplest_ffmpeg_audio_encoder_pure();
+//    decode_audio("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.mp2");
+//    encode_audio("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.mp2");
 
     printf("------------------------------------------\n");
     printf("\n");

@@ -8,22 +8,41 @@ Android中提出了一套类似Java垃圾回收机制的智能指针，采用强
 Android设计了强引用sp和弱引用wp，故实际对象的释放，可分为强引用控制和弱引用控制。所谓强引用控制，指的是强引用数mStrong为0时，释放实际对象；弱引用控制，则指的是弱引用数mWeak为0时，才释放实际对象。
 
 
+// encoder
+result = avcodec_send_frame(audioAVCodecContext, frame);
+result = avcodec_receive_packet(audioAVCodecContext, avPacket);
+
+// decoder
+result = avcodec_send_packet(audioAVCodecContext, avPacket);
+result = avcodec_receive_frame(audioAVCodecContext, decoded_frame);
+
+
+cd x264
+CC=cl ./configure --enable-static --enable-shared --enable-pic
+
+
+ ./configure --toolchain=msvc --enable-yasm --enable-asm --enable-gpl --enable-libx264 --extra-cflags=-I/usr/local/include --extra-ldflags=-LIBPATH:/usr/local/lib
 
 
 
+ ./configure --prefix=/root/mydev/tools/ffmpeg --enable-libmp3lame --enable-static --enable-shared --enable-x86asm --enable-asm --enable-gpl --enable-libx264
 
 
+Stream #0.0[0x1e0]: Video: mpeg2video, yuv420p, 704x576 [PAR 12:11 DAR 4:3], 9578 kb/s, 25 tbr, 90k tbn, 50 tbc
+25  tbr 代表帧率
+90k tbn 代表文件层的时间精度,即1S=1200k,和duration相关
+50  tbc 代表视频层的时间精度,即1S=50,和strem->duration和时间戳相关
+
+在AndroidAPI <= 20（Android5.0之前的版本）中Google支持的CameraPreview Callback的YUV常用格式有两种：一个是NV21，一个是YV12。如果我们需要对Camera采集的图像进行编码等，必须要对其进一步处理，比如格式转换、旋转等操作，否则会出现一些花屏、叠影等问题。	
 
 
+采样率：每秒钟记录多少个采样点；
+在H264协议里定义了三种帧，完整编码的帧叫I帧，参考之前的I帧生成的只包含差异部分编码的帧叫P帧，还有一种参考前后的帧编码的帧叫B帧。
+H264采用的核心算法是帧内压缩和帧间压缩，帧内压缩是生成I帧的算法，帧间压缩是生成B帧和P帧的算法。
 
-
-
-
-
-
-
-
-
+ffmpeg提供了av_rescale_q_rnd函数进行转换。
+av_rescale_q_rnd(int64_t a, int64_t b, int64_t c, enum AVRounding rnd)
+此函数主要用于对于不同时间戳的转换。具体来说是将原来以 "时间基b" 表示的 数值a 转换成以 "时间基c" 来表示的新值。AVRounding表示取整的策略
 
 
 

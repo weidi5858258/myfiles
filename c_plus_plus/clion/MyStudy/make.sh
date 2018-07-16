@@ -48,23 +48,20 @@ digui ${currentDir}
 #ln -s libpostproc-ffmpeg.so.53.3.100 libpostproc.so
 # echo ${codeFiles}
 
-currentSystem="${1}"
-if [[ ${currentSystem} == "ubuntu" ]]; then
-    ffmpegLibPath="/root/mydev/tools/ffmpeg/lib"
-    sdlLibPath="/usr/include/SDL2"
-else
-    ffmpegLibPath="/mnt/d/mydev/ffmpeg/lib"
-    sdlLibPath="/usr/include/SDL2"
-fi
+ffmpegIncludePath="/root/mydev/tools/ffmpeg/include"
+ffmpegLibPath="/root/mydev/tools/ffmpeg/lib"
+sdlLibPath="/usr/include/SDL2"
+
+#-I"/mnt/d/mydev/ffmpeg/include"
 
 g++ \
 -x c++ \
 -o run_me \
 -g -Wall -std=c++11 \
--I"/mnt/d/mydev/ffmpeg/include"
+-I${ffmpegIncludePath} \
 ${codeFiles} \
--L${sdlLibPath} -lSDL2 \
--L${sdlLibPath} -lSDL2main \
+-L${sdlLibPath}    -lSDL2 \
+-L${sdlLibPath}    -lSDL2main \
 -L${ffmpegLibPath} -lavformat \
 -L${ffmpegLibPath} -lavdevice \
 -L${ffmpegLibPath} -lavcodec \

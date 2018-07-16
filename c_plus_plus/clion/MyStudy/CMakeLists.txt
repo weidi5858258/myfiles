@@ -26,8 +26,8 @@ if (WIN32)
             -L${FFMPEG_LIB_PATH} -lavdevice
             -L${FFMPEG_LIB_PATH} -lavfilter
             -L${FFMPEG_LIB_PATH} -lavutil
-            -L${FFMPEG_LIB_PATH} -lswresample
             -L${FFMPEG_LIB_PATH} -lswscale
+            -L${FFMPEG_LIB_PATH} -lswresample
             -L${SDL2_LIB_PATH} -lSDL2
             -L${SDL2_LIB_PATH} -lSDL2main
             )
@@ -64,6 +64,8 @@ else ()
             -L${FFMPEG_LIB_PATH} -lswscale
             -L${SDL2_LIB_PATH} -lSDL2
             -L${SDL2_LIB_PATH} -lSDL2main
+            -lmp3lame
+            -lx264
             -llzma
             -lasound
             -lsndio
