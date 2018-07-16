@@ -76,6 +76,8 @@ Lecture_1.mp3: MPEG ADTS, layer II, v2,  64 kBits, 22.05 kHz, Stereo
 
 avCodec = avcodec_find_encoder_by_name("libfdk_aac");
 
+常用的立体声有2个通道，环绕立体声3个通道。
+
 
 
 

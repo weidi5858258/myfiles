@@ -34,6 +34,7 @@ extern "C" {// 不能少
 #include <libavfilter/avfilter.h>
 #include <libavfilter/buffersink.h>
 #include <libavfilter/buffersrc.h>
+#include <libavutil/channel_layout.h>
 #include <libavutil/mathematics.h>
 #include <libavutil/samplefmt.h>
 #include <libavutil/audio_fifo.h>
@@ -72,8 +73,8 @@ using namespace std;
 #define OUTPUT_YUV420P 0
 #define OUTPUT_IMAGE 1
 
-#define INBUFSIZE 4096
-#define MP3BUFSIZE (int) (1.25 * INBUFSIZE) + 7200
+#define INBUF_SIZE 4096
+#define MP3BUFSIZE (int) (1.25 * INBUF_SIZE) + 7200
 /***
  现在不能单独使用音频,必须先初始化视频,此后才能处理音频.
  因为在初始化视频时需要初始化dstAVFrame,dstAVFrame在

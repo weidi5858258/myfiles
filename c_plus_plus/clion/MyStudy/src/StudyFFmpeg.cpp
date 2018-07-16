@@ -1768,145 +1768,7 @@ int simplest_ffmpeg_audio_decoder() {
     return 0;
 }
 
-static void decode(AVCodecContext *dec_ctx,
-                   AVPacket *pkt,
-                   AVFrame *frame,
-                   FILE *outfile) {
-    int i, ch;
-    int ret, data_size;
 
-    /* send the packet with the compressed data to the decoder */
-    ret = avcodec_send_packet(dec_ctx, pkt);
-    if (ret < 0) {
-        fprintf(stderr, "Error submitting the packet to the decoder\n");
-        exit(1);
-    }
-
-    /* read all the output frames (in general there may be any number of them */
-    while (ret >= 0) {
-        ret = avcodec_receive_frame(dec_ctx, frame);
-        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
-            return;
-        else if (ret < 0) {
-            fprintf(stderr, "Error during decoding\n");
-            exit(1);
-        }
-        data_size = av_get_bytes_per_sample(dec_ctx->sample_fmt);
-        if (data_size < 0) {
-            /* This should not occur, checking just for paranoia */
-            fprintf(stderr, "Failed to calculate data size\n");
-            exit(1);
-        }
-        for (i = 0; i < frame->nb_samples; i++)
-            for (ch = 0; ch < dec_ctx->channels; ch++)
-                fwrite(frame->data[ch] + data_size * i, 1, data_size, outfile);
-    }
-}
-
-int decode_audio() {
-    const char *outfilename, *filename;
-    const AVCodec *codec;
-    AVCodecContext *c = NULL;
-    AVCodecParserContext *parser = NULL;
-    int len, ret;
-    FILE *f, *outfile;
-    uint8_t inbuf[AUDIO_INBUF_SIZE + AV_INPUT_BUFFER_PADDING_SIZE];
-    uint8_t *data;
-    size_t data_size;
-    AVPacket *pkt;
-    AVFrame *decoded_frame = NULL;
-
-    filename = "/root/mydev/workspace_github/simplest_ffmpeg_audio_player_2.2/simplest_audio_play_sdl2/aaa.mp3";
-    outfilename = "/root/mydev/workspace_github/simplest_ffmpeg_audio_player_2.2/simplest_audio_play_sdl2/output.pcm";
-
-    pkt = av_packet_alloc();
-
-    /* find the MPEG audio decoder */
-    codec = avcodec_find_decoder(AV_CODEC_ID_MP2);
-    if (!codec) {
-        fprintf(stderr, "Codec not found\n");
-        exit(1);
-    }
-
-    parser = av_parser_init(codec->id);
-    if (!parser) {
-        fprintf(stderr, "Parser not found\n");
-        exit(1);
-    }
-
-    c = avcodec_alloc_context3(codec);
-    if (!c) {
-        fprintf(stderr, "Could not allocate audio codec context\n");
-        exit(1);
-    }
-
-    /* open it */
-    if (avcodec_open2(c, codec, NULL) < 0) {
-        fprintf(stderr, "Could not open codec\n");
-        exit(1);
-    }
-
-    f = fopen(filename, "rb");
-    if (!f) {
-        fprintf(stderr, "Could not open %s\n", filename);
-        exit(1);
-    }
-    outfile = fopen(outfilename, "wb");
-    if (!outfile) {
-        av_free(c);
-        exit(1);
-    }
-
-    /* decode until eof */
-    data = inbuf;
-    data_size = fread(inbuf, 1, AUDIO_INBUF_SIZE, f);
-
-    while (data_size > 0) {
-        if (!decoded_frame) {
-            if (!(decoded_frame = av_frame_alloc())) {
-                fprintf(stderr, "Could not allocate audio frame\n");
-                exit(1);
-            }
-        }
-
-        ret = av_parser_parse2(parser, c, &pkt->data, &pkt->size,
-                               data, data_size,
-                               AV_NOPTS_VALUE, AV_NOPTS_VALUE, 0);
-        if (ret < 0) {
-            fprintf(stderr, "Error while parsing\n");
-            exit(1);
-        }
-        data += ret;
-        data_size -= ret;
-
-        if (pkt->size)
-            decode(c, pkt, decoded_frame, outfile);
-
-        if (data_size < AUDIO_REFILL_THRESH) {
-            memmove(inbuf, data, data_size);
-            data = inbuf;
-            len = fread(data + data_size, 1,
-                        AUDIO_INBUF_SIZE - data_size, f);
-            if (len > 0)
-                data_size += len;
-        }
-    }
-
-    /* flush the decoder */
-    pkt->data = NULL;
-    pkt->size = 0;
-    decode(c, pkt, decoded_frame, outfile);
-
-    fclose(outfile);
-    fclose(f);
-
-    avcodec_free_context(&c);
-    av_parser_close(parser);
-    av_frame_free(&decoded_frame);
-    av_packet_free(&pkt);
-
-    return 0;
-}
 
 int initOutputEncoder(AVFormatContext *avFormatContext,
                       AVCodecParameters *videoAVCodecParameters,
@@ -3118,6 +2980,7 @@ int encode(AVCodecContext *audioAVCodecContext,
 }
 
 /***
+ 来自雷神的代码
  使用这个方法进行编码
  只能对pcm文件进行编码
  */
@@ -3239,6 +3102,9 @@ int simplest_ffmpeg_audio_encoder_pure() {
     return 0;
 }
 
+/***
+ 使用了libmp3lame库
+ */
 int pcm2mp3(char *inPath, char *outPath) {
     int status = 0;
     lame_global_flags *gfp;
@@ -3267,11 +3133,11 @@ int pcm2mp3(char *inPath, char *outPath) {
     infp = fopen(inPath, "rb");
     outfp = fopen(outPath, "wb");
 
-    input_buffer = (short *) malloc(INBUFSIZE * 2);
+    input_buffer = (short *) malloc(INBUF_SIZE * 2);
     encoded_mp3_buffer = (unsigned char *) malloc(MP3BUFSIZE);
 
     do {
-        input_samples = fread(input_buffer, 2, INBUFSIZE, infp);
+        input_samples = fread(input_buffer, 2, INBUF_SIZE, infp);
         printf("input_samples is %d.\n", input_samples);
         //fprintf(stderr, "input_samples is %d./n", input_samples);
         mp3_bytes = lame_encode_buffer_interleaved(gfp,
@@ -3287,7 +3153,7 @@ int pcm2mp3(char *inPath, char *outPath) {
         } else if (mp3_bytes > 0) {
             fwrite(encoded_mp3_buffer, 1, mp3_bytes, outfp);
         }
-    } while (input_samples == INBUFSIZE);
+    } while (input_samples == INBUF_SIZE);
 
     mp3_bytes = lame_encode_flush(gfp, encoded_mp3_buffer, sizeof(encoded_mp3_buffer));
     if (mp3_bytes > 0) {
@@ -3306,6 +3172,150 @@ int pcm2mp3(char *inPath, char *outPath) {
 
     exit:
     return status;
+}
+
+/***
+ * 实现将音频的三大要素：声道，样本，采样率变更的demo
+ * 例如双声道变成单声道，44100->48000，float->s16等
+ * @param audio_dec_ctx
+ * @param pAudioDecodeFrame
+ * @param out_sample_fmt
+ * @param out_channels
+ * @param out_sample_rate
+ * @param out_buf
+ * @return
+ */
+int AudioResampling(AVCodecContext *audio_dec_ctx, AVFrame *pAudioDecodeFrame,
+                    int out_sample_fmt, int out_channels, int out_sample_rate, uint8_t *out_buf) {
+    //////////////////////////////////////////////////////////////////////////
+    SwrContext *swr_ctx = NULL;
+    int data_size = 0;
+    int ret = 0;
+    int64_t src_ch_layout = AV_CH_LAYOUT_STEREO; //初始化这样根据不同文件做调整
+    int64_t dst_ch_layout = AV_CH_LAYOUT_STEREO; //这里设定ok
+    int dst_nb_channels = 0;
+    int dst_linesize = 0;
+    int src_nb_samples = 0;
+    int dst_nb_samples = 0;
+    int max_dst_nb_samples = 0;
+    uint8_t **dst_data = NULL;
+    int resampled_data_size = 0;
+
+    //重新采样
+    if (swr_ctx) {
+        swr_free(&swr_ctx);
+    }
+    swr_ctx = swr_alloc();
+    if (!swr_ctx) {
+        printf("swr_alloc error \n");
+        return -1;
+    }
+
+    src_ch_layout = (audio_dec_ctx->channel_layout &&
+                     audio_dec_ctx->channels ==
+                     av_get_channel_layout_nb_channels(audio_dec_ctx->channel_layout)) ?
+                    audio_dec_ctx->channel_layout :
+                    av_get_default_channel_layout(audio_dec_ctx->channels);
+
+    if (out_channels == 1) {
+        dst_ch_layout = AV_CH_LAYOUT_MONO;
+    } else if (out_channels == 2) {
+        dst_ch_layout = AV_CH_LAYOUT_STEREO;
+    } else {
+        //可扩展
+    }
+
+    if (src_ch_layout <= 0) {
+        printf("src_ch_layout error \n");
+        return -1;
+    }
+
+    src_nb_samples = pAudioDecodeFrame->nb_samples;
+    if (src_nb_samples <= 0) {
+        printf("src_nb_samples error \n");
+        return -1;
+    }
+
+    /* set options */
+    av_opt_set_int(swr_ctx, "in_channel_layout", src_ch_layout, 0);
+    av_opt_set_int(swr_ctx, "in_sample_rate", audio_dec_ctx->sample_rate, 0);
+    av_opt_set_sample_fmt(swr_ctx, "in_sample_fmt", audio_dec_ctx->sample_fmt, 0);
+
+    av_opt_set_int(swr_ctx, "out_channel_layout", dst_ch_layout, 0);
+    av_opt_set_int(swr_ctx, "out_sample_rate", out_sample_rate, 0);
+    av_opt_set_sample_fmt(swr_ctx, "out_sample_fmt", (AVSampleFormat) out_sample_fmt, 0);
+    swr_init(swr_ctx);
+
+    max_dst_nb_samples = dst_nb_samples =
+            av_rescale_rnd(src_nb_samples, out_sample_rate, audio_dec_ctx->sample_rate, AV_ROUND_UP);
+    if (max_dst_nb_samples <= 0) {
+        printf("av_rescale_rnd error \n");
+        return -1;
+    }
+
+    dst_nb_channels = av_get_channel_layout_nb_channels(dst_ch_layout);
+    ret = av_samples_alloc_array_and_samples(&dst_data, &dst_linesize, dst_nb_channels,
+                                             dst_nb_samples, (AVSampleFormat) out_sample_fmt, 0);
+    if (ret < 0) {
+        printf("av_samples_alloc_array_and_samples error \n");
+        return -1;
+    }
+
+
+    dst_nb_samples = av_rescale_rnd(swr_get_delay(swr_ctx, audio_dec_ctx->sample_rate) +
+                                    src_nb_samples, out_sample_rate, audio_dec_ctx->sample_rate, AV_ROUND_UP);
+    if (dst_nb_samples <= 0) {
+        printf("av_rescale_rnd error \n");
+        return -1;
+    }
+    if (dst_nb_samples > max_dst_nb_samples) {
+        av_free(dst_data[0]);
+        ret = av_samples_alloc(dst_data, &dst_linesize, dst_nb_channels,
+                               dst_nb_samples, (AVSampleFormat) out_sample_fmt, 1);
+        max_dst_nb_samples = dst_nb_samples;
+    }
+
+    data_size = av_samples_get_buffer_size(NULL, audio_dec_ctx->channels,
+                                           pAudioDecodeFrame->nb_samples,
+                                           audio_dec_ctx->sample_fmt, 1);
+    if (data_size <= 0) {
+        printf("av_samples_get_buffer_size error \n");
+        return -1;
+    }
+    resampled_data_size = data_size;
+
+    if (swr_ctx) {
+        ret = swr_convert(swr_ctx, dst_data, dst_nb_samples,
+                          (const uint8_t **) pAudioDecodeFrame->data, pAudioDecodeFrame->nb_samples);
+        if (ret <= 0) {
+            printf("swr_convert error \n");
+            return -1;
+        }
+
+        resampled_data_size = av_samples_get_buffer_size(&dst_linesize, dst_nb_channels,
+                                                         ret, (AVSampleFormat) out_sample_fmt, 1);
+        if (resampled_data_size <= 0) {
+            printf("av_samples_get_buffer_size error \n");
+            return -1;
+        }
+    } else {
+        printf("swr_ctx null error \n");
+        return -1;
+    }
+
+    //将值返回去
+    memcpy(out_buf, dst_data[0], resampled_data_size);
+
+    if (dst_data) {
+        av_freep(&dst_data[0]);
+    }
+    av_freep(&dst_data);
+    dst_data = NULL;
+
+    if (swr_ctx) {
+        swr_free(&swr_ctx);
+    }
+    return resampled_data_size;
 }
 
 

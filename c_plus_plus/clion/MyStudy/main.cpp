@@ -21,6 +21,13 @@
 
 #endif //MYSTUDY_FFMPEG
 
+#ifndef MYSTUDY_FFMPEG_SAMPLE
+#define MYSTUDY_FFMPEG_SAMPLE
+
+#include "src/ffmpeg_sample.cpp"
+
+#endif //MYSTUDY_FFMPEG_SAMPLE
+
 
 void test();
 
@@ -28,7 +35,7 @@ int simplest_ffmpeg_player();
 
 int simplest_ffmpeg_player2();
 
-int decoderVideoFrameToImage();
+int decoder_video_frame_to_image();
 
 int simplest_ffmpeg_player_sdl2();
 
@@ -40,11 +47,15 @@ int simplest_ffmpeg_audio_encoder();
 
 int simplest_ffmpeg_audio_encoder_pure();
 
-int decode_audio();
+int decode_audio_main(const char *infilename, const char *outfilename);
 
-int decode_audio(const char *infilename, const char *outfilename);
+int decode_audio2(const char *input_file_name, const char *output_file_name);
 
-int encode_audio(const char *infilename, const char *outfilename);
+int encode_audio_main(const char *infilename, const char *outfilename);
+
+int decode_video_main(const char *input_file_name, const char *output_file_name);
+
+int encode_video_main(const char *codec_name, const char *output_file_name);
 
 int recorderScreen();
 
@@ -71,7 +82,7 @@ int gen_allcolor_video();
 
 int yuv_2_h264();
 
-int pcm2mp3(char* inPath, char* outPath);
+int pcm2mp3(char *inPath, char *outPath);
 
 
 /***
@@ -92,10 +103,12 @@ int main(int argc, char *argv[]) {
 //    decoderVideoFrameToImage();
 //    simplest_audio_play_sdl2();
 //    simplest_ffmpeg_audio_encoder();
-    simplest_ffmpeg_audio_encoder_pure();
-//    decode_audio("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.mp2");
-//    encode_audio("/root/音乐/tdjm.pcm", "/root/音乐/temp.aac");
-//    pcm2mp3("/root/音乐/tdjm.pcm", "/root/音乐/tdjm.mp3");
+//    simplest_ffmpeg_audio_encoder_pure();
+//    decode_audio_main("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.mp2");
+//    decode_audio2("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.pcm");
+//    encode_audio_main("/root/音乐/tdjm.pcm", "/root/音乐/temp.aac");
+//    pcm2mp3("/root/音乐/temp.pcm", "/root/音乐/tdjm.mp3");
+    decode_video_main("/root/视频/sex.avi", "/root/图片/video_to_image");
 
     printf("------------------------------------------\n");
     printf("\n");

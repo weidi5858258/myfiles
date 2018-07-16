@@ -30,7 +30,7 @@ int handleAudio(AVCodecContext *audioAVCodecContext,
 /***
  只用到解码器,没有用到编码器
  */
-int decoderVideoFrameToImage() {
+int decoder_video_frame_to_image() {
     ////////////////////////////音视频公共部分////////////////////////////
     // char filePath[] = "/root/视频/10_APITest_MKV-HEVC.mkv";
     char filePath[] = "/media/root/windows-d/Tools/apache-tomcat-8.5.23/webapps/ROOT/video/xunnu.mp4";
@@ -485,437 +485,120 @@ void saveImage(AVFrame *dstAVFrame, int width, int height, int iFrame) {
     fclose(dstFile);
 }
 
-static void decode(AVCodecContext *audioAVCodecContext,
-                   AVPacket *avPacket,
-                   AVFrame *decoded_frame,
-                   FILE *outfile) {
-    int i, j;
-    int result, data_size;
 
-    /* send the packet with the compressed data to the decoder */
-    // 正常情况下返回结果为0
-    result = avcodec_send_packet(audioAVCodecContext, avPacket);
-    if (result < 0) {
-        fprintf(stderr, "Error submitting the packet to the decoder\n");
-        exit(1);
-    }
 
-    /* read all the output frames (in general there may be any number of them */
-    while (result >= 0) {
-        // 正常情况情况下返回结果为0,第二次返回结果可能为-11
-        // 解码后的数据放在了decoded_frame中
-        result = avcodec_receive_frame(audioAVCodecContext, decoded_frame);
-        // fprintf(stdout, "While loop result = %d\n", result);
-        if (result == AVERROR(EAGAIN) || result == AVERROR_EOF) {
-            return;
-        } else if (result < 0) {
-            fprintf(stderr, "Error during decoding\n");
-            exit(1);
-        }
-        // 一个sample多少个字节
-        data_size = av_get_bytes_per_sample(audioAVCodecContext->sample_fmt);
-        // fprintf(stdout, "While loop data_size = %d\n", data_size);// 4
-        if (data_size < 0) {
-            /* This should not occur, checking just for paranoia */
-            fprintf(stderr, "Failed to calculate data size\n");
-            exit(1);
-        }
-        int nb_samples = decoded_frame->nb_samples;
-        int channels = audioAVCodecContext->channels;
-        // fprintf(stdout, "While loop nb_samples = %d\n", nb_samples);// 1152
-        // fprintf(stdout, "While loop channels = %d\n", channels);// 2(左声道,右声道)
-        // 一帧数据有多个sample,一个sample可能有2个声道
-        for (i = 0; i < nb_samples; i++) {
-            for (j = 0; j < channels; j++) {
-                /***
-                 刚开始写的时候,decoded_frame->data[0]与decoded_frame->data[1]指向的都是开始位置,都是起点.
-                 然后decoded_frame->data[0]偏移data_size * 0个位置写data_size个字节,
-                 接着decoded_frame->data[1]偏移data_size * 1个位置写data_size个字节,
-                 依次类推.
-                 双声道时先写左声道,再写右声道.
-                 */
-                fwrite(decoded_frame->data[j] + data_size * i, 1, data_size, outfile);
-            }
-        }
-    }
-}
-
-int decode_audio(const char *infilename, const char *outfilename) {
-    AVFormatContext *avFormatContext = NULL;
-    AVCodecParameters *audioAVCodecParameters = NULL;
+/***
+ 来自网上的代码
+ 使用这个方法解码成的pcm文件再编码成mp3文件后,声音变了,这种声音蛮好听的
+ */
+int decode_audio2(const char *input_file_name, const char *output_file_name) {
+    //1.注册组件
     av_register_all();
-    avFormatContext = avformat_alloc_context();
-    if (avformat_open_input(&avFormatContext, infilename, NULL, NULL)) {
-        printf("Couldn't open input stream.\n");
+    //封装格式上下文
+    AVFormatContext *av_format_context = avformat_alloc_context();
+
+    //2.打开输入音频文件
+    if (avformat_open_input(&av_format_context, input_file_name, NULL, NULL) != 0) {
+        printf("%s\n", "打开输入音频文件失败");
         return -1;
     }
-    if (avformat_find_stream_info(avFormatContext, NULL) < 0) {
-        printf("Couldn't find stream information.\n");
+    //3.获取音频信息
+    if (avformat_find_stream_info(av_format_context, NULL) < 0) {
+        printf("%s\n", "获取音频信息失败");
         return -1;
     }
 
-    int audioStreamIndex = -1;
-    int nb_streams = avFormatContext->nb_streams;
-    printf("avFormatContext->nb_streams = %d\n", nb_streams);// 2
+    //音频解码，需要找到对应的AVStream所在的pFormatCtx->streams的索引位置
+    int audio_stream_index = -1;
     int i;
-    for (i = 0; i < nb_streams; i++) {
-        AVMediaType avMediaType = avFormatContext->streams[i]->codecpar->codec_type;
-        if (avMediaType == AVMEDIA_TYPE_AUDIO) {
-            audioStreamIndex = avMediaType;
-            printf("audioStreamIndex = %d\n", audioStreamIndex);
+    for (i = 0; i < av_format_context->nb_streams; i++) {
+        //根据类型判断是否是音频流
+        if (av_format_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+            audio_stream_index = i;
+            break;
         }
     }
-    if (audioStreamIndex == -1) {
-        printf("Didn't find a video or audio stream.\n");
+    //4.获取解码器
+    //根据索引拿到对应的流,根据流拿到解码器上下文
+    AVCodecContext *audio_av_codec_context = av_format_context->streams[audio_stream_index]->codec;
+    //再根据上下文拿到编解码id，通过该id拿到解码器
+    AVCodec *audio_av_codec = avcodec_find_decoder(audio_av_codec_context->codec_id);
+    if (audio_av_codec == NULL) {
+        printf("%s\n", "无法解码");
         return -1;
     }
-
-    if (audioStreamIndex != -1) {
-        audioAVCodecParameters = avFormatContext->streams[audioStreamIndex]->codecpar;
+    //5.打开解码器
+    if (avcodec_open2(audio_av_codec_context, audio_av_codec, NULL) < 0) {
+        printf("%s\n", "编码器无法打开");
+        return -1;
     }
+    //编码数据
+    AVPacket *av_packet = (AVPacket *) av_malloc(sizeof(AVPacket));
+    //解压缩数据
+    AVFrame *frame = av_frame_alloc();
 
-    printf("audioAVCodecParameters->codec_id = %d\n", audioAVCodecParameters->codec_id);// 标示特定的编解码器
-    printf("audioAVCodecParameters->codec_type = %d\n", audioAVCodecParameters->codec_type);// 标示特定的编解码器
-    printf("audioAVCodecParameters->channels = %d\n", audioAVCodecParameters->channels);// 声道数（音频）
-    printf("audioAVCodecParameters->bit_rate = %d\n", audioAVCodecParameters->bit_rate);// 平均比特率
-    printf("audioAVCodecParameters->format = %d\n", audioAVCodecParameters->format);// 像素格式/采样数据格式
-    printf("audioAVCodecParameters->sample_rate = %d\n", audioAVCodecParameters->sample_rate);// 采样率（音频）
-    printf("audioAVCodecParameters->sample_aspect_ratio = %d\n", audioAVCodecParameters->sample_aspect_ratio);
-    printf("audioAVCodecParameters->bits_per_coded_sample = %d\n", audioAVCodecParameters->bits_per_coded_sample);
-    printf("audioAVCodecParameters->bits_per_raw_sample = %d\n", audioAVCodecParameters->bits_per_raw_sample);
+    //frame->16bit 44100 PCM 统一音频采样格式与采样率
+    SwrContext *swr_context = swr_alloc();
+    //重采样设置选项-----------------------------------------------------------start
+    //输入的采样格式
+    enum AVSampleFormat in_sample_fmt = audio_av_codec_context->sample_fmt;
+    //输出的采样格式 16bit PCM
+    enum AVSampleFormat out_sample_fmt = AV_SAMPLE_FMT_S16;
+    //输入的采样率
+    int in_sample_rate = audio_av_codec_context->sample_rate;
+    //输出的采样率
+    int out_sample_rate = 44100;
+    //输入的声道布局
+    uint64_t in_ch_layout = audio_av_codec_context->channel_layout;
+    //输出的声道布局
+    uint64_t out_ch_layout = AV_CH_LAYOUT_MONO;
 
-    const AVCodec *audioAVCodecDecoder = NULL;
-    AVCodecContext *audioAVCodecContext = NULL;
-    AVCodecParserContext *audioAVCodecParserContext = NULL;
-    AVFrame *decoded_frame = NULL;
-    // 存储一帧（一般情况下）压缩编码数据
-    AVPacket *avPacket = NULL;
-    int len, result;
-    FILE *infile, *outfile;
-    uint8_t inbuf[AUDIO_INBUF_SIZE + AV_INPUT_BUFFER_PADDING_SIZE];
-    uint8_t *data_buf;
-    size_t data_buf_size;
-
-    avPacket = av_packet_alloc();
-
-    /* find the MPEG audio decoder */
-    audioAVCodecDecoder = avcodec_find_decoder(AV_CODEC_ID_MP2);
-    if (!audioAVCodecDecoder) {
-        fprintf(stderr, "Codec not found\n");
-        exit(1);
-    }
-
-    audioAVCodecContext = avcodec_alloc_context3(audioAVCodecDecoder);
-    if (!audioAVCodecContext) {
-        fprintf(stderr, "Could not allocate audio codec context\n");
-        exit(1);
-    }
-
-    audioAVCodecParserContext = av_parser_init(audioAVCodecDecoder->id);
-    if (!audioAVCodecParserContext) {
-        fprintf(stderr, "Parser not found\n");
-        exit(1);
-    }
-
-    /* open decoder */
-    if (avcodec_open2(audioAVCodecContext, audioAVCodecDecoder, NULL) < 0) {
-        fprintf(stderr, "Could not open codec\n");
-        exit(1);
-    }
-
-    AVSampleFormat audioAVSampleFormat = audioAVCodecContext->sample_fmt;
-    int sample_rate = audioAVCodecContext->sample_rate;
-    int channels = audioAVCodecContext->channels;
-    printf("audioAVSampleFormat = %d\n", audioAVSampleFormat);// 8
-    printf("audio sample_rate = %d\n", sample_rate);// 0
-    printf("audio channels = %d\n", channels);// 0
-
-    fprintf(stdout, "AVERROR(EAGAIN) = %d\n", AVERROR(EAGAIN));// -11
-    fprintf(stdout, "AVERROR(EINVAL) = %d\n", AVERROR(EINVAL));// -22
-    fprintf(stdout, "AVERROR(ENOMEM) = %d\n", AVERROR(ENOMEM));// -12
-    fprintf(stdout, "AVERROR_EOF     = %d\n", AVERROR_EOF);    // -541478725
-
-    infile = fopen(infilename, "rb");
-    if (!infile) {
-        fprintf(stderr, "Could not open %s\n", infilename);
-        exit(1);
-    }
-    outfile = fopen(outfilename, "wb");
-    if (!outfile) {
-        av_free(audioAVCodecContext);
-        exit(1);
-    }
-
-    /* decode until eof */
-    data_buf = inbuf;
-    // 把infile中的文件内容读到data_buf指向的数组中去,读成功的话data_buf_size值等于AUDIO_INBUF_SIZE值
-    data_buf_size = fread(inbuf, 1, AUDIO_INBUF_SIZE, infile);
-    // 成功时返回AUDIO_INBUF_SIZE大小
-    fprintf(stderr, "data_size = %d\n", data_buf_size);
-
-    while (data_buf_size > 0) {
-        if (!decoded_frame) {
-            if (!(decoded_frame = av_frame_alloc())) {
-                fprintf(stderr, "Could not allocate audio frame\n");
-                exit(1);
+    swr_alloc_set_opts(swr_context, out_ch_layout, out_sample_fmt, out_sample_rate, in_ch_layout, in_sample_fmt,
+                       in_sample_rate, 0, NULL);
+    swr_init(swr_context);
+    //重采样设置选项-----------------------------------------------------------end
+    //获取输出的声道个数
+    int out_channel_nb = av_get_channel_layout_nb_channels(out_ch_layout);
+    //存储pcm数据
+    uint8_t *out_buffer = (uint8_t *) av_malloc(2 * 44100);
+    FILE *fp_pcm = fopen(output_file_name, "wb");
+    int ret, got_frame, framecount = 0;
+    //6.一帧一帧读取压缩的音频数据AVPacket
+    while (av_read_frame(av_format_context, av_packet) >= 0) {
+        if (av_packet->stream_index == audio_stream_index) {
+            //解码AVPacket->AVFrame
+            ret = avcodec_decode_audio4(audio_av_codec_context, frame, &got_frame, av_packet);
+            if (ret < 0) {
+                printf("%s\n", "解码完成");
+            }
+            //非0，正在解码
+            if (got_frame) {
+                printf("解码%d帧\n", framecount++);
+                swr_convert(swr_context, &out_buffer, 2 * 44100, (const uint8_t **)frame->data, frame->nb_samples);
+                //获取sample的size
+                int out_buffer_size = av_samples_get_buffer_size(NULL, out_channel_nb,
+                                                                 frame->nb_samples,
+                                                                 out_sample_fmt, 1);
+                //写入文件进行测试
+                fwrite(out_buffer, 1, out_buffer_size, fp_pcm);
             }
         }
-
-        /***
-         int av_parser_parse2(AVCodecParserContext *s,
-                                 AVCodecContext *avctx,
-                                 uint8_t **poutbuf,
-                                 int *poutbuf_size,
-                                 const uint8_t *buf,
-                                 int buf_size,
-                                 int64_t pts,
-                                 int64_t dts,
-                                 int64_t pos)
-         从data_buf数组中解析出一帧的数据(avPacket中存储的就是一帧数据量)
-         调用一次av_parser_parse2函数就是解析出一帧的数据
-         成功的话result大小等于avPacket->size大小
-         */
-        result = av_parser_parse2(audioAVCodecParserContext,
-                                  audioAVCodecContext,
-                                  &avPacket->data,
-                                  &avPacket->size,
-                                  data_buf,
-                                  data_buf_size,
-                                  AV_NOPTS_VALUE,
-                                  AV_NOPTS_VALUE,
-                                  0);
-        fprintf(stderr, "result = %d\n", result);
-        if (result < 0) {
-            fprintf(stderr, "Error while parsing\n");
-            exit(1);
-        }
-
-        data_buf += result;
-        data_buf_size -= result;
-        fprintf(stderr, "data_size = %d\n", data_buf_size);
-        fprintf(stderr, "avPacket->size = %d\n", avPacket->size);
-
-        // 解析出来的一帧数据大小不为0表示avPacket中有数据
-        if (avPacket->size) {
-            decode(audioAVCodecContext, avPacket, decoded_frame, outfile);
-        }
-
-        if (data_buf_size < AUDIO_REFILL_THRESH) {
-            memmove(inbuf, data_buf, data_buf_size);
-            data_buf = inbuf;
-            len = fread(data_buf + data_buf_size, 1, AUDIO_INBUF_SIZE - data_buf_size, infile);
-            if (len > 0) {
-                data_buf_size += len;
-            }
-        }
+        av_free_packet(av_packet);
     }
 
-    /* flush the decoder */
-    avPacket->data = NULL;
-    avPacket->size = 0;
-    decode(audioAVCodecContext, avPacket, decoded_frame, outfile);
 
-    fclose(outfile);
-    fclose(infile);
-
-    avcodec_free_context(&audioAVCodecContext);
-    av_parser_close(audioAVCodecParserContext);
-    av_frame_free(&decoded_frame);
-    av_packet_free(&avPacket);
-
+    fclose(fp_pcm);
+    av_frame_free(&frame);
+    av_free(out_buffer);
+    swr_free(&swr_context);
+    avcodec_close(audio_av_codec_context);
+    avformat_close_input(&av_format_context);
     return 0;
 }
 
-/* check that a given sample format is supported by the encoder */
-static int check_sample_fmt(const AVCodec *codec, enum AVSampleFormat sample_fmt) {
-    const enum AVSampleFormat *p = codec->sample_fmts;
 
-    while (*p != AV_SAMPLE_FMT_NONE) {
-        if (*p == sample_fmt)
-            return 1;
-        p++;
-    }
-    return 0;
-}
 
-/* just pick the highest supported samplerate */
-static int select_sample_rate(const AVCodec *codec) {
-    const int *p;
-    int best_samplerate = 0;
 
-    if (!codec->supported_samplerates)
-        return 44100;
-
-    p = codec->supported_samplerates;
-    while (*p) {
-        if (!best_samplerate || abs(44100 - *p) < abs(44100 - best_samplerate))
-            best_samplerate = *p;
-        p++;
-    }
-    return best_samplerate;
-}
-
-/* select layout with the highest channel count */
-static int select_channel_layout(const AVCodec *codec) {
-    const uint64_t *p;
-    uint64_t best_ch_layout = 0;
-    int best_nb_channels = 0;
-
-    if (!codec->channel_layouts)
-        return AV_CH_LAYOUT_STEREO;
-
-    p = codec->channel_layouts;
-    while (*p) {
-        int nb_channels = av_get_channel_layout_nb_channels(*p);
-
-        if (nb_channels > best_nb_channels) {
-            best_ch_layout = *p;
-            best_nb_channels = nb_channels;
-        }
-        p++;
-    }
-    return best_ch_layout;
-}
-
-static void encode(AVCodecContext *audioAVCodecContext,
-                   AVFrame *needToEncodedAVFrame,
-                   AVPacket *encodedAVPacket,
-                   FILE *outputFile) {
-    int result;
-
-    /* send the frame for encoding */
-    // 正常情况下返回结果为0
-    result = avcodec_send_frame(audioAVCodecContext, needToEncodedAVFrame);
-    // fprintf(stdout, "avcodec_send_frame_result = %d\n", result);
-    if (result < 0) {
-        fprintf(stderr, "Error sending the frame to the encoder\n");
-        exit(1);
-    }
-
-    /* read all the available output packets (in general there may be any
-     * number of them */
-    while (result >= 0) {
-        // 正常情况情况下返回结果为0,第二次返回结果可能为-11
-        // 编码后的数据放在了avPacket中
-        result = avcodec_receive_packet(audioAVCodecContext, encodedAVPacket);
-        // fprintf(stdout, "avcodec_receive_packet_result = %d\n", result);
-        if (result == AVERROR(EAGAIN) || result == AVERROR_EOF) {
-            return;
-        } else if (result < 0) {
-            fprintf(stderr, "Error encoding audio frame\n");
-            exit(1);
-        }
-
-        fwrite(encodedAVPacket->data, 1, encodedAVPacket->size, outputFile);
-        av_packet_unref(encodedAVPacket);
-    }
-}
-
-int encode_audio(const char *infilename, const char *outfilename) {
-    const AVCodec *audioAVCodecEncoder = NULL;
-    AVCodecContext *audioAVCodecContext = NULL;
-    AVFrame *needToEncodedAVFrame = NULL;
-    AVPacket *avPacket = NULL;
-    FILE *outputFile = NULL;
-    uint16_t *samples = NULL;
-    int i, j, k, result;
-    float t, tincr;
-
-    /* find the MP2 encoder */
-    audioAVCodecEncoder = avcodec_find_encoder(AV_CODEC_ID_MP2);
-    if (!audioAVCodecEncoder) {
-        fprintf(stderr, "Codec not found\n");
-        exit(1);
-    }
-
-    audioAVCodecContext = avcodec_alloc_context3(audioAVCodecEncoder);
-    if (!audioAVCodecContext) {
-        fprintf(stderr, "Could not allocate audio codec context\n");
-        exit(1);
-    }
-    /* put sample parameters */
-    audioAVCodecContext->bit_rate = 64000;
-    /* check that the encoder supports s16 pcm input */
-    audioAVCodecContext->sample_fmt = AV_SAMPLE_FMT_S16;
-    if (!check_sample_fmt(audioAVCodecEncoder, audioAVCodecContext->sample_fmt)) {
-        fprintf(stderr, "Encoder does not support sample format %s",
-                av_get_sample_fmt_name(audioAVCodecContext->sample_fmt));
-        exit(1);
-    }
-    /* select other audio parameters supported by the encoder */
-    audioAVCodecContext->sample_rate = select_sample_rate(audioAVCodecEncoder);
-    audioAVCodecContext->channel_layout = select_channel_layout(audioAVCodecEncoder);
-    audioAVCodecContext->channels = av_get_channel_layout_nb_channels(audioAVCodecContext->channel_layout);
-
-    /* open it */
-    if (avcodec_open2(audioAVCodecContext, audioAVCodecEncoder, NULL) < 0) {
-        fprintf(stderr, "Could not open codec\n");
-        exit(1);
-    }
-
-    outputFile = fopen(outfilename, "wb");
-    if (!outputFile) {
-        fprintf(stderr, "Could not open %s\n", outfilename);
-        exit(1);
-    }
-
-    /* packet for holding encoded output */
-    avPacket = av_packet_alloc();
-    if (!avPacket) {
-        fprintf(stderr, "could not allocate the packet\n");
-        exit(1);
-    }
-
-    /* frame containing input raw audio */
-    needToEncodedAVFrame = av_frame_alloc();
-    if (!needToEncodedAVFrame) {
-        fprintf(stderr, "Could not allocate audio frame\n");
-        exit(1);
-    }
-    needToEncodedAVFrame->nb_samples = audioAVCodecContext->frame_size;
-    needToEncodedAVFrame->format = audioAVCodecContext->sample_fmt;
-    needToEncodedAVFrame->channel_layout = audioAVCodecContext->channel_layout;
-    /* allocate the data buffers */
-    result = av_frame_get_buffer(needToEncodedAVFrame, 0);
-    if (result < 0) {
-        fprintf(stderr, "Could not allocate audio data buffers\n");
-        exit(1);
-    }
-
-    /* encode a single tone sound */
-    t = 0;
-    tincr = 2 * M_PI * 440.0 / audioAVCodecContext->sample_rate;
-    for (i = 0; i < 2000; i++) {
-        /* make sure the frame is writable -- makes a copy if the encoder
-         * kept a reference internally */
-        result = av_frame_make_writable(needToEncodedAVFrame);
-        if (result < 0) {
-            exit(1);
-        }
-        samples = (uint16_t *) needToEncodedAVFrame->data[0];
-
-        for (j = 0; j < audioAVCodecContext->frame_size; j++) {
-            samples[2 * j] = (int) (sin(t) * 10000);
-
-            for (k = 1; k < audioAVCodecContext->channels; k++) {
-                samples[2 * j + k] = samples[2 * j];
-            }
-            t += tincr;
-        }
-        encode(audioAVCodecContext, needToEncodedAVFrame, avPacket, outputFile);
-    }
-
-    /* flush the encoder */
-    encode(audioAVCodecContext, NULL, avPacket, outputFile);
-
-    fclose(outputFile);
-
-    av_frame_free(&needToEncodedAVFrame);
-    av_packet_free(&avPacket);
-    avcodec_free_context(&audioAVCodecContext);
-
-    return 0;
-}
 
 /***
 AVFormatContext *avFormatContext = NULL;
