@@ -501,6 +501,7 @@ static void decode_video(AVCodecContext *video_av_codec_context,
 
 /***
  来自官方sample的代码
+ 代码执行有问题
  */
 int decode_video_main(const char *input_file_name, const char *output_file_name) {
     const AVCodec *video_av_codec;

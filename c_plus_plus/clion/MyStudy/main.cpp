@@ -102,13 +102,14 @@ int main(int argc, char *argv[]) {
 
 //    decoderVideoFrameToImage();
 //    simplest_audio_play_sdl2();
+//    simplest_ffmpeg_audio_decoder();
 //    simplest_ffmpeg_audio_encoder();
 //    simplest_ffmpeg_audio_encoder_pure();
-//    decode_audio_main("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.mp2");
+//    decode_audio_main("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/GALAYoungForYou.pcm");
 //    decode_audio2("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.pcm");
-//    encode_audio_main("/root/音乐/tdjm.pcm", "/root/音乐/temp.aac");
+    encode_audio_main("/root/音乐/txdx.pcm", "/root/音乐/txdx.mp2");
 //    pcm2mp3("/root/音乐/temp.pcm", "/root/音乐/tdjm.mp3");
-    decode_video_main("/root/视频/sex.avi", "/root/图片/video_to_image");
+//    decode_video_main("/root/视频/sex.avi", "/root/图片/video_to_image");
 
     printf("------------------------------------------\n");
     printf("\n");

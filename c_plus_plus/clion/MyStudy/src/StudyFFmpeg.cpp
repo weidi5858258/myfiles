@@ -1592,9 +1592,8 @@ int simplest_ffmpeg_audio_decoder() {
     int i, audioStreamIndex = -1;
     int result;
 
-    char filePath[] = "/root/mydev/workspace_github/simplest_ffmpeg_audio_player_2.2/simplest_audio_play_sdl2/aaa.mp3";
-    FILE *pFile = fopen(
-            "/root/mydev/workspace_github/simplest_ffmpeg_audio_player_2.2/simplest_audio_play_sdl2/output.pcm", "wb");
+    char filePath[] = "/root/音乐/txdx.mp3";
+    FILE *pFile = fopen("/root/音乐/txdx.pcm", "wb");
 
     AVFormatContext *avFormatContext = NULL;
     AVCodecContext *audioAVCodecContext = NULL;
@@ -1722,6 +1721,7 @@ int simplest_ffmpeg_audio_decoder() {
                     printf("AUDIO AVERROR_EOF\n");
                     return -1;
                 default:
+                    // [mp3float @ 0x3b10e40] Header missing
                     printf("AUDIO OTHER ERROR\n");
                     return -1;
             }
