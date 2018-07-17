@@ -77,13 +77,62 @@ Lecture_1.mp3: MPEG ADTS, layer II, v2,  64 kBits, 22.05 kHz, Stereo
 avCodec = avcodec_find_encoder_by_name("libfdk_aac");
 
 常用的立体声有2个通道，环绕立体声3个通道。
+声道数目 立体声（stero）单声道（mono）
 
+采样率  单位时间内对音频ad芯片的采样次数，常见的音频采样率有。
+ 0: 96000 Hz
+ 1: 88200 Hz
+ 2: 64000 Hz
+ 3: 48000 Hz
+ 4: 44100 Hz
+ 5: 32000 Hz
+ 6: 24000 Hz
+ 7: 22050 Hz
+ 8: 16000 Hz
+ 9: 12000 Hz
+10: 11025 Hz
+11: 8000 Hz
+12: 7350 Hz
+13: Reserved
+14: Reserved
+15: frequency is written explicitly
+左边是adts头里面对应的采样率编码值，右边是对应的采样率值。
+单采样bit数目  单个采样的bit位数，16／8 bit。
 
+ffmpeg中的一些参数：
+   out_sample_format 音频采样格式
+   sample_rate 采样率值（非编码值）
+   in_channel_layout 解码后的PCM数据layout格式，左左左右右右   左右左右左右
+   nb_samples  一帧音频中的采样个数，用于计算一帧数据大小
 
-
-
-
-
-
-
-
+注意ffmpeg中的两个结构，AVPacket(编码的音视频帧),AVFrame(解码后的音视频数据)
+AVPacket packet = {0};
+packet.data =(uint8_t*)buf;
+    packet.size = len;
+AVFrame *decode_frame = avcodec_alloc_frame();
+if(decode_frame == NULL)
+{
+return -1;
+}
+//前面已经初始化过解码器
+int audio4_decode_len = avcodec_decode_audio4(av_codec_ctx_,decode_frame,got_frame,&packet);//解码
+if(audio4_decode_len < 0||*got_frame != 1)
+{
+return -1;
+}
+AVSampleFormat out_sample_format = AV_SAMPLE_FMT_S16;
+struct SwrContext *audio_convert_ctx;
+        audio_convert_ctx = swr_alloc();
+unsigned long long in_channel_layout = av_get_default_channel_layout(av_codec_ctx_->channels);
+                    audio_convert_ctx = swr_alloc_set_opts(audio_convert_ctx,in_channel_layout,out_sample_format,av_codec_ctx_->sample_rate,
+                                    in_channel_layout,av_codec_ctx_->sample_fmt,av_codec_ctx_->sample_rate,0,NULL);
+swr_init(audio_convert_ctx);                   
+    int nb_samples = swr_convert(audio_convert_ctx,//重采样，返回的值是新的采样率的一帧中的采样个数，可以根据声道和采样bit数目计算一帧数据大小
+                       (uint8_t **)&outbuf,
+                       AVCODEC_MAX_AUDIO_FRAME_SIZE,
+                       (const uint8_t **)decode_frame->data,
+                       decode_frame->nb_samples);
+outlen = av_samples_get_buffer_size(NULL,av_codec_ctx_->channels ,nb_samples,out_sample_format, 1);//计算出重采样后一帧pcm数据的大小
+sample_rate = av_codec_ctx_->sample_rate;
+channels = av_codec_ctx_->channels;
+avcodec_free_frame(&decode_frame);

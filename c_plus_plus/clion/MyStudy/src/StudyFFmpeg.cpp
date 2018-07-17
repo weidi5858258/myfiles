@@ -1592,8 +1592,8 @@ int simplest_ffmpeg_audio_decoder() {
     int i, audioStreamIndex = -1;
     int result;
 
-    char filePath[] = "/root/音乐/txdx.mp3";
-    FILE *pFile = fopen("/root/音乐/txdx.pcm", "wb");
+    char filePath[] = "/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a";
+    FILE *pFile = fopen("/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm", "wb");
 
     AVFormatContext *avFormatContext = NULL;
     AVCodecContext *audioAVCodecContext = NULL;
@@ -3104,6 +3104,9 @@ int simplest_ffmpeg_audio_encoder_pure() {
 
 /***
  使用了libmp3lame库
+ 输入文件只能是pcm文件,其他封装文件都不行.
+ 因为是用fread函数读取数据的,如果是其他封装文件,那么读取出来的数据肯定是有问题的.
+ 封装文件需要解码后才可以,这里没有解码.
  */
 int pcm2mp3(char *inPath, char *outPath) {
     int status = 0;
@@ -3111,7 +3114,7 @@ int pcm2mp3(char *inPath, char *outPath) {
     int ret_code;
     FILE *infp;
     FILE *outfp;
-    short *input_buffer;
+    short *unencoded_pcm_buffer;
     int input_samples;
     unsigned char *encoded_mp3_buffer;
     int mp3_bytes;
@@ -3123,6 +3126,20 @@ int pcm2mp3(char *inPath, char *outPath) {
         goto exit;
     }
 
+    // 设置被输入编码器的原始数据的采样率
+//    lame_set_in_samplerate(gfp,8000);
+    // 设置最终mp3编码输出的声音的采样率，如果不设置则和输入采样率一样
+//    lame_set_out_samplerate(gfp, 44100);
+    // 设置被输入编码器的原始数据的声道数
+//    lame_set_num_channels(gfp,1);
+    // 设置比特率控制模式，默认是CBR，但是通常我们都会设置VBR。参数是枚举，vbr_off代表CBR，vbr_abr代表ABR（因为ABR不常见，所以本文不对ABR做讲解）vbr_mtrh代表VBR
+//    lame_set_VBR(gfp,vbr_off);
+    // 设置CBR的比特率，只有在CBR模式下才生效
+//    lame_set_brate(gfp,8);
+    // 设置最终mp3编码输出的声道模式，如果不设置则和输入声道数一样。参数是枚举，STEREO代表双声道，MONO代表单声道
+//    lame_set_mode(gfp,3);
+//    lame_set_quality(gfp,2); /* 2 = high 5 = medium 7 = low */
+
     ret_code = lame_init_params(gfp);
     if (ret_code < 0) {
         printf("lame_init_params returned %d\n", ret_code);
@@ -3133,19 +3150,26 @@ int pcm2mp3(char *inPath, char *outPath) {
     infp = fopen(inPath, "rb");
     outfp = fopen(outPath, "wb");
 
-    input_buffer = (short *) malloc(INBUF_SIZE * 2);
+    unencoded_pcm_buffer = (short *) malloc(INBUF_SIZE * 2);
     encoded_mp3_buffer = (unsigned char *) malloc(MP3BUFSIZE);
 
     do {
-        input_samples = fread(input_buffer, 2, INBUF_SIZE, infp);
+        input_samples = fread(unencoded_pcm_buffer, 2, INBUF_SIZE, infp);
         printf("input_samples is %d.\n", input_samples);
         //fprintf(stderr, "input_samples is %d./n", input_samples);
+        /***
+         编码PCM数据
+            lame_encode_buffer或lame_encode_buffer_interleaved：将PCM数据送入编码器，获取编码出的mp3数据。这些数据写入文件就是mp3文件。
+            其中lame_encode_buffer输入的参数中是双声道的数据分别输入的，lame_encode_buffer_interleaved输入的参数中双声道数据是交错在一起输入的。具体使用哪个需要看采集到的数据是哪种格式的，不过现在的设备采集到的数据大部分都是双声道数据是交错在一起。
+            单声道输入只能使用lame_encode_buffer，把单声道数据当成左声道数据传入，右声道传NULL即可。
+            调用这两个函数时需要传入一块内存来获取编码器出的数据，这块内存的大小lame给出了一种建议的计算方式：采样率/20+7200。
+         */
         mp3_bytes = lame_encode_buffer_interleaved(gfp,
-                                                   input_buffer,
+                                                   unencoded_pcm_buffer,
                                                    input_samples / 2,
                                                    encoded_mp3_buffer,
                                                    MP3BUFSIZE);
-        //fprintf(stderr, "mp3_bytes is %d./n", mp3_bytes);
+        fprintf(stdout, "mp3_bytes is %d\n", mp3_bytes);
         if (mp3_bytes < 0) {
             printf("lame_encode_buffer_interleaved returned %d\n", mp3_bytes);
             status = -1;
@@ -3153,7 +3177,8 @@ int pcm2mp3(char *inPath, char *outPath) {
         } else if (mp3_bytes > 0) {
             fwrite(encoded_mp3_buffer, 1, mp3_bytes, outfp);
         }
-    } while (input_samples == INBUF_SIZE);
+//    } while (input_samples == INBUF_SIZE);
+    } while (input_samples > 0);
 
     mp3_bytes = lame_encode_flush(gfp, encoded_mp3_buffer, sizeof(encoded_mp3_buffer));
     if (mp3_bytes > 0) {
@@ -3163,7 +3188,7 @@ int pcm2mp3(char *inPath, char *outPath) {
 
     free_buffers:
     free(encoded_mp3_buffer);
-    free(input_buffer);
+    free(unencoded_pcm_buffer);
 
     fclose(outfp);
     fclose(infp);

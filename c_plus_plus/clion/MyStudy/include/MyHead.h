@@ -74,6 +74,7 @@ using namespace std;
 #define OUTPUT_IMAGE 1
 
 #define INBUF_SIZE 4096
+// 采样率/20+7200
 #define MP3BUFSIZE (int) (1.25 * INBUF_SIZE) + 7200
 /***
  现在不能单独使用音频,必须先初始化视频,此后才能处理音频.
