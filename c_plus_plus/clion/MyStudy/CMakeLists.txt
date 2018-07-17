@@ -78,6 +78,8 @@ else ()
             -lsqlite3
             -lz -lrt -lm -lpthread
             -ldl
+            #opengl
+            -lglut -lGL -lGLU
             )
 
     include_directories(

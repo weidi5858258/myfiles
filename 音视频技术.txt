@@ -100,9 +100,9 @@ avCodec = avcodec_find_encoder_by_name("libfdk_aac");
 单采样bit数目  单个采样的bit位数，16／8 bit。
 
 ffmpeg中的一些参数：
-   out_sample_format 音频采样格式
+   sample_format 音频采样格式
    sample_rate 采样率值（非编码值）
-   in_channel_layout 解码后的PCM数据layout格式，左左左右右右   左右左右左右
+   channel_layout 解码后的PCM数据layout格式，左左左右右右   左右左右左右
    nb_samples  一帧音频中的采样个数，用于计算一帧数据大小
 
 注意ffmpeg中的两个结构，AVPacket(编码的音视频帧),AVFrame(解码后的音视频数据)
@@ -136,3 +136,52 @@ outlen = av_samples_get_buffer_size(NULL,av_codec_ctx_->channels ,nb_samples,out
 sample_rate = av_codec_ctx_->sample_rate;
 channels = av_codec_ctx_->channels;
 avcodec_free_frame(&decode_frame);
+
+封装格式
+作用：视频码流和音频码流按照一定的格式储存在一个文件汇总
+视频编码数据
+作用：将视频像素数据（RGB，YUV等）压缩成为视频码流，从而降低视频的数据量
+音频编码数据
+作用：将音频采样数据（PCM等）压缩成为音频码流，从而降低音频的数据量
+视频像素数据
+作用：保存了屏幕上每一个像素点的像素值
+格式：常见的像素数据格式有RGB24, RGB32, YUV420P,YUV422P,YUV444P等。压缩编码中一般使用的是YUV格式的像素数据,最为常见的格式为YUV420P。
+特点：视频像素数据体积很大，一般情况下一小时高清视频的RGB24格式的数据体积为：3600*25*1920*1080*3=559.9GB（PS：这里假定帧率为25HZ，取样精度8bit）
+音频采样数据
+作用：保存了音频中每个采样点的值。
+特点：音频采样数据体积很大,一般情况下一首4分钟的PCM格式的
+   歌曲体积为:
+   4*60*44100*2*2=42.3MByte
+          PS:这里假定采样率为44100Hz,采样精度为16bit
+
+
+ffmpeg解码
+OpenGL绘图
+OpenGL-PBO加速
+OpenGL-Double PBO加速
+YUV格式转RGB(由GPU完成)
+多线程解码
+多路视频
+视频特效
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

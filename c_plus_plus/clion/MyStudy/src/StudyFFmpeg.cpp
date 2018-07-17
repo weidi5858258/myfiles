@@ -6,6 +6,15 @@
 
 #include "../include/MyHead.h"
 
+/***
+    视频文件格式（容器格式）
+    视频编解码器（视频编码格式）
+    音频编解码器（音频编码格式）
+    音频编码的作用:
+        将音频采样数据(PCM等)压缩成为音频码流,从而降低音频的数据量.
+    aac比mp3的所占用的体积相对来说要少.
+    aac压缩方法:比较复杂.可以将音频数据压缩10倍以上.
+ */
 
 static Uint8 *audio_chunk;
 static Uint32 audio_len;
@@ -13,6 +22,10 @@ static Uint8 *audio_pos;
 
 void fill_audio(void *udata, Uint8 *stream, int len);
 
+/***
+ 能够播放视频,但是一会儿工夫画面就成黑白了,
+ 这个原因是不是视频在主线程中播放导致的?
+ */
 int simplest_ffmpeg_player2() {
     int i, videoStreamIndex = -1, audioStreamIndex = -1;
     uint8_t *out_buffer;
@@ -20,7 +33,7 @@ int simplest_ffmpeg_player2() {
 
 //    char filePath[] = "http://192.168.0.131:8080/video/aaaaa.mp4";
 //    char filePath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
-    char filePath[] = "/root/视频/aaaaa.rmvb";
+    char filePath[] = "/root/视频/haoke.avi";
 
     // 屏幕宽高
     int screen_w = 0, screen_h = 0;
@@ -1535,6 +1548,9 @@ void fill_audio(void *udata, Uint8 *stream, int len) {
 //    return 0;
 //}
 
+/***
+ 尖叫声
+ */
 int simplest_audio_play_sdl2() {
     //Init
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
@@ -1555,7 +1571,7 @@ int simplest_audio_play_sdl2() {
         return -1;
     }
 
-    FILE *fp = fopen("/root/音乐/GALAYoungForYou.mp3", "rb+");
+    FILE *fp = fopen("/root/音乐/GALAYoungForYou.pcm", "rb+");
     if (fp == NULL) {
         printf("cannot open this file\n");
         return -1;

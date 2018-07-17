@@ -49,6 +49,8 @@ extern "C" {// 不能少
 #include <lame.h>
 
 #include <SDL2/SDL.h>
+
+#include <GL/glut.h>
 };
 
 //extern "C" {
@@ -82,7 +84,7 @@ using namespace std;
  音频中也要用到.
 */
 #define NEED_VIDEO 1
-#define NEED_AUDIO 1
+#define NEED_AUDIO 0
 
 #include "Test.h"
 

@@ -84,6 +84,9 @@ int yuv_2_h264();
 
 int pcm2mp3(char *inPath, char *outPath);
 
+int resampling_audio(const char *dst_filename);
+
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -100,16 +103,36 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-//    decoderVideoFrameToImage();
+//    simplest_ffmpeg_player2();
+//    decoder_video_frame_to_image();
 //    simplest_audio_play_sdl2();
 //    simplest_ffmpeg_audio_decoder();
 //    simplest_ffmpeg_audio_encoder();
 //    simplest_ffmpeg_audio_encoder_pure();
-    decode_audio_main("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm");
+//    decode_audio_main("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm");
 //    decode_audio2("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.pcm");
 //    encode_audio_main("/root/音乐/txdx.pcm", "/root/音乐/txdx.mp2");
 //    pcm2mp3("/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.mp3");
 //    decode_video_main("/root/视频/sex.avi", "/root/图片/video_to_image");
+    resampling_audio("/root/音乐/resampling.mp2");
+
+    /*glutInit(&argc,argv);
+    //显示模式初始化
+    glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB|GLUT_DEPTH);
+    //定义窗口大小
+    glutInitWindowSize(300,300);
+    //定义窗口位置
+    glutInitWindowPosition(100,100);
+    //创建窗口
+    glutCreateWindow("OpenGL Version");
+    const GLubyte* name = glGetString(GL_VENDOR); //返回负责当前OpenGL实现厂商的名字
+    const GLubyte* biaoshifu = glGetString(GL_RENDERER); //返回一个渲染器标识符，通常是个硬件平台
+    const GLubyte* OpenGLVersion =glGetString(GL_VERSION); //返回当前OpenGL实现的版本号
+    const GLubyte* gluVersion= gluGetString(GLU_VERSION); //返回当前GLU工具库版本
+    printf("OpenGL实现厂商的名字：%s\n", name);
+    printf("渲染器标识符：%s\n", biaoshifu);
+    printf("OOpenGL实现的版本号：%s\n",OpenGLVersion );
+    printf("OGLU工具库版本：%s\n", gluVersion);*/
 
     printf("------------------------------------------\n");
     printf("\n");

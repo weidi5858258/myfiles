@@ -189,6 +189,10 @@ echo "Y" | sudo apt-get install mono-complete
 echo "Y" | sudo apt-get install libsdl2-2.0
 echo "Y" | sudo apt-get install libsdl2-dev
 echo "Y" | sudo apt-get install apt-rdepends
+echo "Y" | sudo apt-get install build-essential
+echo "Y" | sudo apt-get install libgl1-mesa-dev
+echo "Y" | sudo apt-get install libglu1-mesa-dev
+echo "Y" | sudo apt-get install freeglut3-dev
 echo "Y" | sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  
 echo "Y" | sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20  
 echo "Y" | sudo update-alternatives --config gcc 
@@ -218,6 +222,7 @@ echo "y" | sudo apt-get install libreadline6-dev:i386
 
 echo "y" | sudo add-apt-repository ppa:openjdk-r/ppa
 echo "y" | sudo apt-get update
+echo "y" | sudo apt-get install openjdk-7-jdk
 echo "y" | sudo apt-get install openjdk-8-jdk
 echo "y" | sudo update-alternatives --config java 
 echo "y" | sudo update-alternatives --config javac

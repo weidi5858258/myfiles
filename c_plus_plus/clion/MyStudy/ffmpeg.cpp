@@ -9,7 +9,31 @@
 
 #define RECORDING_SCREEN 0
 
-void saveImage(AVFrame *dstAVFrame, int width, int height, int iFrame);
+/***
+把一个视频解码后保存为一张张的图片
+ */
+void saveImage(AVFrame *dstAVFrame, int width, int height, int iFrame) {
+    FILE *dstFile;
+    char dstFilePath[32];
+    int y;
+
+    sprintf(dstFilePath, "/root/图片/video_to_image/frame%d.ppm", iFrame);
+    // 打开文件
+    dstFile = fopen(dstFilePath, "wb");
+    if (dstFile == NULL) {
+        printf("dstFile = NULL\n");
+        return;
+    }
+    // 写头
+    fprintf(dstFile, "P6\n%d %d\n255\n", width, height);
+
+    // 写pixel数据
+    for (y = 0; y < height; y++) {
+        fwrite(dstAVFrame->data[0] + y * dstAVFrame->linesize[0], width * 3, 1, dstFile);
+    }
+    // 关闭文件
+    fclose(dstFile);
+}
 
 int handleVideo(AVCodecContext *videoAVCodecContext,
                 SwsContext *videoSwsContext,
@@ -18,14 +42,105 @@ int handleVideo(AVCodecContext *videoAVCodecContext,
                 AVFrame *dstAVFrame,
                 int srcW, int srcH,
                 FILE *outputYUVFile,
-                int &imageCount);
+                int &imageCount) {
+    int result = avcodec_send_packet(videoAVCodecContext, avPacket);
+    // printf("video result = %d\n", result);
+    switch (result) {
+        case 0:
+            break;
+        case AVERROR(EAGAIN):
+            printf("VIDEO AVERROR(EAGAIN)\n");
+            return -1;
+        case AVERROR(EINVAL):
+            printf("VIDEO AVERROR(EINVAL)\n");
+            return -1;
+        case AVERROR(ENOMEM):
+            printf("VIDEO AVERROR(ENOMEM)\n");
+            return -1;
+        case AVERROR_EOF:
+            printf("VIDEO AVERROR_EOF\n");
+            return -1;
+        default:
+            printf("VIDEO OTHER ERROR\n");
+            return -1;
+    }
+    // 一般情况下while循环也只执行一次
+    while (avcodec_receive_frame(videoAVCodecContext, srcAVFrame) >= 0) {
+        //转换，把源数据srcAVFrame转换成dstAVFrame，dstAVFrame由前面设置格式为AV_PIX_FMT_YUV420P
+        sws_scale(videoSwsContext,
+                  (const uint8_t *const *) srcAVFrame->data,
+                  srcAVFrame->linesize,
+                  0,
+                  srcH,
+                  dstAVFrame->data,
+                  dstAVFrame->linesize);
+
+#if OUTPUT_YUV420P
+        fwrite(dstAVFrame->data[0], 1, screen_w * screen_h, outputYUVFile);        //Y
+        fwrite(dstAVFrame->data[1], 1, (screen_w * screen_h) / 4, outputYUVFile);  //U
+        fwrite(dstAVFrame->data[2], 1, (screen_w * screen_h) / 4, outputYUVFile);  //V
+#endif
+
+#if OUTPUT_IMAGE
+        // 输出多少张图片
+        if (++imageCount <= 500) {
+            saveImage(dstAVFrame, srcW, srcH, imageCount);
+        } else {
+            return 1;
+        }
+#endif
+    }
+    return 0;
+}
 
 int handleAudio(AVCodecContext *audioAVCodecContext,
                 SwrContext *audioSwrContext,
                 AVSampleFormat audioAVSampleFormat,
                 AVPacket *avPacket,
                 AVFrame *srcAVFrame,
-                AVFrame *dstAVFrame);
+                AVFrame *dstAVFrame) {
+    int result = avcodec_send_packet(audioAVCodecContext, avPacket);
+    // printf("audio result = %d\n", result);
+    switch (result) {
+        case 0:
+            break;
+        case AVERROR(EAGAIN):
+            printf("AUDIO AVERROR(EAGAIN)\n");
+            return -1;
+        case AVERROR(EINVAL):
+            printf("AUDIO AVERROR(EINVAL)\n");
+            return -1;
+        case AVERROR(ENOMEM):
+            printf("AUDIO AVERROR(ENOMEM)\n");
+            return -1;
+        case AVERROR_EOF:
+            printf("AUDIO AVERROR_EOF\n");
+            return -1;
+        default:
+            printf("AUDIO OTHER ERROR\n");
+            return -1;
+    }
+    // 一般情况下while循环也只执行一次
+    while (avcodec_receive_frame(audioAVCodecContext, srcAVFrame) >= 0) {
+        // Audacity: 16bit PCM little endian stereo
+        if (audioAVSampleFormat == AV_SAMPLE_FMT_S16P) {// 6
+
+            //Audacity: big endian 32bit stereo start offset 7 (but has noise)
+        } else if (audioAVSampleFormat == AV_SAMPLE_FMT_FLTP) {// 8
+            swr_convert(audioSwrContext,
+                        (uint8_t **) dstAVFrame->data,
+                        MAX_AUDIO_FRAME_SIZE,
+                        (const uint8_t **) srcAVFrame->data,
+                        srcAVFrame->nb_samples);
+
+            /*printf("index:%5d\tavPacket->pts:%lld\tavPacket->size:%d\n",
+                   index, avPacket->pts, avPacket->size);*/
+            printf("avPacket->pts:%lld\tavPacket->dts:%lld\tavPacket->size:%d\n",
+                   avPacket->pts, avPacket->dts, avPacket->size);
+        }
+    }
+    return 0;
+}
 
 /***
  只用到解码器,没有用到编码器
@@ -33,7 +148,7 @@ int handleAudio(AVCodecContext *audioAVCodecContext,
 int decoder_video_frame_to_image() {
     ////////////////////////////音视频公共部分////////////////////////////
     // char filePath[] = "/root/视频/10_APITest_MKV-HEVC.mkv";
-    char filePath[] = "/media/root/windows-d/Tools/apache-tomcat-8.5.23/webapps/ROOT/video/xunnu.mp4";
+    char filePath[] = "/root/视频/haoke.avi";
     // 格式上下结构体，,可以理解为存储数据流的文件，伴随整个生命周期
     AVFormatContext *avFormatContext = NULL;
     //srcAVFrame保存原始帧
@@ -352,138 +467,7 @@ int decoder_video_frame_to_image() {
     return 0;
 }
 
-int handleVideo(AVCodecContext *videoAVCodecContext,
-                SwsContext *videoSwsContext,
-                AVPacket *avPacket,
-                AVFrame *srcAVFrame,
-                AVFrame *dstAVFrame,
-                int srcW, int srcH,
-                FILE *outputYUVFile,
-                int &imageCount) {
-    int result = avcodec_send_packet(videoAVCodecContext, avPacket);
-    // printf("video result = %d\n", result);
-    switch (result) {
-        case 0:
-            break;
-        case AVERROR(EAGAIN):
-            printf("VIDEO AVERROR(EAGAIN)\n");
-            return -1;
-        case AVERROR(EINVAL):
-            printf("VIDEO AVERROR(EINVAL)\n");
-            return -1;
-        case AVERROR(ENOMEM):
-            printf("VIDEO AVERROR(ENOMEM)\n");
-            return -1;
-        case AVERROR_EOF:
-            printf("VIDEO AVERROR_EOF\n");
-            return -1;
-        default:
-            printf("VIDEO OTHER ERROR\n");
-            return -1;
-    }
-    // 一般情况下while循环也只执行一次
-    while (avcodec_receive_frame(videoAVCodecContext, srcAVFrame) >= 0) {
-        //转换，把源数据srcAVFrame转换成dstAVFrame，dstAVFrame由前面设置格式为AV_PIX_FMT_YUV420P
-        sws_scale(videoSwsContext,
-                  (const uint8_t *const *) srcAVFrame->data,
-                  srcAVFrame->linesize,
-                  0,
-                  srcH,
-                  dstAVFrame->data,
-                  dstAVFrame->linesize);
 
-#if OUTPUT_YUV420P
-        fwrite(dstAVFrame->data[0], 1, screen_w * screen_h, outputYUVFile);        //Y
-        fwrite(dstAVFrame->data[1], 1, (screen_w * screen_h) / 4, outputYUVFile);  //U
-        fwrite(dstAVFrame->data[2], 1, (screen_w * screen_h) / 4, outputYUVFile);  //V
-#endif
-
-#if OUTPUT_IMAGE
-        // 输出多少张图片
-        if (++imageCount <= 5) {
-            saveImage(dstAVFrame, srcW, srcH, imageCount);
-        } else {
-            return 1;
-        }
-#endif
-    }
-    return 0;
-}
-
-int handleAudio(AVCodecContext *audioAVCodecContext,
-                SwrContext *audioSwrContext,
-                AVSampleFormat audioAVSampleFormat,
-                AVPacket *avPacket,
-                AVFrame *srcAVFrame,
-                AVFrame *dstAVFrame) {
-    int result = avcodec_send_packet(audioAVCodecContext, avPacket);
-    // printf("audio result = %d\n", result);
-    switch (result) {
-        case 0:
-            break;
-        case AVERROR(EAGAIN):
-            printf("AUDIO AVERROR(EAGAIN)\n");
-            return -1;
-        case AVERROR(EINVAL):
-            printf("AUDIO AVERROR(EINVAL)\n");
-            return -1;
-        case AVERROR(ENOMEM):
-            printf("AUDIO AVERROR(ENOMEM)\n");
-            return -1;
-        case AVERROR_EOF:
-            printf("AUDIO AVERROR_EOF\n");
-            return -1;
-        default:
-            printf("AUDIO OTHER ERROR\n");
-            return -1;
-    }
-    // 一般情况下while循环也只执行一次
-    while (avcodec_receive_frame(audioAVCodecContext, srcAVFrame) >= 0) {
-        // Audacity: 16bit PCM little endian stereo
-        if (audioAVSampleFormat == AV_SAMPLE_FMT_S16P) {// 6
-
-            //Audacity: big endian 32bit stereo start offset 7 (but has noise)
-        } else if (audioAVSampleFormat == AV_SAMPLE_FMT_FLTP) {// 8
-            swr_convert(audioSwrContext,
-                        (uint8_t **) dstAVFrame->data,
-                        MAX_AUDIO_FRAME_SIZE,
-                        (const uint8_t **) srcAVFrame->data,
-                        srcAVFrame->nb_samples);
-
-            /*printf("index:%5d\tavPacket->pts:%lld\tavPacket->size:%d\n",
-                   index, avPacket->pts, avPacket->size);*/
-            printf("avPacket->pts:%lld\tavPacket->dts:%lld\tavPacket->size:%d\n",
-                   avPacket->pts, avPacket->dts, avPacket->size);
-        }
-    }
-    return 0;
-}
-
-/***
-把一个视频解码后保存为一张张的图片
- */
-void saveImage(AVFrame *dstAVFrame, int width, int height, int iFrame) {
-    FILE *dstFile;
-    char dstFilePath[32];
-    int y;
-
-    sprintf(dstFilePath, "/root/图片/video_to_image/frame%d.ppm", iFrame);
-    // 打开文件
-    dstFile = fopen(dstFilePath, "wb");
-    if (dstFile == NULL) {
-        printf("dstFile = NULL\n");
-        return;
-    }
-    // 写头
-    fprintf(dstFile, "P6\n%d %d\n255\n", width, height);
-
-    // 写pixel数据
-    for (y = 0; y < height; y++) {
-        fwrite(dstAVFrame->data[0] + y * dstAVFrame->linesize[0], width * 3, 1, dstFile);
-    }
-    // 关闭文件
-    fclose(dstFile);
-}
 
 
 
