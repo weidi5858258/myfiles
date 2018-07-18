@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
 //    simplest_ffmpeg_player2();
 //    decoder_video_frame_to_image();
 //    simplest_audio_play_sdl2();
-//    simplest_ffmpeg_audio_decoder();
+    simplest_ffmpeg_audio_decoder();
 //    simplest_ffmpeg_audio_encoder();
 //    simplest_ffmpeg_audio_encoder_pure();
 //    decode_audio_main("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm");
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
 //    encode_audio_main("/root/音乐/txdx.pcm", "/root/音乐/txdx.mp2");
 //    pcm2mp3("/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.mp3");
 //    decode_video_main("/root/视频/sex.avi", "/root/图片/video_to_image");
-    resampling_audio("/root/音乐/resampling.mp2");
+//    resampling_audio("/root/音乐/resampling.mp2");
 
     /*glutInit(&argc,argv);
     //显示模式初始化

@@ -1608,8 +1608,8 @@ int simplest_ffmpeg_audio_decoder() {
     int i, audioStreamIndex = -1;
     int result;
 
-    char filePath[] = "/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a";
-    FILE *pFile = fopen("/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm", "wb");
+    char filePath[] = "/root/音乐/01_VBR_16kHz_64kbps_Stereo.mp3";
+    FILE *pFile = fopen("/root/音乐/output.pcm", "wb");
 
     AVFormatContext *avFormatContext = NULL;
     AVCodecContext *audioAVCodecContext = NULL;
@@ -1783,7 +1783,6 @@ int simplest_ffmpeg_audio_decoder() {
 
     return 0;
 }
-
 
 
 int initOutputEncoder(AVFormatContext *avFormatContext,
@@ -3193,8 +3192,7 @@ int pcm2mp3(char *inPath, char *outPath) {
         } else if (mp3_bytes > 0) {
             fwrite(encoded_mp3_buffer, 1, mp3_bytes, outfp);
         }
-//    } while (input_samples == INBUF_SIZE);
-    } while (input_samples > 0);
+    } while (input_samples == INBUF_SIZE);
 
     mp3_bytes = lame_encode_flush(gfp, encoded_mp3_buffer, sizeof(encoded_mp3_buffer));
     if (mp3_bytes > 0) {
@@ -3357,6 +3355,320 @@ int AudioResampling(AVCodecContext *audio_dec_ctx, AVFrame *pAudioDecodeFrame,
         swr_free(&swr_ctx);
     }
     return resampled_data_size;
+}
+
+/***
+ 来自网上的代码
+ 使用这个方法解码成的pcm文件再编码成mp3文件后,声音变了,这种声音蛮好听的
+ */
+int decode_audio2(const char *input_file_name, const char *output_file_name) {
+    //1.注册组件
+    av_register_all();
+    //封装格式上下文
+    AVFormatContext *av_format_context = avformat_alloc_context();
+
+    //2.打开输入音频文件
+    if (avformat_open_input(&av_format_context, input_file_name, NULL, NULL) != 0) {
+        printf("%s\n", "打开输入音频文件失败");
+        return -1;
+    }
+    //3.获取音频信息
+    if (avformat_find_stream_info(av_format_context, NULL) < 0) {
+        printf("%s\n", "获取音频信息失败");
+        return -1;
+    }
+
+    //音频解码，需要找到对应的AVStream所在的pFormatCtx->streams的索引位置
+    int audio_stream_index = -1;
+    int i;
+    for (i = 0; i < av_format_context->nb_streams; i++) {
+        //根据类型判断是否是音频流
+        if (av_format_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+            audio_stream_index = i;
+            break;
+        }
+    }
+    //4.获取解码器
+    //根据索引拿到对应的流,根据流拿到解码器上下文
+    AVCodecContext *audio_av_codec_context = av_format_context->streams[audio_stream_index]->codec;
+    //再根据上下文拿到编解码id，通过该id拿到解码器
+    AVCodec *audio_av_codec = avcodec_find_decoder(audio_av_codec_context->codec_id);
+    if (audio_av_codec == NULL) {
+        printf("%s\n", "无法解码");
+        return -1;
+    }
+    //5.打开解码器
+    if (avcodec_open2(audio_av_codec_context, audio_av_codec, NULL) < 0) {
+        printf("%s\n", "编码器无法打开");
+        return -1;
+    }
+    //编码数据
+    AVPacket *av_packet = (AVPacket *) av_malloc(sizeof(AVPacket));
+    //解压缩数据
+    AVFrame *frame = av_frame_alloc();
+
+    //frame->16bit 44100 PCM 统一音频采样格式与采样率
+    SwrContext *swr_context = swr_alloc();
+    //重采样设置选项-----------------------------------------------------------start
+    //输入的采样格式
+    enum AVSampleFormat in_sample_fmt = audio_av_codec_context->sample_fmt;
+    //输出的采样格式 16bit PCM
+    enum AVSampleFormat out_sample_fmt = AV_SAMPLE_FMT_S16;
+    //输入的采样率
+    int in_sample_rate = audio_av_codec_context->sample_rate;
+    //输出的采样率
+    int out_sample_rate = 44100;
+    //输入的声道布局
+    uint64_t in_ch_layout = audio_av_codec_context->channel_layout;
+    //输出的声道布局
+    uint64_t out_ch_layout = AV_CH_LAYOUT_MONO;
+
+    swr_alloc_set_opts(swr_context, out_ch_layout, out_sample_fmt, out_sample_rate, in_ch_layout, in_sample_fmt,
+                       in_sample_rate, 0, NULL);
+    swr_init(swr_context);
+    //重采样设置选项-----------------------------------------------------------end
+    //获取输出的声道个数
+    int out_channel_nb = av_get_channel_layout_nb_channels(out_ch_layout);
+    //存储pcm数据
+    uint8_t *out_buffer = (uint8_t *) av_malloc(2 * 44100);
+    FILE *fp_pcm = fopen(output_file_name, "wb");
+    int ret, got_frame, framecount = 0;
+    //6.一帧一帧读取压缩的音频数据AVPacket
+    while (av_read_frame(av_format_context, av_packet) >= 0) {
+        if (av_packet->stream_index == audio_stream_index) {
+            //解码AVPacket->AVFrame
+            ret = avcodec_decode_audio4(audio_av_codec_context, frame, &got_frame, av_packet);
+            if (ret < 0) {
+                printf("%s\n", "解码完成");
+            }
+            //非0，正在解码
+            if (got_frame) {
+                printf("解码%d帧\n", framecount++);
+                swr_convert(swr_context, &out_buffer, 2 * 44100, (const uint8_t **)frame->data, frame->nb_samples);
+                //获取sample的size
+                int out_buffer_size = av_samples_get_buffer_size(NULL, out_channel_nb,
+                                                                 frame->nb_samples,
+                                                                 out_sample_fmt, 1);
+                //写入文件进行测试
+                fwrite(out_buffer, 1, out_buffer_size, fp_pcm);
+            }
+        }
+        av_free_packet(av_packet);
+    }
+
+
+    fclose(fp_pcm);
+    av_frame_free(&frame);
+    av_free(out_buffer);
+    swr_free(&swr_context);
+    avcodec_close(audio_av_codec_context);
+    avformat_close_input(&av_format_context);
+    return 0;
+}
+
+//样本枚举
+enum AVSampleFormat_t {
+    AV_SAMPLE_FMT_NONE_t = -1,
+    AV_SAMPLE_FMT_U8_t,          ///< unsigned 8 bits
+    AV_SAMPLE_FMT_S16_t,         ///< signed 16 bits
+    AV_SAMPLE_FMT_S32_t,         ///< signed 32 bits
+    AV_SAMPLE_FMT_FLT_t,         ///< float
+    AV_SAMPLE_FMT_DBL_t,         ///< double
+
+    AV_SAMPLE_FMT_U8P_t,         ///< unsigned 8 bits, planar
+    AV_SAMPLE_FMT_S16P_t,        ///< signed 16 bits, planar
+    AV_SAMPLE_FMT_S32P_t,        ///< signed 32 bits, planar
+    AV_SAMPLE_FMT_FLTP_t,        ///< float, planar
+    AV_SAMPLE_FMT_DBLP_t,        ///< double, planar
+
+    AV_SAMPLE_FMT_NB_t           ///< Number of sample formats. DO NOT USE if linking dynamically
+};
+
+//多路输出每一路的信息结构体
+typedef struct Out_stream_info_t {
+    //user info
+    int user_stream_id;                 //多路输出每一路的ID
+    //video param
+    int m_dwWidth;
+    int m_dwHeight;
+    double m_dbFrameRate;               //帧率
+    int m_video_codecID;
+    int m_video_pixelfromat;
+    int m_bit_rate;                     //码率
+    int m_gop_size;
+    int m_max_b_frame;
+    int m_thread_count;                 //用cpu内核数目
+    //audio param
+    int m_dwChannelCount;               //声道
+    AVSampleFormat_t m_dwBitsPerSample; //样本
+    int m_dwFrequency;                  //采样率
+    int m_audio_codecID;
+
+    //ffmpeg out pram
+    AVAudioFifo *m_audiofifo;          //音频存放pcm数据
+    int64_t m_first_audio_pts;          //第一帧的音频pts
+    int m_is_first_audio_pts;           //是否已经记录第一帧音频时间戳
+    AVFormatContext *m_ocodec;         //输出流context
+    int m_writeheader_seccess;          //写头成功也就是写的头支持里面填写的音视频格式例如采样率等等
+    AVStream *m_ovideo_st;
+    AVStream *m_oaudio_st;
+    AVCodec *m_audio_codec;
+    AVCodec *m_video_codec;
+    AVPacket m_pkt;
+    AVBitStreamFilterContext *m_vbsf_aac_adtstoasc;     //aac->adts to asc过滤器
+    struct SwsContext *m_img_convert_ctx_video;
+    int m_sws_flags;                    //差值算法,双三次
+    AVFrame *m_pout_video_frame;
+    AVFrame *m_pout_audio_frame;
+    SwrContext *m_swr_ctx;
+    char m_outurlname[256];             //输出的url地址
+
+    Out_stream_info_t() {
+        //user info
+        user_stream_id = 0;             //多路输出每一路的ID
+        //video param
+        m_dwWidth = 640;
+        m_dwHeight = 480;
+        m_dbFrameRate = 25;  //帧率
+        m_video_codecID = (int) AV_CODEC_ID_H264;
+        m_video_pixelfromat = (int) AV_PIX_FMT_YUV420P;
+        m_bit_rate = 400000;                //码率
+        m_gop_size = 12;
+        m_max_b_frame = 0;
+        m_thread_count = 2;                 //用cpu内核数目
+        //audio param
+        m_dwChannelCount = 2;               //声道
+        m_dwBitsPerSample = AV_SAMPLE_FMT_S16_t; //样本
+        m_dwFrequency = 44100;              //采样率
+        m_audio_codecID = (int) AV_CODEC_ID_AAC;
+
+        //ffmpeg out pram
+        m_audiofifo = NULL;                 //音频存放pcm数据
+        m_first_audio_pts = 0;              //第一帧的音频pts
+        m_is_first_audio_pts = 0;           //是否已经记录第一帧音频时间戳
+        m_ocodec = NULL;                    //输出流context
+        m_writeheader_seccess = 0;
+        m_ovideo_st = NULL;
+        m_oaudio_st = NULL;
+        m_audio_codec = NULL;
+        m_video_codec = NULL;
+        //m_pkt;
+        m_vbsf_aac_adtstoasc = NULL;        //aac->adts to asc过滤器
+        m_img_convert_ctx_video = NULL;
+        m_sws_flags = SWS_BICUBIC;          //差值算法,双三次
+        m_pout_video_frame = NULL;
+        m_pout_audio_frame = NULL;
+        m_swr_ctx = NULL;
+        memset(m_outurlname, 0, 256);         //清零
+    }
+} Out_stream_info;
+
+SwrContext *ffmpeg_init_pcm_resample(Out_stream_info *out_stream_info, AVFrame *in_frame, AVFrame *out_frame) {
+    SwrContext *swr_ctx = NULL;
+    swr_ctx = swr_alloc();
+    if (!swr_ctx) {
+        printf("swr_alloc error \n");
+        return NULL;
+    }
+    AVCodecContext *audio_dec_ctx = NULL;
+    AVSampleFormat sample_fmt;
+    sample_fmt = (AVSampleFormat) out_stream_info->m_dwBitsPerSample; //样本
+    int out_channel_layout = av_get_default_channel_layout(out_stream_info->m_dwChannelCount);
+    if (audio_dec_ctx->channel_layout == 0) {
+        int channels = 0;
+        audio_dec_ctx->channel_layout = av_get_default_channel_layout(channels);
+    }
+    /* set options */
+    av_opt_set_int(swr_ctx, "in_channel_layout", audio_dec_ctx->channel_layout, 0);
+    av_opt_set_int(swr_ctx, "in_sample_rate", audio_dec_ctx->sample_rate, 0);
+    av_opt_set_sample_fmt(swr_ctx, "in_sample_fmt", audio_dec_ctx->sample_fmt, 0);
+    av_opt_set_int(swr_ctx, "out_channel_layout", out_channel_layout, 0);
+    av_opt_set_int(swr_ctx, "out_sample_rate", out_stream_info->m_dwFrequency, 0);
+    av_opt_set_sample_fmt(swr_ctx, "out_sample_fmt", sample_fmt, 0);
+    swr_init(swr_ctx);
+
+    int64_t src_nb_samples = in_frame->nb_samples;
+    //计算输出的samples 和采样率有关 例如：48000转44100，samples则是从1152转为1059，除法
+    out_frame->nb_samples = av_rescale_rnd(src_nb_samples, out_stream_info->m_dwFrequency, audio_dec_ctx->sample_rate,
+                                           AV_ROUND_UP);
+
+    int ret = av_samples_alloc(out_frame->data, &out_frame->linesize[0],
+                               out_stream_info->m_dwChannelCount, out_frame->nb_samples,
+                               out_stream_info->m_oaudio_st->codec->sample_fmt, 1);
+    if (ret < 0) {
+        return NULL;
+    }
+
+    out_stream_info->m_audiofifo = av_audio_fifo_alloc(out_stream_info->m_oaudio_st->codec->sample_fmt,
+                                                       out_stream_info->m_oaudio_st->codec->channels,
+                                                       out_frame->nb_samples);
+
+    return swr_ctx;
+}
+
+int ffmpeg_preform_pcm_resample(Out_stream_info *out_stream_info, SwrContext *pSwrCtx, AVFrame *in_frame,
+                                AVFrame *out_frame) {
+    int ret = 0;
+    int samples_out_per_size = 0;              //转换之后的samples大小
+
+    if (pSwrCtx != NULL) {
+        //这里注意下samples_out_per_size这个值和 out_frame->nb_samples这个值有时候不一样，ffmpeg里面做了策略不是问题。
+        samples_out_per_size = swr_convert(pSwrCtx, out_frame->data, out_frame->nb_samples,
+                                           (const uint8_t **) in_frame->data, in_frame->nb_samples);
+        if (samples_out_per_size < 0) {
+            return -1;
+        }
+
+        AVCodecContext *audio_dec_ctx = NULL;
+
+        int buffersize_in = av_samples_get_buffer_size(&in_frame->linesize[0], audio_dec_ctx->channels,
+                                                       in_frame->nb_samples, audio_dec_ctx->sample_fmt, 1);
+
+        //修改分包内存
+        int buffersize_out = av_samples_get_buffer_size(&out_frame->linesize[0],
+                                                        out_stream_info->m_oaudio_st->codec->channels,
+                                                        samples_out_per_size,
+                                                        out_stream_info->m_oaudio_st->codec->sample_fmt, 1);
+
+        int fifo_size = av_audio_fifo_size(out_stream_info->m_audiofifo);
+        fifo_size = av_audio_fifo_realloc(out_stream_info->m_audiofifo,
+                                          av_audio_fifo_size(out_stream_info->m_audiofifo) + out_frame->nb_samples);
+        av_audio_fifo_write(out_stream_info->m_audiofifo, (void **) out_frame->data, samples_out_per_size);
+        fifo_size = av_audio_fifo_size(out_stream_info->m_audiofifo);
+
+        out_frame->pkt_pts = in_frame->pkt_pts;
+        out_frame->pkt_dts = in_frame->pkt_dts;
+        //有时pkt_pts和pkt_dts不同，并且pkt_pts是编码前的dts,这里要给avframe传入pkt_dts而不能用pkt_pts
+        //out_frame->pts = out_frame->pkt_pts;
+        out_frame->pts = in_frame->pkt_dts;
+
+        FILE *pcm_file = NULL;
+        //测试用
+        if (out_stream_info->user_stream_id == 11) {
+            if (pcm_file == NULL) {
+                pcm_file = fopen("11.pcm", "wb");
+            }
+            int wtiresize = fwrite(out_frame->data[0], buffersize_out, 1, pcm_file);
+            fflush(pcm_file);
+        }
+    }
+    ret = 1;
+    return ret;
+}
+
+void ffmpeg_uinit_pcm_resample(SwrContext *swr_ctx, AVAudioFifo *audiofifo) {
+    if (swr_ctx) {
+        swr_free(&swr_ctx);
+        swr_ctx = NULL;
+    }
+    if (audiofifo) {
+        av_audio_fifo_free(audiofifo);
+        audiofifo = NULL;
+    }
+}
+
+int test(float) {
+    return 0;
 }
 
 

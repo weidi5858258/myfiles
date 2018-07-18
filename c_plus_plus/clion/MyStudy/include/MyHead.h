@@ -21,13 +21,16 @@
 #include <setjmp.h>
 #include <libgen.h>
 #include <cstddef>
+#include <inttypes.h>
 //#include <opencv2/opencv.hpp>
 
 // ffmpeg and SDL
 extern "C" {// 不能少
 #include <libavcodec/avcodec.h>
+// 摄像头所用
 #include <libavdevice/avdevice.h>
 #include <libavformat/avformat.h>
+#include <libavformat/avio.h>
 #include "libswresample/swresample.h"
 // libswscale是一个主要用于处理图片像素数据的类库.可以完成图片像素格式的转换,图片的拉伸等工作.
 #include <libswscale/swscale.h>
@@ -37,6 +40,7 @@ extern "C" {// 不能少
 #include <libavutil/channel_layout.h>
 #include <libavutil/mathematics.h>
 #include <libavutil/samplefmt.h>
+// 这里是做分片时候重采样编码音频用的
 #include <libavutil/audio_fifo.h>
 #include <libavutil/imgutils.h>
 #include <libavutil/avutil.h>
@@ -45,6 +49,8 @@ extern "C" {// 不能少
 #include <libavutil/fifo.h>
 #include <libavutil/opt.h>
 #include <libavutil/mem.h>
+#include <libavutil/error.h>
+#include <libavutil/time.h>
 
 #include <lame.h>
 
@@ -72,8 +78,6 @@ using namespace std;
 #define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
 #define AUDIO_INBUF_SIZE 20480
 #define AUDIO_REFILL_THRESH 4096
-#define OUTPUT_YUV420P 0
-#define OUTPUT_IMAGE 1
 
 #define INBUF_SIZE 4096
 // 采样率/20+7200
@@ -84,7 +88,10 @@ using namespace std;
  音频中也要用到.
 */
 #define NEED_VIDEO 1
-#define NEED_AUDIO 0
+#define NEED_AUDIO 1
+#define OUTPUT_YUV420P 1
+#define OUTPUT_PCM 1
+#define OUTPUT_IMAGE 0
 
 #include "Test.h"
 

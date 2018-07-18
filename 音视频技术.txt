@@ -165,6 +165,432 @@ YUV格式转RGB(由GPU完成)
 视频特效
 
 
+音频格式的plane概念（平面）
+enum AVSampleFormat {
+    AV_SAMPLE_FMT_NONE = -1,
+    AV_SAMPLE_FMT_U8,          ///< unsigned 8 bits
+    AV_SAMPLE_FMT_S16,         ///< signed 16 bits
+    AV_SAMPLE_FMT_S32,         ///< signed 32 bits
+    AV_SAMPLE_FMT_FLT,         ///< float
+    AV_SAMPLE_FMT_DBL,         ///< double
+
+	// 以下都是带平面格式(带P的都是分片的)
+    AV_SAMPLE_FMT_U8P,         ///< unsigned 8 bits, planar
+    AV_SAMPLE_FMT_S16P,        ///< signed 16 bits, planar
+    AV_SAMPLE_FMT_S32P,        ///< signed 32 bits, planar
+    AV_SAMPLE_FMT_FLTP,        ///< float, planar
+    AV_SAMPLE_FMT_DBLP,        ///< double, planar
+
+    AV_SAMPLE_FMT_NB           ///< Number of sample formats. DO NOT USE if linking dynamically
+};
+同样对双声道音频PCM数据，以S16P为例，存储就可能是
+plane 0: LLLLLLLLLLLLLLLLLLLLLLLLLL...
+plane 1: RRRRRRRRRRRRRRRRRRRRRRRRRR...
+而不再是以前的连续buffer。
+
+mp3编码明确规定了只使用平面格式的数据
+AAC编码依旧使用AV_SAMPLE_FMT_S16格式
+输入也可能是分平面的
+存储PCM数据，注意：swr_context即使进行了转换，也要判断转换后的数据是否分平面
+av_sample_fmt_is_planar(pCodecCtx->sample_fmt)
+编码格式要求是分平面数据
+对于解码也可能需要做swr_convert，比如做播放器，很多时候我们是将S16格式数据丢给声卡，而新版ffmpeg解码音频输出的格式可能不满足S16，如AAC解码后得到的是FLT（浮点型），AC3解码是FLTP（带平面）等，需要根据具体的情况决定是否需要convert
+
+关于音频分片的问题
+	1：无论是不是分片的数据总量是相同的.
+	2：分片的存储在内存中linesize如果两声道则左右分开占用linesize[0]和linesize[1].
+	3：不是分片的存储在内存中两声道不分开，左右左右....这样存储，只占用linesize[0].
+音频信息
+	switch (id) {
+	case AV_CODEC_ID_ADPCM_ADX:    return   32;
+	case AV_CODEC_ID_ADPCM_IMA_QT: return   64;
+	case AV_CODEC_ID_ADPCM_EA_XAS: return  128;
+	case AV_CODEC_ID_AMR_NB:
+	case AV_CODEC_ID_EVRC:
+	case AV_CODEC_ID_GSM:
+	case AV_CODEC_ID_QCELP:
+	case AV_CODEC_ID_RA_288:       return  160;
+	case AV_CODEC_ID_AMR_WB:
+	case AV_CODEC_ID_GSM_MS:       return  320;
+	case AV_CODEC_ID_MP1:          return  384;
+	case AV_CODEC_ID_ATRAC1:       return  512;
+	case AV_CODEC_ID_ATRAC3:       return 1024 * framecount;
+	case AV_CODEC_ID_ATRAC3P:      return 2048;
+	case AV_CODEC_ID_MP2:
+	case AV_CODEC_ID_MUSEPACK7:    return 1152;
+	case AV_CODEC_ID_AC3:          return 1536;
+	}
+	AAC格式nb_samples和frame_size是1024
+
+	如果音频，样本：s16;采样率：44100；声道：2。
+	av_get_bytes_per_sample(s16) == 2;
+	1：假设从麦克风或者文件读出来的通过av_read_frame得到一个数据总量是88200个字节。
+	   这个88200个字节是和帧无关的数据量。
+	2:如果接下来需要将这些数据编码成(无论要编码成AAC还MP3都需要用到ffmpeg的fifo或者AVAudioFifo做数据缓冲)：
+		1) AAC:
+		nb_samples和frame_size = 1024
+		一帧数据量：1024*2*av_get_bytes_per_sample(s16) = 4096个字节。
+		编码：88200/(1024*2*av_get_bytes_per_sample(s16)) = 21.5帧数据
+		2) MP3:
+		nb_samples和frame_size = 1152
+		一帧数据量：1152*2*av_get_bytes_per_sample(s16) = 4608个字节。
+		编码：88200/(1152*2*av_get_bytes_per_sample(s16)) = 19.1帧数据
+	3:持续时间方面
+		1) AAC
+		音频帧的播放时间=一个AAC帧对应的采样样本的个数/采样频率(单位为s)
+		一帧 1024个 sample。采样率 Samplerate 44100KHz，每秒44100个sample, 所以根据公式   音频帧的播放时间=一个AAC帧对应的采样样本的个数/采样频率
+		当前AAC一帧的播放时间是= 1024*1000000/44100= 22.2ms(单位为ms)
+		2) MP3
+		mp3 每帧均为1152个字节， 则：
+		frame_duration = 1152 * 1000000 / sample_rate
+		例如：sample_rate = 44100HZ时，计算出的时长为26.122ms，这就是经常听到的mp3每帧播放时间固定为26ms的由来
+
+ffmpeg重采样中swr_convert和swr_get_out_samples的用法
+在做mux的时候关于重采样可以用fifo，或者audiofifo做缓存处理，当做demux的时候关于重采样就可以用到上面的swr_convert和swr_get_out_samples做配合处理。
+就说如果传入的nb_samles大于了传出的nb_samplse则SwrContext中会有缓存，会导致内存一直暴涨，解决方法，可以看如下代码：
+	没有缓存的重采样这么处理：
+	    ret = swr_convert(swrcontext, pOutputFrame->data,pOutputFrame->nb_samples,
+	    					(const uint8_t**)pInputFrame->data,pInputFrame->nb_samples);
+
+	有缓存的代码这么处理：
+	    //如果还有缓存在swrcontext中,第二个参数要填写0才能获取到，缓存数据
+	    int fifo_size = swr_get_out_samples(swrcontext,0);
+	    if ( fifo_size >= pOutputFrame->nb_samples)
+	    {
+	    	ret = swr_convert(swrcontext, pOutputFrame->data,pOutputFrame->nb_samples,
+	    						NULL,0);
+	    }
+即如果有缓存则先判断是否有缓存在里面，如果有则传入数据为空取出缓存。
+
+
+音频重采样
+ffmpeg实现音频重采样的核心函数swr_convert功能非常强大，可是ffmpeg文档对它的注释太过简单，在应用中往往会出这样那样的问题，其实在读取数据->重采样->编码数据的循环中在第一次执行swr_convert后还应用swr_convert再作个缓存检测看看是否还有数据，如果有就要把它写到FIFO中去，留在下次再使用，这点在转码和由低向高转换采样率时特别重要。
+	const int frame_size = FFMIN(fifo_size, m_Opt->encode_pCodecCtx->frame_size);
+ 
+ 
+	if ((ret = av_audio_fifo_read(m_fifo, (void **)m_fifo_samples_array, frame_size)) < frame_size) {
+		fprintf(stderr, "Could not read data from FIFO\n");
+		return AVERROR_EXIT;
+	}
+ 
+	int out_samples = av_rescale_rnd(swr_get_delay(m_Opt->out_resample_context, 48000) + 1536, 44100, 48000, AV_ROUND_UP);
+ 
+ 
+	int conver_samples= swr_convert(m_Opt->out_resample_context, m_fifo_conver_samples_array, frame_size,
+		(const uint8_t **)m_fifo_samples_array, frame_size);
+	ret = av_audio_fifo_size(m_conver_fifo);
+ 
+	if ((ret = av_audio_fifo_realloc(m_conver_fifo, av_audio_fifo_size(m_conver_fifo) + frame_size)) < 0) {
+			fprintf(stderr, "Could not reallocate FIFO\n");
+			return ret;
+		}
+ 
+	ret = av_audio_fifo_write(m_conver_fifo, (void **)m_fifo_conver_samples_array, conver_samples);
+		fifo_size = av_audio_fifo_size(m_conver_fifo);
+ 
+		if ((ret = av_audio_fifo_read(m_conver_fifo, (void **)m_Opt->out_samples_array, frame_size)) < frame_size) {
+			fprintf(stderr, "Could not read data from FIFO\n");
+			return AVERROR_EXIT;
+		}
+		
+		ret = Encode_audio(ret);
+ 
+		int ret1 = 0;
+ 
+		while ((ret1 = swr_convert(m_Opt->out_resample_context, m_fifo_conver_samples_array, frame_size, NULL, 0)) > 0)
+	{
+	
+ 
+		if ((ret = av_audio_fifo_realloc(m_conver_fifo, av_audio_fifo_size(m_conver_fifo) + ret1)) < 0) {
+			fprintf(stderr, "Could not reallocate FIFO\n");
+			return ret;
+		}
+ 
+		ret = av_audio_fifo_write(m_conver_fifo, (void **)m_fifo_conver_samples_array, ret1);
+		fifo_size = av_audio_fifo_size(m_conver_fifo);
+ 
+		if (fifo_size > m_Opt->encode_pFrame->nb_samples)
+		{
+ 
+			if ((ret = av_audio_fifo_read(m_conver_fifo, (void **)m_Opt->out_samples_array, frame_size)) < frame_size) {
+				fprintf(stderr, "Could not read data from FIFO\n");
+				return AVERROR_EXIT;
+			}
+ 
+			ret = Encode_audio(ret);
+ 
+		}
+
+重点在：
+    if ((r = swr_convert(swr_ctx, output, output_nb_samples,(const uint8_t**)input, nb_samples)) < 0)
+        return -1;
+ 
+    while ((r = swr_convert(swr_ctx, output, output_nb_samples, NULL, 0)) > 0) {
+ 
+    }
+
+
+重采样和AVAudioFifo的用法
+    SwrContext * ffmpeg_init_pcm_resample(Out_stream_info * out_stream_info,AVFrame *in_frame, AVFrame *out_frame)
+    {
+    	SwrContext * swr_ctx = NULL;  
+    	swr_ctx = swr_alloc();  
+    	if (!swr_ctx)  
+    	{  
+    		printf("swr_alloc error \n");  
+    		return NULL;  
+    	}  
+    	AVCodecContext * audio_dec_ctx = m_icodec->streams[m_in_audio_stream_idx]->codec;  
+    	AVSampleFormat sample_fmt;  
+    	sample_fmt = (AVSampleFormat)out_stream_info->m_dwBitsPerSample; //样本  
+    	int out_channel_layout = av_get_default_channel_layout(out_stream_info->m_dwChannelCount);
+    	if (audio_dec_ctx->channel_layout == 0)  
+    	{  
+    		audio_dec_ctx->channel_layout = av_get_default_channel_layout(m_icodec->streams[m_in_audio_stream_idx]->codec->channels);  
+    	}  
+    	/* set options */  
+    	av_opt_set_int(swr_ctx, "in_channel_layout",    audio_dec_ctx->channel_layout, 0);  
+    	av_opt_set_int(swr_ctx, "in_sample_rate",       audio_dec_ctx->sample_rate, 0);  
+    	av_opt_set_sample_fmt(swr_ctx, "in_sample_fmt", audio_dec_ctx->sample_fmt, 0);  
+    	av_opt_set_int(swr_ctx, "out_channel_layout",   out_channel_layout, 0);   
+    	av_opt_set_int(swr_ctx, "out_sample_rate",       out_stream_info->m_dwFrequency, 0);  
+    	av_opt_set_sample_fmt(swr_ctx, "out_sample_fmt", sample_fmt, 0);  
+    	swr_init(swr_ctx);  
+     
+    	int64_t src_nb_samples = in_frame->nb_samples; 
+    	//计算输出的samples 和采样率有关 例如：48000转44100，samples则是从1152转为1059，除法
+    	out_frame->nb_samples = av_rescale_rnd(src_nb_samples, out_stream_info->m_dwFrequency, audio_dec_ctx->sample_rate, AV_ROUND_UP);
+     
+    	int ret = av_samples_alloc(out_frame->data, &out_frame->linesize[0],   
+    		out_stream_info->m_dwChannelCount, out_frame->nb_samples,out_stream_info->m_oaudio_st->codec->sample_fmt,1);  
+    	if (ret < 0)  
+    	{  
+    		return NULL;  
+    	}  
+     
+    	out_stream_info->m_audiofifo  = av_audio_fifo_alloc(out_stream_info->m_oaudio_st->codec->sample_fmt, out_stream_info->m_oaudio_st->codec->channels,  
+    		out_frame->nb_samples);   
+     
+    	return swr_ctx;  
+    }
+     
+    int ffmpeg_preform_pcm_resample(Out_stream_info * out_stream_info,SwrContext * pSwrCtx,AVFrame *in_frame, AVFrame *out_frame)
+    {
+    	int ret = 0;
+    	int samples_out_per_size = 0;              //转换之后的samples大小
+      
+    	if (pSwrCtx != NULL)   
+    	{  
+    		//这里注意下samples_out_per_size这个值和 out_frame->nb_samples这个值有时候不一样，ffmpeg里面做了策略不是问题。
+    		samples_out_per_size = swr_convert(pSwrCtx, out_frame->data, out_frame->nb_samples,   
+    			(const uint8_t**)in_frame->data, in_frame->nb_samples);  
+    		if (samples_out_per_size < 0)  
+    		{  
+    			return -1;  
+    		}  
+     
+    		AVCodecContext * audio_dec_ctx = m_icodec->streams[m_in_audio_stream_idx]->codec; 
+     
+    		int buffersize_in = av_samples_get_buffer_size(&in_frame->linesize[0],audio_dec_ctx->channels,  
+    			in_frame->nb_samples, audio_dec_ctx->sample_fmt, 1);
+     
+    		//修改分包内存  
+    		int buffersize_out = av_samples_get_buffer_size(&out_frame->linesize[0], out_stream_info->m_oaudio_st->codec->channels,  
+    			samples_out_per_size, out_stream_info->m_oaudio_st->codec->sample_fmt, 1); 
+     
+    		int fifo_size = av_audio_fifo_size(out_stream_info->m_audiofifo);  
+    		fifo_size = av_audio_fifo_realloc(out_stream_info->m_audiofifo, av_audio_fifo_size(out_stream_info->m_audiofifo) + out_frame->nb_samples);  
+    		av_audio_fifo_write(out_stream_info->m_audiofifo,(void **)out_frame->data,samples_out_per_size);  
+    		fifo_size = av_audio_fifo_size(out_stream_info->m_audiofifo); 
+     
+    		out_frame->pkt_pts = in_frame->pkt_pts;  
+    		out_frame->pkt_dts = in_frame->pkt_dts;  
+    		//有时pkt_pts和pkt_dts不同，并且pkt_pts是编码前的dts,这里要给avframe传入pkt_dts而不能用pkt_pts  
+    		//out_frame->pts = out_frame->pkt_pts;  
+    		out_frame->pts = in_frame->pkt_dts;  
+     
+    		//测试用
+    		if (out_stream_info->user_stream_id ==11)
+    		{
+    			if (pcm_file == NULL)
+    			{
+    				pcm_file = fopen("11.pcm","wb");
+    			}
+    			int wtiresize = fwrite(out_frame->data[0],buffersize_out,1, pcm_file);
+    			fflush(pcm_file);
+    		}
+    	}  
+    	ret = 1;
+    	return ret;
+    }
+     
+    void ffmpeg_uinit_pcm_resample(SwrContext * swr_ctx,AVAudioFifo * audiofifo)
+    { 
+    	if (swr_ctx)  
+    	{  
+    		swr_free(&swr_ctx);  
+    		swr_ctx = NULL;  
+    	}  
+    	if(audiofifo)  
+    	{  
+    		av_audio_fifo_free(audiofifo);  
+    		audiofifo = NULL;  
+    	}     
+    }
+
+FFmpeg关于nb_smples,frame_size以及profile的解释
+原来一直记得固定编码格式需要固定的sample,例如下面：
+1) AAC:
+nb_samples和frame_size = 1024
+一帧数据量：1024*2*av_get_bytes_per_sample(s16) = 4096个字节。
+会编码：88200/(1024*2*av_get_bytes_per_sample(s16)) = 21.5帧数据
+2) MP3:
+nb_samples和frame_size = 1152
+一帧数据量：1152*2*av_get_bytes_per_sample(s16) = 4608个字节。
+MP3:则会编码：88200/(1152*2*av_get_bytes_per_sample(s16)) = 19.1帧数据
+
+但最近发现AAC编码的音频nb_sampes和frame_size,nb_samplse是avframe中的，frame_szie是AVCodecContext中的，有可能出现2048的情况，一直以为是样本是分片planner例如AV_SAMPLE_FMT_FLT，AV_SAMPLE_FMT_FLTP这些导致，但后来发现无关。aac编码中感谢网友摘录了一些注释，如下：
+    /*
+    A HE-AAC v1 or v2 audio frame contains 2048 PCM samples per channel (there is
+    also one mode with 1920 samples per channel but this is only for special purposes
+    such as DAB+ digital radio).
+    These bits/frame figures are average figures where each AAC frame generally has a different
+    size in bytes. To calculate the same for AAC-LC just use 1024 instead of 2048 PCM samples per
+    frame and channel.
+    For AAC-LD/ELD it is either 480 or 512 PCM samples per frame and channel.
+    */
+从中会发现 当aac编码级别是LC时frame_size 和nb_samples是1024，如果是HE的时候是2048。
+
+//这里的最后一个参数一定要注意用pInputFrame->nb_samples* per_sample_in，以AAC举例子，AVCodecContext中的profile会有LC，HE等不同，
+//nb_samples在LC的时候是1024，在HE的时候是2048。如果不填写对会影响音频数据,nb_samples和AVCodecContext中的frame_size相同。
+ret = avcodec_fill_audio_frame(pInputFrame,Channel_in,SampleFormat_in,buf_in,buf_size_in,pInputFrame->nb_samples* per_sample_in); 
+
+其种标记在ffmpeg中是AVCodecContext中的profile：
+    /**
+     * profile
+     * - encoding: Set by user.
+     * - decoding: Set by libavcodec.
+     */
+     int profile;
+其值如下:
+#define FF_PROFILE_UNKNOWN -99
+#define FF_PROFILE_RESERVED -100
+ 
+#define FF_PROFILE_AAC_MAIN 0
+#define FF_PROFILE_AAC_LOW  1
+#define FF_PROFILE_AAC_SSR  2
+#define FF_PROFILE_AAC_LTP  3
+#define FF_PROFILE_AAC_HE   4
+#define FF_PROFILE_AAC_HE_V2 28
+#define FF_PROFILE_AAC_LD   22
+#define FF_PROFILE_AAC_ELD  38
+#define FF_PROFILE_MPEG2_AAC_LOW 128
+#define FF_PROFILE_MPEG2_AAC_HE  131
+ 
+#define FF_PROFILE_DTS         20
+#define FF_PROFILE_DTS_ES      30
+#define FF_PROFILE_DTS_96_24   40
+#define FF_PROFILE_DTS_HD_HRA  50
+#define FF_PROFILE_DTS_HD_MA   60
+ 
+#define FF_PROFILE_MPEG2_422    0
+#define FF_PROFILE_MPEG2_HIGH   1
+#define FF_PROFILE_MPEG2_SS     2
+#define FF_PROFILE_MPEG2_SNR_SCALABLE  3
+#define FF_PROFILE_MPEG2_MAIN   4
+#define FF_PROFILE_MPEG2_SIMPLE 5
+ 
+#define FF_PROFILE_H264_CONSTRAINED  (1<<9)  // 8+1; constraint_set1_flag
+#define FF_PROFILE_H264_INTRA        (1<<11) // 8+3; constraint_set3_flag
+ 
+#define FF_PROFILE_H264_BASELINE             66
+#define FF_PROFILE_H264_CONSTRAINED_BASELINE (66|FF_PROFILE_H264_CONSTRAINED)
+#define FF_PROFILE_H264_MAIN                 77
+#define FF_PROFILE_H264_EXTENDED             88
+#define FF_PROFILE_H264_HIGH                 100
+#define FF_PROFILE_H264_HIGH_10              110
+#define FF_PROFILE_H264_HIGH_10_INTRA        (110|FF_PROFILE_H264_INTRA)
+#define FF_PROFILE_H264_HIGH_422             122
+#define FF_PROFILE_H264_HIGH_422_INTRA       (122|FF_PROFILE_H264_INTRA)
+#define FF_PROFILE_H264_HIGH_444             144
+#define FF_PROFILE_H264_HIGH_444_PREDICTIVE  244
+#define FF_PROFILE_H264_HIGH_444_INTRA       (244|FF_PROFILE_H264_INTRA)
+#define FF_PROFILE_H264_CAVLC_444            44
+ 
+#define FF_PROFILE_VC1_SIMPLE   0
+#define FF_PROFILE_VC1_MAIN     1
+#define FF_PROFILE_VC1_COMPLEX  2
+#define FF_PROFILE_VC1_ADVANCED 3
+ 
+#define FF_PROFILE_MPEG4_SIMPLE                     0
+#define FF_PROFILE_MPEG4_SIMPLE_SCALABLE            1
+#define FF_PROFILE_MPEG4_CORE                       2
+#define FF_PROFILE_MPEG4_MAIN                       3
+#define FF_PROFILE_MPEG4_N_BIT                      4
+#define FF_PROFILE_MPEG4_SCALABLE_TEXTURE           5
+#define FF_PROFILE_MPEG4_SIMPLE_FACE_ANIMATION      6
+#define FF_PROFILE_MPEG4_BASIC_ANIMATED_TEXTURE     7
+#define FF_PROFILE_MPEG4_HYBRID                     8
+#define FF_PROFILE_MPEG4_ADVANCED_REAL_TIME         9
+#define FF_PROFILE_MPEG4_CORE_SCALABLE             10
+#define FF_PROFILE_MPEG4_ADVANCED_CODING           11
+#define FF_PROFILE_MPEG4_ADVANCED_CORE             12
+#define FF_PROFILE_MPEG4_ADVANCED_SCALABLE_TEXTURE 13
+#define FF_PROFILE_MPEG4_SIMPLE_STUDIO             14
+#define FF_PROFILE_MPEG4_ADVANCED_SIMPLE           15
+ 
+#define FF_PROFILE_JPEG2000_CSTREAM_RESTRICTION_0   0
+#define FF_PROFILE_JPEG2000_CSTREAM_RESTRICTION_1   1
+#define FF_PROFILE_JPEG2000_CSTREAM_NO_RESTRICTION  2
+#define FF_PROFILE_JPEG2000_DCINEMA_2K              3
+#define FF_PROFILE_JPEG2000_DCINEMA_4K              4 
+
+自此，frame_size,nb_samples，profile之间的关系可以理清楚了，关于mp3的只发现过1152的，如果有其他再记录。 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

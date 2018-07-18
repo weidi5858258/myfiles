@@ -832,11 +832,15 @@ static void fill_samples(double *dst, int nb_samples, int nb_channels, int sampl
     进入循环处理:
  */
 int resampling_audio(const char *dst_filename) {
+    // 立体 环绕
     int64_t src_ch_layout = AV_CH_LAYOUT_STEREO, dst_ch_layout = AV_CH_LAYOUT_SURROUND;
     // 采样率
     int src_sample_rate = 48000, dst_sample_rate = 44100;
     // 采样格式
     enum AVSampleFormat src_sample_fmt = AV_SAMPLE_FMT_DBL, dst_sample_fmt = AV_SAMPLE_FMT_S16;
+
+    // 上面几个的目标可以先定好
+
     // 声道数
     int src_nb_channels = 0, dst_nb_channels = 0;
     // 一帧音频中的采样个数，用于计算一帧数据大小
@@ -956,20 +960,21 @@ int resampling_audio(const char *dst_filename) {
             fprintf(stderr, "Error while converting\n");
             goto end;
         }
+        // 需要计算出本次转换后音频所占用的字节数,因为在写的时候要用到这个变量
         dst_bufsize = av_samples_get_buffer_size(&dst_linesize, dst_nb_channels,
                                                  ret, dst_sample_fmt, 1);
         if (dst_bufsize < 0) {
             fprintf(stderr, "Could not get sample buffer size\n");
             goto end;
         }
-        printf("t:%f in:%d out:%d\n", t, src_nb_samples, ret);
+        printf("t:%f in:%d out:%d dst_bufsize:%d\n", t, src_nb_samples, ret, dst_bufsize);
         // 写入数据,生成目标文件
         fwrite(dst_data[0], 1, dst_bufsize, dst_file);
     } while (t < 10);// 大约10秒
 
     if ((ret = get_format_from_sample_fmt(&fmt, dst_sample_fmt)) < 0)
         goto end;
-    fprintf(stderr, "Resampling succeeded. Play the output file with the command:\n"
+    fprintf(stdout, "Resampling succeeded. Play the output file with the command:\n"
                     "ffplay -f %s -channel_layout %"PRId64" -channels %d -ar %d %s\n",
             fmt, dst_ch_layout, dst_nb_channels, dst_sample_rate, dst_filename);
 
@@ -991,5 +996,63 @@ int resampling_audio(const char *dst_filename) {
 int test(int) {
     return 0;
 }
+
+/*
+ * ffmpeg的函数av_samples_get_buffer_size分析，对齐的意思
+ *
+ * 此函数只应用于音频。
+ * 计算出：要把一系列的样本保存起来，需要多大的缓存。
+ * sample，单个通道的单次采样所得到的样本数据。
+ * planar，和yuv存储格式一样，声音也分平面（planar）和打包（packed）两种存储格式。
+ * line_size，一个平面的buffer大小(packed格式，可以看成是特殊地只有一个平面)。
+ * align，指定一个平面的buffer大小的对齐数，单位为字节；
+ *      “0 = default”，常用于提供冗余的大小，此函数之后常常跟着的是类malloc函数。
+ *      “1 = no alignment”，不对齐，其实即是按1字节对齐，也就是说，求的是音频数据的真实大小，
+ *      常常用来计算出刚刚(调用此函数之前)转码出来的数据大小。
+ */
+
+/**
+* Get the required buffer size for the given audio parameters.
+*
+* @param[out] linesize calculated linesize, may be NULL
+* @param nb_channels   the number of channels
+* @param nb_samples    the number of samples in a single channel
+* @param sample_fmt    the sample format
+* @param align         buffer size alignment (0 = default, 1 = no alignment)
+* @return              required buffer size, or negative error code on failure
+*/
+//int av_samples_get_buffer_size(int *linesize, int nb_channels, int nb_samples,
+//                               enum AVSampleFormat sample_fmt, int align) {
+//    int line_size;
+//    int sample_size = av_get_bytes_per_sample(sample_fmt); //获取一个样本的大小
+//    int planar = av_sample_fmt_is_planar(sample_fmt); //检测是哪种存放格式
+//
+//    /* validate parameter ranges */
+//    if (!sample_size || nb_samples <= 0 || nb_channels <= 0) //严谨地，做一下参数校验
+//        return AVERROR(EINVAL);
+//
+//    /* auto-select alignment if not specified */
+//    if (!align) {
+//        if (nb_samples > INT_MAX - 31)
+//            return AVERROR(EINVAL);
+//        align = 1; //按1对齐0
+//        nb_samples = FFALIGN(nb_samples, 32); //对齐后，一個通道里，可能比真实的样本数量多出31个。
+//    }
+//
+//    //这里看不懂。
+//    /* check for integer overflow */
+//    if (nb_channels > INT_MAX / align ||
+//        (int64_t) nb_channels * nb_samples > (INT_MAX - (align * nb_channels)) / sample_size)
+//        return AVERROR(EINVAL);
+//
+//    //对齐的意义在这里。
+//    line_size = planar ? FFALIGN(nb_samples * sample_size, align) :
+//                FFALIGN(nb_samples * sample_size * nb_channels, align);
+//    if (linesize)
+//        *linesize = line_size;
+//
+//    //返回：能存放全部通道的所有样本数量的音频数据的buffer大小
+//    return planar ? line_size * nb_channels : line_size;
+//}
 
 #endif //MYSTUDY_FFMPEG_SAMPLE
