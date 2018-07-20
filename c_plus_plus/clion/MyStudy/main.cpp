@@ -45,6 +45,8 @@ int simplest_ffmpeg_audio_decoder();
 
 int simplest_ffmpeg_audio_encoder();
 
+int crazydiode_video_devoder();
+
 int simplest_ffmpeg_audio_encoder_pure();
 
 int decode_audio_main(const char *infilename, const char *outfilename);
@@ -87,7 +89,6 @@ int pcm2mp3(char *inPath, char *outPath);
 int resampling_audio(const char *dst_filename);
 
 
-
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
  * @param argv
@@ -107,12 +108,14 @@ int main(int argc, char *argv[]) {
 //    decoder_video_frame_to_image();
 //    simplest_audio_play_sdl2();
     simplest_ffmpeg_audio_decoder();
+    // 查看pcm,yuv文件的信息
+//    crazydiode_video_devoder();
 //    simplest_ffmpeg_audio_encoder();
 //    simplest_ffmpeg_audio_encoder_pure();
 //    decode_audio_main("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm");
 //    decode_audio2("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.pcm");
 //    encode_audio_main("/root/音乐/txdx.pcm", "/root/音乐/txdx.mp2");
-//    pcm2mp3("/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.mp3");
+//    pcm2mp3("/root/音乐/audio.pcm", "/root/音乐/audio.mp3");
 //    decode_video_main("/root/视频/sex.avi", "/root/图片/video_to_image");
 //    resampling_audio("/root/音乐/resampling.mp2");
 

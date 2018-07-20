@@ -193,6 +193,8 @@ echo "Y" | sudo apt-get install build-essential
 echo "Y" | sudo apt-get install libgl1-mesa-dev
 echo "Y" | sudo apt-get install libglu1-mesa-dev
 echo "Y" | sudo apt-get install freeglut3-dev
+# pcm player
+echo "Y" | sudo apt-get install sox
 echo "Y" | sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  
 echo "Y" | sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20  
 echo "Y" | sudo update-alternatives --config gcc 
