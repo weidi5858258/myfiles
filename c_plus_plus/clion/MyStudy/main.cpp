@@ -47,6 +47,8 @@ int simplest_ffmpeg_audio_encoder();
 
 int crazydiode_video_devoder();
 
+int crazydiode_audio_devoder();
+
 int simplest_ffmpeg_audio_encoder_pure();
 
 int decode_audio_main(const char *infilename, const char *outfilename);
@@ -107,9 +109,10 @@ int main(int argc, char *argv[]) {
 //    simplest_ffmpeg_player2();
 //    decoder_video_frame_to_image();
 //    simplest_audio_play_sdl2();
-    simplest_ffmpeg_audio_decoder();
+//    simplest_ffmpeg_audio_decoder();
     // 查看pcm,yuv文件的信息
 //    crazydiode_video_devoder();
+    crazydiode_audio_devoder();
 //    simplest_ffmpeg_audio_encoder();
 //    simplest_ffmpeg_audio_encoder_pure();
 //    decode_audio_main("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm");

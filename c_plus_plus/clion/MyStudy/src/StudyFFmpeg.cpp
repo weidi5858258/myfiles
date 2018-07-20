@@ -3819,12 +3819,126 @@ int crazydiode_video_devoder() {
     avformat_free_context(av_format_context);
 }
 
-int crazydiode_audio_devoder(){
+int crazydiode_audio_devoder() {
+    const char in_file_path[] = "/root/音乐/Love_You_I_Do.flac";
+    const char out_file_path[] = "/root/音乐/output.pcm";
 
+    //1.注册组件
+    av_register_all();
+    //封装格式上下文
+    AVFormatContext *avformat_context = avformat_alloc_context();
+    //2.打开输入音频文件
+    if (avformat_open_input(&avformat_context, in_file_path, NULL, NULL) != 0) {
+        printf("%s\n", "avformat_open_input");
+        return -1;
+    }
+    //3.获取音频信息
+    if (avformat_find_stream_info(avformat_context, NULL) < 0) {
+        printf("%s\n", "avformat_find_stream_info");
+        return -1;
+    }
+
+    av_dump_format(avformat_context, 0, in_file_path, false);
+
+    //音频解码，需要找到对应的AVStream所在的pFormatCtx->streams的索引位置
+    int nb_samples = avformat_context->nb_streams;
+    int audio_stream_index = -1;
+    int i;
+    for (i = 0; i < nb_samples; i++) {
+        //根据类型判断是否是音频流
+        if (avformat_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+            audio_stream_index = i;
+            break;
+        }
+    }
+    if (audio_stream_index == -1) {
+        printf("%s\n", "");
+        return -1;
+    }
+
+    //4.获取解码器
+    //根据索引拿到对应的流,根据流拿到解码器上下文
+    AVCodecContext *audio_avcodec_context = avformat_context->streams[audio_stream_index]->codec;
+    //再根据上下文拿到编解码id，通过该id拿到解码器
+    AVCodec *audio_decoder_avcodec = avcodec_find_decoder(audio_avcodec_context->codec_id);
+    if (audio_decoder_avcodec == NULL) {
+        printf("%s\n", "");
+        return -1;
+    }
+    //5.打开解码器
+    if (avcodec_open2(audio_avcodec_context, audio_decoder_avcodec, NULL) < 0) {
+        printf("%s\n", "");
+        return -1;
+    }
+
+    //编码数据
+    AVPacket *avpacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+    //解压缩数据
+    AVFrame *src_avframe = av_frame_alloc();
+
+    //frame->16bit 44100 PCM 统一音频采样格式与采样率
+    SwrContext *audio_swr_context = swr_alloc();
+    //重采样设置选项-----------------------------------------------------------start
+    //输入的采样格式
+    enum AVSampleFormat in_sample_fmt = audio_avcodec_context->sample_fmt;
+    //输出的采样格式 16bit PCM
+    enum AVSampleFormat out_sample_fmt = AV_SAMPLE_FMT_S16;
+    //输入的采样率
+    int in_sample_rate = audio_avcodec_context->sample_rate;
+    //输出的采样率
+    int out_sample_rate = 44100;
+    //输入的声道布局
+    uint64_t in_channel_layout = audio_avcodec_context->channel_layout;
+    //输出的声道布局
+    uint64_t out_channel_layout = AV_CH_LAYOUT_MONO;
+
+    swr_alloc_set_opts(audio_swr_context, out_channel_layout, out_sample_fmt, out_sample_rate,
+                       in_channel_layout, in_sample_fmt, in_sample_rate, 0, NULL);
+    swr_init(audio_swr_context);
+
+    //重采样设置选项-----------------------------------------------------------end
+    //获取输出的声道个数
+    int out_nb_channels = av_get_channel_layout_nb_channels(out_channel_layout);
+    //存储pcm数据
+    uint8_t *out_buffer = (uint8_t *) av_malloc(2 * 44100);
+    FILE *out_file = fopen(out_file_path, "wb");
+    int ret, get_frame, frame_count = 0;
+    //6.一帧一帧读取压缩的音频数据AVPacket
+    while (av_read_frame(avformat_context, avpacket) >= 0) {
+        if (avpacket->stream_index == audio_stream_index) {
+            //解码AVPacket->AVFrame
+            ret = avcodec_decode_audio4(audio_avcodec_context, src_avframe, &get_frame, avpacket);
+            if (ret < 0) {
+                printf("%s\n", "");
+                break;
+            }
+            //非0，正在解码
+            if (get_frame) {
+                printf("解码第%d帧\n", ++frame_count);
+                swr_convert(audio_swr_context, &out_buffer, 2 * 44100,
+                            (const uint8_t **) src_avframe->data, src_avframe->nb_samples);
+                //获取sample的size
+                int out_buffer_size = av_samples_get_buffer_size(NULL, out_nb_channels, src_avframe->nb_samples,
+                                                                 out_sample_fmt, 1);
+                //写入文件进行测试
+                fwrite(out_buffer, 1, out_buffer_size, out_file);
+            }
+        }
+        av_free_packet(avpacket);
+    }
+
+    fclose(out_file);
+    av_frame_free(&src_avframe);
+    av_free(out_buffer);
+    swr_free(&audio_swr_context);
+    avcodec_close(audio_avcodec_context);
+    avformat_close_input(&avformat_context);
+
+    return 0;
 }
 
-int get_file_infomation(){
-    
+int get_file_infomation() {
+
 }
 
 int test(float) {
