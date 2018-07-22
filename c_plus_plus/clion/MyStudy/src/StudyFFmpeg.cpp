@@ -22,6 +22,96 @@ static Uint8 *audio_pos;
 
 void fill_audio(void *udata, Uint8 *stream, int len);
 
+void print_file_audio_info(AVFormatContext *avformat_context, AVCodecContext *audio_avcodec_context,
+                           int in_sample_fmt, int audio_stream_index) {
+    ///////////////////////////////输出音频信息///////////////////////////////
+
+    //输出音频信息
+    printf("\n");
+    printf("Complete name：         \t%s\n", avformat_context->filename);
+    printf("Format long name：     \t%s\n", avformat_context->iformat->long_name);
+    printf("Format：             \t%s\n", avformat_context->iformat->name);
+    int duration = (avformat_context->duration) / 1000000L;
+    int hour = duration / 3600;//小时
+    int minute = duration % 3600 / 60;//分钟
+    int second = duration % 60;//秒
+    printf("Duration：             \t%02d:%02d:%02d\n", hour, minute, second);
+    printf("Channel(s)：         \t%d\n", audio_avcodec_context->channels);
+    printf("Bit rate：             \t%.1f(Kbps)\n", (audio_avcodec_context->bit_rate) / 1000.0f);
+    printf("Sample rate：         \t%.1f(KHz)\n", (audio_avcodec_context->sample_rate) / 1000.0f);
+    char *sample_fmt = NULL;
+    switch (in_sample_fmt) {
+        case AV_SAMPLE_FMT_NONE:
+            sample_fmt = "AV_SAMPLE_FMT_NONE";
+            break;
+        case AV_SAMPLE_FMT_U8:
+            sample_fmt = "AV_SAMPLE_FMT_U8";
+            break;
+        case AV_SAMPLE_FMT_S16:
+            sample_fmt = "AV_SAMPLE_FMT_S16";
+            break;
+        case AV_SAMPLE_FMT_S32:
+            sample_fmt = "AV_SAMPLE_FMT_S32";
+            break;
+        case AV_SAMPLE_FMT_FLT:
+            sample_fmt = "AV_SAMPLE_FMT_FLT";
+            break;
+        case AV_SAMPLE_FMT_DBL:
+            sample_fmt = "AV_SAMPLE_FMT_DBL";
+            break;
+        case AV_SAMPLE_FMT_U8P:
+            sample_fmt = "AV_SAMPLE_FMT_U8P";
+            break;
+        case AV_SAMPLE_FMT_S16P:
+            sample_fmt = "AV_SAMPLE_FMT_S16P";
+            break;
+        case AV_SAMPLE_FMT_S32P:
+            sample_fmt = "AV_SAMPLE_FMT_S32P";
+            break;
+        case AV_SAMPLE_FMT_FLTP:
+            sample_fmt = "AV_SAMPLE_FMT_FLTP";
+            break;
+        case AV_SAMPLE_FMT_DBLP:
+            sample_fmt = "AV_SAMPLE_FMT_DBLP";
+            break;
+        case AV_SAMPLE_FMT_S64:
+            sample_fmt = "AV_SAMPLE_FMT_S64";
+            break;
+        case AV_SAMPLE_FMT_S64P:
+            sample_fmt = "AV_SAMPLE_FMT_S64P";
+            break;
+        case AV_SAMPLE_FMT_NB:
+            sample_fmt = "AV_SAMPLE_FMT_NB";
+            break;
+        default:
+            sample_fmt = "";
+    }
+    printf("Sample format：         \t%d\t%s\n", in_sample_fmt, sample_fmt);
+    printf("Stream size：         \t%d\n", avformat_context->nb_streams);
+    printf("Stream index：         \t%d\n", audio_stream_index);
+    AVDictionaryEntry *avdictionary_entry = NULL;
+    while (avdictionary_entry = av_dict_get(avformat_context->streams[audio_stream_index]->metadata,
+                                            "",
+                                            avdictionary_entry, AV_DICT_IGNORE_SUFFIX)) {
+        printf("Writing library：     \t%s\n", avdictionary_entry->value);
+    }
+    printf("Compile information： \t%s\n", avcodec_configuration());
+    printf("\n");
+    /*puts("FFMPEG支持的所有输入文件格式：");
+    AVInputFormat *pInputFormat = avformat_context->iformat;
+    while (pInputFormat) {
+        printf("%s ", pInputFormat->name);
+        pInputFormat = pInputFormat->next;
+    }*/
+    // 下面的内容还不知道怎么得到
+//    printf("File size： %ld\n", );
+//    printf("Format version： %s\n", );
+//    printf("Format profile：%s\n", );
+//    printf("Bit rate mode： %d\n", );
+//    printf("Compression mode： %d\n", );
+//    printf("Encoding settings： %ld\n", );
+}
+
 /***
  能够播放视频,但是一会儿工夫画面就成黑白了,
  这个原因是不是视频在主线程中播放导致的?
@@ -3678,34 +3768,34 @@ void ffmpeg_uinit_pcm_resample(SwrContext *swr_ctx, AVAudioFifo *audiofifo) {
  马上要废弃的代码,但是现在还能用(2018/7/20)
  */
 int crazydiode_video_devoder() {
-    const char *input_file_name_path = "/root/视频/moumoon_tomodachi-koibito_RV10_cook.rmvb";
+    const char *input_file_name_path = "/root/视频/haoke.avi";
     const char *output_file_name_path = "/root/视频/output.yuv";
+    AVFormatContext *avformat_context = NULL;
+    AVCodecContext *video_av_codec_context = NULL;
 
     //1.注册所有组件
     av_register_all();
-
     //封装格式上下文，统领全局的结构体，保存了视频文件封装格式的相关信息
-    AVFormatContext *av_format_context = avformat_alloc_context();
-
+    avformat_context = avformat_alloc_context();
     //2.打开输入视频文件
-    if (avformat_open_input(&av_format_context, input_file_name_path, NULL, NULL) != 0) {
+    if (avformat_open_input(&avformat_context, input_file_name_path, NULL, NULL) != 0) {
         printf("%s", "");
         return -1;
     }
     //3.获取视频文件信息
-    if (avformat_find_stream_info(av_format_context, NULL) < 0) {
+    if (avformat_find_stream_info(avformat_context, NULL) < 0) {
         printf("%s", "");
         return -1;
     }
 
-    int nb_streams = av_format_context->nb_streams;
+    int nb_streams = avformat_context->nb_streams;
     //获取视频流的索引位置
     //遍历所有类型的流（音频流、视频流、字幕流），找到视频流
     int video_stream_index = -1;
     int i;
     for (i = 0; i < nb_streams; i++) {
         //流的类型
-        if (av_format_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
+        if (avformat_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
             video_stream_index = i;
             break;
         }
@@ -3717,7 +3807,7 @@ int crazydiode_video_devoder() {
 
     //只有知道视频的编码方式，才能够根据编码方式去找到解码器
     //获取视频流中的编解码上下文
-    AVCodecContext *video_av_codec_context = av_format_context->streams[video_stream_index]->codec;
+    video_av_codec_context = avformat_context->streams[video_stream_index]->codec;
     //4.根据编解码上下文中的编码id查找对应的解码
     AVCodec *video_decoder_av_codec = avcodec_find_decoder(video_av_codec_context->codec_id);
     if (video_decoder_av_codec == NULL) {
@@ -3733,26 +3823,26 @@ int crazydiode_video_devoder() {
     }
 
     // 输出视频信息
-    printf("视频的文件格式：%s\n", av_format_context->iformat->name);
-    printf("视频时长：%d\n", (av_format_context->duration) / 1000000);
+    printf("视频的文件格式：%s\n", avformat_context->iformat->name);
+    printf("视频时长：%d\n", (avformat_context->duration) / 1000000);
     printf("视频的宽高：%d,%d\n", video_av_codec_context->width, video_av_codec_context->height);
     printf("解码器的名称：%s\n", video_decoder_av_codec->name);
 
     //准备读取
     //AVPacket用于存储一帧一帧的压缩数据（H264）
     //缓冲区，开辟空间
-    AVPacket *av_packet = (AVPacket *) av_malloc(sizeof(AVPacket));
+    AVPacket *avpacket = (AVPacket *) av_malloc(sizeof(AVPacket));
     //AVFrame用于存储解码后的像素数据(YUV)
     //内存分配
-    AVFrame *src_av_frame = av_frame_alloc();
-    AVFrame *dst_av_frame = av_frame_alloc();
+    AVFrame *src_avframe = av_frame_alloc();
+    AVFrame *dst_avframe = av_frame_alloc();
     int av_picture_get_size = avpicture_get_size(AV_PIX_FMT_YUV420P, video_av_codec_context->width,
                                                  video_av_codec_context->height);
     //只有指定了AVFrame的像素格式、画面大小才能真正分配内存
     //缓冲区分配内存
     uint8_t *out_buffer = (uint8_t *) av_malloc(av_picture_get_size);
     //初始化缓冲区
-    avpicture_fill((AVPicture *) dst_av_frame, out_buffer, AV_PIX_FMT_YUV420P, video_av_codec_context->width,
+    avpicture_fill((AVPicture *) dst_avframe, out_buffer, AV_PIX_FMT_YUV420P, video_av_codec_context->width,
                    video_av_codec_context->height);
     //用于转码（缩放）的参数，转之前的宽高，转之后的宽高，格式等
     struct SwsContext *video_sws_context = sws_getContext(video_av_codec_context->width, video_av_codec_context->height,
@@ -3768,12 +3858,13 @@ int crazydiode_video_devoder() {
 
     printf("while loop start.\n");
 
+    int y_size = video_av_codec_context->width * video_av_codec_context->height;
     //6.一帧一帧的读取压缩数据
-    while (av_read_frame(av_format_context, av_packet) >= 0) {
+    while (av_read_frame(avformat_context, avpacket) >= 0) {
         //只要视频压缩数据（根据流的索引位置判断）
-        if (av_packet->stream_index == video_stream_index) {
+        if (avpacket->stream_index == video_stream_index) {
             //7.解码一帧视频压缩数据，得到视频像素数据
-            ret = avcodec_decode_video2(video_av_codec_context, src_av_frame, &get_picture, av_packet);
+            ret = avcodec_decode_video2(video_av_codec_context, src_avframe, &get_picture, avpacket);
             if (ret < 0) {
                 printf("%s", "");
                 break;
@@ -3787,58 +3878,62 @@ int crazydiode_video_devoder() {
                 //4 输入数据第一列要转码的位置 从0开始
                 //5 输入画面的高度
                 sws_scale(video_sws_context,
-                          (const uint8_t *const *) src_av_frame->data,
-                          src_av_frame->linesize, 0,
+                          (const uint8_t *const *) src_avframe->data,
+                          src_avframe->linesize, 0,
                           video_av_codec_context->height,
-                          dst_av_frame->data,
-                          dst_av_frame->linesize);
+                          dst_avframe->data,
+                          dst_avframe->linesize);
                 //输出到YUV文件
                 //AVFrame像素帧写入文件
                 //data解码后的图像像素数据（音频采样数据）
                 //Y 亮度 UV 色度（压缩了） 人对亮度更加敏感
                 //U V 个数是Y的1/4
-                int y_size = video_av_codec_context->width * video_av_codec_context->height;
-                fwrite(dst_av_frame->data[0], 1, y_size, output_file);
-                fwrite(dst_av_frame->data[1], 1, y_size / 4, output_file);
-                fwrite(dst_av_frame->data[2], 1, y_size / 4, output_file);
+                fwrite(dst_avframe->data[0], 1, y_size, output_file);
+                fwrite(dst_avframe->data[1], 1, y_size / 4, output_file);
+                fwrite(dst_avframe->data[2], 1, y_size / 4, output_file);
 
-                frame_count++;
-                printf("解码第%d帧\n", frame_count);
+                ++frame_count;
             }
         }
         //释放资源
-        av_free_packet(av_packet);
+        av_free_packet(avpacket);
     }
+    printf("总共解码%d帧\n", frame_count);
 
     printf("while loop end.\n");
 
     fclose(output_file);
-    av_frame_free(&src_av_frame);
-    av_frame_free(&dst_av_frame);
+    av_frame_free(&src_avframe);
+    av_frame_free(&dst_avframe);
     avcodec_close(video_av_codec_context);
-    avformat_free_context(av_format_context);
+    avformat_free_context(avformat_context);
 }
 
+/***
+
+ */
 int crazydiode_audio_devoder() {
-    const char in_file_path[] = "/root/音乐/Love_You_I_Do.flac";
+    const char in_file_path[] = "/root/音乐/漂洋过海来看你.mp3";
     const char out_file_path[] = "/root/音乐/output.pcm";
+    AVFormatContext *avformat_context = NULL;
+    AVCodecContext *audio_avcodec_context = NULL;
 
     //1.注册组件
     av_register_all();
     //封装格式上下文
-    AVFormatContext *avformat_context = avformat_alloc_context();
+    avformat_context = avformat_alloc_context();
     //2.打开输入音频文件
     if (avformat_open_input(&avformat_context, in_file_path, NULL, NULL) != 0) {
-        printf("%s\n", "avformat_open_input");
+        printf("%s\n", "");
         return -1;
     }
     //3.获取音频信息
     if (avformat_find_stream_info(avformat_context, NULL) < 0) {
-        printf("%s\n", "avformat_find_stream_info");
+        printf("%s\n", "");
         return -1;
     }
 
-    av_dump_format(avformat_context, 0, in_file_path, false);
+//    av_dump_format(avformat_context, 0, in_file_path, false);
 
     //音频解码，需要找到对应的AVStream所在的pFormatCtx->streams的索引位置
     int nb_samples = avformat_context->nb_streams;
@@ -3858,7 +3953,7 @@ int crazydiode_audio_devoder() {
 
     //4.获取解码器
     //根据索引拿到对应的流,根据流拿到解码器上下文
-    AVCodecContext *audio_avcodec_context = avformat_context->streams[audio_stream_index]->codec;
+    audio_avcodec_context = avformat_context->streams[audio_stream_index]->codec;
     //再根据上下文拿到编解码id，通过该id拿到解码器
     AVCodec *audio_decoder_avcodec = avcodec_find_decoder(audio_avcodec_context->codec_id);
     if (audio_decoder_avcodec == NULL) {
@@ -3871,14 +3966,8 @@ int crazydiode_audio_devoder() {
         return -1;
     }
 
-    //编码数据
-    AVPacket *avpacket = (AVPacket *) av_malloc(sizeof(AVPacket));
-    //解压缩数据
-    AVFrame *src_avframe = av_frame_alloc();
-
-    //frame->16bit 44100 PCM 统一音频采样格式与采样率
-    SwrContext *audio_swr_context = swr_alloc();
     //重采样设置选项-----------------------------------------------------------start
+    //frame->16bit 44100 PCM 统一音频采样格式与采样率
     //输入的采样格式
     enum AVSampleFormat in_sample_fmt = audio_avcodec_context->sample_fmt;
     //输出的采样格式 16bit PCM
@@ -3889,36 +3978,50 @@ int crazydiode_audio_devoder() {
     int out_sample_rate = 44100;
     //输入的声道布局
     uint64_t in_channel_layout = audio_avcodec_context->channel_layout;
-    //输出的声道布局
+    //输出的声道布局(单声道)
     uint64_t out_channel_layout = AV_CH_LAYOUT_MONO;
+    //由声道布局得到声道数
+    //获取输入的声道个数
+    int in_nb_channels = audio_avcodec_context->channels;
+    //int in_nb_channels = av_get_channel_layout_nb_channels(in_channel_layout);
+    //获取输出的声道个数
+    int out_nb_channels = av_get_channel_layout_nb_channels(out_channel_layout);
+    //重采样设置选项-----------------------------------------------------------end
 
+    //打印文件信息
+    print_file_audio_info(avformat_context, audio_avcodec_context, in_sample_fmt, audio_stream_index);
+
+#if NEED_TO_DECODER
+    SwrContext *audio_swr_context = swr_alloc();
     swr_alloc_set_opts(audio_swr_context, out_channel_layout, out_sample_fmt, out_sample_rate,
                        in_channel_layout, in_sample_fmt, in_sample_rate, 0, NULL);
     swr_init(audio_swr_context);
 
-    //重采样设置选项-----------------------------------------------------------end
-    //获取输出的声道个数
-    int out_nb_channels = av_get_channel_layout_nb_channels(out_channel_layout);
-    //存储pcm数据
+    //存放将要编码的数据
+    AVPacket *avpacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+    //存放编码后的数据
+    AVFrame *decoded_avframe = av_frame_alloc();
+    //存储pcm数据(把解码后的数据经过转化后存在这个变量中)
     uint8_t *out_buffer = (uint8_t *) av_malloc(2 * 44100);
+
     FILE *out_file = fopen(out_file_path, "wb");
     int ret, get_frame, frame_count = 0;
     //6.一帧一帧读取压缩的音频数据AVPacket
     while (av_read_frame(avformat_context, avpacket) >= 0) {
         if (avpacket->stream_index == audio_stream_index) {
             //解码AVPacket->AVFrame
-            ret = avcodec_decode_audio4(audio_avcodec_context, src_avframe, &get_frame, avpacket);
+            ret = avcodec_decode_audio4(audio_avcodec_context, decoded_avframe, &get_frame, avpacket);
             if (ret < 0) {
                 printf("%s\n", "");
                 break;
             }
             //非0，正在解码
             if (get_frame) {
-                printf("解码第%d帧\n", ++frame_count);
+                ++frame_count;
                 swr_convert(audio_swr_context, &out_buffer, 2 * 44100,
-                            (const uint8_t **) src_avframe->data, src_avframe->nb_samples);
+                            (const uint8_t **) decoded_avframe->data, decoded_avframe->nb_samples);
                 //获取sample的size
-                int out_buffer_size = av_samples_get_buffer_size(NULL, out_nb_channels, src_avframe->nb_samples,
+                int out_buffer_size = av_samples_get_buffer_size(NULL, out_nb_channels, decoded_avframe->nb_samples,
                                                                  out_sample_fmt, 1);
                 //写入文件进行测试
                 fwrite(out_buffer, 1, out_buffer_size, out_file);
@@ -3926,11 +4029,13 @@ int crazydiode_audio_devoder() {
         }
         av_free_packet(avpacket);
     }
+    printf("总共解码%d帧\n", frame_count);
 
     fclose(out_file);
-    av_frame_free(&src_avframe);
+    av_frame_free(&decoded_avframe);
     av_free(out_buffer);
     swr_free(&audio_swr_context);
+#endif
     avcodec_close(audio_avcodec_context);
     avformat_close_input(&avformat_context);
 
@@ -3940,6 +4045,322 @@ int crazydiode_audio_devoder() {
 int get_file_infomation() {
 
 }
+
+/***
+ * 分离YUV420P像素数据中的Y、U、V分量
+ *
+ * simplest_yuv420_split("lena_256x256_yuv420p.yuv",256,256,1);
+ *
+ * Split Y, U, V planes in YUV420P file.
+ * @param url  Location of Input YUV file.
+ * @param w    Width of Input YUV file.
+ * @param h    Height of Input YUV file.
+ * @param num  Number of frames to process.
+ * 如果视频帧的宽和高分别为w和h，那么一帧YUV420P像素数据一共占用w*h*3/2 Byte的数据。
+ * 其中前w*h Byte存储Y，接着的w*h*1/4 Byte存储U，最后w*h*1/4 Byte存储V。
+ * 上述调用函数的代码运行后，将会把一张分辨率为256x256的名称为
+ * lena_256x256_yuv420p.yuv的YUV420P格式的像素数据文件分离成为三个文件：
+   output_420_y.y：纯Y数据，分辨率为256x256。
+   output_420_u.y：纯U数据，分辨率为128x128。
+   output_420_v.y：纯V数据，分辨率为128x128。
+   注：本文中像素的采样位数一律为8bit。由于1Byte=8bit，所以一个像素的一个分量的采样值占用1Byte。
+ */
+int simplest_yuv420p_split(char *url, int w, int h, int num) {
+    FILE *fp = fopen(url, "rb+");
+    FILE *fp1 = fopen("/root/视频/output_420_y.y", "wb+");
+    FILE *fp2 = fopen("/root/视频/output_420_u.y", "wb+");
+    FILE *fp3 = fopen("/root/视频/output_420_v.y", "wb+");
+
+    unsigned char *pic = (unsigned char *) malloc(w * h * 3 / 2);
+
+    // 有多少帧
+    for (int i = 0; i < num; i++) {
+        // w * h * 3 / 2 = w * h * + w * h / 4 + w * h / 4
+        fread(pic, 1, w * h * 3 / 2, fp);
+        //y
+        fwrite(pic, 1, w * h, fp1);
+        //u
+        fwrite(pic + w * h, 1, w * h / 4, fp2);
+        //v
+        fwrite(pic + w * h * 5 / 4, 1, w * h / 4, fp3);
+    }
+
+    free(pic);
+    fclose(fp);
+    fclose(fp1);
+    fclose(fp2);
+    fclose(fp3);
+
+    return 0;
+}
+
+/***
+ 分离YUV444P像素数据中的Y、U、V分量
+ 如果视频帧的宽和高分别为w和h，那么一帧YUV444P像素数据一共占用w*h*3 Byte的数据。
+ 其中前w*h Byte存储Y，接着的w*h Byte存储U，最后w*h Byte存储V。
+ 上述调用函数的代码运行后，将会把一张分辨率为256x256的名称为
+ lena_256x256_yuv444p.yuv的YUV444P格式的像素数据文件分离成为三个文件：
+ output_444_y.y：纯Y数据，分辨率为256x256。
+ output_444_u.y：纯U数据，分辨率为256x256。
+ output_444_v.y：纯V数据，分辨率为256x256。
+ */
+int simplest_yuv444_split(char *url, int w, int h, int num) {
+    FILE *fp = fopen(url, "rb+");
+    FILE *fp1 = fopen("/root/视频/output_444_y.y", "wb+");
+    FILE *fp2 = fopen("/root/视频/output_444_u.y", "wb+");
+    FILE *fp3 = fopen("/root/视频/output_444_v.y", "wb+");
+
+    unsigned char *pic = (unsigned char *) malloc(w * h * 3);
+
+    for (int i = 0; i < num; i++) {
+        fread(pic, 1, w * h * 3, fp);
+        fwrite(pic, 1, w * h, fp1);
+        fwrite(pic + w * h, 1, w * h, fp2);
+        fwrite(pic + w * h * 2, 1, w * h, fp3);
+    }
+
+    free(pic);
+    fclose(fp);
+    fclose(fp1);
+    fclose(fp2);
+    fclose(fp3);
+
+    return 0;
+}
+
+/***
+ 如果想把YUV格式像素数据变成灰度图像，只需要将U、V分量设置成128即可。
+ 这是因为U、V是图像中的经过偏置处理的色度分量。色度分量在偏置处理前的
+ 取值范围是-128至127，这时候的无色对应的是“0”值。经过偏置后色度分量
+ 取值变成了0至255，因而此时的无色对应的就是128了。上述调用函数的代码运行后，
+ 将会把一张分辨率为256x256的名称为lena_256x256_yuv420p.yuv的YUV420P
+ 格式的像素数据文件处理成名称为output_gray.yuv的YUV420P格式的像素数据文件。
+ */
+int simplest_yuv420_gray(char *url, int w, int h, int num) {
+    FILE *fp = fopen(url, "rb+");
+    FILE *fp1 = fopen("/root/视频/output_gray,yuv", "wb+");
+
+    unsigned char *pic = (unsigned char *) malloc(w * h * 3 / 2);
+
+    for (int i = 0; i < num; i++) {
+        fread(pic, 1, w * h * 3 / 2, fp);
+        //Gray(把uv方向上的色度设置成128)
+        memset(pic + w * h, 128, w * h / 2);
+        fwrite(pic, 1, w * h * 3 / 2, fp1);
+    }
+
+    free(pic);
+    fclose(fp);
+    fclose(fp1);
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////
+
+const char *src_filename = "/root/视频/haoke.avi";
+const char *video_dst_filename = "/root/视频/haoke.yuv";
+const char *audio_dst_filename = "/root/音乐/haoke.aac";
+
+FILE *pOutputAudio = NULL;
+FILE *pOutputVideo = NULL;
+
+AVFormatContext *avformat_context = NULL;
+
+AVStream *avstream = NULL;
+AVCodec *avcodec = NULL;
+AVCodecContext *avcodec_context = NULL;
+
+//分别定义音视频流文件
+AVStream *video_avstream = NULL, *audio_avstream = NULL;
+AVCodecContext *video_avcodec_context = NULL, *audio_avcodec_context = NULL;
+
+int frame_width = 0, frame_height = 0;
+enum AVPixelFormat pix_fmt;
+
+unsigned char *video_dst_data[4];
+int video_dst_linesize[4];
+int video_dst_bufsize;
+
+AVFrame *frame = NULL;
+AVPacket packet;
+
+int decode_packet(int *got_frame) {
+    int ret = 0;
+    *got_frame = 0;
+    if (packet.stream_index == video_avstream->index) {
+        ret = avcodec_decode_video2(video_avcodec_context, frame, got_frame, &packet);
+        if (ret < 0) {
+            printf("%s\n", "");
+            return -1;
+        }
+        if (*got_frame) {
+            printf("%s\n", "");
+            av_image_copy(video_dst_data, video_dst_linesize,
+                          (const unsigned char **) frame->data, frame->linesize,
+                          pix_fmt, frame_width, frame_height);
+            fwrite(video_dst_data[0], 1, video_dst_bufsize, pOutputVideo);
+        }
+    } else if (packet.stream_index == audio_avstream->index) {
+        ret = avcodec_decode_audio4(audio_avcodec_context, frame, got_frame, &packet);
+        if (ret < 0) {
+            printf("%s\n", "");
+            return -1;
+        }
+
+        /*
+        av_get_bytes_per_sample((enum AVSampleFormat)frame->format)返回的是采样位数16bits or 8 bits，此函数进行了右移
+        操作，即除以8来获得字节数
+        nb_samples指每个声道每一帧所包含的采样个数
+        */
+        if (*got_frame) {
+            size_t unpadded_linesize =
+                    frame->nb_samples * av_get_bytes_per_sample((enum AVSampleFormat) frame->format);
+            fwrite(frame->extended_data[0], 1, unpadded_linesize, pOutputAudio);
+        }
+    }
+
+    return FFMIN(ret, packet.size);
+}
+
+static int open_codec_context(enum AVMediaType type) {
+    int stream_index = 0;
+    /*
+    根据type找到对应的音视频流或者字母流，返回的是对应文件流的index
+    */
+    stream_index = av_find_best_stream(avformat_context, type, -1, -1, NULL, 0);
+    if (stream_index < 0) {
+        printf("%s\n", "");
+        return -1;
+    } else {
+        avstream = avformat_context->streams[stream_index];
+        avcodec_context = avstream->codec;
+        avcodec = avcodec_find_decoder(avcodec_context->codec_id);
+        if (!avcodec) {
+            printf("%s\n", "");
+            return -1;
+        }
+
+        /*
+        用于初始化一个视音频编解码器的AVCodecContext
+        */
+        if (stream_index = avcodec_open2(avcodec_context, avcodec, NULL) < 0) {
+            printf("%s\n", "");
+            return -1;
+        }
+    }
+    return stream_index;
+}
+
+int separate_media_to_yuv_and_aac() {
+    int ret, got_frame = 0;
+
+    //=====FFmpeg相关初始化=====
+    av_register_all();
+    /*
+    打开待处理的音视频文件，探测读取文件格式信息保存到ftm_ctx中，
+    同时读取多媒体文件信息，根据视音频流创建AVstream
+    */
+    if (avformat_open_input(&avformat_context, src_filename, NULL, NULL) < 0) {
+        printf("%s\n", "");
+        return -1;
+    }
+    /*
+    读取一部分视音频数据并且获得一些相关的信息,主要给每个媒体流的AVStream结构体赋值
+    */
+    if (avformat_find_stream_info(avformat_context, NULL) < 0) {
+        printf("%s\n", "");
+        return -1;
+    }
+
+    //=====打开音频和视频流=====
+    if (open_codec_context(AVMEDIA_TYPE_VIDEO) >= 0) {
+        video_avstream = avstream;
+        video_avcodec_context = avcodec_context;
+
+        frame_width = video_avcodec_context->width;
+        frame_height = video_avcodec_context->height;
+        pix_fmt = video_avcodec_context->pix_fmt;
+
+        /*
+        分配像素的存储空间
+        该函数的四个参数分别表示AVFrame结构中的缓存指针、各个颜色分量的宽度、图像分辨率（宽、高）、像素格式和内存对其的大小。
+        该函数会返回分配的内存的大小。其实就是对video_dst_data,video_dst_linesize内存进行分配
+        */
+        ret = av_image_alloc(video_dst_data, video_dst_linesize,
+                             frame_width, frame_height, pix_fmt, 1);
+        if (ret < 0) {
+            printf("%s\n", "");
+            return -1;
+        } else {
+            video_dst_bufsize = ret;
+        }
+        if (!(pOutputVideo = fopen(video_dst_filename, "wb"))) {
+            printf("%s\n", "");
+            return -1;
+        }
+    }
+
+    /*
+    查找对应type流，并初始化设置解码器上下文
+    */
+    if (open_codec_context(AVMEDIA_TYPE_AUDIO) >= 0) {
+        audio_avstream = avstream;
+        audio_avcodec_context = avcodec_context;
+        if (!(pOutputAudio = fopen(audio_dst_filename, "wb"))) {
+            printf("%s\n", "");
+            return -1;
+        }
+    }
+
+    //=====打印输入输出格式信息====
+    av_dump_format(avformat_context, 0, src_filename, 0);
+
+    //=====读取和处理音视频文件=====
+    frame = av_frame_alloc();
+    if (!frame) {
+        printf("%s\n", "");
+        return -1;
+    }
+
+    av_init_packet(&packet);
+    packet.data = NULL;
+    packet.size = 0;
+
+    while (av_read_frame(avformat_context, &packet) >= 0) {
+        do {
+            ret = decode_packet(&got_frame);
+            printf("decode packet size: %d\n", ret);
+            packet.data += ret;
+            packet.size -= ret;
+        } while (packet.size > 0);
+    }
+
+    /*
+    将编码器缓存中的数据解码完
+    */
+    packet.data = NULL;
+    packet.size = 0;
+    do {
+        ret = decode_packet(&got_frame);
+        packet.data += ret;
+        packet.size -= ret;
+    } while (got_frame);
+
+    //=====释放资源=====
+    avcodec_close(video_avcodec_context);
+    avcodec_close(audio_avcodec_context);
+    avformat_close_input(&avformat_context);
+    av_frame_free(&frame);
+    av_free(video_dst_data[0]);
+
+    fclose(pOutputAudio);
+    fclose(pOutputVideo);
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////
 
 int test(float) {
     return 0;

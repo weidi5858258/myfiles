@@ -14,7 +14,7 @@ add_executable(MyStudy
         src/StudyFFmpeg.cpp
         src/Study.cpp
         ffmpeg.cpp
-        src/ffmpeg_sample.cpp)
+        src/ffmpeg_sample.cpp src/yuv_player.cpp)
 
 if (WIN32)
     set(FFMPEG_LIB_PATH

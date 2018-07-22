@@ -28,6 +28,13 @@
 
 #endif //MYSTUDY_FFMPEG_SAMPLE
 
+#ifndef MYSTUDY_FFMPEG_YUV_PLAYER
+#define MYSTUDY_FFMPEG_YUV_PLAYER
+
+#include "src/yuv_player.cpp"
+
+#endif //MYSTUDY_FFMPEG_YUV_PLAYER
+
 
 void test();
 
@@ -90,6 +97,10 @@ int pcm2mp3(char *inPath, char *outPath);
 
 int resampling_audio(const char *dst_filename);
 
+int separate_media_to_yuv_and_aac();
+
+int simplest_yuv420p_split(char *url, int w, int h, int num);
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -112,7 +123,7 @@ int main(int argc, char *argv[]) {
 //    simplest_ffmpeg_audio_decoder();
     // 查看pcm,yuv文件的信息
 //    crazydiode_video_devoder();
-    crazydiode_audio_devoder();
+//    crazydiode_audio_devoder();
 //    simplest_ffmpeg_audio_encoder();
 //    simplest_ffmpeg_audio_encoder_pure();
 //    decode_audio_main("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm");
@@ -121,6 +132,8 @@ int main(int argc, char *argv[]) {
 //    pcm2mp3("/root/音乐/audio.pcm", "/root/音乐/audio.mp3");
 //    decode_video_main("/root/视频/sex.avi", "/root/图片/video_to_image");
 //    resampling_audio("/root/音乐/resampling.mp2");
+//    separate_media_to_yuv_and_aac();
+    simplest_yuv420p_split("/root/视频/lena_256x256_yuv420p.yuv", 256, 256, 1);
 
     /*glutInit(&argc,argv);
     //显示模式初始化

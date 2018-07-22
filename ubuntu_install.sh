@@ -193,6 +193,13 @@ echo "Y" | sudo apt-get install build-essential
 echo "Y" | sudo apt-get install libgl1-mesa-dev
 echo "Y" | sudo apt-get install libglu1-mesa-dev
 echo "Y" | sudo apt-get install freeglut3-dev
+echo "Y" | sudo apt-get install gnome
+echo "Y" | sudo apt-get install gnome-shell
+echo "Y" | sudo apt-get install gnome-panel
+echo "Y" | sudo apt-get install gdm
+echo "Y" | sudo apt-get install gnome-tweak-tool
+# mplayer -demuxer rawvideo -rawvideo w=500:h=500 haoke.yuv
+echo "Y" | sudo apt-get install mplayer
 # pcm player
 echo "Y" | sudo apt-get install sox
 echo "Y" | sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  

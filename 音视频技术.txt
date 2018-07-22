@@ -548,16 +548,73 @@ ret = avcodec_fill_audio_frame(pInputFrame,Channel_in,SampleFormat_in,buf_in,buf
 自此，frame_size,nb_samples，profile之间的关系可以理清楚了，关于mp3的只发现过1152的，如果有其他再记录。 
 
 
+pcm裸流播放方法
+ubuntu 工作环境，
+使用命令：sudo apt-get install sox下载播放工具。
+完成后，可以使用play命令播放pcm裸流文件了。
+首先需要知道对应pcm的文件的采样率，通道数，比特率，
+然后使用命令
+play -t raw -r 44.1k -e signed-integer -b 16 -c 2 loved.pcm
+loved.pcm  这个是文件名
+-t 参数后接文件包含数据的格式，我还没高明白raw和pcm这2个音频缩写词包含的具体含义。
+-r 数据采样率参数
+-b 数据比特率参数
+-c 通道数
+下面这个参数没明白，初步猜测是一个数据类型的设置。
+-e -e|--encoding ENCODING   Set encoding (ENCODING may be one of signed-integer,
+                         unsigned-integer, floating-point, mu-law, a-law,
+                         ima-adpcm, ms-adpcm, gsm-full-rate)
 
+一个多媒体文件包含有多个原始流，例如 movie.mkv这个多媒体文件可能包含下面的流数据
+原始流 1 h.264 video
+原始流 2 aac audio for Chinese
+原始流 3 aac audio for English
+原始流 4 Chinese Subtitle
+原始流 5 English Subtitle
 
+音频基本概念
+1.
+通道数
+声音在录制时在不同空间位置用不同录音设备采样的声音信号，声音在播放时采用相应个数的扬声器播放。采用多通道的方式是为了丰富声音的现场感。常用的立体声有2个通道，环绕立体声3个通道。数字音频就是有一连串的样本流组成，立体声每次采用要采两次。有点类似视频中的YUV各个分量。
+2.
+采样率
+把模拟信号转换成数字信号在计算机中处理，需要按照一定的采样率采样，样本值就是声音波形中的一个值。音频在播放时按照采样率进行，采样率越高声音的连续性就越好，由于人的听觉器官分辨能力的局限，往往这些数值达到某种程度就可以满足人对“连续”性的需求了。例如22050和44100的采样率就是电台和CD 常用的采样率。类似视频中的帧率。
+3.
+比特率(bps或kbps)
+单位时间所需的空间存储。比特率反应的是视频或者音频一个样本所有的信息量，越大含有的信息量就大。视频中，图像分辨率越大，一帧就越大，实时解码就容易饥渴，传输带宽需要越大，存储空间就越大。音频中描述一个样本就越准确。
+4.
+帧
+视频中帧就是一个图片采样。音频中一帧一般包含多个样本，如AAC格式会包含1024个样本。
+5.
+样本格式
+音频中一个样本存储方式。列举ffmpeg中的样本格式
+enum AVSampleFormat {
+    AV_SAMPLE_FMT_NONE = -1,
+    AV_SAMPLE_FMT_U8,          ///< unsigned 8 bits
+    AV_SAMPLE_FMT_S16,         ///< signed 16 bits
+    AV_SAMPLE_FMT_S32,         ///< signed 32 bits
+    AV_SAMPLE_FMT_FLT,         ///< float
+    AV_SAMPLE_FMT_DBL,         ///< double
+ 
+    AV_SAMPLE_FMT_U8P,         ///< unsigned 8 bits, planar
+    AV_SAMPLE_FMT_S16P,        ///< signed 16 bits, planar
+    AV_SAMPLE_FMT_S32P,        ///< signed 32 bits, planar
+    AV_SAMPLE_FMT_FLTP,        ///< float, planar
+    AV_SAMPLE_FMT_DBLP,        ///< double, planar
+ 
+    AV_SAMPLE_FMT_NB           ///< Number of sample formats. DO NOT USE if linking dynamically
+};
+讲一下AV_SAMPLE_FMT_S16和AV_SAMPLE_FMT_S16P格式，AV_SAMPLE_FMT_S16保存一个样本采用有符号16bit交叉存储的方式，AV_SAMPLE_FMT_S16P保存一个样本采用有符号16bit平面存储的方式。举例有两个通道，通道1数据流 c1 c1 c1c1... , 通道2数据流 c2 c2 c2 c2...
+平面存储方式：c1 c1 c1c1... c2 c2 c2 c2...
+交叉存储方式：c1, c2,c1, c2, c1, c2, ...
+AVFrame中平面方式planar每个通道数据存储在data[0], data[1]中，
+长度为linesize[0],linesize[1],
+交叉方式则所有的数据都存储在data[0],长度为linesize[0]。
 
+mplayer -demuxer rawvideo -rawvideo w=500:h=500 haoke.yuv
 
-
-
-
-
-
-
+ffmpeg采集摄像头视频数据
+ffmpeg -f video4linux2 -s 320*240 -r 10 -i /dev/video0 test.asf
 
 
 

@@ -761,6 +761,7 @@ int encode_video_main(const char *codec_name, const char *output_file_name) {
     return 0;
 }
 
+// 根据样本格式返回样本格式字符串
 static int get_format_from_sample_fmt(const char **fmt,
                                       enum AVSampleFormat sample_fmt) {
     int i;
@@ -792,13 +793,20 @@ static int get_format_from_sample_fmt(const char **fmt,
 
 /**
  * Fill dst buffer with nb_samples, generated starting from t.
+ *相当于是声源 产生一个正弦波形的声波
+ * dst 保存声音数据返回个调用者 nb_samples 采用的样本数 nb_channels 声音通道数，表明单次采样的样本数 t采用开始时间
+ *正弦波形就是一个生源，实际中复杂的声音都是通过波形叠加成的。
+ *以 sample_rate采样率，从时间t开始采样，采样通道为2，每个通道的数据相同，从频率为440HZ的波形上采样，形成声源
  */
 static void fill_samples(double *dst, int nb_samples, int nb_channels, int sample_rate, double *t) {
     int i, j;
+    //采样时间间隔    tincr
     double tincr = 1.0 / sample_rate, *dstp = dst;
+    //正弦波y=Asin（ωx+φ）+h 最小正周期T=2π/|ω| 所以440HZ是正弦波的频率
     const double c = 2 * M_PI * 440.0;
 
     /* generate sin tone with 440Hz frequency and duplicated channels */
+    //填充每个通道数据 采用交叉存储
     for (i = 0; i < nb_samples; i++) {
         *dstp = sin(c * (*t));
         for (j = 1; j < nb_channels; j++)
@@ -814,9 +822,9 @@ static void fill_samples(double *dst, int nb_samples, int nb_channels, int sampl
  大致过程:
     1.
     为目标数据设置好几个参数:
-    channel_layout(单声道,双声道,环绕)
-    sample_rate(采样率)
+    channel_layout(声道布局:单声道,双声道,环绕)
     sample_format(采样格式)
+    sample_rate(采样率)
     2.
     初始化SwrContext结构体(需要设置一些参数和申请空间)
     3.
@@ -827,16 +835,18 @@ static void fill_samples(double *dst, int nb_samples, int nb_channels, int sampl
     使用av_rescale_rnd函数得到目标nb_samples
     5.
     使用av_samples_alloc_array_and_samples函数
-    为装源数据,目标数据的容器申请空间
+    为装"源数据,目标数据"的容器申请空间
     6.
     进入循环处理:
  */
 int resampling_audio(const char *dst_filename) {
     // 立体 环绕
+    // AV_CH_LAYOUT_STEREO 声音布局立体声 	  AV_CH_LAYOUT_SURROUND 声音布局环绕立体声
     int64_t src_ch_layout = AV_CH_LAYOUT_STEREO, dst_ch_layout = AV_CH_LAYOUT_SURROUND;
     // 采样率
     int src_sample_rate = 48000, dst_sample_rate = 44100;
     // 采样格式
+    //样本存储格式
     enum AVSampleFormat src_sample_fmt = AV_SAMPLE_FMT_DBL, dst_sample_fmt = AV_SAMPLE_FMT_S16;
 
     // 上面几个的目标可以先定好
@@ -844,6 +854,7 @@ int resampling_audio(const char *dst_filename) {
     // 声道数
     int src_nb_channels = 0, dst_nb_channels = 0;
     // 一帧音频中的采样个数，用于计算一帧数据大小
+    //每次采用样本数
     int src_nb_samples = 1024, dst_nb_samples, max_dst_nb_samples;
 
     uint8_t **src_data = NULL, **dst_data = NULL;
@@ -851,6 +862,7 @@ int resampling_audio(const char *dst_filename) {
     FILE *dst_file;
     int dst_bufsize;
     const char *fmt;
+    //重采样上下文
     struct SwrContext *swr_context;
     double t;
     int ret;
@@ -890,8 +902,9 @@ int resampling_audio(const char *dst_filename) {
     }
 
     /* allocate source and destination samples buffers */
-
+    //获取源通道数
     src_nb_channels = av_get_channel_layout_nb_channels(src_ch_layout);
+    //分配源声音所需要空间  src_linesize=	 src_nb_channels× src_nb_samples×sizeof(double)
     ret = av_samples_alloc_array_and_samples(&src_data, &src_linesize, src_nb_channels,
                                              src_nb_samples, src_sample_fmt, 0);
     if (ret < 0) {
@@ -902,6 +915,8 @@ int resampling_audio(const char *dst_filename) {
     /* compute the number of converted samples: buffering is avoided
      * ensuring that the output buffer will contain at least all the
      * converted input samples */
+    //计算目标样本数  转换前后的样本数不一样  抓住一点 采样时间相等
+    //src_nb_samples/src_rate=dst_nb_samples/dst_rate
     max_dst_nb_samples = dst_nb_samples =
             av_rescale_rnd(src_nb_samples, dst_sample_rate, src_sample_rate, AV_ROUND_UP);
 
@@ -937,6 +952,7 @@ int resampling_audio(const char *dst_filename) {
 
         /* compute destination number of samples */
         // 可以理解成装目标数据的容器的空间够不够用了,不够用的话,需要重新申请空间
+        //swr_get_delay(swr_ctx, src_rate)延迟时间 源采样率为单位的样本数
         dst_nb_samples = av_rescale_rnd(swr_get_delay(swr_context, src_sample_rate) + src_nb_samples,
                                         dst_sample_rate, src_sample_rate, AV_ROUND_UP);
         if (dst_nb_samples > max_dst_nb_samples) {
@@ -954,6 +970,7 @@ int resampling_audio(const char *dst_filename) {
          int swr_convert(struct SwrContext *s, uint8_t **out, int out_count,
                                 const uint8_t **in , int in_count)
          */
+        //ret 实际转换得到的样本数
         ret = swr_convert(swr_context, dst_data, dst_nb_samples,
                           (const uint8_t **) src_data, src_nb_samples);
         if (ret < 0) {
@@ -991,6 +1008,15 @@ int resampling_audio(const char *dst_filename) {
 
     swr_free(&swr_context);
     return ret < 0;
+}
+
+
+
+/***
+ 网上的代码(也是修改了官方的代码)
+ */
+int resampling_audio2(const char *dst_filename){
+
 }
 
 int test(int) {

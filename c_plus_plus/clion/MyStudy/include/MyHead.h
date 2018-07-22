@@ -93,6 +93,8 @@ using namespace std;
 #define OUTPUT_PCM 1
 #define OUTPUT_IMAGE 0
 
+#define NEED_TO_DECODER 1
+
 #include "Test.h"
 
 
