@@ -73,8 +73,6 @@ extern "C" {// 不能少
 #include <algorithm>
 #include <functional>
 
-using namespace std;
-
 #define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
 #define AUDIO_INBUF_SIZE 20480
 #define AUDIO_REFILL_THRESH 4096
@@ -95,9 +93,20 @@ using namespace std;
 
 #define NEED_TO_DECODER 1
 
+//set '1' to choose a type of file to play
+#define LOAD_BGRA    0
+#define LOAD_RGB24   0
+#define LOAD_BGR24   1
+#define LOAD_YUV420P 1
+
+//Refresh Event
+#define REFRESH_EVENT  (SDL_USEREVENT + 1)
+//Break
+#define BREAK_EVENT    (SDL_USEREVENT + 2)
+
+using namespace std;
+
 #include "Test.h"
-
-
 
 
 #endif //MYSTUDY_MYHEAD_H

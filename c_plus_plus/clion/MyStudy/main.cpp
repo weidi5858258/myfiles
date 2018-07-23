@@ -44,13 +44,13 @@ int simplest_ffmpeg_player2();
 
 int decoder_video_frame_to_image();
 
-int simplest_ffmpeg_player_sdl2();
+int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure();
 
 int simplest_audio_play_sdl2();
 
 int simplest_ffmpeg_audio_decoder();
 
-int simplest_ffmpeg_audio_encoder();
+int pcm2aac();
 
 int crazydiode_video_devoder();
 
@@ -118,13 +118,14 @@ int main(int argc, char *argv[]) {
     printf("------------------------------------------\n");
 
 //    simplest_ffmpeg_player2();
+    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure();
 //    decoder_video_frame_to_image();
 //    simplest_audio_play_sdl2();
 //    simplest_ffmpeg_audio_decoder();
     // 查看pcm,yuv文件的信息
 //    crazydiode_video_devoder();
 //    crazydiode_audio_devoder();
-//    simplest_ffmpeg_audio_encoder();
+//    pcm2aac();
 //    simplest_ffmpeg_audio_encoder_pure();
 //    decode_audio_main("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm");
 //    decode_audio2("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.pcm");
@@ -133,7 +134,7 @@ int main(int argc, char *argv[]) {
 //    decode_video_main("/root/视频/sex.avi", "/root/图片/video_to_image");
 //    resampling_audio("/root/音乐/resampling.mp2");
 //    separate_media_to_yuv_and_aac();
-    simplest_yuv420p_split("/root/视频/lena_256x256_yuv420p.yuv", 256, 256, 1);
+//    simplest_yuv420p_split("/root/视频/lena_256x256_yuv420p.yuv", 256, 256, 1);
 
     /*glutInit(&argc,argv);
     //显示模式初始化

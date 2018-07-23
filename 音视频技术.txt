@@ -79,7 +79,7 @@ avCodec = avcodec_find_encoder_by_name("libfdk_aac");
 常用的立体声有2个通道，环绕立体声3个通道。
 声道数目 立体声（stero）单声道（mono）
 
-采样率  单位时间内对音频ad芯片的采样次数，常见的音频采样率有。
+采样率  单位时间内对音频ad芯片的采样次数，常见的音频采样率(sample_rate)有。
  0: 96000 Hz
  1: 88200 Hz
  2: 64000 Hz
@@ -99,11 +99,25 @@ avCodec = avcodec_find_encoder_by_name("libfdk_aac");
 左边是adts头里面对应的采样率编码值，右边是对应的采样率值。
 单采样bit数目  单个采样的bit位数，16／8 bit。
 
+音频
+32 kbps —MW(AM) 质量
+96 kbps —FM质量
+128 - 160 kbps –相当好的质量，有时有明显差别
+192 kbps — 优良质量，偶尔有差别
+224 - 320 kbps — 高质量
+音频
+800 bps – 能够分辨的语音所需最低码率（需使用专用的FS-1015语音编解码器）
+8 kbps —电话质量（使用语音编码）
+8-500 kbps --Ogg Vorbis和MPEG1 Player1/2/3中使用的有损音频模式
+500 kbps–1.4 Mbps —44.1KHz的无损音频，解码器为FLAC Audio,WavPack或Monkey's Audio
+1411.2 - 2822.4 Kbps —脉冲编码调制(PCM)声音格式CD光碟的数字音频
+5644.8 kbps —SACD使用的Direct Stream Digital格式
+
 ffmpeg中的一些参数：
-   sample_format 音频采样格式
-   sample_rate 采样率值（非编码值）
-   channel_layout 解码后的PCM数据layout格式，左左左右右右   左右左右左右
-   nb_samples  一帧音频中的采样个数，用于计算一帧数据大小
+   sample_format    音频采样格式
+   sample_rate      采样率值（非编码值）
+   channel_layout   解码后的PCM数据layout格式，左左左右右右   左右左右左右
+   nb_samples       一帧音频中的采样个数，用于计算一帧数据大小
 
 注意ffmpeg中的两个结构，AVPacket(编码的音视频帧),AVFrame(解码后的音视频数据)
 AVPacket packet = {0};
@@ -195,6 +209,10 @@ AAC编码依旧使用AV_SAMPLE_FMT_S16格式
 av_sample_fmt_is_planar(pCodecCtx->sample_fmt)
 编码格式要求是分平面数据
 对于解码也可能需要做swr_convert，比如做播放器，很多时候我们是将S16格式数据丢给声卡，而新版ffmpeg解码音频输出的格式可能不满足S16，如AAC解码后得到的是FLT（浮点型），AC3解码是FLTP（带平面）等，需要根据具体的情况决定是否需要convert
+
+假设现在有2个通道channel1, channel2.
+那么AV_SAMPLE_FMT_S16在内存的格式就为: c1, c2, c1, c2, c1, c2, ....
+而AV_SAMPLE_FMT_S16P在内存的格式为: c1, c1, c1,... c2, c2, c2,...
 
 关于音频分片的问题
 	1：无论是不是分片的数据总量是相同的.
@@ -557,13 +575,19 @@ ubuntu 工作环境，
 play -t raw -r 44.1k -e signed-integer -b 16 -c 2 loved.pcm
 loved.pcm  这个是文件名
 -t 参数后接文件包含数据的格式，我还没高明白raw和pcm这2个音频缩写词包含的具体含义。
--r 数据采样率参数
--b 数据比特率参数
--c 通道数
+-r 数据采样率参数 44.1k
+-b 数据比特率参数 8--->128kbps 16--->256kbps 32--->512kbps
+-c 通道数        2
 下面这个参数没明白，初步猜测是一个数据类型的设置。
--e -e|--encoding ENCODING   Set encoding (ENCODING may be one of signed-integer,
-                         unsigned-integer, floating-point, mu-law, a-law,
-                         ima-adpcm, ms-adpcm, gsm-full-rate)
+-e -e|--encoding ENCODING   Set encoding (ENCODING may be one of 
+						 signed-integer(-b 16 or -b 32)一般指定这个值,
+                         unsigned-integer, 
+                         floating-point, 
+                         mu-law, 
+                         a-law,
+                         ima-adpcm, 
+                         ms-adpcm, 
+                         gsm-full-rate)
 
 一个多媒体文件包含有多个原始流，例如 movie.mkv这个多媒体文件可能包含下面的流数据
 原始流 1 h.264 video
@@ -616,16 +640,61 @@ mplayer -demuxer rawvideo -rawvideo w=500:h=500 haoke.yuv
 ffmpeg采集摄像头视频数据
 ffmpeg -f video4linux2 -s 320*240 -r 10 -i /dev/video0 test.asf
 
+ffmpeg2.0最新的解码出来的数据是 sample_fmts  = AV_SAMPLE_FMT_FLTP
+android需要的音频格式：sample_fmts (AV_SAMPLE_FMT_S8, AV_SAMPLE_FMT_S16) 
+
+问题:
 
 
 
 
+通过av_get_channel_layout_nb_channels()和av_get_default_channel_layout()这些函数可以得到channels和channellayout的转换。
+libavutil中的audioconvert.c定义channellayout和channels的相关map：
+channel_layout_map[]
+	{ "mono",        1,  AV_CH_LAYOUT_MONO },
+    { "stereo",      2,  AV_CH_LAYOUT_STEREO },
+    { "2.1",         3,  AV_CH_LAYOUT_2POINT1 },
+    { "3.0",         3,  AV_CH_LAYOUT_SURROUND },
+    { "3.0(back)",   3,  AV_CH_LAYOUT_2_1 },
+    { "4.0",         4,  AV_CH_LAYOUT_4POINT0 },
+    { "quad",        4,  AV_CH_LAYOUT_QUAD },
+    { "quad(side)",  4,  AV_CH_LAYOUT_2_2 },
+    { "3.1",         4,  AV_CH_LAYOUT_3POINT1 },
+    { "5.0",         5,  AV_CH_LAYOUT_5POINT0_BACK },
+    { "5.0(side)",   5,  AV_CH_LAYOUT_5POINT0 },
+    { "4.1",         5,  AV_CH_LAYOUT_4POINT1 },
+    { "5.1",         6,  AV_CH_LAYOUT_5POINT1_BACK },
+    { "5.1(side)",   6,  AV_CH_LAYOUT_5POINT1 },
+    { "6.0",         6,  AV_CH_LAYOUT_6POINT0 },
+    { "6.0(front)",  6,  AV_CH_LAYOUT_6POINT0_FRONT },
+    { "hexagonal",   6,  AV_CH_LAYOUT_HEXAGONAL },
+    { "6.1",         7,  AV_CH_LAYOUT_6POINT1 },
+    { "6.1",         7,  AV_CH_LAYOUT_6POINT1_BACK },
+    { "6.1(front)",  7,  AV_CH_LAYOUT_6POINT1_FRONT },
+    { "7.0",         7,  AV_CH_LAYOUT_7POINT0 },
+    { "7.0(front)",  7,  AV_CH_LAYOUT_7POINT0_FRONT },
+    { "7.1",         8,  AV_CH_LAYOUT_7POINT1 },
+    { "7.1(wide)",   8,  AV_CH_LAYOUT_7POINT1_WIDE },
+    { "octagonal",   8,  AV_CH_LAYOUT_OCTAGONAL },
+    { "downmix",     2,  AV_CH_LAYOUT_STEREO_DOWNMIX, },
 
 
+PCM音频数据是如何存储的
+单声道音频,采样数据按时间的先后顺序依次存入
+双声道音频,按照LRLRLR的方式存储,存储的时候还和机器的大小端有关
 
+8位单声道:0声道,0声道......
+8位双声道:0声道(左),1声道(右),0声道(左),1声道(右)......
+16位单声道:0声道(低字节),0声道(高字节),0声道(低字节),0声道(高字节)......
+16位双声道:0声道(左,低字节),0声道(左,高字节),1声道(右,低字节),1声道(右,高字节)......
 
-
-
+PCM音频数据中常用的专业术语
+一般我们描述PCM音频数据的参数的时候有如下描述方式:
+44100Hz 16bit stereo:每秒钟有44100次采样,采样数据用16位(2字节)记录,双声道(立体声)；
+22050Hz 8bit  mono:每秒钟有22050次采样,采样数据用8位(1字节)记录,单声道；
+ 44100Hz指的是采样率，它的意思是每秒取样44100次。采样率越大，存储数字音频所占的空间就越大。
+16bit指的是采样精度，意思是原始模拟信号被采样后，每一个采样点在计算机中用16位（两个字节）来表示。采样精度越高越能精细地表示模拟信号的差异。
+一般来说PCM数据中的波形幅值越大，代表音量越大。
 
 
 

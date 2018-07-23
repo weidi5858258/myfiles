@@ -123,7 +123,7 @@ int simplest_ffmpeg_player2() {
 
 //    char filePath[] = "http://192.168.0.131:8080/video/aaaaa.mp4";
 //    char filePath[] = "/root/mydev/tools/apache-tomcat-9.0.0.M19/webapps/ROOT/video/aaaaa.mp4";
-    char filePath[] = "/root/视频/haoke.avi";
+    char filePath[] = "/root/视频/aaaaa.rmvb";
 
     // 屏幕宽高
     int screen_w = 0, screen_h = 0;
@@ -1368,6 +1368,169 @@ void video_encode_example(const char *filename, int codec_id) {
     printf("\n");
 }
 
+//Bit per Pixel
+#if LOAD_BGRA
+const int bpp = 32;
+#elif LOAD_RGB24 | LOAD_BGR24
+const int bpp = 24;
+#elif LOAD_YUV420P
+const int bpp = 12;
+#endif
+
+int playback_window_w = 500, playback_window_h = 500;
+const int pixel_w = 320, pixel_h = 180;
+
+const int data_buffer_size = pixel_w * pixel_h * bpp / 8;
+//总的倍数除以8就是byte数
+unsigned char data_buffer[data_buffer_size];
+//BPP=32
+unsigned char data_buffer_convert[pixel_w * pixel_h * 4];
+
+//Convert RGB24/BGR24 to RGB32/BGR32
+//And change Endian if needed
+void convert_24to32(unsigned char *image_in, unsigned char *image_out, int pixel_w, int pixel_h) {
+    for (int i = 0; i < pixel_h; i++)
+        for (int j = 0; j < pixel_w; j++) {
+            //Big Endian or Small Endian?
+            //"ARGB" order:high bit -> low bit.
+            //ARGB Format Big Endian (low address save high MSB, here is A) in memory : A|R|G|B
+            //ARGB Format Little Endian (low address save low MSB, here is B) in memory : B|G|R|A
+            if (SDL_BYTEORDER == SDL_LIL_ENDIAN) {
+                //Little Endian (x86): R|G|B --> B|G|R|A
+                image_out[(i * pixel_w + j) * 4 + 0] = image_in[(i * pixel_w + j) * 3 + 2];
+                image_out[(i * pixel_w + j) * 4 + 1] = image_in[(i * pixel_w + j) * 3 + 1];
+                image_out[(i * pixel_w + j) * 4 + 2] = image_in[(i * pixel_w + j) * 3];
+                image_out[(i * pixel_w + j) * 4 + 3] = '0';
+            } else {
+                //Big Endian: R|G|B --> A|R|G|B
+                image_out[(i * pixel_w + j) * 4] = '0';
+                memcpy(image_out + (i * pixel_w + j) * 4 + 1, image_in + (i * pixel_w + j) * 3, 3);
+            }
+        }
+}
+
+
+int thread_exit = 0;
+
+int refresh_video(void *opaque) {
+    thread_exit = 0;
+    while (!thread_exit) {
+        SDL_Event event;
+        event.type = REFRESH_EVENT;
+        SDL_PushEvent(&event);
+        SDL_Delay(40);
+    }
+    thread_exit = 0;
+    //Break
+    SDL_Event event;
+    event.type = BREAK_EVENT;
+    SDL_PushEvent(&event);
+
+    return 0;
+}
+
+int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure() {
+    SDL_Window *sdl_window = NULL;
+    SDL_Renderer *sdl_renderer = NULL;
+    SDL_Texture *sdl_texture = NULL;
+    if (SDL_Init(SDL_INIT_VIDEO)) {
+        printf("Could not initialize SDL - %s\n", SDL_GetError());
+        return -1;
+    }
+    //SDL 2.0 Support for multiple windows
+    sdl_window = SDL_CreateWindow("Simplest Video Play SDL2",
+                                  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                  playback_window_w, playback_window_h,
+                                  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    if (!sdl_window) {
+        printf("SDL: could not create window - exiting:%s\n", SDL_GetError());
+        return -1;
+    }
+
+    sdl_renderer = SDL_CreateRenderer(sdl_window, -1, 0);
+
+    Uint32 sdl_pix_fmt = 0;
+#if LOAD_BGRA
+    //Note: ARGB8888 in "Little Endian" system stores as B|G|R|A
+    sdl_pix_fmt = SDL_PIXELFORMAT_ARGB8888;
+#elif LOAD_RGB24
+    sdl_pix_fmt= SDL_PIXELFORMAT_RGB888;
+#elif LOAD_BGR24
+    sdl_pix_fmt = SDL_PIXELFORMAT_BGR888;
+#elif LOAD_YUV420P
+    //IYUV: Y + U + V  (3 planes)
+    //YV12: Y + V + U  (3 planes)
+    sdl_pix_fmt = SDL_PIXELFORMAT_IYUV;
+#endif
+
+    sdl_texture = SDL_CreateTexture(sdl_renderer, sdl_pix_fmt, SDL_TEXTUREACCESS_STREAMING, pixel_w, pixel_h);
+    //SDL_Thread *refresh_thread = SDL_CreateThread(refresh_video, NULL, NULL);
+    SDL_CreateThread(refresh_video, NULL, NULL);
+
+    FILE *in_file = NULL;
+#if LOAD_BGRA
+    in_file = fopen("/root/视频/test_bgra_320x180.rgb", "rb+");
+#elif LOAD_RGB24
+    in_file=fopen("/root/视频/susheview2_640x480_rgb24.rgb","rb+");
+#elif LOAD_BGR24
+    in_file = fopen("/root/视频/test_bgr24_320x180.rgb", "rb+");
+#elif LOAD_YUV420P
+    in_file = fopen("/root/视频/sintel_480x272_yuv420p.yuv", "rb+");
+#endif
+    if (in_file == NULL) {
+        printf("cannot open this file\n");
+        return -1;
+    }
+
+    SDL_Event event;
+    SDL_Rect sdl_rect;
+    while (1) {
+        //Wait
+        SDL_WaitEvent(&event);
+        if (event.type == REFRESH_EVENT) {
+            if (fread(data_buffer, 1, data_buffer_size, in_file) != data_buffer_size) {
+                //Loop
+                fseek(in_file, 0, SEEK_SET);
+                fread(data_buffer, 1, data_buffer_size, in_file);
+            }
+
+#if LOAD_BGRA
+            //We don't need to change Endian
+            //Because input BGRA pixel data(B|G|R|A) is same as ARGB8888 in Little Endian (B|G|R|A)
+            SDL_UpdateTexture(sdl_texture, NULL, buffer, pixel_w * 4);
+#elif LOAD_RGB24 | LOAD_BGR24
+            //change 24bit to 32 bit
+            //and in Windows we need to change Endian
+            convert_24to32(data_buffer, data_buffer_convert, pixel_w, pixel_h);
+            SDL_UpdateTexture(sdl_texture, NULL, data_buffer_convert, pixel_w * 4);
+#elif LOAD_YUV420P
+            SDL_UpdateTexture(sdl_texture, NULL, buffer, pixel_w);
+#endif
+
+            //FIX: If window is resize
+            sdl_rect.x = 0;
+            sdl_rect.y = 0;
+            sdl_rect.w = playback_window_w;
+            sdl_rect.h = playback_window_h;
+
+            SDL_RenderClear(sdl_renderer);
+            SDL_RenderCopy(sdl_renderer, sdl_texture, NULL, &sdl_rect);
+            SDL_RenderPresent(sdl_renderer);
+        } else if (event.type == SDL_WINDOWEVENT) {
+            //If Resize
+            SDL_GetWindowSize(sdl_window, &playback_window_w, &playback_window_h);
+        } else if (event.type == SDL_QUIT) {
+            thread_exit = 1;
+        } else if (event.type == BREAK_EVENT) {
+            break;
+        }
+    }// while end
+
+    SDL_Quit();
+
+    return 0;
+}
+
 #define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
 //Output PCM
 #define OUTPUT_PCM 1
@@ -1781,6 +1944,9 @@ int simplest_ffmpeg_audio_decoder() {
 
     audioAVSampleFormat = audioAVCodecContext->sample_fmt;
     printf("audioAVSampleFormat = %d\n", audioAVSampleFormat);
+
+    const char *sample_fmt_name = av_get_sample_fmt_name(audioAVSampleFormat);
+    printf("sample_fmt_name = %d\n", sample_fmt_name);
 
     uint8_t *out_buffer = (uint8_t *) av_malloc(MAX_AUDIO_FRAME_SIZE * 2);
     //Out Audio Param
@@ -2928,7 +3094,7 @@ int flush_encoder(AVFormatContext *fmt_ctx, unsigned int stream_index) {
  pcm ---> aac
  不成功
  */
-int simplest_ffmpeg_audio_encoder() {
+int pcm2aac() {
     AVFormatContext *pFormatCtx;
     AVOutputFormat *fmt;
     AVStream *audio_st;
@@ -2945,10 +3111,10 @@ int simplest_ffmpeg_audio_encoder() {
 
     FILE *in_file = NULL;                            //Raw PCM data
     int framenum = 1000;                          //Audio frame number
-    const char *out_file = "/root/音乐/tdjm.aac";          //Output URL
+    const char *out_file = "/root/音乐/audio.aac";          //Output URL
     int i;
 
-    in_file = fopen("/root/音乐/tdjm.pcm", "rb");
+    in_file = fopen("/root/音乐/audio.pcm", "rb");
 
     av_register_all();
 
@@ -2984,6 +3150,7 @@ int simplest_ffmpeg_audio_encoder() {
     av_dump_format(pFormatCtx, 0, out_file, 1);
 
     pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
+//    pCodec = avcodec_find_encoder(AV_CODEC_ID_AAC);
     if (!pCodec) {
         printf("Can not find encoder!\n");
         return -1;
@@ -3094,6 +3261,15 @@ int encode(AVCodecContext *audioAVCodecContext,
  来自雷神的代码
  使用这个方法进行编码
  只能对pcm文件进行编码
+ 我在这里有个疑问:
+ 想要编码的采样率,比特率和声道数与源pcm的采样率,比特率和声道数一样,编码出来的音频才能正常播放吗
+
+ 音频编码一般只需要设置:
+ 1.采样率sample_rete
+ 2.比特率bit_rete
+ 3.声道数channels
+ 4.采样格式sample_fmt
+ 只要设置正确应该就能正常播放了
  */
 int simplest_ffmpeg_audio_encoder_pure() {
     AVCodec *audioAVCodecEncoder = NULL;
@@ -3106,9 +3282,9 @@ int simplest_ffmpeg_audio_encoder_pure() {
 
     int endocedFrameCount = 0;
 
-    char filename_in[] = "/root/音乐/tdjm.pcm";
+    char filename_in[] = "/root/音乐/audio.pcm";
 
-    char filename_out[] = "/root/音乐/temp.mp2";
+    char filename_out[] = "/root/音乐/audio2.mp2";
 
     AVCodecID codec_id = AV_CODEC_ID_MP2;
     audioAVCodecEncoder = avcodec_find_encoder(codec_id);
@@ -3122,15 +3298,19 @@ int simplest_ffmpeg_audio_encoder_pure() {
         printf("Could not allocate video codec context\n");
         return -1;
     }
-    audioAVCodecContext->codec_id = codec_id;
     audioAVCodecContext->codec_type = AVMEDIA_TYPE_AUDIO;
+    audioAVCodecContext->codec_id = codec_id;
     // 比特率降低后,音频体积也会降低
-    audioAVCodecContext->bit_rate = 64000;// 64kb/s
+    audioAVCodecContext->bit_rate = 320000;// 64kbps/s
+    // Specified sample format s16p is invalid or not supported(mp2)
     audioAVCodecContext->sample_fmt = AV_SAMPLE_FMT_S16;
     // 下面几个参数的设置参照官方sample
-    audioAVCodecContext->sample_rate = 44100;// 44100Hz
+    // Specified sample rate 64000 is not supported(mp2)
+    audioAVCodecContext->sample_rate = 48000;// 44100Hz(mp2最大支持这个48000)
+    // Specified channel layout '3.0' is not supported(mp2)
+    // 声道布局
     audioAVCodecContext->channel_layout = AV_CH_LAYOUT_STEREO;// 立体声
-    // 双声道
+    // 双声道(根据声道布局得到声道数)
     audioAVCodecContext->channels = av_get_channel_layout_nb_channels(audioAVCodecContext->channel_layout);
     printf("audioAVCodecContext->channel_layout = %ld\n", audioAVCodecContext->channel_layout);
     printf("audioAVCodecContext->channels = %d\n", audioAVCodecContext->channels);
@@ -3498,6 +3678,7 @@ int decode_audio2(const char *input_file_name, const char *output_file_name) {
         printf("%s\n", "编码器无法打开");
         return -1;
     }
+
     //编码数据
     AVPacket *av_packet = (AVPacket *) av_malloc(sizeof(AVPacket));
     //解压缩数据
@@ -3768,8 +3949,8 @@ void ffmpeg_uinit_pcm_resample(SwrContext *swr_ctx, AVAudioFifo *audiofifo) {
  马上要废弃的代码,但是现在还能用(2018/7/20)
  */
 int crazydiode_video_devoder() {
-    const char *input_file_name_path = "/root/视频/haoke.avi";
-    const char *output_file_name_path = "/root/视频/output.yuv";
+    const char *input_file_name_path = "/root/视频/01_APITest_MPEG1.mpg";
+    const char *output_file_name_path = "/root/视频/01_APITest_MPEG1.yuv";
     AVFormatContext *avformat_context = NULL;
     AVCodecContext *video_av_codec_context = NULL;
 
@@ -4176,20 +4357,20 @@ AVStream *video_avstream = NULL, *audio_avstream = NULL;
 AVCodecContext *video_avcodec_context = NULL, *audio_avcodec_context = NULL;
 
 int frame_width = 0, frame_height = 0;
-enum AVPixelFormat pix_fmt;
+enum AVPixelFormat avpixel_format;
 
 unsigned char *video_dst_data[4];
 int video_dst_linesize[4];
 int video_dst_bufsize;
 
-AVFrame *frame = NULL;
-AVPacket packet;
+AVFrame *avframe = NULL;
+AVPacket avpacket;
 
 int decode_packet(int *got_frame) {
     int ret = 0;
     *got_frame = 0;
-    if (packet.stream_index == video_avstream->index) {
-        ret = avcodec_decode_video2(video_avcodec_context, frame, got_frame, &packet);
+    if (avpacket.stream_index == video_avstream->index) {
+        ret = avcodec_decode_video2(video_avcodec_context, avframe, got_frame, &avpacket);
         if (ret < 0) {
             printf("%s\n", "");
             return -1;
@@ -4197,12 +4378,12 @@ int decode_packet(int *got_frame) {
         if (*got_frame) {
             printf("%s\n", "");
             av_image_copy(video_dst_data, video_dst_linesize,
-                          (const unsigned char **) frame->data, frame->linesize,
-                          pix_fmt, frame_width, frame_height);
+                          (const unsigned char **) avframe->data, avframe->linesize,
+                          avpixel_format, frame_width, frame_height);
             fwrite(video_dst_data[0], 1, video_dst_bufsize, pOutputVideo);
         }
-    } else if (packet.stream_index == audio_avstream->index) {
-        ret = avcodec_decode_audio4(audio_avcodec_context, frame, got_frame, &packet);
+    } else if (avpacket.stream_index == audio_avstream->index) {
+        ret = avcodec_decode_audio4(audio_avcodec_context, avframe, got_frame, &avpacket);
         if (ret < 0) {
             printf("%s\n", "");
             return -1;
@@ -4215,12 +4396,12 @@ int decode_packet(int *got_frame) {
         */
         if (*got_frame) {
             size_t unpadded_linesize =
-                    frame->nb_samples * av_get_bytes_per_sample((enum AVSampleFormat) frame->format);
-            fwrite(frame->extended_data[0], 1, unpadded_linesize, pOutputAudio);
+                    avframe->nb_samples * av_get_bytes_per_sample((enum AVSampleFormat) avframe->format);
+            fwrite(avframe->extended_data[0], 1, unpadded_linesize, pOutputAudio);
         }
     }
 
-    return FFMIN(ret, packet.size);
+    return FFMIN(ret, avpacket.size);
 }
 
 static int open_codec_context(enum AVMediaType type) {
@@ -4280,7 +4461,7 @@ int separate_media_to_yuv_and_aac() {
 
         frame_width = video_avcodec_context->width;
         frame_height = video_avcodec_context->height;
-        pix_fmt = video_avcodec_context->pix_fmt;
+        avpixel_format = video_avcodec_context->pix_fmt;
 
         /*
         分配像素的存储空间
@@ -4288,7 +4469,7 @@ int separate_media_to_yuv_and_aac() {
         该函数会返回分配的内存的大小。其实就是对video_dst_data,video_dst_linesize内存进行分配
         */
         ret = av_image_alloc(video_dst_data, video_dst_linesize,
-                             frame_width, frame_height, pix_fmt, 1);
+                             frame_width, frame_height, avpixel_format, 1);
         if (ret < 0) {
             printf("%s\n", "");
             return -1;
@@ -4317,41 +4498,41 @@ int separate_media_to_yuv_and_aac() {
     av_dump_format(avformat_context, 0, src_filename, 0);
 
     //=====读取和处理音视频文件=====
-    frame = av_frame_alloc();
-    if (!frame) {
+    avframe = av_frame_alloc();
+    if (!avframe) {
         printf("%s\n", "");
         return -1;
     }
 
-    av_init_packet(&packet);
-    packet.data = NULL;
-    packet.size = 0;
+    av_init_packet(&avpacket);
+    avpacket.data = NULL;
+    avpacket.size = 0;
 
-    while (av_read_frame(avformat_context, &packet) >= 0) {
+    while (av_read_frame(avformat_context, &avpacket) >= 0) {
         do {
             ret = decode_packet(&got_frame);
             printf("decode packet size: %d\n", ret);
-            packet.data += ret;
-            packet.size -= ret;
-        } while (packet.size > 0);
+            avpacket.data += ret;
+            avpacket.size -= ret;
+        } while (avpacket.size > 0);
     }
 
     /*
     将编码器缓存中的数据解码完
     */
-    packet.data = NULL;
-    packet.size = 0;
+    avpacket.data = NULL;
+    avpacket.size = 0;
     do {
         ret = decode_packet(&got_frame);
-        packet.data += ret;
-        packet.size -= ret;
+        avpacket.data += ret;
+        avpacket.size -= ret;
     } while (got_frame);
 
     //=====释放资源=====
     avcodec_close(video_avcodec_context);
     avcodec_close(audio_avcodec_context);
     avformat_close_input(&avformat_context);
-    av_frame_free(&frame);
+    av_frame_free(&avframe);
     av_free(video_dst_data[0]);
 
     fclose(pOutputAudio);
