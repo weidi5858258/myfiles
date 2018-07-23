@@ -31,7 +31,7 @@
 #ifndef MYSTUDY_FFMPEG_YUV_PLAYER
 #define MYSTUDY_FFMPEG_YUV_PLAYER
 
-#include "src/yuv_player.cpp"
+#include "src/player.cpp"
 
 #endif //MYSTUDY_FFMPEG_YUV_PLAYER
 
@@ -44,7 +44,9 @@ int simplest_ffmpeg_player2();
 
 int decoder_video_frame_to_image();
 
-int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure();
+int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path,
+                                                   int playback_window_w,
+                                                   int playback_window_h);
 
 int simplest_audio_play_sdl2();
 
@@ -118,7 +120,8 @@ int main(int argc, char *argv[]) {
     printf("------------------------------------------\n");
 
 //    simplest_ffmpeg_player2();
-    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure();
+    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/480_272_yuv420p.yuv",
+                                                   500, 500);
 //    decoder_video_frame_to_image();
 //    simplest_audio_play_sdl2();
 //    simplest_ffmpeg_audio_decoder();

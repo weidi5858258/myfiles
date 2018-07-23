@@ -96,7 +96,7 @@ extern "C" {// 不能少
 //set '1' to choose a type of file to play
 #define LOAD_BGRA    0
 #define LOAD_RGB24   0
-#define LOAD_BGR24   1
+#define LOAD_BGR24   0
 #define LOAD_YUV420P 1
 
 //Refresh Event
