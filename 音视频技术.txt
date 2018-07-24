@@ -696,18 +696,149 @@ PCM音频数据中常用的专业术语
 16bit指的是采样精度，意思是原始模拟信号被采样后，每一个采样点在计算机中用16位（两个字节）来表示。采样精度越高越能精细地表示模拟信号的差异。
 一般来说PCM数据中的波形幅值越大，代表音量越大。
 
+对于ffmpeg来说，音频数据会保存在AVFrame中extended_data数组中，如果是打包模式(packed)，就只用extended_data[0],如果是planar模式，则每个channel分别保存在extended_data[i]中。对于音频，只有linesize[0]有效，打包模式保存整个音频帧的buff大小，planar模式保存每个channel的buff大小。
+short *sample_buffer_L = pFrame->extended_data[0];//存放着左声道的数据
+short *sample_buffer_R = pFrame->extended_data[1];//存放着右声道的数据
+两者都是16bit，而裸的PCM文件里的数据是按照 LRLRLRLR  这样存储的，所以我们需要按照这种格式存储16bit的数据：
+//Left channel
+data[i] = (char)(sample_buffer_L[j] & 0xff);//左声道低8位
+data[i+1] = (char)((sample_buffer_L[j]>>8) & 0xff);;//左声道高8位
+//Right channel
+data[i+2] = (char)(sample_buffer_R[j] & 0xff);//右声道低8位
+data[i+3] = (char)((sample_buffer_R[j]>>8) & 0xff);;//右声道高8位
+
+哪些封装格式的视频需要写文件头,哪些不需要.
+
+./configure \
+--enable-libx264 \
+--enable-gpl \
+--enable-decoder=h264 \
+--enable-encoder=libx264 \
+--enable-shared \
+--enable-static \
+--enable-nonfree \
+--enable-libfdk-aac \
+--disable-yasm \
+--prefix=/root/mydev/tools/ffmpeg
+
+--prefix=/root/mydev/tools/ffmpeg --enable-libmp3lame --enable-libx264 --enable-gpl
+
+./configure \
+--enable-libmp3lame \
+--enable-libx264 \
+--enable-gpl \
+--enable-decoder=h264 \
+--enable-encoder=libx264 \
+--enable-nonfree \
+--enable-libfdk-aac \
+--disable-yasm \
+--prefix=/root/mydev/tools/ffmpeg
+
+
+--disable-static \
+--enable-shared \
+--enable-gpl \
+--enable-version3 \
+--disable-w32threads \
+--enable-avisynth \
+--enable-bzlib \
+--enable-fontconfig \
+--enable-frei0r \
+--enable-gnutls \
+--enable-iconv \
+--enable-libass \
+--enable-libbluray \
+--enable-libcaca \
+--enable-libfreetype \
+--enable-libgsm \
+--enable-libilbc \
+--enable-libmodplug \
+--enable-libmp3lame \
+--enable-libopencore-amrnb \
+--enable-libopencore-amrwb \
+--enable-libopenjpeg \
+--enable-libopus \
+--enable-librtmp \
+--enable-libschroedinger \
+--enable-libsoxr \
+--enable-libspeex \
+--enable-libtheora \
+--enable-libtwolame \
+--enable-libvidstab \
+--enable-libvo-aacenc \
+--enable-libvo-amrwbenc \
+--enable-libvorbis \
+--enable-libvpx \
+--enable-libwavpack \
+--enable-libx264 \
+--enable-libx265 \
+--enable-libxavs \
+--enable-libxvid \
+--enable-decklink \
+--enable-zlib \
 
 
 
+//音频输出参数
+//声道布局
+uint64_t out_channel_layout = AV_CH_LAYOUT_STEREO;
+//采样格式
+AVSampleFormat out_sample_fmt = AV_SAMPLE_FMT_S16;
+//采样率
+int out_sample_rate = 44100;
+
+//根据声道格式返回声道个数
+int out_nb_channels = av_get_channel_layout_nb_channels(out_channel_layout);
+//采样个数nb_samples: AAC-1024 MP3-1152 
+int out_nb_samples = pCodecCtx->frame_size;
+//写到文件中去时要用到,就是写入多少个字节
+int out_buffer_size = av_samples_get_buffer_size(NULL, 
+								out_nb_channels, out_nb_samples, out_sample_fmt, 1);
+
+// 1 second of 48khz 32bit(4Byte) audio
+#define MAX_AUDIO_FRAME_SIZE 192000
+uint8_t *buffer = (uint8_t *)av_malloc(MAX_AUDIO_FRAME_SIZE);
+
+audio_convert_ctx = swr_alloc();
+if (audio_convert_ctx == NULL)
+{
+	printf("Could not allocate SwrContext\n");
+	return -1;
+}
+swr_alloc_set_opts(audio_convert_ctx, 
+					out_channel_layout, 
+					out_sample_fmt,
+					out_sample_rate, 
+					pCodecCtx->channel_layout, 
+					pCodecCtx->sample_fmt, 
+					pCodecCtx->sample_rate, 
+					0, NULL);
+swr_init(audio_convert_ctx);
+
+//原始数据放在AVPacket中,解码后的数据放在AVFrame中
+if (avcodec_decode_audio4(pCodecCtx, pAudioFrame, &got_picture, &packet) < 0)
+{
+	printf("Error in decoding audio frame.\n");
+	return -1;
+}
+//为什么要做这步操作:
+//解码得到的数据类型为float 4bit，而播放器播放的格式一般为S16（signed 16bit）,就需要对解码得到的数据进行转换
+//转换前的数据放在AVFrame中,转换后的数据放在uint8_t中
+swr_convert(audio_convert_ctx, &buffer, MAX_AUDIO_FRAME_SIZE, 
+			(const uint8_t **)pAudioFrame->data, pAudioFrame->nb_samples);
+//一次解码得到的数据大小为out_buffer_size
+fwrite(buffer, 1, out_buffer_size, fp_pcm);
+
+处理音频时,需要用到的处理数据的变量有
+AVPacket avcodec_decode_audio4(...)
+AVFrame  swr_convert(...)
+uint8_t  fwrite(...)
+有关的概念有:声道布局,声道数,采样个数,采样率,比特率
 
 
-
-
-
-
-
-
-
+有些格式的视频不符合标准，获得的pCodecCtx->frame_size为0
+雷老师，我使用wmv格式的视频进行测试，结果不能进行得到正确的pcm文件，文件大小始终为0，发现是out_nb_samples = pCodecCtx->frame_size发生错误，其中pCodecCtx->frame_size为0，导致av_samples_get_buffer_size算出的大小是负数。问过有经验组长，他告诉我有些格式的视频不符合标准，不能从文件头中获取到信息，要在读入一帧后获取，也就是ret = avcodec_decode_audio4( pCodecCtx, pFrame,&got_picture, packet);之后，从pFrame中获取信息。
+发现错误，重新修改程序，就能得到数据了。
 
 
 

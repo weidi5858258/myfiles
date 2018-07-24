@@ -54,6 +54,9 @@ extern "C" {// 不能少
 
 #include <lame.h>
 
+//录音
+#include <alsa/asoundlib.h>
+
 #include <SDL2/SDL.h>
 
 #include <GL/glut.h>
@@ -103,6 +106,8 @@ extern "C" {// 不能少
 #define REFRESH_EVENT  (SDL_USEREVENT + 1)
 //Break
 #define BREAK_EVENT    (SDL_USEREVENT + 2)
+
+#define ALSA_PCM_NEW_HW_PARAMS_API
 
 using namespace std;
 

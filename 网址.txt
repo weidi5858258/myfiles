@@ -93,6 +93,12 @@ https://www.nasm.us/ NASM
 https://blog.csdn.net/liu3364575/article/details/78395442 ffmpeg开发之旅(1)：视频直播YUV颜色格式完全解析
 https://blog.csdn.net/bjrxyz/article/details/73435407 使用libmp3lame库编码mp3
 http://dsplab.diei.unipg.it/software/pyuv_raw_video_sequence_player PYUV: raw video sequence player
+https://blog.csdn.net/guoke312/article/details/73232176 多媒体音频PCM数据
+https://blog.csdn.net/qfnu08zzr/article/details/6763159 RGB和YUV之比较
+https://blog.csdn.net/u011913612/article/details/53838675 ffmpeg学习十：将pcm格式的音频编码为aac格式
+https://blog.csdn.net/leixiaohua1020/article/details/19016109 avcodec_decode_video2()解码视频后丢帧的问题解决
+https://blog.csdn.net/bjrxyz/article/details/73435407 使用libmp3lame库编码mp3
+
 
 
 

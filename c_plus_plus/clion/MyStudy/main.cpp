@@ -54,6 +54,8 @@ int simplest_ffmpeg_audio_decoder();
 
 int pcm2aac();
 
+int pcm2aac(const char *in_pcm_path, const char *out_aac_path);
+
 int crazydiode_video_devoder();
 
 int crazydiode_audio_devoder();
@@ -103,6 +105,8 @@ int separate_media_to_yuv_and_aac();
 
 int simplest_yuv420p_split(char *url, int w, int h, int num);
 
+int audio_recorder(const char *out_file_path);
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -120,8 +124,8 @@ int main(int argc, char *argv[]) {
     printf("------------------------------------------\n");
 
 //    simplest_ffmpeg_player2();
-    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/480_272_yuv420p.yuv",
-                                                   500, 500);
+//    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/480_272_yuv420p.yuv",
+//                                                   500, 500);
 //    decoder_video_frame_to_image();
 //    simplest_audio_play_sdl2();
 //    simplest_ffmpeg_audio_decoder();
@@ -129,6 +133,7 @@ int main(int argc, char *argv[]) {
 //    crazydiode_video_devoder();
 //    crazydiode_audio_devoder();
 //    pcm2aac();
+    pcm2aac("/root/音乐/tdjm.pcm", "/root/音乐/tdjm.aac");
 //    simplest_ffmpeg_audio_encoder_pure();
 //    decode_audio_main("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm");
 //    decode_audio2("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.pcm");
@@ -138,6 +143,7 @@ int main(int argc, char *argv[]) {
 //    resampling_audio("/root/音乐/resampling.mp2");
 //    separate_media_to_yuv_and_aac();
 //    simplest_yuv420p_split("/root/视频/lena_256x256_yuv420p.yuv", 256, 256, 1);
+//    audio_recorder("/root/音乐/myrecorder.pcm");
 
     /*glutInit(&argc,argv);
     //显示模式初始化

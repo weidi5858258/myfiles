@@ -2948,10 +2948,10 @@ int pcm2aac() {
 
     FILE *in_file = NULL;                            //Raw PCM data
     int framenum = 1000;                          //Audio frame number
-    const char *out_file = "/root/音乐/audio.aac";          //Output URL
+    const char *out_file = "/root/音乐/tdjm.aac";          //Output URL
     int i;
 
-    in_file = fopen("/root/音乐/audio.pcm", "rb");
+    in_file = fopen("/root/音乐/tdjm.pcm", "rb");
 
     av_register_all();
 
@@ -2979,12 +2979,12 @@ int pcm2aac() {
     pCodecCtx->codec_type = AVMEDIA_TYPE_AUDIO;
     pCodecCtx->sample_fmt = AV_SAMPLE_FMT_S16;
     pCodecCtx->sample_rate = 44100;
+    pCodecCtx->bit_rate = 320000;
     pCodecCtx->channel_layout = AV_CH_LAYOUT_STEREO;
     pCodecCtx->channels = av_get_channel_layout_nb_channels(pCodecCtx->channel_layout);
-    pCodecCtx->bit_rate = 64000;
 
     //Show some information
-    av_dump_format(pFormatCtx, 0, out_file, 1);
+//    av_dump_format(pFormatCtx, 0, out_file, 1);
 
     pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
 //    pCodec = avcodec_find_encoder(AV_CODEC_ID_AAC);
@@ -3056,6 +3056,124 @@ int pcm2aac() {
 
     fclose(in_file);
 
+    return 0;
+}
+
+/***
+ pcm ---> aac
+ 成功
+ */
+int pcm2aac(const char *in_pcm_path, const char *out_aac_path) {
+    AVFrame *frame;
+    AVCodec *codec = NULL;
+    AVPacket packet;
+    AVCodecContext *codecContext;
+    int readSize = 0;
+    int ret = 0, getPacket;
+    FILE *fileIn, *fileOut;
+    int frameCount = 0;
+    /* register all the codecs */
+    av_register_all();
+
+    //1.我们需要读一帧一帧的数据，所以需要AVFrame结构
+    //读出的一帧数据保存在AVFrame中。
+    frame = av_frame_alloc();
+    frame->channels = 2;
+    frame->sample_rate = 44100;
+//    frame->sample_rate = 11025;
+    //样本格式
+    frame->format = AV_SAMPLE_FMT_S16;
+    frame->nb_samples = 1024;
+    frame->data[0] = (uint8_t *) av_malloc(1024 * 4);
+
+    //2.读出来的数据保存在AVPacket中，因此，我们还需要AVPacket结构体
+    //初始化packet
+    memset(&packet, 0, sizeof(AVPacket));
+    av_init_packet(&packet);
+
+
+    //3.读出来的数据，我们需要编码，因此需要编码器
+    //下面的函数找到h.264类型的编码器
+    /* find the mpeg1 video encoder */
+    // 不行
+    // codec = avcodec_find_encoder(AV_CODEC_ID_AAC);
+    // 可行
+    codec = avcodec_find_encoder_by_name("libfdk_aac");
+    if (!codec) {
+        fprintf(stderr, "Codec not found\n");
+        exit(1);
+    }
+
+    //有了编码器，我们还需要编码器的上下文环境，用来控制编码的过程
+    codecContext = avcodec_alloc_context3(codec);//分配AVCodecContext实例
+    if (!codecContext) {
+        fprintf(stderr, "Could not allocate video codec context\n");
+        return -1;
+    }
+    /* put sample parameters */
+    codecContext->sample_rate = frame->sample_rate;
+    codecContext->channels = frame->channels;
+    codecContext->sample_fmt = (enum AVSampleFormat) frame->format;
+    /* select other audio parameters supported by the encoder */
+    codecContext->channel_layout = AV_CH_LAYOUT_STEREO;
+    //准备好了编码器和编码器上下文环境，现在可以打开编码器了
+    //根据编码器上下文打开编码器
+    if (avcodec_open2(codecContext, codec, NULL) < 0) {
+        fprintf(stderr, "Could not open codec\n");
+        return -1;
+    }
+    fileIn = fopen(in_pcm_path, "rb+");
+    //4.准备输出文件
+    fileOut = fopen(out_aac_path, "wb+");
+    //下面开始编码
+    while (1) {
+        //读一帧数据出来
+        readSize = fread(frame->data[0], 1, 1024 * 4, fileIn);
+        if (readSize == 0) {
+            fprintf(stdout, "end of file\n");
+            frameCount++;
+            break;
+        }
+        //初始化packet
+        av_init_packet(&packet);
+        /* encode the image */
+        frame->pts = frameCount;
+        ret = avcodec_encode_audio2(codecContext, &packet, frame, &getPacket); //将AVFrame中的像素信息编码为AVPacket中的码流
+        if (ret < 0) {
+            fprintf(stderr, "Error encoding frame\n");
+            goto out;
+        }
+
+        if (getPacket) {
+            frameCount++;
+            //获得一个完整的编码帧
+            printf("Write frame %3d (size=%5d)\n", frameCount, packet.size);
+            fwrite(packet.data, 1, packet.size, fileOut);
+            av_packet_unref(&packet);
+        }
+    }//while end
+
+    /* flush buffer */
+    for (getPacket = 1; getPacket; frameCount++) {
+        frame->pts = frameCount;
+        ret = avcodec_encode_audio2(codecContext, &packet, NULL, &getPacket);       //输出编码器中剩余的码流
+        if (ret < 0) {
+            fprintf(stderr, "Error encoding frame\n");
+            goto out;
+        }
+        if (getPacket) {
+            printf("flush buffer Write frame %3d (size=%5d)\n", frameCount, packet.size);
+            fwrite(packet.data, 1, packet.size, fileOut);
+            av_packet_unref(&packet);
+        }
+    } //for (got_output = 1; got_output; frameIdx++)
+
+    out:
+    fclose(fileIn);
+    fclose(fileOut);
+    av_frame_free(&frame);
+    avcodec_close(codecContext);
+    av_free(codecContext);
     return 0;
 }
 
@@ -3238,52 +3356,57 @@ int simplest_ffmpeg_audio_encoder_pure() {
  */
 int pcm2mp3(char *inPath, char *outPath) {
     int status = 0;
-    lame_global_flags *gfp;
+    lame_global_flags *global_flags;
     int ret_code;
-    FILE *infp;
-    FILE *outfp;
+    FILE *in_file;
+    FILE *out_file;
     short *unencoded_pcm_buffer;
-    int input_samples;
+    int in_samples;
     unsigned char *encoded_mp3_buffer;
     int mp3_bytes;
 
-    gfp = lame_init();
-    if (gfp == NULL) {
+    global_flags = lame_init();
+    if (global_flags == NULL) {
         printf("lame_init failed\n");
         status = -1;
         goto exit;
     }
 
     // 设置被输入编码器的原始数据的采样率
-//    lame_set_in_samplerate(gfp,8000);
+    lame_set_in_samplerate(global_flags, 8000);
     // 设置最终mp3编码输出的声音的采样率，如果不设置则和输入采样率一样
-//    lame_set_out_samplerate(gfp, 44100);
+    lame_set_out_samplerate(global_flags, 44100);
     // 设置被输入编码器的原始数据的声道数
-//    lame_set_num_channels(gfp,1);
-    // 设置比特率控制模式，默认是CBR，但是通常我们都会设置VBR。参数是枚举，vbr_off代表CBR，vbr_abr代表ABR（因为ABR不常见，所以本文不对ABR做讲解）vbr_mtrh代表VBR
-//    lame_set_VBR(gfp,vbr_off);
-    // 设置CBR的比特率，只有在CBR模式下才生效
-//    lame_set_brate(gfp,8);
+    lame_set_num_channels(global_flags, 1);
     // 设置最终mp3编码输出的声道模式，如果不设置则和输入声道数一样。参数是枚举，STEREO代表双声道，MONO代表单声道
-//    lame_set_mode(gfp,3);
-//    lame_set_quality(gfp,2); /* 2 = high 5 = medium 7 = low */
+    lame_set_mode(global_flags, STEREO);
+    // 设置比特率控制模式，默认是CBR，但是通常我们都会设置VBR。
+    // 参数是枚举，vbr_off代表CBR，vbr_abr代表ABR
+    //（因为ABR不常见，所以本文不对ABR做讲解）vbr_mtrh代表VBR
+    lame_set_VBR(global_flags, vbr_off);
+    // 设置CBR的比特率，只有在CBR模式下才生效
+    lame_set_brate(global_flags, 8);
+    // 2 = high 5 = medium 7 = low
+    lame_set_quality(global_flags,2);
+    // 设置VBR的比特率，只有在VBR模式下才生效。
+    // lame_set_VBR_mean_bitrate_kbps(global_flags, );
 
-    ret_code = lame_init_params(gfp);
+    ret_code = lame_init_params(global_flags);
     if (ret_code < 0) {
         printf("lame_init_params returned %d\n", ret_code);
         status = -1;
         goto close_lame;
     }
 
-    infp = fopen(inPath, "rb");
-    outfp = fopen(outPath, "wb");
+    in_file = fopen(inPath, "rb");
+    out_file = fopen(outPath, "wb");
 
     unencoded_pcm_buffer = (short *) malloc(INBUF_SIZE * 2);
     encoded_mp3_buffer = (unsigned char *) malloc(MP3BUFSIZE);
 
     do {
-        input_samples = fread(unencoded_pcm_buffer, 2, INBUF_SIZE, infp);
-        printf("input_samples is %d.\n", input_samples);
+        in_samples = fread(unencoded_pcm_buffer, 2, INBUF_SIZE, in_file);
+        printf("input_samples is %d.\n", in_samples);
         //fprintf(stderr, "input_samples is %d./n", input_samples);
         /***
          编码PCM数据
@@ -3292,9 +3415,9 @@ int pcm2mp3(char *inPath, char *outPath) {
             单声道输入只能使用lame_encode_buffer，把单声道数据当成左声道数据传入，右声道传NULL即可。
             调用这两个函数时需要传入一块内存来获取编码器出的数据，这块内存的大小lame给出了一种建议的计算方式：采样率/20+7200。
          */
-        mp3_bytes = lame_encode_buffer_interleaved(gfp,
+        mp3_bytes = lame_encode_buffer_interleaved(global_flags,
                                                    unencoded_pcm_buffer,
-                                                   input_samples / 2,
+                                                   in_samples / 2,
                                                    encoded_mp3_buffer,
                                                    MP3BUFSIZE);
         fprintf(stdout, "mp3_bytes is %d\n", mp3_bytes);
@@ -3303,24 +3426,25 @@ int pcm2mp3(char *inPath, char *outPath) {
             status = -1;
             goto free_buffers;
         } else if (mp3_bytes > 0) {
-            fwrite(encoded_mp3_buffer, 1, mp3_bytes, outfp);
+            fwrite(encoded_mp3_buffer, 1, mp3_bytes, out_file);
         }
-    } while (input_samples == INBUF_SIZE);
+    } while (in_samples == INBUF_SIZE);
 
-    mp3_bytes = lame_encode_flush(gfp, encoded_mp3_buffer, sizeof(encoded_mp3_buffer));
+    //刷新编码器缓冲，获取残留在编码器缓冲里的数据。这部分数据也需要写入mp3文件
+    mp3_bytes = lame_encode_flush(global_flags, encoded_mp3_buffer, sizeof(encoded_mp3_buffer));
     if (mp3_bytes > 0) {
         printf("writing %d mp3 bytes\n", mp3_bytes);
-        fwrite(encoded_mp3_buffer, 1, mp3_bytes, outfp);
+        fwrite(encoded_mp3_buffer, 1, mp3_bytes, out_file);
     }
 
     free_buffers:
     free(encoded_mp3_buffer);
     free(unencoded_pcm_buffer);
 
-    fclose(outfp);
-    fclose(infp);
+    fclose(out_file);
+    fclose(in_file);
     close_lame:
-    lame_close(gfp);
+    lame_close(global_flags);
 
     exit:
     return status;
@@ -3931,8 +4055,8 @@ int crazydiode_video_devoder() {
 
  */
 int crazydiode_audio_devoder() {
-    const char in_file_path[] = "/root/音乐/漂洋过海来看你.mp3";
-    const char out_file_path[] = "/root/音乐/output.pcm";
+    const char in_file_path[] = "/root/音乐/01_VBR_16kHz_64kbps_Stereo.mp3";
+    const char out_file_path[] = "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm";
     AVFormatContext *avformat_context = NULL;
     AVCodecContext *audio_avcodec_context = NULL;
 
@@ -4378,7 +4502,146 @@ int separate_media_to_yuv_and_aac() {
     return 0;
 }
 
-//////////////////////////////////////////////////////////////////
+int wav2mp3() {
+    int read, write;
+    FILE *pcm = fopen("/Users/liuchan_xin/Desktop/音视频播放与保存例子/ipcamera.wav", "rb");
+    FILE *mp3 = fopen("/Users/liuchan_xin/Desktop/file.mp3", "wb");
+
+    int PCM_SIZE = 640;
+    int MP3_SIZE = 8192;
+
+    short int pcm_buffer[PCM_SIZE];
+    unsigned char mp3_buffer[MP3_SIZE];
+
+    lame_t lame = lame_init();
+
+    lame_set_num_channels(lame, 1);
+    lame_set_in_samplerate(lame, 8000);
+    lame_set_brate(lame, 8);
+//    lame_set_mode(lame, 3);
+    lame_set_quality(lame, 2); /* 2=high 5 = medium 7=low */
+
+    lame_init_params(lame);
+
+    do {
+        read = fread(pcm_buffer, sizeof(short int), PCM_SIZE, pcm);
+
+        if (read == 0)
+            write = lame_encode_flush(lame, mp3_buffer, MP3_SIZE);
+        else {
+            write = lame_encode_buffer(lame,
+                                       pcm_buffer, NULL,
+                                       read, mp3_buffer, MP3_SIZE);
+        }
+
+        fwrite(mp3_buffer, write, 1, mp3);
+    } while (read != 0);
+
+    lame_close(lame);
+    fclose(mp3);
+    fclose(pcm);
+
+    return 0;
+}
+
+int audio_recorder(const char *out_file_path) {
+    long loops;
+    int rc;
+    int size;
+    snd_pcm_t *handle;
+    snd_pcm_hw_params_t *params;
+    unsigned int val;
+    int dir;
+    snd_pcm_uframes_t frames;
+    char *buffer;
+    FILE *fd_out;
+    /* Open PCM device for recording (capture). */
+    rc = snd_pcm_open(&handle, "default",
+                      SND_PCM_STREAM_CAPTURE, 0);
+    if (rc < 0) {
+        fprintf(stderr,
+                "unable to open pcm device: %s\n",
+                snd_strerror(rc));
+        exit(1);
+    }
+
+    /* Allocate a hardware parameters object. */
+    snd_pcm_hw_params_alloca(&params);
+
+    /* Fill it in with default values. */
+    snd_pcm_hw_params_any(handle, params);
+
+    /* Set the desired hardware parameters. */
+
+    /* Interleaved mode */
+    snd_pcm_hw_params_set_access(handle, params,
+                                 SND_PCM_ACCESS_RW_INTERLEAVED);
+
+    /* Signed 16-bit little-endian format */
+    snd_pcm_hw_params_set_format(handle, params,
+                                 SND_PCM_FORMAT_S16_LE);
+
+    /* Two channels (stereo) */
+    snd_pcm_hw_params_set_channels(handle, params, 2);
+
+    /* 11025 bits/second sampling rate (CD quality) */
+    val = 11025;
+    snd_pcm_hw_params_set_rate_near(handle, params,
+                                    &val, &dir);
+
+    /* Set period size to 32 frames. */
+    //frames = 32;
+    // snd_pcm_hw_params_set_period_size_near(handle,
+    //                             params, &frames, &dir);
+
+    /* Write the parameters to the driver */
+    rc = snd_pcm_hw_params(handle, params);
+    if (rc < 0) {
+        fprintf(stderr,
+                "unable to set hw parameters: %s\n",
+                snd_strerror(rc));
+        exit(1);
+    }
+
+    /* Use a buffer large enough to hold one period */
+    snd_pcm_hw_params_get_period_size(params,
+                                      &frames, &dir);
+    size = frames * 4; /* 2 bytes/sample, 2 channels */
+    buffer = (char *) malloc(size);
+
+    /* We want to loop for 5 seconds */
+    snd_pcm_hw_params_get_period_time(params,
+                                      &val, &dir);
+    loops = 5000000 / val;
+    fprintf(stdout, "loops = %d\n", loops);
+    fd_out = fopen(out_file_path, "wb+");
+    while (loops > 0) {
+        loops--;
+        rc = snd_pcm_readi(handle, buffer, frames);
+        if (rc == -EPIPE) {
+            /* EPIPE means overrun */
+            fprintf(stderr, "overrun occurred\n");
+            snd_pcm_prepare(handle);
+        } else if (rc < 0) {
+            fprintf(stderr,
+                    "error from read: %s\n",
+                    snd_strerror(rc));
+        } else if (rc != (int) frames) {
+            fprintf(stderr, "short read, read %d frames\n", rc);
+        }
+        rc = fwrite(buffer, 1, size, fd_out);
+        if (rc != size)
+            fprintf(stderr,
+                    "short write: wrote %d bytes\n", rc);
+        fprintf(stdout, "loops = %d\n", loops);
+    }
+    fclose(fd_out);
+    snd_pcm_drain(handle);
+    snd_pcm_close(handle);
+    free(buffer);
+
+    return 0;
+}
 
 int test(float) {
     return 0;

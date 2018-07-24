@@ -80,6 +80,9 @@ else ()
             -ldl
             #opengl
             -lglut -lGL -lGLU
+            #录音
+            -lasound
+            -lfdk-aac
             )
 
     include_directories(
