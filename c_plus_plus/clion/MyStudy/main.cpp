@@ -35,6 +35,13 @@
 
 #endif //MYSTUDY_FFMPEG_YUV_PLAYER
 
+#ifndef MYSTUDY_FFMPEG_LEIXIAOHUA
+#define MYSTUDY_FFMPEG_LEIXIAOHUA
+
+#include "src/leixiaohua1020.cpp"
+
+#endif //MYSTUDY_FFMPEG_LEIXIAOHUA
+
 
 void test();
 
@@ -107,6 +114,8 @@ int simplest_yuv420p_split(char *url, int w, int h, int num);
 
 int audio_recorder(const char *out_file_path);
 
+int alexander_video_player_sdl2();
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -133,7 +142,7 @@ int main(int argc, char *argv[]) {
 //    crazydiode_video_devoder();
 //    crazydiode_audio_devoder();
 //    pcm2aac();
-    pcm2aac("/root/音乐/tdjm.pcm", "/root/音乐/tdjm.aac");
+//    pcm2aac("/root/音乐/output.pcm", "/root/音乐/output.aac");
 //    simplest_ffmpeg_audio_encoder_pure();
 //    decode_audio_main("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm");
 //    decode_audio2("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.pcm");
@@ -144,6 +153,7 @@ int main(int argc, char *argv[]) {
 //    separate_media_to_yuv_and_aac();
 //    simplest_yuv420p_split("/root/视频/lena_256x256_yuv420p.yuv", 256, 256, 1);
 //    audio_recorder("/root/音乐/myrecorder.pcm");
+    alexander_video_player_sdl2();
 
     /*glutInit(&argc,argv);
     //显示模式初始化

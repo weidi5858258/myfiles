@@ -39,7 +39,6 @@ void convert_24to32(unsigned char *image_in, unsigned char *image_out, int pixel
         }
 }
 
-
 int thread_exit = 0;
 
 int refresh_video(void *opaque) {
