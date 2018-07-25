@@ -116,6 +116,10 @@ int audio_recorder(const char *out_file_path);
 
 int alexander_video_player_sdl2();
 
+int alexander_decode_video_to_yuv();
+
+int alexander_playback_yuv();
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -138,7 +142,7 @@ int main(int argc, char *argv[]) {
 //    decoder_video_frame_to_image();
 //    simplest_audio_play_sdl2();
 //    simplest_ffmpeg_audio_decoder();
-    // 查看pcm,yuv文件的信息
+    //查看pcm,yuv文件的信息
 //    crazydiode_video_devoder();
 //    crazydiode_audio_devoder();
 //    pcm2aac();
@@ -153,7 +157,9 @@ int main(int argc, char *argv[]) {
 //    separate_media_to_yuv_and_aac();
 //    simplest_yuv420p_split("/root/视频/lena_256x256_yuv420p.yuv", 256, 256, 1);
 //    audio_recorder("/root/音乐/myrecorder.pcm");
-    alexander_video_player_sdl2();
+//    alexander_video_player_sdl2();
+//    alexander_decode_video_to_yuv();
+    alexander_playback_yuv();
 
     /*glutInit(&argc,argv);
     //显示模式初始化

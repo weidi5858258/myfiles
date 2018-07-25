@@ -90,7 +90,7 @@ extern "C" {// 不能少
 */
 #define NEED_VIDEO 1
 #define NEED_AUDIO 1
-#define OUTPUT_YUV420P 1
+#define OUTPUT_YUV420P 0
 #define OUTPUT_PCM 1
 #define OUTPUT_IMAGE 0
 
@@ -108,6 +108,8 @@ extern "C" {// 不能少
 #define BREAK_EVENT    (SDL_USEREVENT + 2)
 
 #define ALSA_PCM_NEW_HW_PARAMS_API
+
+#define AV_DUMP_FORMAT 1
 
 using namespace std;
 
