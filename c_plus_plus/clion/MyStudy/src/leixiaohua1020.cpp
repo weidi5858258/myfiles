@@ -27,8 +27,9 @@ int audio_stream_index = -1;
 int thread_pause_flag = 0;
 int thread_exit_flag = 0;
 
-char *in_file_path = "/root/视频/yuv/480_272_bigbuckbunny.yuv";
-char *out_file_path = "/root/视频/yuv/haoke.yuv";
+//char *in_file_path = "/root/视频/haoke.avi";
+char *in_file_path = "/root/视频/yuv/240_240_yuv420p.yuv";
+char *out_file_path = "/root/视频/yuv/720_576_haoke.yuv";
 
 FILE *in_file = NULL;
 FILE *out_file = NULL;
@@ -44,11 +45,11 @@ int src_video_width = 0, src_video_height = 0, src_video_area = 0;
 int playback_window_w = 0, playback_window_h = 0;
 AVCodecContext *video_avcodec_context = NULL;
 AVCodecParameters *video_avcodec_parameters = NULL;
-//src_avframe保存原始帧 dst_avframe转换成yuv后的帧保存在此处
-AVFrame *src_video_avframe = NULL, *dst_video_avframe = NULL;
 //Decoder Encoder
 AVCodec *video_avcodec_decoder = NULL, *video_avcodec_encoder = NULL;
-// 先自己申请空间,然后为初始化video_dst_avframe而服务
+//src_avframe保存原始帧 dst_avframe转换成yuv后的帧保存在此处
+AVFrame *src_video_avframe = NULL, *dst_video_avframe = NULL;
+//先自己申请空间,然后为初始化video_dst_avframe而服务
 unsigned char *video_out_buffer = NULL;
 uint8_t *video_out_buffer2 = NULL;
 int video_out_buffer_size = 0, video_frame_count = 0;
@@ -328,7 +329,8 @@ int create_video_sws_context() {
                          1);
     video_sws_context = sws_getContext(src_video_width, src_video_height, src_avpixel_format,
                                        src_video_width, src_video_height, dst_avpixel_format,
-                                       SWS_BICUBIC, NULL, NULL, NULL);
+                                       SWS_BICUBIC,//flags
+                                       NULL, NULL, NULL);
     if (video_sws_context == NULL) {
         printf("%s\n", "");
         return -1;
@@ -428,7 +430,6 @@ int alexander_refresh_video_thread(void *opaque) {
  无声电影
  */
 int alexander_video_player_sdl2() {
-
     init_av();
 
     if (avformat_open_and_find() < 0) {
@@ -512,6 +513,7 @@ void *alexander_decode_video_thread(void *) {
                 break;
             }
             if (got_picture_ptr) {
+                //像素格式转换,改变大小(放大或缩小)
                 sws_scale(video_sws_context,
                           (const unsigned char *const *) src_video_avframe, src_video_avframe->linesize,
                           0, src_video_height, dst_video_avframe->data, dst_video_avframe->linesize);
@@ -845,6 +847,118 @@ int alexander_use_libavcodec_decode_to_yuv() {
     printf("Decoder: Succeed to decode %d frame.\n", video_frame_count);
 
     close();
+
+    return 0;
+}
+
+/***
+ 播放窗口大小改变
+ */
+int alexander_how_to_use_sws_scale() {
+    const char *srcFileName = "/root/视频/yuv/480_272_yuv420p.yuv";
+    const char *dstFileName = "/root/视频/yuv/240_240_yuv420p.yuv";
+
+    struct SwsContext *img_convert_ctx = nullptr;
+
+    // 設定原始 YUV 的長寬
+    const int in_width = 480;
+    const int in_height = 272;
+
+    // 設定目的 YUV 的長寬
+    const int out_width = 240;
+    const int out_height = 240;
+
+    const int read_size = in_width * in_height * 3 / 2;
+    const int write_size = out_width * out_height * 3 / 2;
+
+    //用于保存yuv的各个分量的数据
+    uint8_t *inbuf[4];
+    uint8_t *outbuf[4];
+
+    //不知道为什么要这样定义
+    int inlinesize[4] = {in_width, in_width / 2, in_width / 2, 0};
+    int outlinesize[4] = {out_width, out_width / 2, out_width / 2, 0};
+
+    uint8_t *ptr_src_yuv_buf = nullptr;
+    uint8_t *ptr_dst_yuv_buf = nullptr;
+    ptr_src_yuv_buf = new uint8_t[read_size];
+    ptr_dst_yuv_buf = new uint8_t[write_size];
+
+    FILE *fin = fopen(srcFileName, "rb");
+    FILE *fout = fopen(dstFileName, "wb");
+
+    if (fin == NULL) {
+        fprintf(stderr, "open input file %s error.\n", srcFileName);
+        return -1;
+    }
+
+    if (fout == NULL) {
+        fprintf(stderr, "open output file %s error.\n", dstFileName);
+        return -1;
+    }
+
+    //保存多少数据就申请多少空间
+    inbuf[0] = (uint8_t *) malloc(in_width * in_height);
+    inbuf[1] = (uint8_t *) malloc(in_width * in_height >> 2);//in_width * in_height / 4
+    inbuf[2] = (uint8_t *) malloc(in_width * in_height >> 2);
+    inbuf[3] = NULL;
+
+    outbuf[0] = (uint8_t *) malloc(out_width * out_height);
+    //向右移动2位,就是除以4(2的2次方)；向右移动3位,就是除以8(2的3次方)；
+    //向左移动2位,就是乘以4(2的2次方)；向左移动3位,就是乘以8(2的3次方)；
+    outbuf[1] = (uint8_t *) malloc(out_width * out_height >> 2);
+    outbuf[2] = (uint8_t *) malloc(out_width * out_height >> 2);
+    outbuf[3] = NULL;
+
+    // ********* Initialize software scaling *********
+    // ********* sws_getContext **********************
+    img_convert_ctx = sws_getContext(in_width, in_height, AV_PIX_FMT_YUV420P,
+                                     out_width, out_height, AV_PIX_FMT_YUV420P,
+                                     SWS_POINT,
+                                     nullptr, nullptr, nullptr);
+    if (img_convert_ctx == NULL) {
+        fprintf(stderr, "Cannot initialize the conversion context!\n");
+        return -1;
+    }
+
+    int32_t in_y_size = in_width * in_height;
+    int32_t out_y_size = out_width * out_height;
+
+    bool bExit = false;
+    while (!bExit) {
+
+        if ((fread(ptr_src_yuv_buf, 1, read_size, fin) < 0) || (feof(fin))) {
+            bExit = true;
+            break;
+        }
+
+        memcpy(inbuf[0], ptr_src_yuv_buf, in_y_size);
+        memcpy(inbuf[1], ptr_src_yuv_buf + in_y_size, in_y_size / 4);
+        memcpy(inbuf[2], ptr_src_yuv_buf + in_y_size * 5 / 4, in_y_size / 4);
+
+        // ********* 主要的 function ******
+        // ********* sws_scale ************
+        sws_scale(img_convert_ctx, inbuf, inlinesize,
+                  0, in_height, outbuf, outlinesize);
+
+        memcpy(ptr_dst_yuv_buf, outbuf[0], out_y_size);
+        memcpy(ptr_dst_yuv_buf + out_y_size, outbuf[1], out_y_size >> 2);
+        memcpy(ptr_dst_yuv_buf + (out_y_size * 5 >> 2), outbuf[2], out_y_size >> 2);
+
+        fwrite(ptr_dst_yuv_buf, 1, write_size, fout);
+    }
+    // ********* 結束的 function *******
+    // ********* sws_freeContext *******
+    sws_freeContext(img_convert_ctx);
+
+    fclose(fin);
+    fclose(fout);
+
+    delete[] ptr_src_yuv_buf;
+    ptr_src_yuv_buf = nullptr;
+
+    delete[] ptr_dst_yuv_buf;
+    ptr_dst_yuv_buf = nullptr;
 
     return 0;
 }

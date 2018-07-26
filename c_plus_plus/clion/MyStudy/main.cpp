@@ -122,6 +122,8 @@ int alexander_playback_yuv();
 
 int alexander_use_libavcodec_decode_to_yuv();
 
+int alexander_how_to_use_sws_scale();
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -162,7 +164,8 @@ int main(int argc, char *argv[]) {
 //    alexander_video_player_sdl2();
 //    alexander_decode_video_to_yuv();
 //    alexander_playback_yuv();
-    alexander_use_libavcodec_decode_to_yuv();
+//    alexander_use_libavcodec_decode_to_yuv();
+    alexander_how_to_use_sws_scale();
 
     /*glutInit(&argc,argv);
     //显示模式初始化
