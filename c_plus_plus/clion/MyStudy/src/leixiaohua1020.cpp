@@ -9,12 +9,17 @@
 
 ///////////////////////////公共变量///////////////////////////
 
+enum AVCodecID avcodec_id = AV_CODEC_ID_NONE;
 //格式上下结构体，,可以理解为存储数据流的文件，伴随整个生命周期
 AVFormatContext *avformat_context = NULL;
 
 //AVPacket结构体的作用是从内存中获取一个视频压缩帧,对于音频可能获取一个或者多个压缩帧.
 AVPacket *avpacket = NULL;
 AVFrame *avframe = NULL;
+//用于解析输入的数据流并把它分成一帧一帧的压缩编码数据。
+//比较形象的说法就是把长长的一段连续的数据“切割”成一段段的数据。
+//他的核心函数是av_parser_parse2()。
+AVCodecParserContext *avcodec_parser_context = NULL;
 
 int video_stream_index = -1;
 int audio_stream_index = -1;
@@ -22,8 +27,8 @@ int audio_stream_index = -1;
 int thread_pause_flag = 0;
 int thread_exit_flag = 0;
 
-const char *in_file_path = "/root/视频/720_576_yuv420p_haoke.yuv";
-const char *out_file_path = "/root/视频/haoke.yuv";
+char *in_file_path = "/root/视频/yuv/480_272_bigbuckbunny.yuv";
+char *out_file_path = "/root/视频/yuv/haoke.yuv";
 
 FILE *in_file = NULL;
 FILE *out_file = NULL;
@@ -46,7 +51,6 @@ AVCodec *video_avcodec_decoder = NULL, *video_avcodec_encoder = NULL;
 // 先自己申请空间,然后为初始化video_dst_avframe而服务
 unsigned char *video_out_buffer = NULL;
 uint8_t *video_out_buffer2 = NULL;
-
 int video_out_buffer_size = 0, video_frame_count = 0;
 //像素格式
 enum AVPixelFormat src_avpixel_format = AV_PIX_FMT_NONE;
@@ -63,7 +67,7 @@ AVFrame *src_audio_avframe = NULL, *dst_audio_avframe = NULL;
 AVCodec *audio_avcodec_decoder = NULL, *audio_avcodec_encoder = NULL;
 unsigned char *audio_out_buffer = NULL;
 uint8_t *audio_out_buffer2 = NULL;
-int audio_out_buffer_size = 0;
+int audio_out_buffer_size = 0, audio_frame_count = 0;
 //采样格式
 enum AVSampleFormat src_avsample_format = AV_SAMPLE_FMT_NONE;
 enum AVSampleFormat dst_avsample_format = AV_SAMPLE_FMT_S16;
@@ -103,7 +107,8 @@ void init_sdl() {
         return;
     }
 
-    char *file_name;
+    //得到文件名
+    /*char *file_name = NULL;
     char temp_file_path[1024];
     strncpy(temp_file_path, in_file_path, strlen(in_file_path));
     strncpy(temp_file_path, temp_file_path + 1, strlen(temp_file_path));
@@ -115,7 +120,7 @@ void init_sdl() {
             break;
         }
     }
-    printf("file_name: %s\n", file_name);
+    printf("file_name: %s\n", file_name);*/
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
         printf("Could not initialize SDL - %s\n", SDL_GetError());
@@ -286,6 +291,21 @@ int open_video_avcodec_decoder() {
     }
 }
 
+int open_audio_avcodec_decoder() {
+    if (audio_stream_index != -1) {
+        audio_avcodec_context = avformat_context->streams[audio_stream_index]->codec;
+        audio_avcodec_decoder = avcodec_find_decoder(audio_avcodec_context->codec_id);
+    }
+    if (audio_avcodec_decoder == NULL) {
+        printf("Codec not found.\n");
+        return -1;
+    }
+    if (avcodec_open2(audio_avcodec_context, audio_avcodec_decoder, NULL) < 0) {
+        printf("Could not open codec.\n");
+        return -1;
+    }
+}
+
 int create_video_sws_context() {
     src_video_width = video_avcodec_context->width;
     src_video_height = video_avcodec_context->height;
@@ -294,6 +314,7 @@ int create_video_sws_context() {
     src_video_avframe = av_frame_alloc();
     dst_video_avframe = av_frame_alloc();
     avpacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+    av_init_packet(avpacket);
 
     int image_get_buffer_size = av_image_get_buffer_size(dst_avpixel_format,
                                                          src_video_width,
@@ -358,8 +379,13 @@ int open_files() {
         printf("%s\n", "输出文件打开有问题");
         return -1;
     }
+#else
+    out_file = fopen(out_file_path, "wb+");
+    if (out_file == NULL) {
+        printf("%s\n", "输出文件打开有问题");
+        return -1;
+    }
 #endif
-
     in_file = fopen(in_file_path, "rb+");
     if (in_file == NULL) {
         printf("%s\n", "输入文件打开有问题");
@@ -574,8 +600,36 @@ int alexander_decode_video_to_yuv() {
 }
 
 int alexander_playback_yuv() {
-    src_video_width = 720;
-    src_video_height = 576;
+    char *pc = NULL;
+    char *temp_file_path = NULL;
+    char temp_path[strlen(in_file_path)];
+    memset(temp_path, 0, strlen(in_file_path));
+    strncpy(temp_path, in_file_path + 1, strlen(in_file_path) - 1);
+    printf("temp_path: %s\n", temp_path);
+    pc = strtok(temp_path, "/");
+    while (pc != NULL) {
+        if (strstr(pc, ".yuv") != NULL || strstr(pc, ".rgb") != NULL) {
+            temp_file_path = pc;
+            printf("in_file_name: %s\n", temp_file_path);
+            break;
+        }
+        pc = strtok(NULL, "/");
+    }
+    pc = strtok(temp_file_path, "_");
+    int i = 0;
+    while (pc != NULL) {
+        if (i == 0) {
+            src_video_width = atoi(pc);
+        } else if (i == 1) {
+            src_video_height = atoi(pc);
+        } else {
+            break;
+        }
+        i++;
+        pc = strtok(NULL, "_");
+    }
+    printf("src_video_width: %d, src_video_height: %d\n", src_video_width, src_video_height);
+
     init_sdl();
     if (sdl_thread == NULL) {
         printf("%s\n", "sdl_thread is NULL.");
@@ -622,6 +676,181 @@ int alexander_playback_yuv() {
     close();
 
     return 0;
+}
+
+/***
+ 只使用到libavcodec库
+ 一个“纯净”的解码器，理论上说只需要使用libavcodec就足够了，并不需要使用libavformat。
+ 一个“纯净”的解码器，它仅仅通过调用libavcodec将H.264/HEVC等格式的压缩视频码流解码成为YUV数据。
+ 此解码器的输入必须是只包含视频编码数据“裸流”（例如H.264、HEVC码流文件）,
+ 而不能是包含封装格式的媒体数据（例如AVI、MKV、MP4）。
+ */
+int alexander_use_libavcodec_decode_to_yuv() {
+    //error
+//    memset(in_file_path, 0, strlen(in_file_path));
+//    memset(out_file_path, 0, strlen(out_file_path));
+
+#define TEST_HEVC 0
+#define TEST_H264 0
+
+#if TEST_HEVC
+    //HEVC
+    avcodec_id = AV_CODEC_ID_HEVC;
+    in_file_path = "/root/视频/bigbuckbunny_480x272.hevc";
+#elif TEST_H264
+    //H.264
+    avcodec_id = AV_CODEC_ID_H264;
+    in_file_path = "/root/视频/bigbuckbunny_480x272.h264";
+#else
+    //MPEG2
+    avcodec_id = AV_CODEC_ID_MPEG2VIDEO;
+    in_file_path = "/root/视频/bigbuckbunny_480x272.m2v";
+#endif
+    out_file_path = "/root/视频/yuv/480_272_bigbuckbunny.yuv";
+
+    uint8_t out_buffer[INBUF_SIZE + AV_INPUT_BUFFER_PADDING_SIZE] = {0};
+    int first_time = 1;
+
+    avcodec_register_all();
+    //解码特定的格式(根据格式找到解码器,大多数视频的解码器是能找到的,编码器就比较少了)
+    video_avcodec_decoder = avcodec_find_decoder(avcodec_id);
+    if (!video_avcodec_decoder) {
+        printf("%s\n", "video_avcodec_decoder is NULL.");
+        return -1;
+    }
+    video_avcodec_context = avcodec_alloc_context3(video_avcodec_decoder);
+    if (!video_avcodec_context) {
+        printf("%s\n", "video_avcodec_context is NULL.");
+        return -1;
+    }
+    if (avcodec_open2(video_avcodec_context, video_avcodec_decoder, NULL) < 0) {
+        printf("%s\n", "avcodec_open2 failure");
+        return -1;
+    }
+
+    avcodec_parser_context = av_parser_init(avcodec_id);
+    if (!avcodec_parser_context) {
+        printf("%s\n", "avcodec_parser_context is NULL.");
+        return -1;
+    }
+
+    if (open_files() < 0) {
+        return -1;
+    }
+
+    avframe = av_frame_alloc();
+    avpacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+    av_init_packet(avpacket);
+
+    while (1) {
+        video_out_buffer_size = fread(out_buffer, 1, INBUF_SIZE, in_file);
+        printf("video_out_buffer_size = %d\n", video_out_buffer_size);
+        if (!video_out_buffer_size) {
+            break;
+        }
+        video_out_buffer2 = out_buffer;
+        while (video_out_buffer_size > 0) {
+            /***
+             其中poutbuf指向解析后输出的压缩编码数据帧，buf指向输入的压缩编码数据。
+             如果函数执行完后输出数据为空（poutbuf_size为0），则代表解析还没有完成，
+             还需要再次调用av_parser_parse2()解析一部分数据才可以得到解析后的数据帧。
+             当函数执行完后输出数据不为空的时候，代表解析完成，可以将poutbuf中的这帧数据取出来做后续处理。
+             */
+            int len = av_parser_parse2(avcodec_parser_context, video_avcodec_context,
+                                       &(avpacket->data), &(avpacket->size),
+                                       video_out_buffer2, video_out_buffer_size,
+                                       AV_NOPTS_VALUE, AV_NOPTS_VALUE, AV_NOPTS_VALUE);
+
+            printf("len: %6d\n", len);
+            printf("avpacket->size: %6d\n", avpacket->size);
+            video_out_buffer2 += len;
+            video_out_buffer_size -= len;
+            if (!avpacket->size) {
+                //继续解析
+                continue;
+            }
+            switch (avcodec_parser_context->pict_type) {
+                case AV_PICTURE_TYPE_I:
+                    printf("Type:\tI帧\t");
+                    break;
+                case AV_PICTURE_TYPE_P:
+                    printf("Type:\tP帧\t");
+                    break;
+                case AV_PICTURE_TYPE_B:
+                    printf("Type:\tB帧\t");
+                    break;
+                default:
+                    printf("Type:Other\t");
+                    break;
+            }
+            printf("Number:\t%d\n", avcodec_parser_context->output_picture_number);
+
+            ret = avcodec_decode_video2(video_avcodec_context, avframe, &got_picture_ptr, avpacket);
+            if (ret < 0) {
+                printf("Decode Error.\n");
+                return ret;
+            }
+            if (got_picture_ptr) {
+                if (first_time) {
+                    //解码一帧成功后才能得到某些信息
+                    printf("\nCodec Full Name: %s\n", video_avcodec_context->codec->long_name);
+                    printf("width: %d\nheight: %d\n\n", video_avcodec_context->width, video_avcodec_context->height);
+                    first_time = 0;
+                }
+
+                //Y U V
+                int i;
+                for (i = 0; i < avframe->height; i++) {
+                    fwrite(avframe->data[0] + avframe->linesize[0] * i, 1, avframe->width, out_file);
+                }
+                for (i = 0; i < avframe->height / 2; i++) {
+                    fwrite(avframe->data[1] + avframe->linesize[1] * i, 1, avframe->width / 2, out_file);
+                }
+                for (i = 0; i < avframe->height / 2; i++) {
+                    fwrite(avframe->data[2] + avframe->linesize[2] * i, 1, avframe->width / 2, out_file);
+                }
+
+                video_frame_count++;
+            }
+        }//while end
+    }//while end
+
+    //Flush Decoder
+    avpacket->data = NULL;
+    avpacket->size = 0;
+    while (1) {
+        ret = avcodec_decode_video2(video_avcodec_context, avframe, &got_picture_ptr, avpacket);
+        if (ret < 0) {
+            printf("Decode Error.\n");
+            return ret;
+        }
+        if (!got_picture_ptr) {
+            break;
+        }
+
+        //Y, U, V
+        for (int i = 0; i < avframe->height; i++) {
+            fwrite(avframe->data[0] + avframe->linesize[0] * i, 1, avframe->width, out_file);
+        }
+        for (int i = 0; i < avframe->height / 2; i++) {
+            fwrite(avframe->data[1] + avframe->linesize[1] * i, 1, avframe->width / 2, out_file);
+        }
+        for (int i = 0; i < avframe->height / 2; i++) {
+            fwrite(avframe->data[2] + avframe->linesize[2] * i, 1, avframe->width / 2, out_file);
+        }
+
+        video_frame_count++;
+    }//while end
+
+    printf("Decoder: Succeed to decode %d frame.\n", video_frame_count);
+
+    close();
+
+    return 0;
+}
+
+void test(char) {
+
 }
 
 

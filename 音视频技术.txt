@@ -707,7 +707,9 @@ data[i+1] = (char)((sample_buffer_L[j]>>8) & 0xff);;//左声道高8位
 data[i+2] = (char)(sample_buffer_R[j] & 0xff);//右声道低8位
 data[i+3] = (char)((sample_buffer_R[j]>>8) & 0xff);;//右声道高8位
 
+问题:
 哪些封装格式的视频需要写文件头,哪些不需要.
+音频封装格式解码为pcm时,是不是只能改变采样格式,其他的如采样率,比特率,声道数都不能改变?
 
 ./configure \
 --enable-libx264 \
@@ -841,7 +843,9 @@ uint8_t  fwrite(...)
 发现错误，重新修改程序，就能得到数据了。
 
 
-
+Stream #0:0: Video: h264 (High), yuv420p(progressive), 480x272, 25 fps, 25 tbr, 1200k tbn, 50 tbc
+Stream #0:0: Video: hevc (Main), yuv420p(tv), 480x272, 25 fps, 25 tbr, 1200k tbn, 25 tbc
+Stream #0:0: Video: mpeg2video (Main), yuv420p(tv, progressive), 480x272 [SAR 1:1 DAR 30:17], 25 fps, 25 tbr, 1200k tbn, 50 tbc
 
 
 

@@ -30,6 +30,7 @@ void print_file_audio_info(AVFormatContext *avformat_context, AVCodecContext *au
     printf("\n");
     printf("Complete name：         \t%s\n", avformat_context->filename);
     printf("Format long name：     \t%s\n", avformat_context->iformat->long_name);
+    printf("Codec long name：     \t%s\n", audio_avcodec_context->codec->long_name);
     printf("Format：             \t%s\n", avformat_context->iformat->name);
     int duration = (avformat_context->duration) / 1000000L;
     int hour = duration / 3600;//小时

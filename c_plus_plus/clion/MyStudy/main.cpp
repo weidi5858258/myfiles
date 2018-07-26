@@ -120,6 +120,8 @@ int alexander_decode_video_to_yuv();
 
 int alexander_playback_yuv();
 
+int alexander_use_libavcodec_decode_to_yuv();
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -159,7 +161,8 @@ int main(int argc, char *argv[]) {
 //    audio_recorder("/root/音乐/myrecorder.pcm");
 //    alexander_video_player_sdl2();
 //    alexander_decode_video_to_yuv();
-    alexander_playback_yuv();
+//    alexander_playback_yuv();
+    alexander_use_libavcodec_decode_to_yuv();
 
     /*glutInit(&argc,argv);
     //显示模式初始化
