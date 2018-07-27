@@ -44,7 +44,10 @@ extern "C" {// 不能少
 #include <libavutil/audio_fifo.h>
 #include <libavutil/imgutils.h>
 #include <libavutil/avutil.h>
+#include <libavutil/avassert.h>
 #include <libavutil/frame.h>
+#include <libavutil/hwcontext.h>
+#include <libavutil/pixdesc.h>
 #include <libavutil/pixfmt.h>
 #include <libavutil/fifo.h>
 #include <libavutil/opt.h>

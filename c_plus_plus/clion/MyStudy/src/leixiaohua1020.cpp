@@ -753,6 +753,7 @@ int alexander_use_libavcodec_decode_to_yuv() {
         video_out_buffer2 = out_buffer;
         while (video_out_buffer_size > 0) {
             /***
+             使用AVCodecParser从输入的数据流中分离出一帧一帧的压缩编码数据。
              其中poutbuf指向解析后输出的压缩编码数据帧，buf指向输入的压缩编码数据。
              如果函数执行完后输出数据为空（poutbuf_size为0），则代表解析还没有完成，
              还需要再次调用av_parser_parse2()解析一部分数据才可以得到解析后的数据帧。
@@ -795,6 +796,8 @@ int alexander_use_libavcodec_decode_to_yuv() {
             if (got_picture_ptr) {
                 if (first_time) {
                     //解码一帧成功后才能得到某些信息
+                    //纯净”的解码器中，可以通过avcodec_decode_video2()获得这些信息。
+                    //因此我们只有在成功解码第一帧之后，才能通过读取相应的字段获取到这些信息。
                     printf("\nCodec Full Name: %s\n", video_avcodec_context->codec->long_name);
                     printf("width: %d\nheight: %d\n\n", video_avcodec_context->width, video_avcodec_context->height);
                     first_time = 0;

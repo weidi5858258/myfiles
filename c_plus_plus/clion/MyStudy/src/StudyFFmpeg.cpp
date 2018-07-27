@@ -2930,7 +2930,7 @@ int flush_encoder(AVFormatContext *fmt_ctx, unsigned int stream_index) {
 
 /***
  pcm ---> aac
- 不成功
+ 成功
  */
 int pcm2aac() {
     AVFormatContext *pFormatCtx;
@@ -2952,7 +2952,7 @@ int pcm2aac() {
     const char *out_file = "/root/音乐/tdjm.aac";          //Output URL
     int i;
 
-    in_file = fopen("/root/音乐/tdjm.pcm", "rb");
+    in_file = fopen("/root/音乐/pcm/tdjm.pcm", "rb");
 
     av_register_all();
 
@@ -2987,8 +2987,8 @@ int pcm2aac() {
     //Show some information
 //    av_dump_format(pFormatCtx, 0, out_file, 1);
 
-    pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
-//    pCodec = avcodec_find_encoder(AV_CODEC_ID_AAC);
+//    pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
+    pCodec = avcodec_find_encoder_by_name("libfdk_aac");
     if (!pCodec) {
         printf("Can not find encoder!\n");
         return -1;

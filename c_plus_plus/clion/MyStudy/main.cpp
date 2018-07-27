@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
     //查看pcm,yuv文件的信息
 //    crazydiode_video_devoder();
 //    crazydiode_audio_devoder();
-//    pcm2aac();
+    pcm2aac();
 //    pcm2aac("/root/音乐/output.pcm", "/root/音乐/output.aac");
 //    simplest_ffmpeg_audio_encoder_pure();
 //    decode_audio_main("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm");
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 //    alexander_decode_video_to_yuv();
 //    alexander_playback_yuv();
 //    alexander_use_libavcodec_decode_to_yuv();
-    alexander_how_to_use_sws_scale();
+//    alexander_how_to_use_sws_scale();
 
     /*glutInit(&argc,argv);
     //显示模式初始化
