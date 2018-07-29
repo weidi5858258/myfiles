@@ -7,6 +7,15 @@
 
 #include "../include/MyHead.h"
 
+//Bit per Pixel
+#if LOAD_BGRA
+const int bpp = 32;
+#elif LOAD_RGB24 | LOAD_BGR24
+const int bpp = 24;
+#elif LOAD_YUV420P
+const int bpp = 12;
+#endif
+
 //Convert RGB24/BGR24 to RGB32/BGR32
 //And change Endian if needed
 void convert_24to32(unsigned char *image_in, unsigned char *image_out, int pixel_w, int pixel_h) {
@@ -51,14 +60,17 @@ int refresh_video(void *opaque) {
 }
 
 /***
- 文件名命名规则:
- 320_180_bgra.rgb       AV_PIX_FMT_BGRA
- 640_480_rgb24.rgb      AV_PIX_FMT_RGB24
- 320_180_bgr24.rgb      AV_PIX_FMT_BGR24
- 480_272_yuv420p.yuv    AV_PIX_FMT_YUV420P
+ * 文件名命名规则:
+ * 320_180_bgra.rgb
+ * 640_480_rgb24.rgb
+ * 320_180_bgr24.rgb
+ * 480_272_yuv420p.yuv
  */
-int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path) {
-    if (in_file_path == NULL) {
+int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path,
+                                                   int playback_window_w,
+                                                   int playback_window_h) {
+    // int playback_window_w = 500, playback_window_h = 500;
+    if (in_file_path == NULL || playback_window_w <= 0 || playback_window_h <= 0) {
         printf("%s\n", "");
         return -1;
     }
@@ -103,43 +115,8 @@ int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path) {
         return -1;
     }
 
-//set '1' to choose a type of file to play
-#define LOAD_BGRA    0
-#define LOAD_RGB24   0
-#define LOAD_BGR24   0
-#define LOAD_YUV420P 0
-//下面两个还没有验证
-#define LOAD_YUV422P 0
-#define LOAD_YUV444P 1
 
-    //Bit per Pixel
-    int src_video_bpp = 0;
-    Uint32 sdl_pix_fmt = 0;
-#if LOAD_BGRA
-    //Note: ARGB8888 in "Little Endian" system stores as B|G|R|A
-    src_video_bpp = 32;
-    sdl_pix_fmt = SDL_PIXELFORMAT_ARGB8888;
-#elif LOAD_RGB24
-    src_video_bpp = 24;
-    sdl_pix_fmt= SDL_PIXELFORMAT_RGB888;
-#elif LOAD_BGR24
-    src_video_bpp = 24;
-    sdl_pix_fmt = SDL_PIXELFORMAT_BGR888;
-#elif LOAD_YUV420P
-    src_video_bpp = av_get_bits_per_pixel(av_pix_fmt_desc_get(AV_PIX_FMT_YUV420P));
-    //YV12: Y + V + U  (3 planes)
-    //IYUV: Y + U + V  (3 planes)
-    sdl_pix_fmt = SDL_PIXELFORMAT_IYUV;
-#elif LOAD_YUV422P
-    src_video_bpp = av_get_bits_per_pixel(av_pix_fmt_desc_get(AV_PIX_FMT_YUV422P));
-    sdl_pix_fmt = SDL_PIXELFORMAT_IYUV;
-#elif LOAD_YUV444P
-    src_video_bpp = av_get_bits_per_pixel(av_pix_fmt_desc_get(AV_PIX_FMT_YUV444P));
-    sdl_pix_fmt = SDL_PIXELFORMAT_IYUV;
-#endif
-
-    printf("src_video_bpp = %d\n", src_video_bpp);
-    const int data_buffer_size = pixel_w * pixel_h * src_video_bpp / 8;
+    const int data_buffer_size = pixel_w * pixel_h * bpp / 8;
     //总的倍数除以8就是byte数
     unsigned char data_buffer[data_buffer_size];
     //BPP=32
@@ -153,9 +130,9 @@ int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path) {
         return -1;
     }
     //SDL 2.0 Support for multiple windows
-    sdl_window = SDL_CreateWindow(temp_path,
+    sdl_window = SDL_CreateWindow("Simplest Video Play SDL2",
                                   SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                  pixel_w, pixel_h,
+                                  playback_window_w, playback_window_h,
                                   SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!sdl_window) {
         printf("SDL: could not create window - exiting:%s\n", SDL_GetError());
@@ -164,10 +141,22 @@ int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path) {
 
     sdl_renderer = SDL_CreateRenderer(sdl_window, -1, 0);
 
-    sdl_texture = SDL_CreateTexture(sdl_renderer,
-                                    sdl_pix_fmt,
-                                    SDL_TEXTUREACCESS_STREAMING,
-                                    pixel_w, pixel_h);
+    Uint32 sdl_pix_fmt = 0;
+#if LOAD_BGRA
+    //Note: ARGB8888 in "Little Endian" system stores as B|G|R|A
+    sdl_pix_fmt = SDL_PIXELFORMAT_ARGB8888;
+#elif LOAD_RGB24
+    sdl_pix_fmt= SDL_PIXELFORMAT_RGB888;
+#elif LOAD_BGR24
+    sdl_pix_fmt = SDL_PIXELFORMAT_BGR888;
+#elif LOAD_YUV420P
+    //IYUV: Y + U + V  (3 planes)
+    //YV12: Y + V + U  (3 planes)
+    sdl_pix_fmt = SDL_PIXELFORMAT_IYUV;
+#endif
+
+    sdl_texture = SDL_CreateTexture(sdl_renderer, sdl_pix_fmt,
+                                    SDL_TEXTUREACCESS_STREAMING, pixel_w, pixel_h);
     //SDL_Thread *refresh_thread = SDL_CreateThread(refresh_video, NULL, NULL);
     SDL_CreateThread(refresh_video, NULL, NULL);
 
@@ -188,24 +177,19 @@ int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path) {
             //Because input BGRA pixel data(B|G|R|A) is same as ARGB8888 in Little Endian (B|G|R|A)
             SDL_UpdateTexture(sdl_texture, NULL, data_buffer, pixel_w * 4);
 #elif LOAD_RGB24 | LOAD_BGR24
-            //为什么要从24位转化到32位
-            //change 24 bit to 32 bit and in Windows we need to change Endian
+            //change 24bit to 32 bit
+            //and in Windows we need to change Endian
             convert_24to32(data_buffer, data_buffer_convert, pixel_w, pixel_h);
             SDL_UpdateTexture(sdl_texture, NULL, data_buffer_convert, pixel_w * 4);
 #elif LOAD_YUV420P
             SDL_UpdateTexture(sdl_texture, NULL, data_buffer, pixel_w);
-#elif LOAD_YUV422P
-            SDL_UpdateTexture(sdl_texture, NULL, data_buffer, pixel_w);
-#elif LOAD_YUV444P
-            //convert_24to32(data_buffer, data_buffer_convert, pixel_w, pixel_h);
-            SDL_UpdateTexture(sdl_texture, NULL, data_buffer, pixel_w * 4);
 #endif
 
             //FIX: If window is resize
             sdl_rect.x = 0;
             sdl_rect.y = 0;
-            sdl_rect.w = pixel_w;
-            sdl_rect.h = pixel_h;
+            sdl_rect.w = playback_window_w;
+            sdl_rect.h = playback_window_h;
 
             SDL_RenderClear(sdl_renderer);
             SDL_RenderCopy(sdl_renderer, sdl_texture, NULL, &sdl_rect);
@@ -213,7 +197,7 @@ int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path) {
         } else if (event.type == SDL_WINDOWEVENT) {
             //printf("SDL_WINDOWEVENT\n");
             //If Resize
-            SDL_GetWindowSize(sdl_window, &pixel_w, &pixel_h);
+            SDL_GetWindowSize(sdl_window, &playback_window_w, &playback_window_h);
         } else if (event.type == SDL_QUIT) {
             printf("SDL_QUIT\n");
             thread_exit = 1;

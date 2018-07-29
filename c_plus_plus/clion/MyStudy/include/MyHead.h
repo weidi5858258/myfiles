@@ -11,6 +11,7 @@
 //#include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -47,6 +48,7 @@ extern "C" {// 不能少
 #include <libavutil/avassert.h>
 #include <libavutil/frame.h>
 #include <libavutil/hwcontext.h>
+#include <libavutil/parseutils.h>
 #include <libavutil/pixdesc.h>
 #include <libavutil/pixfmt.h>
 #include <libavutil/fifo.h>
@@ -99,12 +101,6 @@ extern "C" {// 不能少
 
 #define NEED_TO_DECODER 1
 
-//set '1' to choose a type of file to play
-#define LOAD_BGRA    0
-#define LOAD_RGB24   0
-#define LOAD_BGR24   0
-#define LOAD_YUV420P 1
-
 //Refresh Event
 #define REFRESH_EVENT  (SDL_USEREVENT + 1)
 //Break
@@ -117,8 +113,6 @@ extern "C" {// 不能少
 using namespace std;
 
 #include "Test.h"
-
-
 
 
 #endif //MYSTUDY_MYHEAD_H

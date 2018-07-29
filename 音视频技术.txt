@@ -848,7 +848,27 @@ Stream #0:0: Video: hevc (Main), yuv420p(tv), 480x272, 25 fps, 25 tbr, 1200k tbn
 Stream #0:0: Video: mpeg2video (Main), yuv420p(tv, progressive), 480x272 [SAR 1:1 DAR 30:17], 25 fps, 25 tbr, 1200k tbn, 50 tbc
 
 
+struct FormatCtx {
+  inline FormatCtx(const char* filename)
+  : ctx_(avformat_alloc_context()) {
+    av_init_packet(&p);
+    if (avformat_open_input(&ctx_, filename, 0, 0) < 0)
+      abort();
+    if (avformat_find_stream_info(ctx_, 0) < 0)
+      abort();
+  }
 
+  inline ~FormatCtx() {
+    av_free_packet(&p);
+  }
+
+  inline bool read() {
+    return av_read_frame(ctx_, &p) >= 0;
+  }
+
+  AVFormatContext* ctx_;
+  AVPacket p;
+} formatCtx_;
 
 
 

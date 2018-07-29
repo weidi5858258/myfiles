@@ -20,7 +20,7 @@ static Uint8 *audio_chunk;
 static Uint32 audio_len;
 static Uint8 *audio_pos;
 
-void fill_audio(void *udata, Uint8 *stream, int len);
+void alexander_fill_audio(void *udata, Uint8 *stream, int len);
 
 void print_file_audio_info(AVFormatContext *avformat_context, AVCodecContext *audio_avcodec_context,
                            int in_sample_fmt, int audio_stream_index) {
@@ -99,7 +99,7 @@ void print_file_audio_info(AVFormatContext *avformat_context, AVCodecContext *au
     printf("Compile information： \t%s\n", avcodec_configuration());
     printf("\n");
     /*puts("FFMPEG支持的所有输入文件格式：");
-    AVInputFormat *pInputFormat = avformat_context->iformat;
+    AVInputFormat *pInputFormat = src_avformat_context->iformat;
     while (pInputFormat) {
         printf("%s ", pInputFormat->name);
         pInputFormat = pInputFormat->next;
@@ -416,7 +416,7 @@ int simplest_ffmpeg_player2() {
     wanted_spec.channels = out_nb_channels;
     wanted_spec.silence = 0;
     wanted_spec.samples = out_nb_samples;
-    wanted_spec.callback = fill_audio;
+    wanted_spec.callback = alexander_fill_audio;
     wanted_spec.userdata = audioAVCodecContext;
     if (SDL_OpenAudio(&wanted_spec, NULL) < 0) {
         printf("can't open audio.\n");
@@ -1373,7 +1373,7 @@ void video_encode_example(const char *filename, int codec_id) {
 //Output PCM
 #define OUTPUT_PCM 1
 //Use SDL
-#define USE_SDL 1
+#define PLAYBACK_AUDIO_WITH_SDL2 1
 
 
 /***
@@ -1382,7 +1382,7 @@ void video_encode_example(const char *filename, int codec_id) {
  * len: The length (in bytes) of the audio buffer
  * 回调函数
 */
-void fill_audio(void *udata, Uint8 *stream, int len) {
+void alexander_fill_audio(void *udata, Uint8 *stream, int len) {
     if (audio_len == 0)        /*  Only  play  if  we  have  data  left  */
         return;
     len = (len > audio_len ? audio_len : len);    /*  Mix  as  much  data  as  possible  */
@@ -1655,7 +1655,7 @@ int simplest_audio_play_sdl2() {
     wanted_spec.channels = 2;
     wanted_spec.silence = 0;
     wanted_spec.samples = 1024;
-    wanted_spec.callback = fill_audio;
+    wanted_spec.callback = alexander_fill_audio;
 
     if (SDL_OpenAudio(&wanted_spec, NULL) < 0) {
         printf("can't open audio.\n");
@@ -2106,7 +2106,7 @@ static void encode(AVCodecContext *enc_ctx,
 
     /* send the frame to the encoder */
     if (frame)
-        printf("Send frame %3"PRId64"\n", frame->pts);
+        printf("Send frame %3" PRId64 "\n", frame->pts);
 
     ret = avcodec_send_frame(enc_ctx, frame);
     if (ret < 0) {
@@ -2123,7 +2123,7 @@ static void encode(AVCodecContext *enc_ctx,
             exit(1);
         }
 
-        printf("Write packet %3"PRId64" (size=%5d)\n", pkt->pts, pkt->size);
+        printf("Write packet %3" PRId64 " (size=%5d)\n", pkt->pts, pkt->size);
         fwrite(pkt->data, 1, pkt->size, outfile);
         av_packet_unref(pkt);
     }
@@ -3005,6 +3005,7 @@ int pcm2aac() {
     frame_buf = (uint8_t *) av_malloc(size);
     avcodec_fill_audio_frame(pFrame, pCodecCtx->channels, pCodecCtx->sample_fmt, (const uint8_t *) frame_buf, size, 1);
 
+    printf("Failed to read raw data! \n");
     //Write Header
     avformat_write_header(pFormatCtx, NULL);
 
@@ -4076,7 +4077,7 @@ int crazydiode_audio_devoder() {
         return -1;
     }
 
-//    av_dump_format(avformat_context, 0, in_file_path, false);
+//    av_dump_format(src_avformat_context, 0, in_file_path, false);
 
     //音频解码，需要找到对应的AVStream所在的pFormatCtx->streams的索引位置
     int nb_samples = avformat_context->nb_streams;

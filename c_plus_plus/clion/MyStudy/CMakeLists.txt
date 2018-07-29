@@ -63,10 +63,11 @@ else ()
             -L${FFMPEG_LIB_PATH} -lavformat
             -L${FFMPEG_LIB_PATH} -lavdevice
             -L${FFMPEG_LIB_PATH} -lavcodec
-            -L${FFMPEG_LIB_PATH} -lavutil
             -L${FFMPEG_LIB_PATH} -lavfilter
+            -L${FFMPEG_LIB_PATH} -lavutil
             -L${FFMPEG_LIB_PATH} -lswresample
             -L${FFMPEG_LIB_PATH} -lswscale
+            -L${FFMPEG_LIB_PATH} -lpostproc
             -L${SDL2_LIB_PATH} -lSDL2
             -L${SDL2_LIB_PATH} -lSDL2main
             -lmp3lame

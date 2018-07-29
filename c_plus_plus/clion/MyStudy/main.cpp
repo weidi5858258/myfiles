@@ -51,9 +51,7 @@ int simplest_ffmpeg_player2();
 
 int decoder_video_frame_to_image();
 
-int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path,
-                                                   int playback_window_w,
-                                                   int playback_window_h);
+int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path);
 
 int simplest_audio_play_sdl2();
 
@@ -124,6 +122,14 @@ int alexander_use_libavcodec_decode_to_yuv();
 
 int alexander_how_to_use_sws_scale();
 
+int alexander_how_to_use_sws_scale2();
+
+int alexander_how_to_use_sws_scale3();
+
+int alexander_how_to_use_sws_scale4();
+
+int alexander_playback_pcm();
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -141,18 +147,18 @@ int main(int argc, char *argv[]) {
     printf("------------------------------------------\n");
 
 //    simplest_ffmpeg_player2();
-//    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/480_272_yuv420p.yuv",
-//                                                   500, 500);
+//    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/rgb/240_240_rgb24_haoke.rgb",
+//                                                   240, 240);
 //    decoder_video_frame_to_image();
 //    simplest_audio_play_sdl2();
 //    simplest_ffmpeg_audio_decoder();
     //查看pcm,yuv文件的信息
 //    crazydiode_video_devoder();
 //    crazydiode_audio_devoder();
-    pcm2aac();
+//    pcm2aac();
 //    pcm2aac("/root/音乐/output.pcm", "/root/音乐/output.aac");
 //    simplest_ffmpeg_audio_encoder_pure();
-//    decode_audio_main("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a", "/root/音乐/01_VBR_16kHz_64kbps_Stereo.pcm");
+//    decode_audio_main("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/pcm/GALAYoungForYou.pcm");
 //    decode_audio2("/root/音乐/GALAYoungForYou.mp3", "/root/音乐/temp.pcm");
 //    encode_audio_main("/root/音乐/txdx.pcm", "/root/音乐/txdx.mp2");
 //    pcm2mp3("/root/音乐/audio.pcm", "/root/音乐/audio.mp3");
@@ -162,28 +168,16 @@ int main(int argc, char *argv[]) {
 //    simplest_yuv420p_split("/root/视频/lena_256x256_yuv420p.yuv", 256, 256, 1);
 //    audio_recorder("/root/音乐/myrecorder.pcm");
 //    alexander_video_player_sdl2();
-//    alexander_decode_video_to_yuv();
+//    alexander_decode_video_to_yuv();// OUTPUT_YUV420P 1
 //    alexander_playback_yuv();
 //    alexander_use_libavcodec_decode_to_yuv();
 //    alexander_how_to_use_sws_scale();
-
-    /*glutInit(&argc,argv);
-    //显示模式初始化
-    glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB|GLUT_DEPTH);
-    //定义窗口大小
-    glutInitWindowSize(300,300);
-    //定义窗口位置
-    glutInitWindowPosition(100,100);
-    //创建窗口
-    glutCreateWindow("OpenGL Version");
-    const GLubyte* name = glGetString(GL_VENDOR); //返回负责当前OpenGL实现厂商的名字
-    const GLubyte* biaoshifu = glGetString(GL_RENDERER); //返回一个渲染器标识符，通常是个硬件平台
-    const GLubyte* OpenGLVersion =glGetString(GL_VERSION); //返回当前OpenGL实现的版本号
-    const GLubyte* gluVersion= gluGetString(GLU_VERSION); //返回当前GLU工具库版本
-    printf("OpenGL实现厂商的名字：%s\n", name);
-    printf("渲染器标识符：%s\n", biaoshifu);
-    printf("OOpenGL实现的版本号：%s\n",OpenGLVersion );
-    printf("OGLU工具库版本：%s\n", gluVersion);*/
+//    alexander_how_to_use_sws_scale2();
+//    alexander_how_to_use_sws_scale3();
+//    alexander_how_to_use_sws_scale4();
+//    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/rgb/240_240_bgra.rgb");
+//    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/yuv/256_256_yuv444p_lena.yuv");
+    alexander_playback_pcm();
 
     printf("------------------------------------------\n");
     printf("\n");

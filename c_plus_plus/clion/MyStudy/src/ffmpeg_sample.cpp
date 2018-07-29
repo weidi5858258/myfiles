@@ -1021,7 +1021,7 @@ int resampling_audio2(const char *dst_filename) {
 /***
  网上的代码
  */
-int AudioResampling(AVCodecContext *audio_avcodec_context, AVFrame *src_audio_avframe,
+int AudioResampling2(AVCodecContext *audio_avcodec_context, AVFrame *src_audio_avframe,
                     int out_sample_fmt, int out_channels, int out_sample_rate,
                     uint8_t *out_buf) {
     //////////////////////////////////////////////////////////////////////////
