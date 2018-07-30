@@ -1158,6 +1158,7 @@ int audio_decode_frame(VideoState *is) {
             len1 = avcodec_decode_audio4(is->audio_st->codec, is->audio_frame,
                                          &got_frame, pkt);
             if (len1 < 0) {
+                fprintf(stderr, "len1 = %d\n", len1);
                 // error, skip the frame
                 is->audio_pkt_size = 0;
                 break;
@@ -1288,7 +1289,8 @@ int audio_decode_frame(VideoState *is) {
     }//for end
 }
 
-void audio_callback(void *userdata, Uint8 *stream, int len) {
+void audio_callback(void *userdata, uint8_t *stream, int len) {
+    fprintf(stdout, "audio_callback: len = %d\n", len);
     VideoState *is = (VideoState *) userdata;
     int len1, audio_data_size;
 
@@ -1303,6 +1305,7 @@ void audio_callback(void *userdata, Uint8 *stream, int len) {
             } else {
                 is->audio_buf_size = audio_data_size;
             }
+            fprintf(stdout, "audio_callback: audio_data_size = %d\n", audio_data_size);
             is->audio_buf_index = 0;
         }
 
@@ -1447,7 +1450,7 @@ static int decode_thread(void *arg) {
     if (avformat_find_stream_info(avformat_context, NULL) < 0) {
         return -1;
     }
-    av_dump_format(avformat_context, 0, video_state->filename, 0);
+    //av_dump_format(avformat_context, 0, video_state->filename, 0);
     for (i = 0; i < avformat_context->nb_streams; i++) {
         if (avformat_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO
             && audio_stream_index < 0) {
