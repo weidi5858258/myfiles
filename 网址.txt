@@ -98,6 +98,8 @@ https://blog.csdn.net/qfnu08zzr/article/details/6763159 RGB和YUV之比较
 https://blog.csdn.net/u011913612/article/details/53838675 ffmpeg学习十：将pcm格式的音频编码为aac格式
 https://blog.csdn.net/leixiaohua1020/article/details/19016109 avcodec_decode_video2()解码视频后丢帧的问题解决
 https://blog.csdn.net/bjrxyz/article/details/73435407 使用libmp3lame库编码mp3
+https://blog.csdn.net/u012362160/article/details/49660057 音频重采样造成音质损失的原理
+http://www.pt80.net/thread-663924-1-1.html 不同音乐格式之谜（wav,flac,ape,wv,tak,ogg,aac）
 
 
 

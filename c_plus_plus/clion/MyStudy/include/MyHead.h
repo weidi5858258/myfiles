@@ -23,6 +23,7 @@
 #include <libgen.h>
 #include <cstddef>
 #include <inttypes.h>
+#include <math.h>
 //#include <opencv2/opencv.hpp>
 
 // ffmpeg and SDL
@@ -46,12 +47,14 @@ extern "C" {// 不能少
 #include <libavutil/imgutils.h>
 #include <libavutil/avutil.h>
 #include <libavutil/avassert.h>
+#include <libavutil/avstring.h>
 #include <libavutil/frame.h>
 #include <libavutil/hwcontext.h>
 #include <libavutil/parseutils.h>
 #include <libavutil/pixdesc.h>
 #include <libavutil/pixfmt.h>
 #include <libavutil/fifo.h>
+#include <libavutil/log.h>
 #include <libavutil/opt.h>
 #include <libavutil/mem.h>
 #include <libavutil/error.h>

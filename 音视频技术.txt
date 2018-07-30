@@ -871,6 +871,81 @@ struct FormatCtx {
 } formatCtx_;
 
 
+1. 采样率
+    采样设备每秒抽取样本的次数
+2. 音频格式及量化精度（位宽）
+    每种音频格式有不同的量化精度（位宽），位数越多，表示值就越精确，声音表现自然就越精准。
+3. 分片（plane）和打包（packed）
+    以双声道为例，带P（plane）的数据格式在存储时，其左声道和右声道的数据是分开存储的，左声道的数据存储在data[0]，右声道的数据存储在data[1]，每个声道的所占用的字节数为linesize[0]和linesize[1]；
+    不带P（packed）的音频数据在存储时，是按照LRLRLR...的格式交替存储在data[0]中，linesize[0]表示总的数据量。
+4. 声道分布（channel_layout)
+    声道分布在FFmpeg\libavutil\channel_layout.h中有定义，一般来说用的比较多的是AV_CH_LAYOUT_STEREO（双声道）和AV_CH_LAYOUT_SURROUND（三声道）
+5. 音频帧的数据量计算
+    一帧音频的数据量=channel数 * nb_samples样本数 * 每个样本占用的字节数
+    如果该音频帧是FLTP格式的PCM数据，包含1024个样本，双声道，那么该音频帧包含的音频数据量是2*1024*4=8192字节
+
+ffmpeg重采样中swr_convert和swr_get_out_samples的用法
+在做mux的时候关于重采样可以用fifo，或者audiofifo做缓存处理，
+当做demux的时候关于重采样就可以用到上面的swr_convert和swr_get_out_samples做配合处理。
+如果传入的nb_samles大于了传出的nb_samplse则SwrContext中会有缓存，会导致内存一直暴涨，解决方法，可以看如下代码：
+没有缓存的重采样这么处理：
+ret = swr_convert(swrcontext, pOutputFrame->data,pOutputFrame->nb_samples,
+		(const uint8_t**)pInputFrame->data,pInputFrame->nb_samples);
+有缓存的代码这么处理： 
+//如果还有缓存在swrcontext中,第二个参数要填写0才能获取到，缓存数据
+int fifo_size = swr_get_out_samples(swrcontext,0);
+if ( fifo_size >= pOutputFrame->nb_samples)
+{
+	ret = swr_convert(swrcontext, pOutputFrame->data,pOutputFrame->nb_samples,
+	NULL,0);
+}
+即如果有缓存则先判断是否有缓存在里面，如果有则传入数据为空取出缓存。
+
+
+庖丁解牛，彻底掌握c++类型转换
+#include using namespace std;class Base {public:int objb;Base (int a) : objb(a){cout << "Base .... " << endl;}Base (const Base &other):objb(other.objb){cout << "Base copy ...." <<endl;}~Base (){cout << "~Base .... " << endl;}};class Derived :public Base {public:int objd;Derived (int b, int d) :Base(b),objd(d) {cout << "Derived .... " << endl;}~Derived () {cout << "~Derived .... " << endl;}};class A {};class B {public:B(const Base& base):bb(base.objb){cout << "B .... " << endl;}~B () {cout << "~B .... " << endl;}int cc;int bb;};class virtualA {public:virtual void funA(){} // ~virtualA(){}};class virtualB : public virtualA{};class virtualC {public:virtual void funC (){}};int main(){int a = 10;double d1 = static_cast(a);//double dre = static_cast(a);//int 和double之间没有父子类关系,所以 int不能转换成double&,而如果是父子类则 可以把 Base对像 转成Derived&double d2 = reinterpret_cast(a);//原封不动拷贝内存，把int转换成 double&，然后用double的性质来解释 int//double d3 = dynamic_cast(a);double d4 = a;cout << d1 << endl;cout << d2 << endl;cout << d4 << endl;cout <<"------------------------------------------------" << endl;double d = 10000000000.1;cout << "d = " << d << endl;int b1 = static_cast(d);cout << b1 << endl;int b2 = reinterpret_cast(d); cout << b2 << endl;//int b3 = dynamic_cast (d);int b4 = d;cout << b4 << endl;int b5 = (int)d;cout << b5 << endl;cout << "------------------------------------------------" << endl;Base bObj(10);Derived dObj(10,11);bObj = dObj;//调用拷贝构造函数cout << bObj.objb << endl;Base bObj2 = static_cast(dObj);//分成两步，1父类引用指向子类对象;2将该引用的对象拷贝到目标对象,static_cast只是做了第一步cout << bObj2.objb << endl;Base bObj3 = static_cast(dObj);//直接调用拷贝构造函数cout << bObj3.objb << endl;cout << "following is reinterpret_cast " << endl;Base bObj4 = reinterpret_cast (dObj);//也分成两步，1父类引用指向子类对象 2将该引用的对象拷贝到目标对象cout << bObj4.objb << endl;cout << "reinterpret_cast end" << endl;//Base bObj5 = dynamic_cast (dObj);//Derived dObj2 = bObj;//cout << dObj2.objb <<" "<< dObj2.objd << endl;Derived dObj3 = static_cast(bObj);//类型中没有 & 编译出错，因为没有对应的构造函数供调用,这里强制下行转换cout << dObj3.objb <<" "<< dObj3.objd << endl;Derived dObj4 = reinterpret_cast (bObj);//类型中没有&编译不过cout << dObj4.objb <<" "<< dObj4.objd << endl;// A aObj = static_cast (bObj); //static_cast 调用了目标类型的转换构造函数，所以编译时检查类型安全// A aObj = static_cast (bObj);//转换成引用类型没有调用转换构造函数，对象和引用所代表的类不存在父子关系B bb = static_cast (bObj);//调用转换构造函数 转换成功// B bb1 = static_cast (bObj);//编译期类型检查，所以无法成功B bb2 = reinterpret_cast (bObj);//reterinpret_cast不做任何检测，转换成功cout << "bb2.bb= " << bb2.bb << endl;//reinterpret_cast 只是把内存原模原样的复制过来cout << "&bb2=" << &bb2 << endl;cout << "&bObj=" << &bObj << endl;cout << "-------------------------------------------------" << endl;Base base1(20);Derived derived1(20,21);Base *pBase1 = &derived1;//Derived *pDerived = &base1;Derived *pDerived1 = static_cast (&base1);//父子类之间的指针转换 上行安全，下行虽不安全也可以转cout << pDerived1->objb << endl;cout << pDerived1->objd << endl;Derived* pDerived2 = reinterpret_cast (&base1);//你想干啥就干啥，安全自己负责cout << pDerived2->objb << endl;cout << pDerived2->objd << endl;//Derived* pDerived3 = dynamic_cast (&base1);//dynamic_cast 只能转换指针和引用类型，且必须polymorphic（多态，也就是虚函数）cout << "--------------------------------" << endl;virtualA va1;virtualB vb1;virtualA* pva = NULL;virtualB* pvb = NULL;pva = &va1;pvb = dynamic_cast(&va1);//继承了有虚函数的父类可以通过编译，但能否转换成功需要在运行时才知道，运行时检查不成功则返回空指针;cout << "pvb="<<pvb<<endl; //转换失败因为不安全pva = dynamic_cast (&vb1);cout << "pva=" <<pva<< endl;//转换成功 ，因为类型安全virtualC vc1;virtualC* pvc = NULL;pvc = dynamic_cast(&va1);//通过编译但是 类型转换不安全，所以运行时类型转换失败cout << "pvc = " << pvc << endl;cout << "-----------------------------------" << endl;//vb1 = dynamic_cast(va1);//通过编译，但是运行时抛出bad_alloc异常，因为无法转换va1 = dynamic_cast (vb1);//通过编译且转换正常cout << "-------析构开始------"<< endl;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

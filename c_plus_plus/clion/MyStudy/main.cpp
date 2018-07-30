@@ -130,6 +130,8 @@ int alexander_how_to_use_sws_scale4();
 
 int alexander_playback_pcm();
 
+int main2(const char *in_file_name);
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -177,7 +179,9 @@ int main(int argc, char *argv[]) {
 //    alexander_how_to_use_sws_scale4();
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/rgb/240_240_bgra.rgb");
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/yuv/256_256_yuv444p_lena.yuv");
-    alexander_playback_pcm();
+//    alexander_playback_pcm();
+    main2("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a");
+//    main2("/root/音乐/tdjm.mp3");
 
     printf("------------------------------------------\n");
     printf("\n");

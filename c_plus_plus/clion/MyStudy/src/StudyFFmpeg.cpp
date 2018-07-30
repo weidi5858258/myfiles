@@ -3389,7 +3389,7 @@ int pcm2mp3(char *inPath, char *outPath) {
     // 设置CBR的比特率，只有在CBR模式下才生效
     lame_set_brate(global_flags, 8);
     // 2 = high 5 = medium 7 = low
-    lame_set_quality(global_flags,2);
+    lame_set_quality(global_flags, 2);
     // 设置VBR的比特率，只有在VBR模式下才生效。
     // lame_set_VBR_mean_bitrate_kbps(global_flags, );
 
@@ -3453,18 +3453,19 @@ int pcm2mp3(char *inPath, char *outPath) {
 }
 
 /***
+ * 网上的代码
  * 实现将音频的三大要素：声道，样本，采样率变更的demo
  * 例如双声道变成单声道，44100->48000，float->s16等
- * @param audio_dec_ctx
+ * @param audio_avcodec_context
  * @param pAudioDecodeFrame
  * @param out_sample_fmt
- * @param out_channels
+ * @param out_nb_channels
  * @param out_sample_rate
  * @param out_buf
  * @return
  */
-int AudioResampling(AVCodecContext *audio_dec_ctx, AVFrame *pAudioDecodeFrame,
-                    int out_sample_fmt, int out_channels, int out_sample_rate, uint8_t *out_buf) {
+int AudioResampling(AVCodecContext *audio_avcodec_context, AVFrame *pAudioDecodeFrame,
+                    int out_sample_fmt, int out_nb_channels, int out_sample_rate, uint8_t *out_buf) {
     //////////////////////////////////////////////////////////////////////////
     SwrContext *swr_ctx = NULL;
     int data_size = 0;
@@ -3488,16 +3489,15 @@ int AudioResampling(AVCodecContext *audio_dec_ctx, AVFrame *pAudioDecodeFrame,
         printf("swr_alloc error \n");
         return -1;
     }
+    src_ch_layout = (audio_avcodec_context->channel_layout &&
+                     audio_avcodec_context->channels ==
+                     av_get_channel_layout_nb_channels(audio_avcodec_context->channel_layout)) ?
+                    audio_avcodec_context->channel_layout :
+                    av_get_default_channel_layout(audio_avcodec_context->channels);
 
-    src_ch_layout = (audio_dec_ctx->channel_layout &&
-                     audio_dec_ctx->channels ==
-                     av_get_channel_layout_nb_channels(audio_dec_ctx->channel_layout)) ?
-                    audio_dec_ctx->channel_layout :
-                    av_get_default_channel_layout(audio_dec_ctx->channels);
-
-    if (out_channels == 1) {
+    if (out_nb_channels == 1) {
         dst_ch_layout = AV_CH_LAYOUT_MONO;
-    } else if (out_channels == 2) {
+    } else if (out_nb_channels == 2) {
         dst_ch_layout = AV_CH_LAYOUT_STEREO;
     } else {
         //可扩展
@@ -3516,8 +3516,8 @@ int AudioResampling(AVCodecContext *audio_dec_ctx, AVFrame *pAudioDecodeFrame,
 
     /* set options */
     av_opt_set_int(swr_ctx, "in_channel_layout", src_ch_layout, 0);
-    av_opt_set_int(swr_ctx, "in_sample_rate", audio_dec_ctx->sample_rate, 0);
-    av_opt_set_sample_fmt(swr_ctx, "in_sample_fmt", audio_dec_ctx->sample_fmt, 0);
+    av_opt_set_int(swr_ctx, "in_sample_rate", audio_avcodec_context->sample_rate, 0);
+    av_opt_set_sample_fmt(swr_ctx, "in_sample_fmt", audio_avcodec_context->sample_fmt, 0);
 
     av_opt_set_int(swr_ctx, "out_channel_layout", dst_ch_layout, 0);
     av_opt_set_int(swr_ctx, "out_sample_rate", out_sample_rate, 0);
@@ -3525,7 +3525,7 @@ int AudioResampling(AVCodecContext *audio_dec_ctx, AVFrame *pAudioDecodeFrame,
     swr_init(swr_ctx);
 
     max_dst_nb_samples = dst_nb_samples =
-            av_rescale_rnd(src_nb_samples, out_sample_rate, audio_dec_ctx->sample_rate, AV_ROUND_UP);
+            av_rescale_rnd(src_nb_samples, out_sample_rate, audio_avcodec_context->sample_rate, AV_ROUND_UP);
     if (max_dst_nb_samples <= 0) {
         printf("av_rescale_rnd error \n");
         return -1;
@@ -3540,8 +3540,8 @@ int AudioResampling(AVCodecContext *audio_dec_ctx, AVFrame *pAudioDecodeFrame,
     }
 
 
-    dst_nb_samples = av_rescale_rnd(swr_get_delay(swr_ctx, audio_dec_ctx->sample_rate) +
-                                    src_nb_samples, out_sample_rate, audio_dec_ctx->sample_rate, AV_ROUND_UP);
+    dst_nb_samples = av_rescale_rnd(swr_get_delay(swr_ctx, audio_avcodec_context->sample_rate) +
+                                    src_nb_samples, out_sample_rate, audio_avcodec_context->sample_rate, AV_ROUND_UP);
     if (dst_nb_samples <= 0) {
         printf("av_rescale_rnd error \n");
         return -1;
@@ -3553,9 +3553,9 @@ int AudioResampling(AVCodecContext *audio_dec_ctx, AVFrame *pAudioDecodeFrame,
         max_dst_nb_samples = dst_nb_samples;
     }
 
-    data_size = av_samples_get_buffer_size(NULL, audio_dec_ctx->channels,
+    data_size = av_samples_get_buffer_size(NULL, audio_avcodec_context->channels,
                                            pAudioDecodeFrame->nb_samples,
-                                           audio_dec_ctx->sample_fmt, 1);
+                                           audio_avcodec_context->sample_fmt, 1);
     if (data_size <= 0) {
         printf("av_samples_get_buffer_size error \n");
         return -1;
@@ -3563,8 +3563,11 @@ int AudioResampling(AVCodecContext *audio_dec_ctx, AVFrame *pAudioDecodeFrame,
     resampled_data_size = data_size;
 
     if (swr_ctx) {
-        ret = swr_convert(swr_ctx, dst_data, dst_nb_samples,
-                          (const uint8_t **) pAudioDecodeFrame->data, pAudioDecodeFrame->nb_samples);
+        ret = swr_convert(swr_ctx,
+                          dst_data,
+                          dst_nb_samples,
+                          (const uint8_t **) pAudioDecodeFrame->data,
+                          pAudioDecodeFrame->nb_samples);
         if (ret <= 0) {
             printf("swr_convert error \n");
             return -1;
