@@ -180,8 +180,8 @@ int main(int argc, char *argv[]) {
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/rgb/240_240_bgra.rgb");
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/yuv/256_256_yuv444p_lena.yuv");
 //    alexander_playback_pcm();
-    main2("/root/音乐/01_VBR_16kHz_64kbps_Stereo.m4a");
-//    main2("/root/音乐/tdjm.mp3");
+    main2("/root/音乐/txdx.mp3");
+//    main2("/root/视频/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4");
 
     printf("------------------------------------------\n");
     printf("\n");

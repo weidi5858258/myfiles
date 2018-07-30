@@ -1394,7 +1394,7 @@ void alexander_fill_audio(void *udata, Uint8 *stream, int len) {
 
 //int playbackAudio() {
 //    AVFormatContext *pFormatCtx;
-//    int i, audioStream;
+//    int i, audio_stream_index;
 //    AVCodecContext *pCodecCtx;
 //    AVCodec *pCodec;
 //
@@ -1419,20 +1419,20 @@ void alexander_fill_audio(void *udata, Uint8 *stream, int len) {
 //    av_dump_format(pFormatCtx, 0, url, false);
 //
 //    // Find the first audio stream
-//    audioStream = -1;
+//    audio_stream_index = -1;
 //    for (i = 0; i < pFormatCtx->nb_streams; i++)
 //        if (pFormatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
-//            audioStream = i;
+//            audio_stream_index = i;
 //            break;
 //        }
 //
-//    if (audioStream == -1) {
+//    if (audio_stream_index == -1) {
 //        printf("Didn't find a audio stream.\n");
 //        return -1;
 //    }
 //
 //    // Get a pointer to the codec context for the audio stream
-//    pCodecCtx = pFormatCtx->streams[audioStream]->codec;
+//    pCodecCtx = pFormatCtx->streams[audio_stream_index]->codec;
 //
 //    // Find the decoder for the audio stream
 //    pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
@@ -1512,7 +1512,7 @@ void alexander_fill_audio(void *udata, Uint8 *stream, int len) {
 //    SDL_PauseAudio(0);
 //
 //    while (av_read_frame(pFormatCtx, packet) >= 0) {
-//        if (packet->stream_index == audioStream) {
+//        if (packet->stream_index == audio_stream_index) {
 //
 //            ret = avcodec_decode_audio4(pCodecCtx, pFrame, &got_picture, packet);
 //            if (ret < 0) {
