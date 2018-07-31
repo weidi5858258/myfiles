@@ -139,7 +139,7 @@ void test() {
     // 申请一块能装下整个文件的空间
     ar = (char *) malloc(sizeof(char) * size);
     // 读文件
-    // fread(ar, 1, size, fp);//每次读一个，共读size次
+    // fread(ar, 1, all_pkts_size, fp);//每次读一个，共读size次
     fread(ar, size, 1, fp);
     // 内容的首地址
     printf("%p\n", ar);

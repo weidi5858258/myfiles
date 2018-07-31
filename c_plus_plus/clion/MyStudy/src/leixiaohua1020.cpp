@@ -845,7 +845,7 @@ int alexander_use_libavcodec_decode_to_yuv() {
                                        AV_NOPTS_VALUE, AV_NOPTS_VALUE, AV_NOPTS_VALUE);
 
             printf("len: %6d\n", len);
-            printf("avpacket->size: %6d\n", avpacket->size);
+            printf("avpacket->all_pkts_size: %6d\n", avpacket->size);
             video_out_buffer2 += len;
             video_out_buffer_size -= len;
             if (!avpacket->size) {
@@ -1095,7 +1095,7 @@ int alexander_how_to_use_sws_scale2() {
 
     if (av_parse_video_size(&dst_video_width, &dst_video_height, dst_size) < 0) {
         fprintf(stderr,
-                "Invalid size '%s', must be in the form WxH or a valid size abbreviation\n",
+                "Invalid all_pkts_size '%s', must be in the form WxH or a valid all_pkts_size abbreviation\n",
                 dst_size);
         exit(1);
     }
@@ -1587,8 +1587,8 @@ int alexander_playback_pcm() {
     sdl_audio_spec->channels = out_nb_channels;
     sdl_audio_spec->silence = 0;
     sdl_audio_spec->samples = out_nb_samples;
-    sdl_audio_spec->callback = alexander_fill_audio2;
     sdl_audio_spec->userdata = audio_avcodec_context;
+    sdl_audio_spec->callback = alexander_fill_audio2;
     if (SDL_OpenAudio(sdl_audio_spec, NULL) < 0) {
         printf("can't open audio.\n");
         return -1;
@@ -1609,7 +1609,7 @@ int alexander_playback_pcm() {
                 //avframe为解码后的数据
                 swr_convert(audio_swr_context, &audio_out_buffer2, MAX_AUDIO_FRAME_SIZE,
                             (const uint8_t **) avframe->data, avframe->nb_samples);
-                //printf("index:%5d\t pts:%lld\t packet size:%d\n", index, avpacket->pts, avpacket->size);
+                //printf("index:%5d\t pts:%lld\t packet all_pkts_size:%d\n", index, avpacket->pts, avpacket->all_pkts_size);
 
 #if OUTPUT_PCM
                 //Write PCM
@@ -1892,7 +1892,7 @@ int flush_encoder2(AVFormatContext *fmt_ctx, unsigned int stream_index) {
 
     for (int i = 0;; i++) {
         pkt_in.data = NULL;
-        pkt_in.size = 0;
+        pkt_in.all_pkts_size = 0;
         got_frame = -1;
         got_picture_ptr = -1;
         if (av_read_frame(src_avformat_context, &pkt_in) < 0) {
@@ -2156,7 +2156,7 @@ int yuv422p() {
 //    if (pFrameYUV == NULL)
 //        return -1;
 //
-//    // Determine required video_out_buffer2 size and allocate video_out_buffer2
+//    // Determine required video_out_buffer2 all_pkts_size and allocate video_out_buffer2
 //    numBytes = avpicture_get_size(AV_PIX_FMT_YUV422P, video_avcodec_context->width,
 //                                  video_avcodec_context->height);
 //    video_out_buffer2 = (uint8_t *) av_malloc(numBytes * sizeof(uint8_t));
@@ -2199,7 +2199,7 @@ int yuv422p() {
 //        if (packet.stream_index == video_stream_index) {
 //            // Decode video frame
 //            avcodec_decode_video(video_avcodec_context, pFrame, &frameFinished,
-//                                 packet.data, packet.size);
+//                                 packet.data, packet.all_pkts_size);
 //
 //            // Did we get a video frame?
 //            if (frameFinished) {
@@ -2432,7 +2432,7 @@ int separate_media_to_yuv_and_aac() {
     while (av_read_frame(src_avformat_context, avpacket) >= 0) {
         do {
             ret = decode_packet(&got_frame);
-            printf("decode packet size: %d\n", ret);
+            printf("decode packet all_pkts_size: %d\n", ret);
             avpacket->data += ret;
             avpacket->size -= ret;
         } while (avpacket->size > 0);

@@ -88,7 +88,7 @@ void print_file_audio_info(AVFormatContext *avformat_context, AVCodecContext *au
             sample_fmt = "";
     }
     printf("Sample format：         \t%d\t%s\n", in_sample_fmt, sample_fmt);
-    printf("Stream size：         \t%d\n", avformat_context->nb_streams);
+    printf("Stream all_pkts_size：         \t%d\n", avformat_context->nb_streams);
     printf("Stream index：         \t%d\n", audio_stream_index);
     AVDictionaryEntry *avdictionary_entry = NULL;
     while (avdictionary_entry = av_dict_get(avformat_context->streams[audio_stream_index]->metadata,
@@ -105,7 +105,7 @@ void print_file_audio_info(AVFormatContext *avformat_context, AVCodecContext *au
         pInputFormat = pInputFormat->next;
     }*/
     // 下面的内容还不知道怎么得到
-//    printf("File size： %ld\n", );
+//    printf("File all_pkts_size： %ld\n", );
 //    printf("Format version： %s\n", );
 //    printf("Format profile：%s\n", );
 //    printf("Bit rate mode： %d\n", );
@@ -607,7 +607,7 @@ int simplest_ffmpeg_player2() {
                                 (const uint8_t **) srcAVFrame->data,
                                 srcAVFrame->nb_samples);
 
-                    printf("index:%5d\tavPacket->pts:%lld\tavPacket->size:%d\n", index, avPacket->pts, avPacket->size);
+                    printf("index:%5d\tavPacket->pts:%lld\tavPacket->all_pkts_size:%d\n", index, avPacket->pts, avPacket->all_pkts_size);
 
                     index++;
 
@@ -1334,7 +1334,7 @@ void video_encode_example(const char *filename, int codec_id) {
         /* encode the image */
 //        out_size = avcodec_encode_video(c, outbuf, outbuf_size, picture);
         had_output |= out_size;
-        printf("encoding frame %3d (size=%5d)\n", i++, out_size);
+        printf("encoding frame %3d (all_pkts_size=%5d)\n", i++, out_size);
         fwrite(outbuf, 1, out_size, f);
     }
 
@@ -1347,7 +1347,7 @@ void video_encode_example(const char *filename, int codec_id) {
 
 //        out_size = avcodec_encode_video(c, outbuf, outbuf_size, NULL);
         had_output |= out_size;
-        printf("write frame %3d (size=%5d)\n", i, out_size);
+        printf("write frame %3d (all_pkts_size=%5d)\n", i, out_size);
         fwrite(outbuf, 1, out_size, f);
     }
 
@@ -1523,7 +1523,7 @@ void alexander_fill_audio(void *udata, Uint8 *stream, int len) {
 //                swr_convert(au_convert_ctx, &out_buffer, MAX_AUDIO_FRAME_SIZE, (const uint8_t **) pFrame->data,
 //                            pFrame->nb_samples);
 //
-//                printf("index:%5d\t pts:%lld\t packet size:%d\n", index, packet->pts, packet->size);
+//                printf("index:%5d\t pts:%lld\t packet all_pkts_size:%d\n", index, packet->pts, packet->all_pkts_size);
 //
 //#if OUTPUT_PCM
 //                //Write PCM
@@ -1606,7 +1606,7 @@ void alexander_fill_audio(void *udata, Uint8 *stream, int len) {
 //    int buffer_size = 64;
 //    uint8_t buffer[buffer_size];
 //    packet.data = buffer;
-//    packet.size = buffer_size;
+//    packet.all_pkts_size = buffer_size;
 //    FILE *outfile = fopen("test.raw", "wb");
 //    int len;
 //    int frameFinished = 0;
@@ -1861,7 +1861,7 @@ int simplest_ffmpeg_audio_decoder() {
                                 (const uint8_t **) srcAVFrame->data,
                                 srcAVFrame->nb_samples);*/
 
-                    printf("index:%5d\tavPacket->pts:%lld\tavPacket->size:%d\n", index, avPacket->pts, avPacket->size);
+                    printf("index:%5d\tavPacket->pts:%lld\tavPacket->all_pkts_size:%d\n", index, avPacket->pts, avPacket->size);
                     //Write PCM
                     fwrite(out_buffer, 1, out_buffer_size, pFile);
                     index++;
@@ -2123,7 +2123,7 @@ static void encode(AVCodecContext *enc_ctx,
             exit(1);
         }
 
-        printf("Write packet %3" PRId64 " (size=%5d)\n", pkt->pts, pkt->size);
+        printf("Write packet %3" PRId64 " (all_pkts_size=%5d)\n", pkt->pts, pkt->size);
         fwrite(pkt->data, 1, pkt->size, outfile);
         av_packet_unref(pkt);
     }
@@ -2919,7 +2919,7 @@ int flush_encoder(AVFormatContext *fmt_ctx, unsigned int stream_index) {
             ret = 0;
             break;
         }
-        printf("Flush Encoder: Succeed to encode 1 frame!\tsize:%5d\n", enc_pkt.size);
+        printf("Flush Encoder: Succeed to encode 1 frame!\tall_pkts_size:%5d\n", enc_pkt.size);
         /* mux encoded frame */
         ret = av_write_frame(fmt_ctx, &enc_pkt);
         if (ret < 0)
@@ -3030,7 +3030,7 @@ int pcm2aac() {
             return -1;
         }
         if (got_frame == 1) {
-            printf("Succeed to encode 1 frame! \tsize:%5d\n", pkt.size);
+            printf("Succeed to encode 1 frame! \tall_pkts_size:%5d\n", pkt.size);
             pkt.stream_index = audio_st->index;
             ret = av_write_frame(pFormatCtx, &pkt);
             av_free_packet(&pkt);
@@ -3149,7 +3149,7 @@ int pcm2aac(const char *in_pcm_path, const char *out_aac_path) {
         if (getPacket) {
             frameCount++;
             //获得一个完整的编码帧
-            printf("Write frame %3d (size=%5d)\n", frameCount, packet.size);
+            printf("Write frame %3d (all_pkts_size=%5d)\n", frameCount, packet.size);
             fwrite(packet.data, 1, packet.size, fileOut);
             av_packet_unref(&packet);
         }
@@ -3164,7 +3164,7 @@ int pcm2aac(const char *in_pcm_path, const char *out_aac_path) {
             goto out;
         }
         if (getPacket) {
-            printf("flush buffer Write frame %3d (size=%5d)\n", frameCount, packet.size);
+            printf("flush buffer Write frame %3d (all_pkts_size=%5d)\n", frameCount, packet.size);
             fwrite(packet.data, 1, packet.size, fileOut);
             av_packet_unref(&packet);
         }
@@ -3207,7 +3207,7 @@ int encode(AVCodecContext *audioAVCodecContext,
     }
     // 一般情况下while循环也只执行一次
     while (avcodec_receive_packet(audioAVCodecContext, encodedAVPacket) >= 0) {
-        printf("Succeed to encode frame: %5d\tsize:%5d\n", ++endocedFrameCount, (*encodedAVPacket).size);
+        printf("Succeed to encode frame: %5d\tall_pkts_size:%5d\n", ++endocedFrameCount, (*encodedAVPacket).size);
         fwrite((*encodedAVPacket).data, 1, (*encodedAVPacket).size, outputFile);
         av_packet_unref(encodedAVPacket);
     }
@@ -3325,7 +3325,7 @@ int simplest_ffmpeg_audio_encoder_pure() {
     for (;;) {
         /*av_init_packet(&avPacket);
         avPacket.data = NULL;    // packet data will be allocated by the encoder
-        avPacket.size = 0;*/
+        avPacket.all_pkts_size = 0;*/
         //Read raw data(raw:未经加工的)
         if (fread(frame_buf, 1, samples_get_buffer_size, inputFile) <= 0) {
             printf("Failed to read raw data! \n");
@@ -3580,7 +3580,7 @@ int AudioResampling(AVCodecContext *audio_avcodec_context, AVFrame *pAudioDecode
             return -1;
         }
     } else {
-        printf("swr_ctx null error \n");
+        printf("audio_swr_context null error \n");
         return -1;
     }
 
@@ -4390,7 +4390,7 @@ int audio_recorder(const char *out_file_path) {
     snd_pcm_hw_params_set_rate_near(handle, params,
                                     &val, &dir);
 
-    /* Set period size to 32 frames. */
+    /* Set period all_pkts_size to 32 frames. */
     //frames = 32;
     // snd_pcm_hw_params_set_period_size_near(handle,
     //                             params, &frames, &dir);

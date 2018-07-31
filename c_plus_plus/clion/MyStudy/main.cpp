@@ -42,6 +42,13 @@
 
 #endif //MYSTUDY_FFMPEG_LEIXIAOHUA
 
+#ifndef MYSTUDY_FFMPEG_MUSIC_PLAYER
+#define MYSTUDY_FFMPEG_MUSIC_PLAYER
+
+#include "src/music_player.cpp"
+
+#endif //MYSTUDY_FFMPEG_MUSIC_PLAYER
+
 
 void test();
 
@@ -130,7 +137,7 @@ int alexander_how_to_use_sws_scale4();
 
 int alexander_playback_pcm();
 
-int main2(const char *in_file_name);
+int alexander_music_player(const char *in_file_name);
 
 
 /***
@@ -180,8 +187,8 @@ int main(int argc, char *argv[]) {
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/rgb/240_240_bgra.rgb");
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/yuv/256_256_yuv444p_lena.yuv");
 //    alexander_playback_pcm();
-    main2("/root/音乐/txdx.mp3");
-//    main2("/root/视频/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4");
+    alexander_music_player("/root/音乐/Love_You_I_Do.flac");
+//    alexander_music_player("/root/视频/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4");
 
     printf("------------------------------------------\n");
     printf("\n");

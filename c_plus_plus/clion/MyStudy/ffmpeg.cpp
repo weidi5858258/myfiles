@@ -139,7 +139,7 @@ int handleAudio(AVCodecContext *audioAVCodecContext,
                     (const uint8_t **) srcAVFrame->data,
                     srcAVFrame->nb_samples);
 
-        printf("avPacket->pts:%lld\tavPacket->dts:%lld\tavPacket->size:%d\n",
+        printf("avPacket->pts:%lld\tavPacket->dts:%lld\tavPacket->all_pkts_size:%d\n",
                avPacket->pts, avPacket->dts, avPacket->size);
 
 #ifdef NEED_AUDIO

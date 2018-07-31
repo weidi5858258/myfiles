@@ -16,7 +16,7 @@ add_executable(MyStudy
         ffmpeg.cpp
         src/ffmpeg_sample.cpp
         src/leixiaohua1020.cpp
-        src/player.cpp)
+        src/player.cpp src/music_player.cpp)
 
 if (WIN32)
     set(FFMPEG_LIB_PATH
