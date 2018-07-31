@@ -188,7 +188,7 @@ int main(int argc, char *argv[]) {
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/yuv/256_256_yuv444p_lena.yuv");
 //    alexander_playback_pcm();
 //    alexander_music_player("/root/音乐/tdjm.mp3");
-    alexander_music_player("/root/音乐/Love_You_I_Do.flac");
+    alexander_music_player("/root/音乐/txdx.mp3");
 //    alexander_music_player("/root/视频/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4");
 
     printf("------------------------------------------\n");
