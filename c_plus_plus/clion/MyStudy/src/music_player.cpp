@@ -29,32 +29,44 @@ typedef struct PacketQueue {
 
 typedef struct VideoState {
     char filename[1024];
-    AVFormatContext *avformat_context;
-    int video_stream_index, audio_stream_index;
     PacketQueue packet_queue;
-    AVStream *audio_avstream;
-    AVFrame *audio_avframe;
+    int video_stream_index = -1, audio_stream_index = -1;
+
+    AVFormatContext *avformat_context = NULL;
+    AVStream *audio_avstream = NULL;
+    AVFrame *audio_avframe = NULL;
+    struct SwrContext *audio_swr_context = NULL;
+
     AVPacket audio_avpacket;
-    //下面两个变量的数据就是audio_avpacket中的data和size
-    uint8_t *audio_pkt_data;
+    //下面两个变量的数据就是audio_avpacket中的data和size数据
+    uint8_t *audio_pkt_data = NULL;
     int audio_pkt_size;
+
     //解码一次得到的数据量
     unsigned int audio_decoded_data_size;
     //用于标记已处理过的数据位置(针对audio_decoded_data_size的位置)
     unsigned int audio_decoded_data_size_index;
-    uint8_t *audio_buf;
+
+    uint8_t *audio_buf = NULL;
     DECLARE_ALIGNED(16, uint8_t, audio_buf2)[AVCODEC_MAX_AUDIO_FRAME_SIZE * 4];
+
+    //采样格式(每个采样点所占的字节数)
     enum AVSampleFormat src_avsample_format;
     enum AVSampleFormat dst_avsample_format;
+    //声音布局
     int64_t src_ch_layout;
     int64_t dst_ch_layout;
+    //声道数量
     int src_nb_channels;
     int dst_nb_channels;
+    //采样率(每秒采集多少个样点)
     int src_sample_rate;
     int dst_sample_rate;
-    struct SwrContext *audio_swr_context;
-    SDL_Thread *sdl_thread;
+
+    //退出标志
     int quit;
+
+    SDL_Thread *sdl_thread = NULL;
 } VideoState;
 
 VideoState *global_video_state;
