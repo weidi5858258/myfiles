@@ -730,20 +730,20 @@ data[i+3] = (char)((sample_buffer_R[j]>>8) & 0xff);;//右声道高8位
 --enable-gpl \
 --enable-openssl \
 --enable-decoder=h264 \
---enable-decoder=h265 \
 --enable-decoder=vpx \
 --enable-encoder=libx264 \
---enable-encoder=libx265 \
 --enable-encoder=libvpx \
 --enable-nonfree \
 --enable-libmp3lame \
 --enable-libfdk-aac \
 --enable-libvpx \
 --enable-libx264 \
---enable-libx265 \
 --disable-yasm \
 --prefix=/root/mydev/tools/ffmpeg
 
+--enable-decoder=h265 \
+--enable-encoder=libx265 \
+--enable-libx265 \
 
 
 

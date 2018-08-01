@@ -36,6 +36,8 @@
     如果是 planar类型，同一声道的所有采样点数据放到一起，然后存放下一个声道
  判断是否是planar类型:
  av_sample_fmt_is_planar(sample_fmt)
+
+
  */
 
 ///////////////////////////公共变量///////////////////////////
@@ -60,8 +62,8 @@ int audio_stream_index = -1;
 int thread_pause_flag = 0;
 int thread_exit_flag = 0;
 
-//char *in_file_path = "/root/视频/haoke.avi";
-char *in_file_path = "/root/视频/yuv/240_240_rgb24_haoke.yuv";
+char *in_file_path = "/root/视频/tomcat_video/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4";
+//char *in_file_path = "/root/视频/yuv/240_240_rgb24_haoke.yuv";
 //char *out_file_path = "/root/视频/rgb/720_480_rgb24.rgb";
 char *out_file_path = "/root/视频/yuv/haoke.yuv";
 
@@ -506,6 +508,7 @@ int alexander_refresh_video_thread(void *opaque) {
 }
 
 /***
+ 播放流畅,代码比较好
  无声电影
  */
 int alexander_video_player_sdl2() {
@@ -1292,6 +1295,7 @@ int alexander_how_to_use_sws_scale3() {
 }
 
 /***
+ 使用这个函数.
  这个函数可以改变源视频的分辨率大小和像素格式.
  像素格式现在只支持(AV_PIX_FMT_GRAY8,AV_PIX_FMT_YUV420P,AV_PIX_FMT_YUV422P,
  AV_PIX_FMT_YUV444P,AV_PIX_FMT_YUYV422,

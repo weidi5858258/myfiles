@@ -52,9 +52,6 @@
 
 void test();
 
-int simplest_ffmpeg_player();
-
-int simplest_ffmpeg_player2();
 
 int decoder_video_frame_to_image();
 
@@ -155,6 +152,7 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
+//    simplest_ffmpeg_player();
 //    simplest_ffmpeg_player2();
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/rgb/240_240_rgb24_haoke.rgb",
 //                                                   240, 240);
@@ -185,7 +183,7 @@ int main(int argc, char *argv[]) {
 //    alexander_how_to_use_sws_scale3();
 //    alexander_how_to_use_sws_scale4();
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/rgb/240_240_bgra.rgb");
-    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/tomcat_video/yuv/640_360_yuv444p_cuc_ieschool.yuv");
+//    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/tomcat_video/yuv/640_360_yuv444p_cuc_ieschool.yuv");
 //    alexander_playback_pcm();
 //    alexander_music_player("/root/音乐/tdjm.mp3");
 //    alexander_music_player("/root/音乐/txdx.mp3");
