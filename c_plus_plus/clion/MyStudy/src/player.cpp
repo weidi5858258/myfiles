@@ -198,7 +198,7 @@ int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path) {
             SDL_UpdateTexture(sdl_texture, NULL, data_buffer, pixel_w);
 #elif LOAD_YUV444P
             //convert_24to32(data_buffer, data_buffer_convert, pixel_w, pixel_h);
-            SDL_UpdateTexture(sdl_texture, NULL, data_buffer, pixel_w * 4);
+            SDL_UpdateTexture(sdl_texture, NULL, data_buffer, pixel_w);
 #endif
 
             //FIX: If window is resize

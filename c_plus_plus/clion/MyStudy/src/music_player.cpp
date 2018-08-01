@@ -22,8 +22,9 @@ typedef struct PacketQueue {
     int all_pkts;
     //所有AVPacket占用的空间大小
     int all_pkts_size;
-    //作用?
+    //互斥量
     SDL_mutex *sdl_mutex;
+    //条件变量
     SDL_cond *sdl_cond;
 } PacketQueue;
 
@@ -73,40 +74,42 @@ AudioState *global_audio_state;
 
 void packet_queue_init(PacketQueue *packet_queue) {
     memset(packet_queue, 0, sizeof(PacketQueue));
+    //创建的互斥量默认是未上锁的
     packet_queue->sdl_mutex = SDL_CreateMutex();
+    //创建条件变量
     packet_queue->sdl_cond = SDL_CreateCond();
 }
 
 int packet_queue_put(PacketQueue *packet_queue, AVPacket *avpacket) {
-    SDL_LockMutex(packet_queue->sdl_mutex);
+    if (SDL_LockMutex(packet_queue->sdl_mutex) == 0) {
+        //需要把AVPacket类型构造成AVPacketList类型,因此先要构造一个AVPacketList指针
+        AVPacketList *avpacket_list = NULL;
+        avpacket_list = (AVPacketList *) av_malloc(sizeof(AVPacketList));
+        if (!avpacket_list) {
+            return -1;
+        }
+        avpacket_list->pkt = *avpacket;
+        avpacket_list->next = NULL;
 
-    //需要把AVPacket类型构造成AVPacketList类型,因此先要构造一个AVPacketList指针
-    AVPacketList *avpacket_list = NULL;
-    avpacket_list = (AVPacketList *) av_malloc(sizeof(AVPacketList));
-    if (!avpacket_list) {
-        return -1;
+        //SDL_LockMutex(packet_queue->sdl_mutex);
+
+        //第一次为NULL
+        if (!packet_queue->last_pkt) {
+            packet_queue->first_pkt = avpacket_list;
+            fprintf(stdout,
+                    "packet_queue->first_pkt->pkt.pos = %ld\n",
+                    packet_queue->first_pkt->pkt.pos);
+        } else {
+            packet_queue->last_pkt->next = avpacket_list;
+        }
+        packet_queue->last_pkt = avpacket_list;
+        packet_queue->all_pkts++;
+        packet_queue->all_pkts_size += avpacket_list->pkt.size;
+        //?
+        SDL_CondSignal(packet_queue->sdl_cond);
+
+        SDL_UnlockMutex(packet_queue->sdl_mutex);
     }
-    avpacket_list->pkt = *avpacket;
-    avpacket_list->next = NULL;
-
-    //SDL_LockMutex(packet_queue->sdl_mutex);
-
-    //第一次为NULL
-    if (!packet_queue->last_pkt) {
-        packet_queue->first_pkt = avpacket_list;
-        fprintf(stdout,
-                "packet_queue->first_pkt->pkt.pos = %ld\n",
-                packet_queue->first_pkt->pkt.pos);
-    } else {
-        packet_queue->last_pkt->next = avpacket_list;
-    }
-    packet_queue->last_pkt = avpacket_list;
-    packet_queue->all_pkts++;
-    packet_queue->all_pkts_size += avpacket_list->pkt.size;
-    //?
-    SDL_CondSignal(packet_queue->sdl_cond);
-
-    SDL_UnlockMutex(packet_queue->sdl_mutex);
     return 0;
 }
 
@@ -146,6 +149,8 @@ static int packet_queue_get(PacketQueue *packet_queue, AVPacket *avpacket, int b
             SDL_Event event;
             event.type = FF_QUIT_EVENT;
             SDL_PushEvent(&event);
+            //信号激活后，返回0,否则返回错误代码
+            //SDL_ConWait必须在互斥量锁住之后才能调用。该函数会解锁锁住的互斥量，并等待拥有该锁的线程激活信号。激活后，会重新上锁。
             SDL_CondWait(packet_queue->sdl_cond, packet_queue->sdl_mutex);
             fprintf(stdout, "%s\n", "SDL_CondWait end.");
         }
@@ -618,13 +623,22 @@ int alexander_music_player(const char *in_file_name) {
         switch (sdl_event.type) {
             case FF_QUIT_EVENT:
             case SDL_QUIT:
+                //激活信号(成功返回 0，否则返回错误代码)
+                //SDL_ConSignal会激活等待的一个线程(根据优先级)，而不是所有等待的线程。
                 SDL_CondSignal(audio_state->packet_queue.sdl_cond);
                 audio_state->quit = 1;
                 if (audio_state->sdl_thread != NULL) {
                     SDL_DetachThread(audio_state->sdl_thread);
                     audio_state->sdl_thread = NULL;
                 }
+                //SDL_Quit()调用之后才可以调用其后的函数
                 SDL_Quit();
+                if (audio_state->packet_queue.sdl_mutex != NULL) {
+                    SDL_DestroyMutex(audio_state->packet_queue.sdl_mutex);
+                }
+                if (audio_state->packet_queue.sdl_cond != NULL) {
+                    SDL_DestroyCond(audio_state->packet_queue.sdl_cond);
+                }
                 fprintf(stdout, "%s\n", "exit(0).");
                 exit(0);
                 return 0;

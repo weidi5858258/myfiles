@@ -72,6 +72,7 @@ else ()
             -L${SDL2_LIB_PATH} -lSDL2main
             -lmp3lame
             -lx264
+#            -lx265
             -llzma
             -lasound
             -lsndio
@@ -86,6 +87,9 @@ else ()
             #录音
             -lasound
             -lfdk-aac
+            -lcrypto
+            -lssl
+            -lvpx
             )
 
     include_directories(
