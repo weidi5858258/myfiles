@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
 //    separate_media_to_yuv_and_aac();
 //    simplest_yuv420p_split("/root/视频/lena_256x256_yuv420p.yuv", 256, 256, 1);
 //    audio_recorder("/root/音乐/myrecorder.pcm");
-//    alexander_video_player_sdl2();
+    alexander_video_player_sdl2();
 //    alexander_decode_video_to_yuv();// OUTPUT_YUV420P 1
 //    alexander_playback_yuv();
 //    alexander_use_libavcodec_decode_to_yuv();
@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
 //    alexander_music_player("/root/音乐/tdjm.mp3");
 //    alexander_music_player("/root/音乐/txdx.mp3");
 //    alexander_music_player("/root/视频/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4");
-    alexander_audio_or_video_demuxer();
+//    alexander_audio_or_video_demuxer();
 
     printf("------------------------------------------\n");
     printf("\n");

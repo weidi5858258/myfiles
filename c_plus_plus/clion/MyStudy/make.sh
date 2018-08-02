@@ -49,6 +49,7 @@ digui ${currentDir}
 # echo ${codeFiles}
 
 ffmpegIncludePath="/root/mydev/tools/ffmpeg/include"
+lame="/usr/local/include/lame"
 ffmpegLibPath="/root/mydev/tools/ffmpeg/lib"
 sdlLibPath="/usr/include/SDL2"
 
@@ -59,6 +60,7 @@ g++ \
 -o run_me \
 -g -Wall -std=c++11 \
 -I${ffmpegIncludePath} \
+-I${lame} \
 ${codeFiles} \
 -L${sdlLibPath}    -lSDL2 \
 -L${sdlLibPath}    -lSDL2main \
@@ -69,9 +71,24 @@ ${codeFiles} \
 -L${ffmpegLibPath} -lavfilter \
 -L${ffmpegLibPath} -lswscale \
 -L${ffmpegLibPath} -lswresample \
+-L${ffmpegLibPath} -lpostproc \
+-lmp3lame \
+-lx264 \
 -llzma \
+-lasound \
+-lsndio \
+-lXext \
+-lX11 \
+-lxcb \
 -lsqlite3 \
 -lz -lrt -lm -lpthread \
+-ldl \
+-lglut -lGL -lGLU \
+-lasound \
+-lfdk-aac \
+-lcrypto \
+-lssl \
+-lvpx \
 
 #-lpostproc \
 if [[ -e ${currentDir}"/"run_me ]]; then
