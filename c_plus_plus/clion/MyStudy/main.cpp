@@ -136,6 +136,8 @@ int alexander_playback_pcm();
 
 int alexander_music_player(const char *in_file_name);
 
+int alexander_audio_or_video_demuxer();
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -188,6 +190,7 @@ int main(int argc, char *argv[]) {
 //    alexander_music_player("/root/音乐/tdjm.mp3");
 //    alexander_music_player("/root/音乐/txdx.mp3");
 //    alexander_music_player("/root/视频/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4");
+    alexander_audio_or_video_demuxer();
 
     printf("------------------------------------------\n");
     printf("\n");

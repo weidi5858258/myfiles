@@ -918,7 +918,12 @@ if ( fifo_size >= pOutputFrame->nb_samples)
 
 
 
-
+音频封装遇到的问题：
+ Malformed AAC bitstream detected: use the audio bitstream filter 'aac_adtstoasc' to fix it ('-bsf:a aac_adtstoasc' option with ffmpeg)
+解决：
+在音频数据处理之前，加上这句即可：
+AVBitStreamFilterContext* aacbsfc = av_bitstream_filter_init("aac_adtstoasc");
+原因是FIX:AAC in some container format (FLV, MP4, MKV etc.) need "aac_adtstoasc" bitstream filter (BSF)
 
 
 
