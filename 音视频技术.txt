@@ -925,9 +925,47 @@ if ( fifo_size >= pOutputFrame->nb_samples)
 AVBitStreamFilterContext* aacbsfc = av_bitstream_filter_init("aac_adtstoasc");
 原因是FIX:AAC in some container format (FLV, MP4, MKV etc.) need "aac_adtstoasc" bitstream filter (BSF)
 
+http://www.cnblogs.com/azraelly/archive/2013/01/01/2841269.html  图文详解YUV420数据格式
+YUV格式有两大类：planar(平面)和packed(交错)。
+(比如一帧的数据存储方式)
+对于planar的YUV格式，YYYYYUUUUUVVVVV。
+对于packed的YUV格式，YUVYUVYUVYUVYUV。
 
+YUV码流的存储格式其实与其采样的方式密切相关，主流的采样方式有三种:
+YUV4:4:4
+YUV4:2:2
+YUV4:2:0
 
+提取每个像素的YUV分量
+YUV 4:4:4采样，每一个Y对应一组UV分量。
+YUV 4:2:2采样，每两个Y共用一组UV分量。 
+YUV 4:2:0采样，每四个Y共用一组UV分量。
 
+存储方式:
+1.
+YUYV格式(属于YUV422)
+
+2.
+UYVY格式(属于YUV422)
+
+3.
+YUV422P格式(属于YUV422)
+
+4.
+YV12,YU12格式(属于YUV420)
+
+5.
+NV12,NV21格式(属于YUV420)
+
+YUV420P，Y，U，V三个分量都是平面格式，有I420和YV12两种格式。
+I420格式和YV12格式的不同之处在于U平面和V平面的位置不同。
+在I420格式中，U平面紧跟在Y平面之后，然后才是V平面(即:YUV);但YV12则是相反(即:YVU)。
+YUV420SP, Y分量平面格式，UV打包格式, 即NV12。 
+NV12与NV21类似，U 和 V 交错排列,不同在于UV顺序。
+I420: YYYYYYYY UU VV    =>YUV420P
+YV12: YYYYYYYY VV UU    =>YUV420P
+NV12: YYYYYYYY UV UV    =>YUV420SP
+NV21: YYYYYYYY VU VU    =>YUV420SP
 
 
 

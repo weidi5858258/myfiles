@@ -1297,9 +1297,14 @@ int alexander_how_to_use_sws_scale3() {
 /***
  使用这个函数.
  这个函数可以改变源视频的分辨率大小和像素格式.
- 像素格式现在只支持(AV_PIX_FMT_GRAY8,AV_PIX_FMT_YUV420P,AV_PIX_FMT_YUV422P,
- AV_PIX_FMT_YUV444P,AV_PIX_FMT_YUYV422,
- AV_PIX_FMT_RGB24,AV_PIX_FMT_BGR24,
+ 像素格式现在只支持(
+ AV_PIX_FMT_GRAY8,
+ AV_PIX_FMT_YUV420P,
+ AV_PIX_FMT_YUV422P,
+ AV_PIX_FMT_YUV444P,
+ AV_PIX_FMT_YUYV422,
+ AV_PIX_FMT_RGB24,
+ AV_PIX_FMT_BGR24,
  AV_PIX_FMT_BGRA)这几种之间的互转.
  */
 int alexander_how_to_use_sws_scale4() {
@@ -1519,6 +1524,9 @@ void alexander_fill_audio2(void *udata, unsigned char *stream, int len) {
     audio_len -= len;
 }
 
+/***
+ 播放效果不好
+ */
 int alexander_playback_pcm() {
     SDL_AudioSpec sdl_audio_spec_;
     sdl_audio_spec = &sdl_audio_spec_;
@@ -2449,6 +2457,47 @@ int alexander_audio_or_video_demuxer() {
         printf("Error occurred.\n");
         return -1;
     }
+    return 0;
+}
+
+int alexander_get_y_frame_from_yuv420p() {
+    //读取文件test_yuv420p_320x180.yuv
+    FILE *fp_yuv = fopen("test_yuv420p_320x180.yuv", "rb");
+    //写入文件frame.yuv
+    FILE *fp_frame = fopen("frame_320x180_out.yuv", "wb");
+    //开辟内存读取test_yuv420p_320x180.yuv文件的第一帧的亮度数据（Y）
+    char *buffer_y = (char *) malloc(sizeof(char) * 320 * 180);
+    char *buffer_u = (char *) malloc(sizeof(char) * 320 * 180 / 4);
+    char *buffer_v = (char *) malloc(sizeof(char) * 320 * 180 / 4);
+
+    //读取函数，将test_yuv420p_320x180.yuv的第一帧存入buff指向的内存
+    for (int i = 0; i < 30; i++) {
+        fread(buffer_y, 320 * 180, 1, fp_yuv);
+        fread(buffer_u, 320 * 180 / 4, 1, fp_yuv);
+        fread(buffer_v, 320 * 180 / 4, 1, fp_yuv);
+        //不要色度的话,就是把u,v方向上的值设为128就行了
+        memset(buffer_u, 128, 320 * 180 / 4);
+        memset(buffer_v, 128, 320 * 180 / 4);
+
+        fwrite(buffer_y, 320 * 180, 1, fp_frame);
+        fwrite(buffer_u, 320 * 180 / 4, 1, fp_frame);
+        fwrite(buffer_v, 320 * 180 / 4, 1, fp_frame);
+    }
+    //fread(buff,320*180,1,fp_yuv);
+    //将buff指向的内存写入frame.yuv
+
+    //fprintf演示
+    //FILE* fp_demo=fopen("demo.txt","wb");
+    //char hello[20]="GuangDianGong";
+    //fprintf(fp_demo,"Hello World,%s",hello);
+    //fclose(fp_demo);
+
+    free(buffer_y);
+    free(buffer_u);
+    free(buffer_v);
+    fclose(fp_yuv);
+    fclose(fp_frame);
+
     return 0;
 }
 

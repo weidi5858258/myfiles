@@ -129,11 +129,22 @@ int alexander_how_to_use_sws_scale();
 int alexander_how_to_use_sws_scale2();
 
 int alexander_how_to_use_sws_scale3();
-
+/***
+ 使用这个函数.
+ 这个函数可以改变源视频的分辨率大小和像素格式.
+ 像素格式现在只支持(AV_PIX_FMT_GRAY8,AV_PIX_FMT_YUV420P,AV_PIX_FMT_YUV422P,
+ AV_PIX_FMT_YUV444P,AV_PIX_FMT_YUYV422,
+ AV_PIX_FMT_RGB24,AV_PIX_FMT_BGR24,
+ AV_PIX_FMT_BGRA)这几种之间的互转.
+ */
 int alexander_how_to_use_sws_scale4();
-
+/***
+ 播放效果不好
+ */
 int alexander_playback_pcm();
-
+/***
+ 播放效果还是不错的,代码比较好
+ */
 int alexander_music_player(const char *in_file_name);
 
 int alexander_audio_or_video_demuxer();
@@ -176,7 +187,7 @@ int main(int argc, char *argv[]) {
 //    separate_media_to_yuv_and_aac();
 //    simplest_yuv420p_split("/root/视频/lena_256x256_yuv420p.yuv", 256, 256, 1);
 //    audio_recorder("/root/音乐/myrecorder.pcm");
-    alexander_video_player_sdl2();
+//    alexander_video_player_sdl2();
 //    alexander_decode_video_to_yuv();// OUTPUT_YUV420P 1
 //    alexander_playback_yuv();
 //    alexander_use_libavcodec_decode_to_yuv();
@@ -1310,6 +1321,19 @@ cout<<a<<b;
 try{
     wrong();
 }
+
+ 字符数组的初始化:
+ 基本方法同一维数组和二维数组的初始化方法.
+ char ch[11] = {'h','e','l','l','o', '', 'w','o','r','l','d'};
+ char ch[] = {'h','e','l','l','o'};
+ '0'  ---> 48(ASCII码)
+ '\0' ---> 0(ASCII码)
+ 为字符数组部分元素赋初值,其余元素默认填充'\0'.
+ if(name[i] == '\n'){break;}
+ 在C语言中字符串是用字符数组来保存的.
+ 字符数组定义好大小后,先清零.
+
+
 
 
 

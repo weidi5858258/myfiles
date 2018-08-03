@@ -2115,7 +2115,8 @@ startHere
 IFS=${IFS_old}
 
 
-
+#授予某个应用有android.permission.CHANGE_CONFIGURATION权限
+adb shell pm grant packagename android.permission.CHANGE_CONFIGURATION
 
 
 

@@ -591,6 +591,7 @@ static int decode_thread(void *arg) {
 }
 
 /***
+ 播放效果还是不错的,代码比较好
  main2 ---> decode_thread ---> stream_component_open ---> audio_callback ---> audio_decode_frame
 
  main2 ---> decode_thread ---> for ---> packet_queue_put
