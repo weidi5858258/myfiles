@@ -967,6 +967,23 @@ YV12: YYYYYYYY VV UU    =>YUV420P
 NV12: YYYYYYYY UV UV    =>YUV420SP
 NV21: YYYYYYYY VU VU    =>YUV420SP
 
+I420和YV12的区别        
+一般来说，直接采集到的视频数据是RGB24格式，
+RGB24一帧的大小size＝width×heigth×3 Bit，
+RGB32一帧的大小size＝width×heigth×4 Bit，
+如果是I420（即YUV标准格式4：2：0）的数据量是 size＝width×heigth×1.5 Bit。       在采集到RGB24数据后，需要对这个格式的数据进行第一次压缩。即将图像的颜色空间由RGB2YUV。因为，X264在进行编码的时候需要标准的YUV（4：2：0）。但是这里需要注意的是，虽然YV12也是（4：2：0），但是YV12和I420的却是不同的，在存储空间上面有些区别。如下： YV12 ： 亮度（行×列） ＋ U（行×列/4) + V（行×列/4）
+
+I420 ： 亮度（行×列） ＋ V（行×列/4) + U（行×列/4）
+
+adb shell pm grant jp.co.c_lis.ccl.morelocale android.permission.CHANGE_CONFIGURATION
+
+adb shell pm grant packagename android.permission.CHANGE_CONFIGURATION授予某个应用有android.permission.CHANGE_CONFIGURATION权限
+
+进入adb shell，直接使用setprop 命令设置 persist.sys.language 和 persist.sys.country这两个属性值。
+例如：
+
+         setprop persist.sys.language zh
+         setprop persist.sys.country CN
 
 
 
