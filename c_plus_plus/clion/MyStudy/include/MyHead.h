@@ -24,6 +24,8 @@
 #include <cstddef>
 #include <inttypes.h>
 #include <math.h>
+#include <sys/stat.h>
+#include <sys/mount.h>
 //#include <opencv2/opencv.hpp>
 
 // ffmpeg and SDL

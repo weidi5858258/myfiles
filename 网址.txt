@@ -102,6 +102,7 @@ https://blog.csdn.net/u012362160/article/details/49660057 音频重采样造成�
 http://www.pt80.net/thread-663924-1-1.html 不同音乐格式之谜（wav,flac,ape,wv,tak,ogg,aac）
 https://blog.csdn.net/a907763895/article/details/42016039 	
 最新（2.44）FFmpeg音频播放 ----- 关键点swr_convert
+http://www.magbt.net/ 魔力电影网
 
 
 
