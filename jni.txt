@@ -202,8 +202,12 @@ if (extractor != NULL) {
 }
 
 
-
-
+status_t
+uint32_t
+uid_t
+Parcel
+sp <VolumeShaper::Configuration>
+BnInterface<IPlayer>
 
 
 

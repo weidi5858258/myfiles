@@ -1559,6 +1559,8 @@ local parameter2=$2;
 # adb logcat > ${currentDir}/${mySonyTempLog} &
 adb logcat > ${currentDir}/${parameter2}".log" &
 
+adb shell pm grant packagename android.permission.CHANGE_CONFIGURATION
+
 # test='u0_a87    509   413   1191524 69184 
 # SyS_epoll_ 00f6fd7294 S com.qiyi.video'
 processName=`echo ${aline} | awk  -F ' ' '{print $9}'`

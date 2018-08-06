@@ -209,6 +209,7 @@ echo "Y" | sudo apt-get install cmake
 echo "Y" | sudo apt-get install cmake-curses-gui
 echo "Y" | sudo apt-get install build-essential
 echo "Y" | sudo apt-get install yasm
+echo "Y" | sudo apt-get install policycoreutils
 # pcm player
 echo "Y" | sudo apt-get install sox
 echo "Y" | sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  
