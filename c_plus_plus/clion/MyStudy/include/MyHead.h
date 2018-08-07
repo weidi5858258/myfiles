@@ -114,6 +114,7 @@ extern "C" {// 不能少
 #define ALSA_PCM_NEW_HW_PARAMS_API
 
 #define AV_DUMP_FORMAT 1
+#define SWR_CH_MAX 1024
 
 using namespace std;
 

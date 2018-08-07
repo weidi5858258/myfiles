@@ -4,7 +4,8 @@ project(MyStudy)
 set(CMAKE_CXX_STANDARD 11)
 add_definitions(-std=c++11)
 
-add_executable(MyStudy
+add_executable(
+        MyStudy
         main.cpp
         include/Test.h
         include/MyHead.h
@@ -16,7 +17,10 @@ add_executable(MyStudy
         ffmpeg.cpp
         src/ffmpeg_sample.cpp
         src/leixiaohua1020.cpp
-        src/player.cpp src/music_player.cpp)
+        src/player.cpp
+        src/music_player.cpp
+        src/music_player2.cpp
+)
 
 if (WIN32)
     set(FFMPEG_LIB_PATH
@@ -36,11 +40,11 @@ if (WIN32)
             -L${SDL2_LIB_PATH} -lSDL2
             -L${SDL2_LIB_PATH} -lSDL2main
             )
-#            -L"C:/MinGW/lib" -lmingw32
-#            -lz
-#            -lm -lpthread
-#            -llzma
-#            -lrt
+    #            -L"C:/MinGW/lib" -lmingw32
+    #            -lz
+    #            -lm -lpthread
+    #            -llzma
+    #            -lrt
 
     include_directories(
             include
@@ -72,7 +76,7 @@ else ()
             -L${SDL2_LIB_PATH} -lSDL2main
             -lmp3lame
             -lx264
-#            -lx265
+            #-lx265
             -llzma
             -lasound
             -lsndio

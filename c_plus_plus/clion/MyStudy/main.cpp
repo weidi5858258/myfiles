@@ -199,7 +199,7 @@ int main(int argc, char *argv[]) {
 //    alexander_how_to_use_sws_scale3();
 //    alexander_how_to_use_sws_scale4();
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/rgb/240_240_bgra.rgb");
-//    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/tomcat_video/yuv/640_360_yuv444p_cuc_ieschool.yuv");
+//    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/tomcat_video/yuv/640_360_graybar.yuv");
 //    alexander_playback_pcm();
 //    alexander_music_player("/root/音乐/tdjm.mp3");
 //    alexander_music_player("/root/音乐/txdx.mp3");

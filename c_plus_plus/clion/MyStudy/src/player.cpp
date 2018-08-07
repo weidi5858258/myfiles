@@ -107,9 +107,9 @@ int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path) {
 #define LOAD_BGRA    0
 #define LOAD_RGB24   0
 #define LOAD_BGR24   0
-#define LOAD_YUV420P 0
+#define LOAD_YUV420P 1
 //下面两个还没有验证
-#define LOAD_YUV422P 0
+#define LOAD_YUV422P 1
 #define LOAD_YUV444P 1
 
     //Bit per Pixel
