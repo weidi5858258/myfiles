@@ -7,9 +7,13 @@
 
 #include <stdio.h>
 
-void handleSigIntSignal(int sign);
+void handleSigIntSignal(int sign) {
+    printf("HandleSignal::handleSigIntSignal():sign = %d\n", sign);
+}
 
-void handleSigPipeSignal(int sign);
+void handleSigPipeSignal(int sign) {
+    printf("HandleSignal::handleSigPipeSignal():sign = %d\n", sign);
+}
 
 class HandleSignal {
 

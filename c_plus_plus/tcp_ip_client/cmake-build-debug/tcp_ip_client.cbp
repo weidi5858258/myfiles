@@ -11,30 +11,30 @@
 				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="rebuild_cache">
-				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
 				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="tcp_ip_client">
@@ -44,31 +44,24 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/mingw32/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/msys/1.0/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/install-tools/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/share/doc/gcc/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/share/doc/gdb/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/cygwin64/usr/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/cygwin64/usr/include/bash"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/D:/ubuntu/head_files/usr/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/D:/ubuntu/head_files/usr/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
-					<Add directory="/usr/include/c++/4.7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.7/."/>
-					<Add directory="/usr/include/c++/4.7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include"/>
+					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/include"/>
+					<Add directory="/root/mydev/tools/ffmpeg/include"/>
+					<Add directory="/usr/include/SDL2"/>
+					<Add directory="/usr/local/include/lame"/>
+					<Add directory="/usr/include/c++/4.8"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8"/>
+					<Add directory="/usr/include/c++/4.8/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 tcp_ip_client"/>
-					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 tcp_ip_client"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="tcp_ip_client/fast">
@@ -78,31 +71,24 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/mingw32/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/msys/1.0/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/install-tools/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/share/doc/gcc/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/MinGW/share/doc/gdb/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/cygwin64/usr/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/C:/cygwin64/usr/include/bash"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/D:/ubuntu/head_files/usr/include"/>
-					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/D:/ubuntu/head_files/usr/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
-					<Add directory="/usr/include/c++/4.7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.7/."/>
-					<Add directory="/usr/include/c++/4.7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include"/>
+					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/include"/>
+					<Add directory="/root/mydev/tools/ffmpeg/include"/>
+					<Add directory="/usr/include/SDL2"/>
+					<Add directory="/usr/local/include/lame"/>
+					<Add directory="/usr/include/c++/4.8"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8"/>
+					<Add directory="/usr/include/c++/4.8/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.7/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 tcp_ip_client/fast"/>
-					<CompileFile command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/local/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 tcp_ip_client/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>

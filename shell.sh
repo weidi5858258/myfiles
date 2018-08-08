@@ -1547,10 +1547,12 @@ adb shell pm path com.miui.fm
 adb shell ls -alh /storage/3D5F-08A6/SonyTVCamera_photo
 ./system/vendor/bin/camera_recognition_daemon &
 
-停用应用
+# 停用应用
 adb shell pm hide   com.ss.android.article.video
-启用应用
+# 启用应用
 adb shell pm unhide com.ss.android.article.video
+# 启动隐式Activity
+adb shell am start -a android.settings.LOCALE_SETTINGS
 
 # 清理日志
 adb logcat -c;

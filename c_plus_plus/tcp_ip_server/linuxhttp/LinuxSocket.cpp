@@ -1079,17 +1079,17 @@ char *getStr() {
 }
 
 void test_sqlite3(void) {
-    SQLiteOpenHelper mySQLiteOpenHelper("/root/temp/tv.db");
-    mySQLiteOpenHelper.onCreate();
-
-    char *str = NULL;
-    str = getStr();
-    fprintf(stdout, "%s\n", str);
-
-    int num;
-    int *p = &num;
-    printf("%d\n", sizeof(p));
-    printf("%p\n", p);
+//    SQLiteOpenHelper mySQLiteOpenHelper("/root/temp/tv.db");
+//    mySQLiteOpenHelper.onCreate();
+//
+//    char *str = NULL;
+//    str = getStr();
+//    fprintf(stdout, "%s\n", str);
+//
+//    int num;
+//    int *p = &num;
+//    printf("%d\n", sizeof(p));
+//    printf("%p\n", p);
 }
 
 // 下面是线程的内容
@@ -1132,7 +1132,9 @@ void test_pthread(void) {
     printf("Game Over\n");
 }
 /***
-typedef unsigned long int pthread_t;线程标识符
+线程的知识点：
+
+ typedef unsigned long int pthread_t;线程标识符
 
 extern int pthread_create __P ((
      // 参数一: pthread_t指针,因此传递的参数是一个地址
@@ -1232,7 +1234,6 @@ pthread_join与pthread_exit只需要用一个
  */
 
 // 下面是继承方面的一点语法内容
-
 /*class Base {
 public:
     void fun1(int, int);

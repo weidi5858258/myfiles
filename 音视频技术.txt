@@ -975,18 +975,209 @@ RGB32一帧的大小size＝width×heigth×4 Bit，
 
 I420 ： 亮度（行×列） ＋ V（行×列/4) + U（行×列/4）
 
-adb shell pm grant jp.co.c_lis.ccl.morelocale android.permission.CHANGE_CONFIGURATION
 
-adb shell pm grant packagename android.permission.CHANGE_CONFIGURATION授予某个应用有android.permission.CHANGE_CONFIGURATION权限
-
-进入adb shell，直接使用setprop 命令设置 persist.sys.language 和 persist.sys.country这两个属性值。
-例如：
-
-         setprop persist.sys.language zh
-         setprop persist.sys.country CN
-
-
-
+AVFifoBuffer * m_fifo = NULL;
+ 
+ 
+ 
+SwrContext * init_pcm_resample(AVFrame *in_frame, AVFrame *out_frame)
+{
+	SwrContext * swr_ctx = NULL;
+	swr_ctx = swr_alloc();
+	if (!swr_ctx)
+	{
+		printf("swr_alloc error \n");
+		return NULL;
+	}
+	AVCodecContext * audio_dec_ctx = icodec->streams[audio_stream_idx]->codec;
+	AVSampleFormat sample_fmt;
+	sample_fmt = (AVSampleFormat)m_dwBitsPerSample; //样本
+	if (audio_dec_ctx->channel_layout == 0)
+	{
+		audio_dec_ctx->channel_layout = av_get_default_channel_layout(icodec->streams[audio_stream_idx]->codec->channels);
+	}
+	/* set options */
+	av_opt_set_int(swr_ctx, "in_channel_layout",    audio_dec_ctx->channel_layout, 0);
+	av_opt_set_int(swr_ctx, "in_sample_rate",       audio_dec_ctx->sample_rate, 0);
+	av_opt_set_sample_fmt(swr_ctx, "in_sample_fmt", audio_dec_ctx->sample_fmt, 0);
+ 
+	av_opt_set_int(swr_ctx, "out_channel_layout",    audio_dec_ctx->channel_layout, 0);
+	av_opt_set_int(swr_ctx, "out_sample_rate",       audio_dec_ctx->sample_rate, 0);
+	av_opt_set_sample_fmt(swr_ctx, "out_sample_fmt", sample_fmt, 0);
+	swr_init(swr_ctx);
+ 
+	int64_t src_nb_samples = in_frame->nb_samples;
+	out_frame->nb_samples = av_rescale_rnd(swr_get_delay(swr_ctx,oaudio_st->codec->sample_rate) + src_nb_samples,
+		oaudio_st->codec->sample_rate, oaudio_st->codec->sample_rate, AV_ROUND_UP);
+ 
+	int ret = av_samples_alloc(out_frame->data, &out_frame->linesize[0], 
+		icodec->streams[audio_stream_idx]->codec->channels, out_frame->nb_samples,oaudio_st->codec->sample_fmt,1);
+	if (ret < 0)
+	{
+		return NULL;
+	}
+ 
+	//pcm分包初始化
+	int buffersize = av_samples_get_buffer_size(NULL, oaudio_st->codec->channels,
+		2048, oaudio_st->codec->sample_fmt, 1);
+	m_fifo = av_fifo_alloc(buffersize);
+	return swr_ctx;
+}
+ 
+int preform_pcm_resample(SwrContext * pSwrCtx,AVFrame *in_frame, AVFrame *out_frame)
+{
+	int ret = 0;
+	if (pSwrCtx != NULL) 
+	{
+		ret = swr_convert(pSwrCtx, out_frame->data, out_frame->nb_samples, 
+			(const uint8_t**)in_frame->data, in_frame->nb_samples);
+		if (ret < 0)
+		{
+			return -1;
+		}
+		//修改分包内存
+		int buffersize = av_samples_get_buffer_size(&out_frame->linesize[0], oaudio_st->codec->channels,
+			ret, oaudio_st->codec->sample_fmt, 1);
+		int sss = av_fifo_size(m_fifo);
+		sss = av_fifo_realloc2(m_fifo, av_fifo_size(m_fifo) + out_frame->linesize[0]);
+		sss = av_fifo_size(m_fifo);
+		av_fifo_generic_write(m_fifo, out_frame->data[0], out_frame->linesize[0], NULL);
+ 
+		out_frame->pkt_pts = in_frame->pkt_pts;
+		out_frame->pkt_dts = in_frame->pkt_dts;
+		//有时pkt_pts和pkt_dts不同，并且pkt_pts是编码前的dts,这里要给avframe传入pkt_dts而不能用pkt_pts
+		//out_frame->pts = out_frame->pkt_pts;
+		out_frame->pts = in_frame->pkt_dts;
+	}
+	return 0;
+}
+void uinit_pcm_resample(AVFrame * poutframe,SwrContext * swr_ctx)
+{
+	if (poutframe)
+	{
+		avcodec_free_frame(&poutframe);
+		poutframe = NULL;
+	}
+	if (swr_ctx)
+	{
+		swr_free(&swr_ctx);
+		swr_ctx = NULL;
+	}
+	//析构pcm分包结构
+	if(m_fifo)
+	{
+		av_fifo_free(m_fifo);
+		m_fifo = NULL;
+	}
+}
+int perform_code(int stream_type,AVFrame * picture)
+{
+	AVCodecContext *cctext = NULL;
+	AVPacket pkt_t;
+	av_init_packet(&pkt_t);
+	pkt_t.data = NULL; // packet data will be allocated by the encoder
+	pkt_t.size = 0;
+	int frameFinished = 0 ;
+ 
+	if (stream_type == AUDIO_ID)
+	{
+		cctext = oaudio_st->codec;
+		//如果进和出的的声道，样本，采样率不同,需要重采样
+		if(icodec->streams[audio_stream_idx]->codec->sample_fmt != (AVSampleFormat)m_dwBitsPerSample ||
+			icodec->streams[audio_stream_idx]->codec->channels != m_dwChannelCount ||
+			icodec->streams[audio_stream_idx]->codec->sample_rate != m_dwFrequency)
+		{
+			int64_t pts_t = picture->pts;
+			int duration_t = (double)cctext->frame_size * (icodec->streams[audio_stream_idx]->time_base.den /icodec->streams[audio_stream_idx]->time_base.num)/ 
+				icodec->streams[audio_stream_idx]->codec->sample_rate;
+ 
+			int frame_bytes = cctext->frame_size * av_get_bytes_per_sample(cctext->sample_fmt)* cctext->channels;
+			AVFrame * pFrameResample = avcodec_alloc_frame();
+			uint8_t * readbuff = new uint8_t[frame_bytes];
+ 
+			if(av_sample_fmt_is_planar(cctext->sample_fmt))
+			{
+				frame_bytes /= cctext->channels;
+			}
+ 
+			while (av_fifo_size(m_fifo) >= frame_bytes) //取出写入的未读的包
+			{
+				pFrameResample->nb_samples = cctext->frame_size;
+				av_fifo_generic_read(m_fifo, readbuff, frame_bytes, NULL);
+ 
+				//这里一定要考虑音频分片的问题
+				//如果是分片的avcodec_fill_audio_frame传入的buf是单声道的，但是buf_size 是两个声道加一起的数据量
+				//如果不是分片的avcodec_fill_audio_frame传入的buf是双声道的，buf_size 是两个声道加一起的数据量
+				if(av_sample_fmt_is_planar(cctext->sample_fmt))
+				{
+					avcodec_fill_audio_frame(pFrameResample,cctext->channels,cctext->sample_fmt,readbuff,frame_bytes * cctext->channels,1);
+				}
+				else
+				{					
+					avcodec_fill_audio_frame(pFrameResample,cctext->channels,cctext->sample_fmt,readbuff,frame_bytes,0);
+				}
+ 
+				if(m_is_first_audio_pts == 0)
+				{
+					m_first_audio_pts = pts_t;
+					m_is_first_audio_pts = 1;
+				}
+				pFrameResample->pts = m_first_audio_pts;
+				m_first_audio_pts += duration_t;
+ 
+ 
+				pFrameResample->pts = av_rescale_q_rnd(pFrameResample->pts, icodec->streams[audio_stream_idx]->codec->time_base, oaudio_st->codec->time_base, AV_ROUND_NEAR_INF);
+				nRet = avcodec_encode_audio2(cctext,&pkt_t,pFrameResample,&frameFinished);
+				if (nRet>=0 && frameFinished)
+				{
+					write_frame(ocodec,AUDIO_ID,pkt_t);
+					av_free_packet(&pkt_t);
+				}
+			}
+			if (readbuff)
+			{
+				delete []readbuff;
+			}
+			if (pFrameResample)
+			{
+				av_free(pFrameResample);
+				pFrameResample = NULL;
+			}
+		}
+		else
+		{
+			nRet = avcodec_encode_audio2(cctext,&pkt_t,picture,&frameFinished);
+			if (nRet>=0 && frameFinished)
+			{
+				write_frame(ocodec,AUDIO_ID,pkt_t);
+				av_free_packet(&pkt_t);
+			}
+		}
+	}
+	else if (stream_type == VIDEO_ID)
+	{
+		cctext = ovideo_st->codec;
+		if(icodec->streams[video_stream_idx]->codec->ticks_per_frame != 1)
+		{
+			AVRational time_base_video_t;
+			time_base_video_t.num = icodec->streams[video_stream_idx]->codec->time_base.num;
+			time_base_video_t.den = icodec->streams[video_stream_idx]->codec->time_base.den /icodec->streams[video_stream_idx]->codec->ticks_per_frame;
+			picture->pts = av_rescale_q_rnd(picture->pts, time_base_video_t, ovideo_st->codec->time_base, AV_ROUND_NEAR_INF);
+		}
+		else
+		{
+			picture->pts = av_rescale_q_rnd(picture->pts, icodec->streams[video_stream_idx]->codec->time_base, ovideo_st->codec->time_base, AV_ROUND_NEAR_INF);
+		}
+		avcodec_encode_video2(cctext,&pkt_t,picture,&frameFinished);
+		picture->pts++;
+		if (frameFinished)
+		{
+			write_frame(ocodec,VIDEO_ID,pkt_t);
+			av_free_packet(&pkt_t);
+		}
+	}
+	return 1;
+}
 
 
 

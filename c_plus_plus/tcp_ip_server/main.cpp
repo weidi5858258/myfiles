@@ -2,6 +2,10 @@
 #include "linuxhttp/LinuxSocket.h"
 #include "signal/HandleSignal.h"
 
+void handleSigIntSignal(int sign);
+
+void handleSigPipeSignal(int sign);
+
 int main(int argc, char *argv[]) {
     printf("\n");
     printf("argc = %d\n", argc);

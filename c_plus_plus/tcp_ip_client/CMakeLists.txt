@@ -2,101 +2,55 @@ cmake_minimum_required(VERSION 3.9)
 project(tcp_ip_client)
 
 set(CMAKE_CXX_STANDARD 11)
-set(ANDROID_INCLUDE_PATH
-        D:\\AOSP)
-set(ANDROID_KEYDL_HAL_HEADER_PATH
-        ${ANDROID_INCLUDE_PATH}\\out\\soong\\.intermediates\\vendor\\sony\\hardware\\interfaces\\eepserver\\1.0\\com.sony.dtv.hardware.eepserver@1.0_genc++_headers\\gen)
-set(ANDROID_HIDL_HAL_HEADER_PATH
-        ${ANDROID_INCLUDE_PATH}\\out\\soong\\.intermediates\\system\\libhidl\\transport\\base\\1.0\\android.hidl.base@1.0_genc++_headers\\gen)
-
-include_directories(
-        #        ${ANDROID_KEYDL_HAL_HEADER_PATH}\\
-        #        ${ANDROID_HIDL_HAL_HEADER_PATH}\\
-        #        ${ANDROID_INCLUDE_PATH}\\external\\curl\\include
-        #        ${ANDROID_INCLUDE_PATH}\\external\\expat\\lib
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\include
-        #        ${ANDROID_INCLUDE_PATH}\\frameworks\\native\\include
-        #        ${ANDROID_INCLUDE_PATH}\\frameworks\\base\\include
-        #        ${ANDROID_INCLUDE_PATH}\\libnativehelper\\include\\nativehelper
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\bta\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\btcore\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\btif\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\device\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\embdrv\\sbc\\decoder\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\embdrv\\sbc\\encoder\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\hci\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\osi\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\profile\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\stack\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\udrv\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\utils\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\vendor_libs\\test_vendor_lib\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\bt\\vnd\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\adf\\libadf\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\adf\\libadfhwc\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\base\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\fs_mgr\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\healthd\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\libcrypto_utils\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\libion\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\libmemunreachable\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\libnativeloader\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\libpackagelistparser\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\libpixelflinger\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\libprocessgroup\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\libsparse\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\libsuspend\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\libsync\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\logwrapper\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\metricsd\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\toolbox\\upstream-netbsd\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\core\\trusty\\libtrusty\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\extras\\libfec\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\extras\\libpagemap\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\extras\\perfprofd\\quipper\\kernel-headers\\tools\\perf\\util\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\extras\\perfprofd\\quipper\\original-kernel-headers\\tools\\perf\\util\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\extras\\simpleperf\\nonlinux_support\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\extras\\tests\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\gatekeeper\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\keymaster\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\media\\alsa_utils\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\media\\audio\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\media\\audio_effects\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\media\\audio_route\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\media\\audio_utils\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\media\\camera\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\media\\private\\camera\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\media\\private\\radio\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\media\\radio\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\nativepower\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\netd\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\security\\keystore\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\security\\softkeymaster\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\update_engine\\include
-        #        ${ANDROID_INCLUDE_PATH}\\system\\update_engine\\client_library\\include
-        #        include
-        #        binder
-
-        C:\\MinGW\\include
-        C:\\MinGW\\mingw32\\include
-        C:\\MinGW\\msys\\1.0\\include
-        C:\\MinGW\\msys\\1.0\\lib\\gcc\\i686-pc-msys\\3.4.4\\include
-        C:\\MinGW\\msys\\1.0\\lib\\gcc\\i686-pc-msys\\3.4.4\\install-tools\\include
-        C:\\MinGW\\share\\doc\\gcc\\include
-        C:\\MinGW\\share\\doc\\gdb\\include
-
-        C:\\cygwin64\\usr\\include
-        C:\\cygwin64\\usr\\include\\bash
-
-        D:\\ubuntu\\head_files\\usr\\include
-        D:\\ubuntu\\head_files\\usr\\usr\\lib\\gcc\\x86_64-linux-gnu\\5\\include
-)
+add_definitions(-std=c++11)
 
 add_executable(tcp_ip_client
         main.cpp
         LinuxSocket.cpp
         LinuxSocket.h)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+set(FFMPEG_LIB_PATH
+        /root/mydev/tools/ffmpeg/lib)
+
+set(SDL2_LIB_PATH
+        /usr/include/SDL2)
+
+target_link_libraries(tcp_ip_client
+        -L${FFMPEG_LIB_PATH} -lavformat
+        -L${FFMPEG_LIB_PATH} -lavdevice
+        -L${FFMPEG_LIB_PATH} -lavcodec
+        -L${FFMPEG_LIB_PATH} -lavfilter
+        -L${FFMPEG_LIB_PATH} -lavutil
+        -L${FFMPEG_LIB_PATH} -lswresample
+        -L${FFMPEG_LIB_PATH} -lswscale
+        -L${FFMPEG_LIB_PATH} -lpostproc
+        -L${SDL2_LIB_PATH} -lSDL2
+        -L${SDL2_LIB_PATH} -lSDL2main
+        -lmp3lame
+        -lx264
+        #-lx265
+        -llzma
+        -lasound
+        -lsndio
+        -lXext
+        -lX11
+        -lxcb
+        -lsqlite3
+        -lz -lrt -lm -lpthread
+        -ldl
+        #opengl
+        -lglut -lGL -lGLU
+        #录音
+        -lasound
+        -lfdk-aac
+        -lcrypto
+        -lssl
+        -lvpx
+        )
+
+include_directories(
+        include
+        /root/mydev/tools/ffmpeg/include
+        /usr/include/SDL2
+        /usr/local/include/lame
+)

@@ -26,7 +26,11 @@
 #include <math.h>
 #include <sys/stat.h>
 #include <sys/mount.h>
+#include <wchar.h>
+#include <string.h>
+#include <time.h>
 //#include <opencv2/opencv.hpp>
+
 
 // ffmpeg and SDL
 extern "C" {// 不能少
@@ -115,6 +119,7 @@ extern "C" {// 不能少
 
 #define AV_DUMP_FORMAT 1
 #define SWR_CH_MAX 1024
+#define PI 3.14159265
 
 using namespace std;
 

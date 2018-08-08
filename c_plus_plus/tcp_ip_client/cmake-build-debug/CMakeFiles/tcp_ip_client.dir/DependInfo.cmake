@@ -11,17 +11,10 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "../C:/MinGW/include"
-  "../C:/MinGW/mingw32/include"
-  "../C:/MinGW/msys/1.0/include"
-  "../C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/include"
-  "../C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/install-tools/include"
-  "../C:/MinGW/share/doc/gcc/include"
-  "../C:/MinGW/share/doc/gdb/include"
-  "../C:/cygwin64/usr/include"
-  "../C:/cygwin64/usr/include/bash"
-  "../D:/ubuntu/head_files/usr/include"
-  "../D:/ubuntu/head_files/usr/usr/lib/gcc/x86_64-linux-gnu/5/include"
+  "../include"
+  "/root/mydev/tools/ffmpeg/include"
+  "/usr/include/SDL2"
+  "/usr/local/include/lame"
   )
 
 # Targets to which this target links.
