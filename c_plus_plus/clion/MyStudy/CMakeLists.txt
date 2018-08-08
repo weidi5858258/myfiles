@@ -11,6 +11,7 @@ add_executable(
         include/Test.h
         include/MyHead.h
         include/Method.h
+        include/GuessNumber.h
 
         src/B0.cpp
         src/Test.cpp
@@ -24,6 +25,7 @@ add_executable(
         src/music_player.cpp
         src/music_player2.cpp
         src/function_study.cpp
+        src/GuessNumber.cpp
 )
 
 if (WIN32)
