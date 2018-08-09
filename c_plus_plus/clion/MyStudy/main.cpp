@@ -259,6 +259,9 @@ struct stud *h_create() {
     return head;
 }
 
+/***
+ 尾插法建立单链表
+ */
 struct stud *r_create() {
     struct stud *head = NULL, *rear = NULL, *p = NULL;
     int n;
