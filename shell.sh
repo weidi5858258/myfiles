@@ -1554,6 +1554,13 @@ adb shell pm unhide com.ss.android.article.video
 # 启动隐式Activity
 adb shell am start -a android.settings.LOCALE_SETTINGS
 
+#由App自行决定软件能否安装在SD卡 
+pm set-Install-Location 0 
+#强制全部App安装在ROM内 
+pm set-Install-Location 1 
+#强制全部App安装在SD卡 
+pm set-Install-Location 2 
+
 # 清理日志
 adb logcat -c;
 # 把字符串当命令使

@@ -18,7 +18,7 @@ void test_sqlite3(void);
 
 void LinuxSocket::studyHard() {
 
-    test_class();
+    test_pthread();
 
 }
 
@@ -1093,9 +1093,9 @@ void test_sqlite3(void) {
 }
 
 // 下面是线程的内容
-void *say_hello(void *args) {
+void *say_hello_thread(void *args) {
     sleep(3);
-    printf("Hello Runoob\n");
+    printf("Hello Runoob pid: %u\n", pthread_self());
 }
 
 void test_pthread(void) {
@@ -1112,7 +1112,7 @@ void test_pthread(void) {
     for (int i = 0; i < PTHREADS_NUM; ++i) {
         // printf("p_tids\[%d\] = %d\n", i, p_tids[i]);
         printf("&p_tids\[%d\] = %p\n", i, &p_tids[i]);
-        int ret = pthread_create(&p_tids[i], &attr, say_hello, NULL);
+        int ret = pthread_create(&p_tids[i], &attr, say_hello_thread, NULL);
         if (ret != 0) {
             printf("pthread_create error: error_code = %d\n", ret);
         }
@@ -1121,18 +1121,32 @@ void test_pthread(void) {
     printf("pthread_join\n");
 
     for (int i = 0; i < PTHREADS_NUM; ++i) {
-        // 其后面的代码会被执行
-        int r = 10;
+        //say_hello_thread函数里面的代码执行完了pthread_join才会返回结果
         int joinResult = pthread_join(p_tids[i], NULL);
-        printf("joinResult = %d\n", joinResult);
+        printf("joinResult = %d, %p\n", joinResult, &p_tids[i]);
     }
 
-    // pthread_exit(NULL);
+    //使用pthread_exit的话其后的代码就不会再执行了
+    //pthread_exit(NULL);
 
     printf("Game Over\n");
 }
 /***
 线程的知识点：
+
+ linux多线程
+ 并发: 指在同一时刻,只能有一条指令执行,但多个进程被快速轮换执行,使得在宏观上具有
+ 多个进程同时执行的效果(单核).
+ 并行: 指在同一时刻,有多条指令在多个处理器上同时执行(真正的同时发生,多核).
+ 同步: 彼此有依赖关系的调用不应该"同时发生",而同步就是要阻止那些"同时发生"的事情.
+ 异步: 任何两个彼此独立的操作是异步的,它表明事情独立的发生.
+                线程                  进程
+ 标识符类型      pthread_t            pid_t
+ 获取id         pthread_self()       getpid()
+ 创建           pthread_create()     fork()
+
+ cat /usr/include/asm-generic/errno.h
+ man pthread_create
 
  typedef unsigned long int pthread_t;线程标识符
 
@@ -1147,18 +1161,22 @@ extern int pthread_create __P ((
      void *__arg);
 第一个参数为指向线程标识符的指针，
 第二个参数用来设置线程属性，第二个参数为NULL时将生成默认属性的线程
-第三个参数是线程运行函数的起始地址，
+第三个参数是线程运行函数的起始地址(意思就是执行线程代码的函数)，
 最后一个参数是运行函数的参数，不需要传递参数时赋为NULL.
+
 当创建线程成功时，函数返回0，
 若不为0则说明创建线程失败，常见的错误返回代码为EAGAIN和EINVAL。
 前者表示系统限制创建新的线程，例如线程数目过多了；
 后者表示第二个参数代表的线程属性值非法。
+
 创建线程成功后，新创建的线程则运行参数三和参数四确定的函数，原来的线程则继续运行下一行代码。
+
 属性结构为pthread_attr_t，它同样在头文件/usr/include/pthread.h中定义。
 属性值不能直接设置，须使用相关函数进行操作，
 初始化的函数为pthread_attr_init，这个函数必须在pthread_create函数之前调用。
 属性对象主要包括是否绑定、是否分离、堆栈地址、堆栈大小、优先级。
 默认的属性为非绑定、非分离、缺省1M的堆栈、与父进程同样级别的优先级。
+
 　　关于线程的绑定，牵涉到另外一个概念：轻进程（LWP：Light Weight Process）。
 轻进程可以理解为内核线程，它位于用户层和系统层之间。
 系统对线程资源的分配、对线程的控制是通过轻进程来实现的，一个轻进程可以控制一个或多个线程。
@@ -1168,7 +1186,8 @@ extern int pthread_create __P ((
 绑定的线程可以保证在需要的时候它总有一个轻进程可用。
 通过设置被绑定的轻进程的优先级和调度级可以使得绑定的线程满足诸如实时反应之类的要求。
 　　设置线程绑定状态的函数为pthread_attr_setscope，
-它有两个参数，第一个是指向属性结构的指针，
+它有两个参数，
+ 第一个是指向属性结构的指针，
 第二个是绑定类型，它有两个取值：
 PTHREAD_SCOPE_SYSTEM（绑定的）和PTHREAD_SCOPE_PROCESS（非绑定的）。
 
@@ -1213,17 +1232,18 @@ extern void pthread_exit __P ((void *__retval)) __attribute__ ((__noreturn__));
 最后要说明的是，一个线程不能被多个线程等待，
 否则第一个接收到信号的线程成功返回，其余调用pthread_join的线程则返回错误代码ESRCH。
 
- 获取当前线程id
-
-　　函数原型：pthread_t pthread_self(void);
-
 　　·互斥锁
-
-　　创建pthread_mutex_init；销毁pthread_mutex_destroy；加锁pthread_mutex_lock；解锁pthread_mutex_unlock。
+     创建pthread_mutex_init；
+     销毁pthread_mutex_destroy；
+     加锁pthread_mutex_lock；
+     解锁pthread_mutex_unlock。
 
 　　·条件锁
-
-　　创建pthread_cond_init；销毁pthread_cond_destroy；触发pthread_cond_signal；广播pthread_cond_broadcast S；等待pthread_cond_wait
+     创建pthread_cond_init；
+     销毁pthread_cond_destroy；
+     触发pthread_cond_signal；
+     广播pthread_cond_broadcast S；
+     等待pthread_cond_wait
 
 pthread_exit等各个线程退出后，进程才结束;
 否则main进程强制结束了，线程可能还没反应过来,因此线程不会执行
