@@ -2887,9 +2887,9 @@ int crazydiode_audio_devoder() {
  */
 int simplest_yuv420p_split(char *url, int w, int h, int num) {
     FILE *fp = fopen(url, "rb+");
-    FILE *fp1 = fopen("/root/视频/output_420_y.y", "wb+");
-    FILE *fp2 = fopen("/root/视频/output_420_u.y", "wb+");
-    FILE *fp3 = fopen("/root/视频/output_420_v.y", "wb+");
+    FILE *fp1 = fopen("/root/视频/tomcat_video/yuv/output_420_y.y", "wb+");
+    FILE *fp2 = fopen("/root/视频/tomcat_video/yuv/output_420_u.y", "wb+");
+    FILE *fp3 = fopen("/root/视频/tomcat_video/yuv/output_420_v.y", "wb+");
 
     unsigned char *pic = (unsigned char *) malloc(w * h * 3 / 2);
 
@@ -2903,6 +2903,33 @@ int simplest_yuv420p_split(char *url, int w, int h, int num) {
         fwrite(pic + w * h, 1, w * h / 4, fp2);
         //v
         fwrite(pic + w * h * 5 / 4, 1, w * h / 4, fp3);
+    }
+
+    free(pic);
+    fclose(fp);
+    fclose(fp1);
+    fclose(fp2);
+    fclose(fp3);
+
+    return 0;
+}
+
+int simplest_yuv444p_split(char *url, int w, int h, int num) {
+    FILE *fp = fopen(url, "rb+");
+    FILE *fp1 = fopen("/root/视频/tomcat_video/yuv/output_yuv444p_y.y", "wb+");
+    FILE *fp2 = fopen("/root/视频/tomcat_video/yuv/output_yuv444p_u.y", "wb+");
+    FILE *fp3 = fopen("/root/视频/tomcat_video/yuv/output_yuv444p_v.y", "wb+");
+
+    unsigned char *pic = (unsigned char *) malloc(w * h * 3);
+
+    for (int i = 0; i < num; i++) {
+        fread(pic, 1, w * h * 3, fp);
+        //Y
+        fwrite(pic, 1, w * h, fp1);
+        //U
+        fwrite(pic + w * h, 1, w * h, fp2);
+        //V
+        fwrite(pic + w * h * 2, 1, w * h, fp3);
     }
 
     free(pic);
@@ -3334,30 +3361,30 @@ int AudioConvertFunc(const char *outfilename, int sample_rate, int channels, con
         /*ResampleCtx = av_audio_resample_init(channels, aCodecCtx->channels, sample_rate, aCodecCtx->sample_rate,
                                              AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16, 16, 10, 0, 1.0);*/
         //if (ResampleCtx == NULL) {
-            if (audio_buffer != NULL) {
-                av_free(audio_buffer);
-                audio_buffer = NULL;
-            }
+        if (audio_buffer != NULL) {
+            av_free(audio_buffer);
+            audio_buffer = NULL;
+        }
 
-            if (packet->data != NULL) {
-                av_free_packet(packet);
-                packet->data = NULL;
-            }
-            if (packet != NULL) {
-                free(packet);
-                packet = NULL;
-            }
-            if (pFormatCtx != NULL) {
-                //av_close_input_file(pFormatCtx);
-                pFormatCtx = NULL;
-            }
-            /*if (aCodecCtx!=NULL)
-            {
-             avcodec_close(aCodecCtx);
-             aCodecCtx=NULL;
-            }*/
-            ResampleChange = 0;
-            return 6;
+        if (packet->data != NULL) {
+            av_free_packet(packet);
+            packet->data = NULL;
+        }
+        if (packet != NULL) {
+            free(packet);
+            packet = NULL;
+        }
+        if (pFormatCtx != NULL) {
+            //av_close_input_file(pFormatCtx);
+            pFormatCtx = NULL;
+        }
+        /*if (aCodecCtx!=NULL)
+        {
+         avcodec_close(aCodecCtx);
+         aCodecCtx=NULL;
+        }*/
+        ResampleChange = 0;
+        return 6;
 //        }
         resamplebuff = (int16_t *) malloc(buffer_size);
         if (resamplebuff == NULL) {
@@ -3398,7 +3425,7 @@ int AudioConvertFunc(const char *outfilename, int sample_rate, int channels, con
     }
 
     datasize = sec * sample_rate;
-    if (avcodec_open2(aCodecCtx, aCodec,NULL) < 0) {
+    if (avcodec_open2(aCodecCtx, aCodec, NULL) < 0) {
         if (audio_buffer != NULL) {
             av_free(audio_buffer);
             audio_buffer = NULL;

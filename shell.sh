@@ -1533,7 +1533,9 @@ KEYCODE_DPAD_UP
 KEYCODE_DPAD_DOWN
 KEYCODE_DPAD_LEFT
 KEYCODE_DPAD_RIGHT
+#覆盖安装apk
 adb install -r ${currentDir}/MySony-release.apk;
+#卸载apk
 adb uninstall ${packageName};
 adb shell pm clear ${packageName};
 adb shell am force-stop ${packageName};

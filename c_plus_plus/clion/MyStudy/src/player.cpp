@@ -77,7 +77,9 @@ int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path) {
 
     pc = strtok(temp_path, "/");
     while (pc != NULL) {
-        if (strstr(pc, ".yuv") != NULL || strstr(pc, ".rgb") != NULL) {
+        if (strstr(pc, ".yuv") != NULL
+            || strstr(pc, ".rgb") != NULL
+            || strstr(pc, ".y") != NULL) {
             in_file_path = pc;
             printf("in_file_name: %s\n", in_file_path);
             break;

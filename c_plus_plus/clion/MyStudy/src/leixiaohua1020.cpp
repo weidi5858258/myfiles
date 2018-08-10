@@ -62,10 +62,10 @@ int audio_stream_index = -1;
 int thread_pause_flag = 0;
 int thread_exit_flag = 0;
 
-char *in_file_path = "/root/视频/tomcat_video/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4";
+char *in_file_path = "/root/视频/tomcat_video/yuv/256_256_yuv420p_y.y";
 //char *in_file_path = "/root/视频/yuv/240_240_rgb24_haoke.yuv";
 //char *out_file_path = "/root/视频/rgb/720_480_rgb24.rgb";
-char *out_file_path = "/root/视频/yuv/haoke.yuv";
+char *out_file_path = "/root/视频/tomcat_video/yuv/haoke.yuv";
 
 FILE *in_file = NULL;
 FILE *out_file = NULL;
@@ -692,7 +692,9 @@ int alexander_playback_yuv() {
     printf("temp_path: %s\n", temp_path);
     pc = strtok(temp_path, "/");
     while (pc != NULL) {
-        if (strstr(pc, ".yuv") != NULL || strstr(pc, ".rgb") != NULL) {
+        if (strstr(pc, ".yuv") != NULL
+            || strstr(pc, ".rgb") != NULL
+            || strstr(pc, ".y") != NULL) {
             temp_file_path = pc;
             printf("in_file_name: %s\n", temp_file_path);
             break;

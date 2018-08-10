@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
 //    decode_video_main("/root/视频/sex.avi", "/root/图片/video_to_image");
 //    resampling_audio("/root/音乐/resampling.mp2");
 //    separate_media_to_yuv_and_aac();
-//    simplest_yuv420p_split("/root/视频/lena_256x256_yuv420p.yuv", 256, 256, 1);
+    simplest_yuv420p_split("/root/视频/tomcat_video/yuv/256_256_yuv420p.yuv", 256, 256, 1);
 //    audio_recorder("/root/音乐/myrecorder.pcm");
 //    alexander_video_player_sdl2();
 //    alexander_decode_video_to_yuv();// OUTPUT_YUV420P 1
@@ -200,15 +200,15 @@ int main(int argc, char *argv[]) {
 //    alexander_how_to_use_sws_scale3();
 //    alexander_how_to_use_sws_scale4();
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/rgb/240_240_bgra.rgb");
-//    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/tomcat_video/yuv/640_360_graybar.yuv");
+//    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/tomcat_video/yuv/256_256_yuv420p.yuv");
 //    alexander_playback_pcm();
 //    alexander_music_player("/root/音乐/tdjm.mp3");
 //    alexander_music_player("/root/音乐/txdx.mp3");
 //    alexander_music_player("/root/视频/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4");
 //    alexander_audio_or_video_demuxer();
 
-    Method method;
-    method.wd_fgets();
+//    Method method;
+//    method.wd_fgets();
 
     printf("------------------------------------------\n");
     printf("\n");
