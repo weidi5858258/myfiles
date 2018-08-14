@@ -1,5 +1,5 @@
 #include "./include/MyHead.h"
-#include "Method.h"
+#include "./include/Method.h"
 
 #ifndef MYSTUDY_STUDY
 #define MYSTUDY_STUDY
@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
 //    decode_video_main("/root/视频/sex.avi", "/root/图片/video_to_image");
 //    resampling_audio("/root/音乐/resampling.mp2");
 //    separate_media_to_yuv_and_aac();
-    simplest_yuv420p_split("/root/视频/tomcat_video/yuv/256_256_yuv420p.yuv", 256, 256, 1);
+//    simplest_yuv420p_split("/root/视频/tomcat_video/yuv/256_256_yuv420p.yuv", 256, 256, 1);
 //    audio_recorder("/root/音乐/myrecorder.pcm");
 //    alexander_video_player_sdl2();
 //    alexander_decode_video_to_yuv();// OUTPUT_YUV420P 1

@@ -315,7 +315,7 @@ void test() {
 “C++中的四少”：
 构造函数
 拷贝构造函数
-赋值函数
+赋值语句
 析构函数
 用户自己不重写上面的函数时，系统会自动生成这样的函数
 
@@ -520,7 +520,7 @@ int getData(int x, int y){
  5.4.3 赋值函数（赋值语句）
  Test t2;先实例化一个对象
  t2 = t;然后这样才是赋值，才会调用到下面的函数（t2必须事先已经定义过了）
-实际上是这样的调用形式：t2.operator=(t)，
+实际上是这样的调用形式：t2.operator=(t),
 然后又会转化为：operator=(&t2, t);
 
  Test &Test::operator=(Test * const this, const Test &t)
@@ -546,6 +546,9 @@ int getData(int x, int y){
  Test t(10);
  Test t2, t3;
  t3 = t2 = t;// t3.operator=(t2.operator=(t))
+
+ 如果函数的参数是普通对象,而没有使用"引用"或者"指针",
+ 那么实参传递给形参时会调用拷贝构造函数.
 
 用“引用”类型作为返回值的类型的原则：
 如果return的对象（如return *this）不受当前

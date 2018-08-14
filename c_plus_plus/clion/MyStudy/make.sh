@@ -19,8 +19,8 @@ function digui() {
 			else
 				# doSomething
 				# echo "It's not directory." 
-				if [[ ! ${tempDir} =~ "cmake-build-debug" ]] && \
-					 [[ ${tempDir} =~ ".c" || ${tempDir} =~ ".cc" || ${tempDir} =~ ".cpp" ]]; then
+				if [[ ! ${tempDir} =~ "cmake-build-debug" ]] \
+				    && [[ ${tempDir} =~ ".c" || ${tempDir} =~ ".cc" || ${tempDir} =~ ".cpp" ]]; then
 
 					if [[ ${tempDir} =~ ${currentDir} ]]; then
 						tempDir=${tempDir#*${currentDir}}
@@ -49,7 +49,7 @@ digui ${currentDir}
 # echo ${codeFiles}
 
 ffmpegIncludePath="/root/mydev/tools/ffmpeg/include"
-lame="/usr/local/include/lame"
+lameIncludePath="/usr/local/include/lame"
 ffmpegLibPath="/root/mydev/tools/ffmpeg/lib"
 sdlLibPath="/usr/include/SDL2"
 
@@ -60,7 +60,7 @@ g++ \
 -o run_me \
 -g -Wall -std=c++11 \
 -I${ffmpegIncludePath} \
--I${lame} \
+-I${lameIncludePath} \
 ${codeFiles} \
 -L${sdlLibPath}    -lSDL2 \
 -L${sdlLibPath}    -lSDL2main \

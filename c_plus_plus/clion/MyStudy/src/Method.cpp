@@ -2,7 +2,7 @@
 // Created by weidi5858258 on 2018/1/1.
 //
 
-#include "Method.h"
+#include "../include/Method.h"
 
 /***
  double sin(double x);
