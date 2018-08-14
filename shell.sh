@@ -1566,11 +1566,13 @@ pm set-Install-Location 2
 # 清理日志
 adb logcat -c;
 # 把字符串当命令使
-local parameter2=$2;
+local parameter2=$2;	
 # adb logcat > ${currentDir}/${mySonyTempLog} &
 adb logcat > ${currentDir}/${parameter2}".log" &
 
 adb shell pm grant packagename android.permission.CHANGE_CONFIGURATION
+
+adb shell am broadcast -a com.android.test --es test_string "this is test string" --ei test_int 100 --ez test_boolean true
 
 # test='u0_a87    509   413   1191524 69184 
 # SyS_epoll_ 00f6fd7294 S com.qiyi.video'
@@ -1580,6 +1582,19 @@ echo ${mytest} | awk  -F '[ ;]+' '{print $2}'
 # 后面有特殊字符
 processName=`echo ${processName} | 
 awk  -F '\r' '{print $1}'`
+
+result=`ping -c 5 -w 100 www.baidu.com`
+echo "${result}"
+
+host="192.168.0.100"
+ping -c2 $host >>/dev/null
+ping -c5 "www.baidus.com" >>/dev/null
+
+if [[ $? -eq 0 ]]; then
+    echo “network is ok,exit...”
+else
+    echo “network is down,now restart network services”
+fi
 
 if [[ ${whiteList} != *${processName2}* ]]; then
 fi
