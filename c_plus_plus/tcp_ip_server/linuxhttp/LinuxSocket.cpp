@@ -1,253 +1,5 @@
 #include "LinuxSocket.h"
 
-void test_open(void);
-
-void test_read(void);
-
-void test_write(void);
-
-void test_lseek(void);
-
-void test_create_server_socket(void);
-
-void test_pthread(void);
-
-void test_class(void);
-
-void test_sqlite3(void);
-
-void LinuxSocket::studyHard() {
-
-    test_pthread();
-
-}
-
-void test_open(void) {
-    int fd = -1;
-    char filename[] = "test.txt";
-    // char filename[] = "/dev/sda1";
-    fd = open(filename, O_RDWR);
-    if (fd == -1) {
-        printf("Open file failure\n");
-    } else {
-        printf("Open file success 1\n");
-    }
-
-    close(fd);
-
-    // 打开文件，如果文件存在则返回-1
-    fd = open(filename, O_RDWR | O_CREAT | O_EXCL, S_IRWXU);
-    if (fd == -1) {
-        printf("File exist, reopen it\n");
-        // 重新打开
-        fd = open(filename, O_RDWR);
-        // MyLog::i(TAG, to_string(fd), NEEDLOG);
-    } else {
-        // 文件不存在，成功创建并打开
-        printf("Open file success 2\n");
-    }
-
-    close(fd);
-
-    int j = 0;
-    for (j = 0; fd >= 0; ++j) {
-        fd = open(filename, O_RDONLY);
-        sleep(1);
-        if (fd > 0) {
-            printf("%d\n", fd);
-        } else {
-            printf("error, can't open file\n");
-            // exit(0);
-        }
-        // 如果打开的文件即时被关闭了，那么这个文件描述符可以重复使用
-        close(fd);
-    }
-}
-
-void test_read(void) {
-    int fd = -1, i;
-    ssize_t size = -1;
-    char buf[10];
-    char filename[] = "test.txt";
-
-    fd = open(filename, O_RDONLY);
-    if (fd == -1) {
-        printf("Open file %s failure, fd:%d\n", filename, fd);
-    } else {
-        printf("Open file %s success, fd:%d\n", filename, fd);
-    }
-    while (size) {
-        size = read(fd, buf, 10);
-        // 读取数据时出错
-        if (size == -1) {
-            printf("read file error occurs\n");
-            break;
-        } else {
-            if (size > 0) {
-                printf("read %d bytes: ", size);
-                // printf("\"");
-                for (i = 0; i < size; ++i) {
-                    printf("%c", *(buf + i));
-                }
-                printf("\n");
-            } else {
-                printf("read %d bytes\n", size);
-                printf("reach the end of file\n");
-            }
-        }
-    }
-    close(fd);
-}
-
-void test_write(void) {
-    int fd = -1, i;
-    ssize_t size = -1;
-    int input = 0;
-    char buf[] = "quick brown fox jumps over the lazy dog 我是谁 ";
-    char filename[] = "test.txt";
-    fd = open(filename, O_RDWR | O_TRUNC);
-    if (fd == -1) {
-        printf("Open file %s failure, fd: %d\n", filename, fd);
-    } else {
-        printf("Open file %s success, fd: %d\n", filename, fd);
-    }
-    size = write(fd, buf, strlen(buf));
-    printf("write %d bytes to file %s\n", size, filename);
-    close(fd);
-}
-
-void test_lseek(void) {
-    off_t offset = -1;
-    // 第一个参数0代表标准输入
-    offset = lseek(0, 0, SEEK_CUR);
-    if (offset == -1) {
-        printf("STDIN can't seek\n");
-    } else {
-        printf("STDIN can seek\n");
-    }
-
-    int fd = -1, i;
-    ssize_t size = -1;
-    char buf1[] = "01234567";
-    char buf2[] = "ABCDEFGH";
-    char filename[] = "test.txt";
-    int len = 8;
-    fd = open(filename, O_RDWR | O_TRUNC, S_IRWXU);
-    if (fd == -1) {
-        printf("Open file %s failure, fd: %d\n", filename, fd);
-        return;
-    }
-    size = write(fd, buf1, len);
-    if (size != len) {
-        printf("write %d bytes to file %s\n", size, filename);
-        return;
-    }
-    offset = lseek(fd, 32, SEEK_SET);
-    if (offset == -1) {
-        return;
-    }
-    size = write(fd, buf2, len);
-    if (size != len) {
-        printf("write %d bytes to file %s\n", size, filename);
-        return;
-    }
-    close(fd);
-}
-
-void process_conn_server(int);
-
-void test_create_server_socket(void) {
-    // ss为服务器端的socket描述符，sc为客户端的socket描述符
-    int ss, sc;
-    // 服务器端地址结构
-    struct sockaddr_in server_addr;
-    // 客户端地址结构
-    struct sockaddr_in client_addr;
-    // 返回值
-    int err;
-    // 分叉的进行ID
-    pid_t pid;
-    // 建立一个流式套接字
-    ss = socket(AF_INET, SOCK_STREAM, 0);
-    // 出错
-    if (ss < 0) {
-        printf("socket error\n");
-        return;
-    }
-
-    // 设置服务器端地址
-    // 清零
-    bzero(reinterpret_cast<char *>(&server_addr), sizeof(server_addr));
-    // 协议族
-    server_addr.sin_family = AF_INET;
-    // 本地地址
-    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    // 服务器端口
-    server_addr.sin_port = htons(PORT);
-
-    // 绑定地址结构到套接字描述符
-    err = bind(ss, (struct sockaddr *) &server_addr, sizeof(server_addr));
-    // 出错
-    if (err < 0) {
-        printf("bind error\n");
-        return;
-    }
-
-    // 设置侦听
-    err = listen(ss, BACKLOG);
-    // 出错
-    if (err < 0) {
-        printf("listen error\n");
-        return;
-    }
-
-    // 主循环过程
-    for (;;) {
-        socklen_t addrlen = sizeof(struct sockaddr);
-        // 接收客户端连接
-        sc = accept(ss, (struct sockaddr *) &client_addr, &addrlen);
-        // 出错
-        if (sc < 0) {
-            continue;
-        } else {
-            printf("server sc: %p\n", sc);
-        }
-        // 建立一个新的进程处理到来的连接
-        pid = fork();
-        if (pid == 0) {
-            // 子进程
-            close(ss);
-            process_conn_server(sc);
-        } else {
-            // 父进程
-            close(sc);
-        }
-    }
-}
-
-// 服务器端对客户端的处理
-void process_conn_server(int sc) {
-    ssize_t size = 0;
-    // 数据的缓冲区
-    char buffer[1024];
-    for (;;) {
-        // 从套接字中读取数据放到缓冲区buffer中
-        size = read(sc, buffer, 1024);
-        // 没有数据
-        if (size == 0) {
-            return;
-        } else {
-            // 输出读到的内容，这个函数的作用就是写给谁，这个谁就是“1”
-            // “1”代表标准输出
-            write(1, buffer, size);
-        }
-        // 构建响应字符，为接收到客户端字节的数量
-        sprintf(buffer, "%d bytes altogether\n", size);
-        // 发给客户端
-        write(sc, buffer, strlen(buffer) + 1);
-    }
-}
-
 /***
 基础知识：
 
@@ -366,8 +118,11 @@ dlopen打开动态库后返回的句柄，参数symbol为函数的名称，返�
 有限的资源，在使用完毕后要及时释放，通常是调用close()函数
 关闭。文件描述符的值公在同一个进程中有效，即不同进程的
 文件描述符，同一个值很有可能描述的不是同一个设备或者普通文件。
-在Linux系统中有3个已经分配的文件描述符，即标准输入、
-标准输出和标准错误，它们的值分别为0、1和2。可以查看/dev下的
+在Linux系统中有3个已经分配的文件描述符，即
+标准输入
+标准输出
+标准错误
+它们的值分别为0、1和2。可以查看/dev下的
 stdin（标准输入）、stdout（标准输出）和stderr（标准错误），
 会发现分别指向了/proc/self/fd目录下的0、1、2文件。
 
@@ -380,6 +135,7 @@ stdin（标准输入）、stdout（标准输出）和stderr（标准错误），
     open()函数打开pathname指定的文件，当函数成功时，
 返回一个整型的文件描述符。这个函数正常情况下会返回一个
 文件描述符的值，在出错的时候会返回-1。
+ 参数说明:
 pathname：
 在通常情况下为1024个字节。
 flags:
@@ -396,7 +152,7 @@ O_TRUNC：将文件长度截断为0.如果此文件存在，并且文件成功�
 O_NONBLOCK：打开文件为非阻塞方式，如果不指定此项，默认的打开
 方式为阻塞方式，即对文件的读写操作需要等待操作的返回状态。
 mode：
-用于表示打开文件的权限，mode的使用性友结合flags的O_CREAT一起
+用于表示打开文件的权限，mode的使用需要结合flags的O_CREAT一起
 使用，否则是无效的。
 S_IRWXU 00700 用户（文件所有者）有读写和执行的权限
 S_IRUSR 00400 用户对文件有读权限
@@ -445,8 +201,9 @@ create的返回值与open一样，在成功时为创建文件的描述符。
 不进行其他操作；如果count的值大于SSIZE_MAX，结果不可预料。
 在读取成功的时候，文件对应的读取位置指针，向后移动位置，
 大小为成功读取的字节数。
-如果read()函数执行成功，返回读取的字节数；当返回值为-1时，
-读取函数有错误发生。如果已经到达文件的末尾，返回0。
+ 如果read()函数执行成功，返回读取的字节数；
+ 当返回值为-1时，读取函数有错误发生。
+ 如果已经到达文件的末尾，返回0。
 返回值的数据类型为ssize_t，这是一个可能不同于int、long
 类型的数据类型，它是一个符号数，具体实现时可能定义为
 int或者long。参数buf是一个指针，它指向缓冲区地址的开始
@@ -494,6 +251,92 @@ int或者long。参数buf是一个指针，它指向缓冲区地址的开始
     lseek()函数执行成功时返回文件的偏移量，可以用SEEK_CUR
 模式下偏移0的方式获得当前的偏移量，如：
     off_t cur_pos = lseek(fd, 0, SEEK_CUR);
+
+    程序,进程和线程
+ 1.Linux进程间的通信和同步方式,包括管道pipe,命名管道fifo,信号量sem,
+ 共享缓冲区shm,消息队列msg,以及信号signal.
+ 2.线程中用到的技术有互斥,条件变量,线程信号.
+ 3.进程的产生过程
+ 进程的产生有多种方式,其基本过程是一致的.
+    首先复制其父进程的环境配置.
+    在内核中建立进程结构.
+    将此结构插入到进程列表,便于维护.
+    分配资源给此进程.
+    复制父进程的内存映射信息.
+    管理文件描述符和链接点.
+    通知父进程.
+ 4.进程的终止方式
+    从main返回.
+    调用exit.
+    调用_exit.
+    调用abort.
+    由一个信号终止.
+    进程在终止的时候,系统会释放进程所拥有的资源,
+    如内存,文件符,内核结构等.
+ 5.进程之间的通信
+    管道,共享内存和消息队列是最常用的方式.
+    管道是UNIX族中进程通信的最古老的方式,它利用内核在两个进程之间
+ 建立通道,它的特点是与文件的操作类似,仅仅在管道的一端只读,另一端只写.
+ 利用读写的方式在进程之间传递数据.
+    共享内存是将内存中的一段地址,在多个进程之间共享.多个进程利用获得
+ 的共享内存的地址来直接对内存进行操作.
+    消息队列是在内核中建立一个链表,发送方按照一定的标识将数据发送到
+ 内核中,内核将其放入量表后,等待接收方的请求.接收方发送请求后,内核按照
+ 消息的标识,从内核中将消息从链表中摘下,传递给接收方.消息队列是一种完全
+ 的异步操作方式.
+ 6.进程之间的同步
+    Linux下进程的同步方式主要有消息,信号量等.
+    信号量是一个共享的表示数量的值.用于多个进程之间操作或者共享资源
+ 的保护,它是进程之间同步的最主要方式.
+ 7.进程和线程
+    进程有进程控制表PCB,系统通过PCB对进程进行高度;
+    线程有线程控制表TCB.
+    但是TCB所表示的状态比PCB要少得多.
+ 8.进程产生的方式
+    fork()函数
+    system()函数
+    exec()函数
+    这些函数的不同在于
+ 其环境的构造之间存在差别,其本质都是对程序运行的各种条件进行设置,
+ 在系统之间建立一个可以运行的程序.
+ 9.进程号
+    每个进程在初始化的时候,系统都分配了一个ID号,用于标识此进程.
+    #include <sys/types.h>
+    #include <unistd.h>
+    // typedef unsigned int pid_t
+    pid_t getpid(void);//当前进程ID
+    pid_t getppid(void);//父进程ID
+    ps -x | grep 父进程ID
+ 10.进程复制fork()函数
+    #include <sys/types.h>
+    #include <unistd.h>
+    pid_t fork(void);
+    成功时返回值是进程的ID号,失败返回-1.
+    fork()的特点是执行一次,返回两次.在父进程和子进程中返回的是
+ 不同的值,父进程返回的是子进程的ID号,而子进程则返回0.
+ 例子:
+    pid_t pid;
+    //执行一次,返回两次
+    pid = fork();
+    if (pid == -1) {
+        printf("进程创建失败!\n");
+        return -1;
+    } else if (pid == 0) {
+        //返回等于0的数(在这里执行的是子进程中的代码)
+        printf("子进程,fork返回值: %d, 子进程ID: %d, 父进程ID: %d\n",
+               pid, getpid(), getppid());
+    } else {
+        //返回大于0的数(这个数就是当前进程创建的子进程号)
+        printf("父进程,fork返回值: %d, 当前进程ID: %d, 父进程ID: %d\n",
+               pid, getpid(), getppid());
+    }
+ 11.进程复制system()函数
+    system()函数调用shell的外部命令在当前进程中开始另一个进程.
+
+
+
+
+
 
     TCP网络编程基础
     基于TCP的Socket编程的服务器流程：
@@ -1072,6 +915,258 @@ vector的成员变量iov_base指向内存空间,iov_len表示内存的长度.
 
 */
 
+/////////////////////////////声明/////////////////////////////
+
+void test_open(void);
+
+void test_read(void);
+
+void test_write(void);
+
+void test_lseek(void);
+
+void test_create_server_socket(void);
+
+void test_pthread(void);
+
+void test_class(void);
+
+void test_sqlite3(void);
+
+void LinuxSocket::studyHard() {
+
+    test_pthread();
+
+}
+
+/////////////////////////////实现/////////////////////////////
+
+void test_open(void) {
+    int fd = -1;
+    char filename[] = "test.txt";
+    // char filename[] = "/dev/sda1";
+    fd = open(filename, O_RDWR);
+    if (fd == -1) {
+        printf("Open file failure\n");
+    } else {
+        printf("Open file success 1\n");
+    }
+
+    close(fd);
+
+    // 打开文件，如果文件存在则返回-1
+    fd = open(filename, O_RDWR | O_CREAT | O_EXCL, S_IRWXU);
+    if (fd == -1) {
+        printf("File exist, reopen it\n");
+        // 重新打开
+        fd = open(filename, O_RDWR);
+        // MyLog::i(TAG, to_string(fd), NEEDLOG);
+    } else {
+        // 文件不存在，成功创建并打开
+        printf("Open file success 2\n");
+    }
+
+    close(fd);
+
+    int j = 0;
+    for (j = 0; fd >= 0; ++j) {
+        fd = open(filename, O_RDONLY);
+        sleep(1);
+        if (fd > 0) {
+            printf("%d\n", fd);
+        } else {
+            printf("error, can't open file\n");
+            // exit(0);
+        }
+        // 如果打开的文件即时被关闭了，那么这个文件描述符可以重复使用
+        close(fd);
+    }
+}
+
+void test_read(void) {
+    int fd = -1, i;
+    ssize_t size = -1;
+    char buf[10];
+    char filename[] = "test.txt";
+
+    fd = open(filename, O_RDONLY);
+    if (fd == -1) {
+        printf("Open file %s failure, fd:%d\n", filename, fd);
+    } else {
+        printf("Open file %s success, fd:%d\n", filename, fd);
+    }
+    while (size) {
+        size = read(fd, buf, 10);
+        // 读取数据时出错
+        if (size == -1) {
+            printf("read file error occurs\n");
+            break;
+        } else {
+            if (size > 0) {
+                printf("read %d bytes: ", size);
+                // printf("\"");
+                for (i = 0; i < size; ++i) {
+                    printf("%c", *(buf + i));
+                }
+                printf("\n");
+            } else {
+                printf("read %d bytes\n", size);
+                printf("reach the end of file\n");
+            }
+        }
+    }
+    close(fd);
+}
+
+void test_write(void) {
+    int fd = -1, i;
+    ssize_t size = -1;
+    int input = 0;
+    char buf[] = "quick brown fox jumps over the lazy dog 我是谁 ";
+    char filename[] = "test.txt";
+    fd = open(filename, O_RDWR | O_TRUNC);
+    if (fd == -1) {
+        printf("Open file %s failure, fd: %d\n", filename, fd);
+    } else {
+        printf("Open file %s success, fd: %d\n", filename, fd);
+    }
+    size = write(fd, buf, strlen(buf));
+    printf("write %d bytes to file %s\n", size, filename);
+    close(fd);
+}
+
+void test_lseek(void) {
+    off_t offset = -1;
+    // 第一个参数0代表标准输入
+    offset = lseek(0, 0, SEEK_CUR);
+    if (offset == -1) {
+        printf("STDIN can't seek\n");
+    } else {
+        printf("STDIN can seek\n");
+    }
+
+    int fd = -1, i;
+    ssize_t size = -1;
+    char buf1[] = "01234567";
+    char buf2[] = "ABCDEFGH";
+    char filename[] = "test.txt";
+    int len = 8;
+    fd = open(filename, O_RDWR | O_TRUNC, S_IRWXU);
+    if (fd == -1) {
+        printf("Open file %s failure, fd: %d\n", filename, fd);
+        return;
+    }
+    size = write(fd, buf1, len);
+    if (size != len) {
+        printf("write %d bytes to file %s\n", size, filename);
+        return;
+    }
+    offset = lseek(fd, 32, SEEK_SET);
+    if (offset == -1) {
+        return;
+    }
+    size = write(fd, buf2, len);
+    if (size != len) {
+        printf("write %d bytes to file %s\n", size, filename);
+        return;
+    }
+    close(fd);
+}
+
+void process_conn_server(int);
+
+void test_create_server_socket(void) {
+    // ss为服务器端的socket描述符，sc为客户端的socket描述符
+    int ss, sc;
+    // 服务器端地址结构
+    struct sockaddr_in server_addr;
+    // 客户端地址结构
+    struct sockaddr_in client_addr;
+    // 返回值
+    int err;
+    // 分叉的进行ID
+    pid_t pid;
+    // 建立一个流式套接字
+    ss = socket(AF_INET, SOCK_STREAM, 0);
+    // 出错
+    if (ss < 0) {
+        printf("socket error\n");
+        return;
+    }
+
+    // 设置服务器端地址
+    // 清零
+    bzero(reinterpret_cast<char *>(&server_addr), sizeof(server_addr));
+    // 协议族
+    server_addr.sin_family = AF_INET;
+    // 本地地址
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    // 服务器端口
+    server_addr.sin_port = htons(PORT);
+
+    // 绑定地址结构到套接字描述符
+    err = bind(ss, (struct sockaddr *) &server_addr, sizeof(server_addr));
+    // 出错
+    if (err < 0) {
+        printf("bind error\n");
+        return;
+    }
+
+    // 设置侦听
+    err = listen(ss, BACKLOG);
+    // 出错
+    if (err < 0) {
+        printf("listen error\n");
+        return;
+    }
+
+    // 主循环过程
+    for (;;) {
+        socklen_t addrlen = sizeof(struct sockaddr);
+        // 接收客户端连接
+        sc = accept(ss, (struct sockaddr *) &client_addr, &addrlen);
+        // 出错
+        if (sc < 0) {
+            continue;
+        } else {
+            printf("server sc: %p\n", sc);
+        }
+        // 建立一个新的进程处理到来的连接
+        pid = fork();
+        if (pid == 0) {
+            // 子进程
+            close(ss);
+            process_conn_server(sc);
+        } else {
+            // 父进程
+            close(sc);
+        }
+    }
+}
+
+// 服务器端对客户端的处理
+void process_conn_server(int sc) {
+    ssize_t size = 0;
+    // 数据的缓冲区
+    char buffer[1024];
+    for (;;) {
+        // 从套接字中读取数据放到缓冲区buffer中
+        size = read(sc, buffer, 1024);
+        // 没有数据
+        if (size == 0) {
+            return;
+        } else {
+            // 输出读到的内容，这个函数的作用就是写给谁，这个谁就是“1”
+            // “1”代表标准输出
+            write(1, buffer, size);
+        }
+        // 构建响应字符，为接收到客户端字节的数量
+        sprintf(buffer, "%d bytes altogether\n", size);
+        // 发给客户端
+        write(sc, buffer, strlen(buffer) + 1);
+    }
+}
+
 char *getStr() {
 //    char *str = "Hello World";
     char str[] = "Hello World";
@@ -1401,12 +1496,12 @@ void test_class(void) {
      创建对象数组时，首先必须要求有默认的构造函数。
      */
     int *q = new int[SIZE];
-    for (int j = 0; j < 10; ++j) {
+    for (int j = 0; j < SIZE; ++j) {
         q[j] = j + 1;
     }
     delete[]q;
 
-    int *q_ = new int(10);
+    int *q_ = new int(SIZE);
     delete q_;
 }
 

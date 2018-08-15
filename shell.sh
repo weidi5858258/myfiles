@@ -1574,6 +1574,9 @@ adb shell pm grant packagename android.permission.CHANGE_CONFIGURATION
 
 adb shell am broadcast -a com.android.test --es test_string "this is test string" --ei test_int 100 --ez test_boolean true
 
+adb shell sm mount VOLUME
+adb shell sm unmount VOLUME
+
 # test='u0_a87    509   413   1191524 69184 
 # SyS_epoll_ 00f6fd7294 S com.qiyi.video'
 processName=`echo ${aline} | awk  -F ' ' '{print $9}'`

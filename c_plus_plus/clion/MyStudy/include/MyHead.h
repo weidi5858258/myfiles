@@ -16,7 +16,6 @@
 #include <string>
 #include <string.h>
 #include <limits.h>// 定义了一些常用类型的最小值,最大值
-#include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
 #include <setjmp.h>
@@ -24,7 +23,10 @@
 #include <cstddef>
 #include <inttypes.h>
 #include <math.h>
+//下面三个头文件使用open函数时用到
+#include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/mount.h>
 #include <wchar.h>
 #include <string.h>
