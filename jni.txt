@@ -569,9 +569,10 @@ LOCAL_PROPRIETARY_MODULE := true
 LOCAL_32_BIT_ONLY := true
 LOCAL_CFLAGS := \
     -D_SPIRV_LLVM_API \
+    -DFAKE_LOG_DEVICE=1 \
     -Werror \
     -Wall \
-    -fvisibility=hidden $(liblog_cflags)
+    -fvisibility=hidden $(liblog_cflags) \
     -Wno-error=deprecated-declarations \
     -Wno-error=pessimizing-move \
     -Wno-error=unused-variable \
@@ -606,6 +607,10 @@ LOCAL_SANITIZE := never
 
 LOCAL_CXX_STL := none
 
+LOCAL_MODULE_HOST_OS := darwin linux windows
+
+LOCAL_LDLIBS_linux := -lrt
+
 LOCAL_INIT_RC := mediametrics.rc
 LOCAL_INIT_RC := android.hardware.media.omx@1.0-service.rc
 
@@ -618,6 +623,9 @@ include $(BUILD_EXECUTABLE)
 #该模块已经预先编译
 include $(BUILD_PREBUILT)
 include $(BUILD_PACKAGE)
+include $(BUILD_HOST_STATIC_LIBRARY)
+include $(BUILD_HOST_SHARED_LIBRARY)
+include $(BUILD_HOST_EXECUTABLE)
 
 include $(call all-makefiles-under, $(LOCAL_PATH))
 
