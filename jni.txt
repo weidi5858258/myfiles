@@ -423,6 +423,8 @@ mmm -B frameworks/av/tools/resampler_tools
 LOCAL_MODULE := fir
 include $(BUILD_HOST_EXECUTABLE)
 
+////////////////////////////////////////////////////////////////
+
 Android.mk语法:
 
 #$(call my-dir)调用NDK内部的函数获得当前.mk文件的路径
@@ -528,6 +530,8 @@ LOCAL_LDLIBS += \
 
 LOCAL_MODULE := libmediacodecservice
 LOCAL_MODULE := android.hardware.media.omx@1.0-service
+LOCAL_MODULE := liblog
+LOCAL_WHOLE_STATIC_LIBRARIES := liblog
 #指定编译之后放置的位置
 #一般情况下不需要指定,当使用include $(BUILD_PREBUILT)时需要指定
 #标识了所编译模块最后放置的位置,如果不指定,不会放到系统中,之后放在最后的obj目录下的对应目录中
@@ -567,6 +571,7 @@ LOCAL_CFLAGS := \
     -D_SPIRV_LLVM_API \
     -Werror \
     -Wall \
+    -fvisibility=hidden $(liblog_cflags)
     -Wno-error=deprecated-declarations \
     -Wno-error=pessimizing-move \
     -Wno-error=unused-variable \
@@ -576,6 +581,7 @@ LOCAL_CFLAGS := \
     -Wno-error=ignored-qualifiers \
     -Wno-error=non-virtual-dtor
 LOCAL_CLANG := true
+LOCAL_LDFLAGS_arm := -Wl,--hash-style=both
 
 LOCAL_REQUIRED_MODULES_arm := mediaextractor.policy
 LOCAL_REQUIRED_MODULES_arm64 := mediaextractor.policy
@@ -596,6 +602,10 @@ LOCAL_PROGUARD_ENABLED := disabled
 
 LOCAL_MANIFEST_FILE := dual/AndroidManifest.xml
 
+LOCAL_SANITIZE := never
+
+LOCAL_CXX_STL := none
+
 LOCAL_INIT_RC := mediametrics.rc
 LOCAL_INIT_RC := android.hardware.media.omx@1.0-service.rc
 
@@ -610,6 +620,8 @@ include $(BUILD_PREBUILT)
 include $(BUILD_PACKAGE)
 
 include $(call all-makefiles-under, $(LOCAL_PATH))
+
+////////////////////////////////////////////////////////////////
 
 
 
