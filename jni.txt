@@ -524,9 +524,16 @@ LOCAL_STATIC_LIBRARIES := \
     libselinux \
     libcrypto \
     libgrallocusage \
-
+#libs/libABC.a
 LOCAL_LDLIBS += \
     -ldl \
+    -L$(LOCAL_PATH)/libs/ -lABC \
+
+LOCAL_JNI_SHARED_LIBRARIES := \
+    libmemoryintarraytest \
+    libcutils \
+    libc++ \
+    libpmtest64 \
 
 LOCAL_MODULE := libmediacodecservice
 LOCAL_MODULE := android.hardware.media.omx@1.0-service
@@ -595,8 +602,6 @@ LOCAL_MULTILIB := first
 
 LOCAL_SDK_VERSION := current
 
-LOCAL_JNI_SHARED_LIBRARIES = libpmtest64
-
 LOCAL_PACKAGE_NAME := PMTest_Java64
 
 LOCAL_PROGUARD_ENABLED := disabled
@@ -640,7 +645,97 @@ android 第一次启动时， 会读取 apk 的信息， 保存到 /data/system/
 如果不想重烧 image， 就只能手动的 mkdir /system/app/lib/arm/ 目录， 然后删除 /data/system/packages.xml 再重启.
 
 
+底层进程间通信方式:
+1.
+先定义一个Bp和Bn公同的基类
+#include <binder/IInterface.h>
+class IPowerManager : public IInterface {...}
+2.
+DECLARE_META_INTERFACE(PowerManager)
+这个PowerManager需要跟Bp的实现类中的
+IMPLEMENT_META_INTERFACE(PowerManager, "android.os.IPowerManager");
+这个对应起来
+3.
+在基类中定义枚举,用于操作不同的动作
+enum {
+    ACQUIRE_WAKE_LOCK = IBinder::FIRST_CALL_TRANSACTION
+};
+4.
+在基类中定义各种需要用到的纯虚函数
+virtual status_t crash(const String16 &message) = 0;
+5.
+实现Bp类
+#include <utils/Log.h>
+#include <utils/Errors.h>
+#include <binder/Parcel.h>//必须要用到的
+class BpPowerManager : public BpInterface<IPowerManager> {...}
+5-1.
+//固定写法
+IMPLEMENT_META_INTERFACE(PowerManager, "android.os.IPowerManager");
+5-2.
+//构造函数需要这么写(固定写法)
+explicit BpPowerManager(const sp<IBinder> &impl)
+                : BpInterface<IPowerManager>(impl) {
+}
+virtual ~BpPowerManager();
+5-3.
+实现基类中定义的纯虚函数
 
+Bp(客户端)一般过程是这样的:
+Parcel data, reply;
+data.writeInterfaceToken(IPowerManager::getInterfaceDescriptor());
+IPowerManager是基类,因此使用IPowerManager::getInterfaceDescriptor().
+上面也是固定写法.
+
+然后把要传递的数据写到data中去.
+//int flags, size_t len
+data.writeInt32(flags);
+data.writeInt32(len);
+//player_type_t playerType(player_type_t是enum)
+data.writeInt32((int32_t) playerType);
+//int64_t event_time_ms
+data.writeInt64(event_time_ms);
+//bool wait
+data.writeInt32(wait);
+//float vol
+data.writeFloat(vol);
+//const sp<IBinder> &lock
+data.writeStrongBinder(lock);
+//const String16 &tag
+data.writeString16(tag);
+//const char *path
+data.writeInt32(strlen(path));
+data.writeCString(path);
+//int len, const int *uids
+data.writeInt32Array(len, uids);
+//const android::sp<ICmrdCallback> &callback
+data.writeStrongBinder(IInterface::asBinder(callback));
+
+return remote()->transact(REBOOT, data, &reply, 0);
+status_t status = remote()->transact(ICameraRecognitionDaemon::OPEN, data, &reply);
+if (status != OK) {
+    return RESULT_ERR_BINDER_ERROR;
+}
+int ret = reply.readInt32();
+return ret;
+
+
+Bn(服务端)一般过程是这样的:
+status_t BnPowerManager::onTransact(uint32_t code,
+    const Parcel &data, Parcel *reply, uint32_t flags) {...}
+//固定写法
+CHECK_INTERFACE(IPowerManager, data, reply);
+
+int width = data.readInt32();
+const char *path = NULL;
+path = data.readCString();
+sp<ICmrdCallback> callback =
+    interface_cast<ICmrdCallback>(data.readStrongBinder());
+
+reply->writeInt32(ret);
+
+default:
+    return BBinder::onTransact(code, data, reply, flags);
 
 
 
