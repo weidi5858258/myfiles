@@ -29,13 +29,34 @@ add_executable(
 )
 
 if (WIN32)
+
+    include_directories(
+            include
+            C:/mydev/tools/ffmpeg-dev/include
+            C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include
+            C:/mydev/tools/SDL2-2.0.8/i686-w64-mingw32/include
+
+            C:/MinGW/include
+            C:/MinGW/mingw32/include
+            C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/include
+            C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/install-tools/include
+            C:/MinGW/share/doc/gcc/include
+            C:/MinGW/share/doc/gdb/include
+            C:/cygwin64/usr/include
+            D:/ubuntu/head_files/usr/local/include
+            D:/ubuntu/head_files/usr/usr/lib/gcc/x86_64-linux-gnu/5/include
+
+            "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/VC/Linux/include"
+    )
+
     set(FFMPEG_LIB_PATH
             C:/mydev/tools/ffmpeg-dev/lib)
 
     set(SDL2_LIB_PATH
             C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib)
 
-    target_link_libraries(MyStudy
+    target_link_libraries(
+            MyStudy
             -L${FFMPEG_LIB_PATH} -lavformat
             -L${FFMPEG_LIB_PATH} -lavcodec
             -L${FFMPEG_LIB_PATH} -lavdevice
@@ -43,25 +64,21 @@ if (WIN32)
             -L${FFMPEG_LIB_PATH} -lavutil
             -L${FFMPEG_LIB_PATH} -lswscale
             -L${FFMPEG_LIB_PATH} -lswresample
+            -L${FFMPEG_LIB_PATH} -lpostproc
             -L${SDL2_LIB_PATH} -lSDL2
             -L${SDL2_LIB_PATH} -lSDL2main
-            )
-    #            -L"C:/MinGW/lib" -lmingw32
-    #            -lz
-    #            -lm -lpthread
-    #            -llzma
-    #            -lrt
 
-    include_directories(
-            include
-            C:/mydev/tools/ffmpeg-dev/include
-            C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include
+            #            -L"C:/MinGW/lib" -lmingw32
     )
 
 else ()
-    #    link_directories(
-    #            /usr/include/SDL2
-    #    )
+
+    include_directories(
+            include
+            /root/mydev/tools/ffmpeg/include
+            /usr/include/SDL2
+            /usr/local/include/lame
+    )
 
     set(FFMPEG_LIB_PATH
             /root/mydev/tools/ffmpeg/lib)
@@ -69,7 +86,8 @@ else ()
     set(SDL2_LIB_PATH
             /usr/include/SDL2)
 
-    target_link_libraries(MyStudy
+    target_link_libraries(
+            MyStudy
             -L${FFMPEG_LIB_PATH} -lavformat
             -L${FFMPEG_LIB_PATH} -lavdevice
             -L${FFMPEG_LIB_PATH} -lavcodec
@@ -100,13 +118,6 @@ else ()
             -lcrypto
             -lssl
             -lvpx
-            )
-
-    include_directories(
-            include
-            /root/mydev/tools/ffmpeg/include
-            /usr/include/SDL2
-            /usr/local/include/lame
     )
 
 endif ()

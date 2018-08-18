@@ -32,9 +32,12 @@
 #include <string.h>
 #include <time.h>
 //#include <opencv2/opencv.hpp>
+// STL
+#include <vector>
+#include <iterator>
+#include <algorithm>
+#include <functional>
 
-
-// ffmpeg and SDL
 extern "C" {// 不能少
 #include <libavcodec/avcodec.h>
 // 摄像头所用
@@ -76,21 +79,15 @@ extern "C" {// 不能少
 #include <SDL2/SDL.h>
 
 #include <GL/glut.h>
-};
 
-//extern "C" {
 //    #include <jconfig.h>
 //    #include <jerror.h>
 //    #include <jmorecfg.h>
 //    #include <jpeglib.h>
 //    #include <turbojpeg.h>
-//}
+};
 
-// STL
-#include <vector>
-#include <iterator>
-#include <algorithm>
-#include <functional>
+#define UBUNTU_SYSTEM
 
 #define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
 #define AUDIO_INBUF_SIZE 20480
