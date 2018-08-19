@@ -651,6 +651,7 @@ android 第一次启动时， 会读取 apk 的信息， 保存到 /data/system/
 #include <binder/IInterface.h>
 class IPowerManager : public IInterface {...}
 2.
+//PowerManager不能随便定义,接口是IPowerManager,那么定义时去掉I,为PowerManager
 DECLARE_META_INTERFACE(PowerManager)
 这个PowerManager需要跟Bp的实现类中的
 IMPLEMENT_META_INTERFACE(PowerManager, "android.os.IPowerManager");
@@ -712,7 +713,7 @@ data.writeInt32Array(len, uids);
 data.writeStrongBinder(IInterface::asBinder(callback));
 
 return remote()->transact(REBOOT, data, &reply, 0);
-status_t status = remote()->transact(ICameraRecognitionDaemon::OPEN, data, &reply);
+status_t status = remote()->transact(IDaemon::OPEN, data, &reply);
 if (status != OK) {
     return RESULT_ERR_BINDER_ERROR;
 }
@@ -737,11 +738,70 @@ reply->writeInt32(ret);
 default:
     return BBinder::onTransact(code, data, reply, flags);
 
+6.
+在其他地方要能够通过Bp端发送消息给Bn端,那么接下去的工作首先就是
+怎样调用到Bp端的代码.
+6-1.
+首先有三种方法(只需选一种就行了)可以选择做第一步.
+1)
+在IPowerManager基类的头文件中需要有这样的代码.
+static const char *getServiceName() {
+    return SERVER_NAME;
+}
+2)
+在BnPowerManager的头文件中需要有这样的代码.
+static const char *getServiceName() {
+    return SERVER_NAME;
+}
+3)在BnPowerManager的子类的头文件中需要有这样的代码.
+static const char *getServiceName() {
+    return SERVER_NAME;
+}
+6-2.
+取得Bp端的对象调用其方法.
+sp<IServiceManager> serviceManager = defaultServiceManager();
+//此处的SERVER_NAME必须跟上面三种方法中返回的字符串一样
+sp<IBinder> binder = serviceManager->getService(String16(SERVER_NAME));
+sp<IDaemon> daemon = interface_cast<IDaemon>(binder);
+//然后就可以使用daemon对象调用Bp端定义的方法了
+daemon->open(1);
 
+7.
+要想Bp端能够连接到Bn端,那么需要把Bn端先启动起来.
+7-1.
+首先需要定义好一个启动类.
+class Daemon :
+		//固定写法,必须要这样继承
+        public BinderService<Daemon>,
+        public BnDaemon {
+	//固定写法(好像不写也能正常工作,不过还是写了吧)
+    friend class BinderService<Daemon>;
 
+}
+7-2.
+然后在main函数中启动起来.
+sp<ProcessState> proc(ProcessState::self());
+sp<IServiceManager> sm = defaultServiceManager();
 
+//addService inside in BinderService
+//先执行BnDaemon的构造方法
+//再执行Daemon的构造方法
+Daemon::instantiate();
 
+ProcessState::self()->startThreadPool();
+IPCThreadState::self()->joinThreadPool();
 
+8.
+编译的时候Bp,Bn端的代码都要加入进去.
+LOCAL_SRC_FILES:= \
+    main.cpp \
+    ../part_a/BpDaemon.cpp \
+    ../part_b/BnDaemon.cpp \
+    ../part_a/BnCallback.cpp \
+    ../part_b/BpCallback.cpp \
+
+通过上面的步骤就能够在其他地方先调用到Bp的代码,然后通过Bp中的代码调用
+到Bn中的代码.这样就实现了跨进程调用了.
 
 
 
