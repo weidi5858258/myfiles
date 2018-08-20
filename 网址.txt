@@ -105,7 +105,7 @@ https://blog.csdn.net/a907763895/article/details/42016039
 http://www.magbt.net/ 魔力电影网
 https://www.jetbrains.com/clion/download/?fromIDE= clion
 git clone https://github.com/mirror/x264.git
-
+https://blog.csdn.net/yuzeze/article/list/1 yuzeze的专栏
 
 
 

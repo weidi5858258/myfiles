@@ -535,6 +535,7 @@ LOCAL_JNI_SHARED_LIBRARIES := \
     libc++ \
     libpmtest64 \
 
+LOCAL_MODULE := app_process
 LOCAL_MODULE := libmediacodecservice
 LOCAL_MODULE := android.hardware.media.omx@1.0-service
 LOCAL_MODULE := liblog
@@ -599,6 +600,9 @@ LOCAL_MULTILIB := 32
 LOCAL_MULTILIB := 64
 LOCAL_MULTILIB := both
 LOCAL_MULTILIB := first
+
+LOCAL_MODULE_STEM_32 := app_process32
+LOCAL_MODULE_STEM_64 := app_process64
 
 LOCAL_SDK_VERSION := current
 
@@ -804,6 +808,9 @@ LOCAL_SRC_FILES:= \
 到Bn中的代码.这样就实现了跨进程调用了.
 
 
+assert()
+如果断言断的对,那么就不报错;
+如果断言断的不对,那么就报错.
 
 
 
