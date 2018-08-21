@@ -1180,9 +1180,42 @@ int perform_code(int stream_type,AVFrame * picture)
 }
 
 
+ffmpeg -h encoder=libx264
+ffmpeg version N-91447-g0bd48ab Copyright (c) 2000-2018 the FFmpeg developers
+  built with gcc 4.8 (Ubuntu 4.8.5-4ubuntu2)
+  configuration: --enable-gpl --enable-openssl --enable-decoder=h264 --enable-decoder=vpx --enable-encoder=libx264 --enable-encoder=libvpx --enable-nonfree --enable-libmp3lame --enable-libfdk-aac --enable-libvpx --enable-libx264 --disable-yasm --prefix=/root/mydev/tools/ffmpeg
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FFmpeg从入门到精通
+最强Android书 架构大剖析
+高级Android开发强化实战
+C++并发编程实战
+Python神经网络编程
+Qt 5.9 C++开发指南 
+OpenCV算法精解：基于Python与C++
+Android组件化架构
+Linux网络服务与Shell脚本攻略
+跟老男孩学Linux运维：核心系统命令实战
+机器人Python极客编程入门与实战
 
 
 

@@ -106,6 +106,7 @@ http://www.magbt.net/ 魔力电影网
 https://www.jetbrains.com/clion/download/?fromIDE= clion
 git clone https://github.com/mirror/x264.git
 https://blog.csdn.net/yuzeze/article/list/1 yuzeze的专栏
+http://mozai.iteye.com/blog/2426860 最新IT书籍PDF研究学习使用链接汇总
 
 
 
