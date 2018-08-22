@@ -181,6 +181,27 @@ void test() {
                &tmpArray[i], (tmpArray + i));
     }
 
+    //不排序
+    std::unordered_map<std::string, std::string> u = {
+            {"RED",   "#FF0000"},
+            {"GREEN", "#00FF00"},
+            {"BLUE",  "#0000FF"}
+    };
+    for (const auto &n : u) {
+        std::cout << "Key:[" << n.first << "] Value:[" << n.second << "]\n";
+    }
+    std::cout << u["RED"] << " " << u["GREEN"] << " " << u["GREEN"] << endl;
+
+    //排序
+    std::map<std::string, std::string> u3 = {
+            {"RED",   "#FF0000"},
+            {"GREEN", "#00FF00"},
+            {"BLUE",  "#0000FF"}
+    };
+    for (const auto &n : u3) {
+        std::cout << "Key:[" << n.first << "] Value:[" << n.second << "]\n";
+    }
+
     // 下面的代码在这个工具中无法编译通过
     /*// 在栈上开辟一维数组
     int *pOne = (int[]){0};

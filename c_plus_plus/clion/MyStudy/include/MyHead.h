@@ -37,6 +37,9 @@
 #include <iterator>
 #include <algorithm>
 #include <functional>
+#include <unordered_map>
+#include <unordered_set>
+#include <map>
 
 extern "C" {// 不能少
 #include <libavcodec/avcodec.h>
