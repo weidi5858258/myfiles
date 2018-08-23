@@ -2152,7 +2152,6 @@ adb shell pm grant packagename android.permission.CHANGE_CONFIGURATION
 #可以通过下面的命令来查找Zygote进程的源码：
 find ./ -nameAndroid.mk -exec grep -l app_process {}\;
 
-
 git config --global core.editor "subl -w"
 
 
