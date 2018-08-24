@@ -1,5 +1,10 @@
+#ifdef UBUNTU_SYSTEM
 #include "./include/MyHead.h"
 #include "./include/Method.h"
+#else
+#include "MyHead.h"
+#include "Method.h"
+#endif
 
 #ifndef MYSTUDY_STUDY
 #define MYSTUDY_STUDY
@@ -115,7 +120,9 @@ int separate_media_to_yuv_and_aac();
 
 int simplest_yuv420p_split(char *url, int w, int h, int num);
 
+#ifdef UBUNTU_SYSTEM
 int audio_recorder(const char *out_file_path);
+#endif
 
 int alexander_video_player_sdl2();
 

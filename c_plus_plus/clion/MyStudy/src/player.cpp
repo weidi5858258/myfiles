@@ -5,7 +5,13 @@
 #ifndef MYSTUDY_FFMPEG_YUV_PLAYER
 #define MYSTUDY_FFMPEG_YUV_PLAYER
 
+#include "MyHead2.h"
+
+#ifdef UBUNTU_SYSTEM
 #include "../include/MyHead.h"
+#else
+#include "MyHead.h"
+#endif
 
 //Convert RGB24/BGR24 to RGB32/BGR32
 //And change Endian if needed

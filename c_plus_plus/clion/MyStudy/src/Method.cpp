@@ -2,7 +2,13 @@
 // Created by weidi5858258 on 2018/1/1.
 //
 
+#include "MyHead2.h"
+
+#ifdef UBUNTU_SYSTEM
 #include "../include/Method.h"
+#else
+#include "Method.h"
+#endif
 
 /***
  double sin(double x);

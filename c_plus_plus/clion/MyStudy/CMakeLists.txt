@@ -26,7 +26,7 @@ add_executable(
         src/music_player2.cpp
         src/function_study.cpp
         src/GuessNumber.cpp
-)
+        src/MyHead2.h)
 
 if (WIN32)
 
@@ -35,6 +35,8 @@ if (WIN32)
             C:/mydev/tools/ffmpeg-dev/include
             C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include
             C:/mydev/tools/SDL2-2.0.8/i686-w64-mingw32/include
+            C:/mydev/tools/lame3.100-64
+            C:/mydev/tools/glutdlls37beta
 
             C:/MinGW/include
             C:/MinGW/mingw32/include
@@ -55,6 +57,9 @@ if (WIN32)
     set(SDL2_LIB_PATH
             C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/lib)
 
+    set(GLUTDLLS37BETA_LIB_PATH
+            C:/mydev/tools/glutdlls37beta)
+
     target_link_libraries(
             MyStudy
             -L${FFMPEG_LIB_PATH} -lavformat
@@ -67,11 +72,13 @@ if (WIN32)
             -L${FFMPEG_LIB_PATH} -lpostproc
             -L${SDL2_LIB_PATH} -lSDL2
             -L${SDL2_LIB_PATH} -lSDL2main
-
-            #            -L"C:/MinGW/lib" -lmingw32
+            -L${GLUTDLLS37BETA_LIB_PATH} -lglut32
+            -lz -lm -lpthread
+            -L"C:/MinGW/lib" -lmingw32
     )
 
 else ()
+    #Ubuntu
 
     include_directories(
             include

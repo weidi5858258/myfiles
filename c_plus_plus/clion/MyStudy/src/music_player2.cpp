@@ -5,7 +5,13 @@
 #ifndef MYSTUDY_FFMPEG_MUSIC_PLAYER2
 #define MYSTUDY_FFMPEG_MUSIC_PLAYER2
 
+#include "MyHead2.h"
+
+#ifdef UBUNTU_SYSTEM
 #include "../include/MyHead.h"
+#else
+#include "MyHead.h"
+#endif
 
 
 #define BUF_SIZE_20K 2048000

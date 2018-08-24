@@ -28,6 +28,8 @@
 					<Add directory="C:/mydev/tools/ffmpeg-dev/include"/>
 					<Add directory="C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include"/>
 					<Add directory="C:/mydev/tools/SDL2-2.0.8/i686-w64-mingw32/include"/>
+					<Add directory="C:/mydev/tools/lame3.100-64"/>
+					<Add directory="C:/mydev/tools/glutdlls37beta"/>
 					<Add directory="C:/MinGW/include"/>
 					<Add directory="C:/MinGW/mingw32/include"/>
 					<Add directory="C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/include"/>
@@ -64,6 +66,8 @@
 					<Add directory="C:/mydev/tools/ffmpeg-dev/include"/>
 					<Add directory="C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include"/>
 					<Add directory="C:/mydev/tools/SDL2-2.0.8/i686-w64-mingw32/include"/>
+					<Add directory="C:/mydev/tools/lame3.100-64"/>
+					<Add directory="C:/mydev/tools/glutdlls37beta"/>
 					<Add directory="C:/MinGW/include"/>
 					<Add directory="C:/MinGW/mingw32/include"/>
 					<Add directory="C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/include"/>
@@ -135,6 +139,9 @@
 			<Option target="MyStudy"/>
 		</Unit>
 		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Method.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead2.h">
 			<Option target="MyStudy"/>
 		</Unit>
 		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Pointer.cpp">

@@ -5,7 +5,13 @@
 #ifndef MYSTUDY_FFMPEG_LEIXIAOHUA
 #define MYSTUDY_FFMPEG_LEIXIAOHUA
 
+#include "MyHead2.h"
+
+#ifdef UBUNTU_SYSTEM
 #include "../include/MyHead.h"
+#else
+#include "MyHead.h"
+#endif
 
 /***
  frame->format为 FLTP类型(每个sample是float类型的)

@@ -28,6 +28,8 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "C:/mydev/tools/ffmpeg-dev/include"
   "C:/mydev/tools/SDL2-2.0.8/x86_64-w64-mingw32/include"
   "C:/mydev/tools/SDL2-2.0.8/i686-w64-mingw32/include"
+  "C:/mydev/tools/lame3.100-64"
+  "C:/mydev/tools/glutdlls37beta"
   "C:/MinGW/include"
   "C:/MinGW/mingw32/include"
   "C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/include"

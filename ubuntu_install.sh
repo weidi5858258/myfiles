@@ -1,5 +1,11 @@
 #! /bin/bash
 
+# sudo mv /var/lib/dpkg/info/ /var/lib/dpkg/info_old/
+# sudo mkdir /var/lib/dpkg/info/
+
+# sudo mv /var/cache/app-info/xapian/default /var/cache/app-info/xapian/default_old
+# sudo mv /var/cache/app-info/xapian/default_old /var/cache/app-info/xapian/default
+
 # echo "y" | sudo apt-get update 
 # echo "y" | sudo apt-get upgrade 
 # echo "y" | sudo apt-get dist-upgrade 
@@ -239,9 +245,10 @@ echo "y" | sudo apt-get install libx11-dev:i386
 echo "y" | sudo apt-get install libncurses5-dev:i386
 echo "y" | sudo apt-get install libreadline6-dev:i386
 
-echo "y" | sudo add-apt-repository ppa:openjdk-r/ppa
-echo "y" | sudo apt-get update
-echo "y" | sudo apt-get install openjdk-7-jdk
-echo "y" | sudo apt-get install openjdk-8-jdk
-echo "y" | sudo update-alternatives --config java 
-echo "y" | sudo update-alternatives --config javac
+# echo "y" | sudo add-apt-repository ppa:openjdk-r/ppa
+# echo "y" | sudo apt-get update
+# echo "y" | sudo apt-get install openjdk-7-jdk
+# echo "y" | sudo apt-get install openjdk-8-jdk
+# echo "y" | sudo update-alternatives --config java 
+# echo "y" | sudo update-alternatives --config javac
+

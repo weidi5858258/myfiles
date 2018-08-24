@@ -5,7 +5,13 @@
 #ifndef MYSTUDY_FFMPEG_MUSIC_PLAYER
 #define MYSTUDY_FFMPEG_MUSIC_PLAYER
 
+#include "MyHead2.h"
+
+#ifdef UBUNTU_SYSTEM
 #include "../include/MyHead.h"
+#else
+#include "MyHead.h"
+#endif
 
 #define SDL_AUDIO_BUFFER_SIZE 1024
 #define MAX_AUDIOQ_SIZE (1 * 1024 * 1024)

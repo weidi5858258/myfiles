@@ -2,7 +2,13 @@
 // Created by weidi on 2018/5/19.
 //
 
+#include "MyHead2.h"
+
+#ifdef UBUNTU_SYSTEM
 #include "../include/MyHead.h"
+#else
+#include "MyHead.h"
+#endif
 
 class Pointer {
 public:

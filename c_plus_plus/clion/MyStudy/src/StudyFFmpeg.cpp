@@ -4,7 +4,13 @@
 #ifndef MYSTUDY_STUDY_FFMPEG
 #define MYSTUDY_STUDY_FFMPEG
 
+#include "MyHead2.h"
+
+#ifdef UBUNTU_SYSTEM
 #include "../include/MyHead.h"
+#else
+#include "MyHead.h"
+#endif
 
 /***
     视频文件格式（容器格式）
@@ -783,7 +789,9 @@ static void encode(AVCodecContext *enc_ctx,
 
     /* send the frame to the encoder */
     if (frame)
+#ifdef UBUNTU_SYSTEM
         printf("Send frame %3" PRId64 "\n", frame->pts);
+#endif
 
     ret = avcodec_send_frame(enc_ctx, frame);
     if (ret < 0) {
@@ -800,7 +808,9 @@ static void encode(AVCodecContext *enc_ctx,
             exit(1);
         }
 
+#ifdef UBUNTU_SYSTEM
         printf("Write packet %3" PRId64 " (all_pkts_size=%5d)\n", pkt->pts, pkt->size);
+#endif
         fwrite(pkt->data, 1, pkt->size, outfile);
         av_packet_unref(pkt);
     }
@@ -2027,6 +2037,7 @@ int simplest_ffmpeg_audio_encoder_pure() {
     return 0;
 }
 
+#ifdef UBUNTU_SYSTEM
 /***
  使用了libmp3lame库
  输入文件只能是pcm文件,其他封装文件都不行.
@@ -2128,6 +2139,7 @@ int pcm2mp3(char *inPath, char *outPath) {
     exit:
     return status;
 }
+#endif
 
 /***
  * 网上的代码
@@ -3003,6 +3015,7 @@ int simplest_yuv420_gray(char *url, int w, int h, int num) {
     return 0;
 }
 
+#ifdef UBUNTU_SYSTEM
 int wav2mp3() {
     int read, write;
     FILE *pcm = fopen("/Users/liuchan_xin/Desktop/音视频播放与保存例子/ipcamera.wav", "rb");
@@ -3044,7 +3057,9 @@ int wav2mp3() {
 
     return 0;
 }
+#endif
 
+#ifdef UBUNTU_SYSTEM
 int audio_recorder(const char *out_file_path) {
     long loops;
     int rc;
@@ -3143,6 +3158,7 @@ int audio_recorder(const char *out_file_path) {
 
     return 0;
 }
+#endif
 
 
 /************************************************************/

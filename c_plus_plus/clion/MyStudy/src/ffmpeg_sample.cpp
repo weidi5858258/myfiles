@@ -5,7 +5,13 @@
 #ifndef MYSTUDY_FFMPEG_SAMPLE
 #define MYSTUDY_FFMPEG_SAMPLE
 
+#include "MyHead2.h"
+
+#ifdef UBUNTU_SYSTEM
 #include "../include/MyHead.h"
+#else
+#include "MyHead.h"
+#endif
 
 static void decode_audio(AVCodecContext *audioAVCodecContext,
                          AVPacket *avPacket,
@@ -613,7 +619,9 @@ static void encode_video(AVCodecContext *enc_ctx, AVFrame *frame, AVPacket *pkt,
 
     /* send the frame to the encoder */
     if (frame)
+#ifdef UBUNTU_SYSTEM
         printf("Send frame %3" PRId64 "\n", frame->pts);
+#endif
 
     ret = avcodec_send_frame(enc_ctx, frame);
     if (ret < 0) {
@@ -630,7 +638,9 @@ static void encode_video(AVCodecContext *enc_ctx, AVFrame *frame, AVPacket *pkt,
             exit(1);
         }
 
+#ifdef UBUNTU_SYSTEM
         printf("Write packet %3" PRId64 " (all_pkts_size=%5d)\n", pkt->pts, pkt->size);
+#endif
         fwrite(pkt->data, 1, pkt->size, outfile);
         av_packet_unref(pkt);
     }
@@ -990,9 +1000,11 @@ int resampling_audio(const char *dst_filename) {
 
     if ((ret = get_format_from_sample_fmt(&fmt, dst_sample_fmt)) < 0)
         goto end;
+#ifdef UBUNTU_SYSTEM
     fprintf(stdout, "Resampling succeeded. Play the output file with the command:\n"
                     "ffplay -f %s -channel_layout %" PRId64 " -channels %d -ar %d %s\n",
             fmt, dst_ch_layout, dst_nb_channels, dst_sample_rate, dst_filename);
+#endif
 
     end:
     fclose(dst_file);

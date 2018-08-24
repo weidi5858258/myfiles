@@ -5,14 +5,19 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
 #include <sys/time.h>
 #include <time.h>
 #include <fcntl.h>
 #include <math.h>
+
+#include "MyHead2.h"
+
+#ifdef UBUNTU_SYSTEM
+#include <sys/mman.h>
 #include <grp.h>
 #include <pwd.h>
 #include <utmp.h>
+#endif
 
 /***
  int isalnum(int c);
@@ -488,7 +493,9 @@ void wd_free(void) {
  在Intel x86上其返回值应为4096bytes。
  */
 void wd_getpagesize() {
+#ifdef UBUNTU_SYSTEM
     printf("page size = %d\n", getpagesize());
+#endif
 }
 
 /***
@@ -501,6 +508,7 @@ void wd_getpagesize() {
  有下列组合：
  */
 void wd_mmap() {
+#ifdef UBUNTU_SYSTEM
     int fd;
     void *start;
     struct stat sb;
@@ -515,6 +523,7 @@ void wd_mmap() {
     printf("%s", start);
     munmap(start, sb.st_size);
     close(fd);
+#endif
 }
 
 /***
@@ -528,6 +537,7 @@ void wd_mmap() {
  EINVAL参数start或length不合法。
  */
 void wd_munmap(void) {
+#ifdef UBUNTU_SYSTEM
     int fd;
     void *start;
     struct stat sb;
@@ -542,6 +552,7 @@ void wd_munmap(void) {
     printf("%s", start);
     munmap(start, sb.st_size);
     close(fd);
+#endif
 }
 
 /***
@@ -853,6 +864,7 @@ void wd_strcoll(void) {
  建议使用memcpy()取代。
  */
 void wd_bcopy(void) {
+#ifdef UBUNTU_SYSTEM
     char dest[30];
     char src[] = "string\0string\0string\0string\0string\0string";
     int i;
@@ -876,6 +888,7 @@ void wd_bcopy(void) {
     printf("%d\n", strlen(dest));
     // 30
     printf("%d\n", sizeof(dest));
+#endif
 }
 
 /***
@@ -989,10 +1002,12 @@ void wd_bzero(void) {
  如果找到指定的字符则返回该字符所在地址，否则返回0。
  */
 void wd_index(void) {
+#ifdef UBUNTU_SYSTEM
     char *s = "0123456789012345678901234567890";
     char *p;
     p = index(s, '5');
     printf("%s\n", p);
+#endif
 }
 
 /***
@@ -1004,10 +1019,12 @@ void wd_index(void) {
  如果找到指定的字符则返回该字符所在地址，否则返回0。
  */
 void wd_rindex(void) {
+#ifdef UBUNTU_SYSTEM
     char *s = "0123456789012345678901234567890";
     char *p;
     p = rindex(s, '5');
     printf("%s\n", p);
+#endif
 }
 
 /***
@@ -1369,6 +1386,7 @@ void wd_endutent(void) {
  或有错误发生。
  */
 void wd_fgetgrent(void) {
+#ifdef UBUNTU_SYSTEM
     struct group *data;
     FILE *stream;
     int i;
@@ -1387,6 +1405,7 @@ void wd_fgetgrent(void) {
     }
 
     fclose(stream);
+#endif
 }
 
 /***
@@ -1399,6 +1418,7 @@ void wd_fgetgrent(void) {
  或有错误发生。
  */
 void wd_fgetpwent(void) {
+#ifdef UBUNTU_SYSTEM
     struct passwd *user;
     FILE *stream;
     stream = fopen("/etc/passwd", "r");
@@ -1408,6 +1428,7 @@ void wd_fgetpwent(void) {
                user->pw_name, user->pw_uid, user->pw_gid,
                user->pw_gecos, user->pw_dir, user->pw_shell);
     }
+#endif
 }
 
 /***
@@ -1418,8 +1439,10 @@ void wd_fgetpwent(void) {
  返回有效和组识别码。
  */
 void wd_getegid(void) {
+#ifdef UBUNTU_SYSTEM
     // 0 当使用root身份执行程序时
     printf("egid is %d\n", getegid());
+#endif
 }
 
 /***
@@ -1436,8 +1459,10 @@ void wd_getegid(void) {
  设成passwd所有者的uid值，即root的uid值(0)。
  */
 void wd_geteuid(void) {
+#ifdef UBUNTU_SYSTEM
     // 0 当使用root身份执行程序时
     printf("euid is %d\n", geteuid());
+#endif
 }
 
 /***
@@ -1446,8 +1471,10 @@ void wd_geteuid(void) {
  getgid()用来取得执行目前进程的组识别码。
  */
 void wd_getgid(void) {
+#ifdef UBUNTU_SYSTEM
     // 0 当使用root身份执行程序时
     printf("gid is %d\n", getgid());
+#endif
 }
 
 /***
@@ -1456,8 +1483,10 @@ void wd_getgid(void) {
  getuid()用来取得执行目前进程的用户识别码。
  */
 void wd_getuid(void) {
+#ifdef UBUNTU_SYSTEM
     // 0 当使用root身份执行程序时
     printf("uid is %d\n", getuid());
+#endif
 }
 
 /***
@@ -1482,6 +1511,7 @@ void wd_getuid(void) {
  ENOMEM内存不足，无法配置group结构。
  */
 void wd_getgrent(void) {
+#ifdef UBUNTU_SYSTEM
     struct group *data;
     int i;
 
@@ -1496,6 +1526,7 @@ void wd_getgrent(void) {
 
         printf("\n");
     }
+#endif
 }
 
 /***
@@ -1506,6 +1537,7 @@ void wd_getgrent(void) {
  返回group结构数据，如果返回NULL则表示已无数据，或有错误发生。
  */
 void wd_getgrgid(void) {
+#ifdef UBUNTU_SYSTEM
     struct group *data;
     int i = 0;
     data = getgrgid(3);
@@ -1517,6 +1549,7 @@ void wd_getgrgid(void) {
     }
 
     printf("\n");
+#endif
 }
 
 /***
@@ -1527,6 +1560,7 @@ void wd_getgrgid(void) {
  返回group结构数据，如果返回NULL则表示已无数据，或有错误发生。
  */
 void wd_getgrnam(void) {
+#ifdef UBUNTU_SYSTEM
     struct group *data;
     int i = 0;
     data = getgrnam("adm");
@@ -1538,6 +1572,7 @@ void wd_getgrnam(void) {
     }
 
     printf("\n");
+#endif
 }
 
 /***
@@ -1551,6 +1586,7 @@ void wd_getgrnam(void) {
  EINVAL参数size值不足以容纳所有的组。
  */
 void wd_getgroups(void) {
+#ifdef UBUNTU_SYSTEM
     gid_t list[500];
     int x, i;
     x = getgroups(0, list);
@@ -1561,6 +1597,7 @@ void wd_getgroups(void) {
     for (i = 0; i < x; ++i) {
         printf("%d:%d\n", i, list[i]);
     }
+#endif
 }
 
 /***
@@ -1575,10 +1612,12 @@ void wd_getgroups(void) {
  使用getpw()取得的密码将为“x”。
  */
 void wd_getpw(void) {
+#ifdef UBUNTU_SYSTEM
     char buffer[80];
     getpw(0, buffer);
     // root:x:0:0:root:/root:/bin/bash
     printf("%s\n", buffer);
+#endif
 }
 
 /***
@@ -1610,6 +1649,7 @@ void wd_getpw(void) {
  ENOMEM内存不足，无法配置passwd结构。
  */
 void wd_getpwent(void) {
+#ifdef UBUNTU_SYSTEM
     struct passwd *user;
 
     while ((user = getpwent()) != 0) {
@@ -1619,6 +1659,7 @@ void wd_getpwent(void) {
     }
 
     endpwent();
+#endif
 }
 
 /***
@@ -1629,11 +1670,13 @@ void wd_getpwent(void) {
  返回passwd结构数据，如果返回NULL则表示已无数据，或有错误发生。
  */
 void wd_getpwnam(void) {
+#ifdef UBUNTU_SYSTEM
     struct passwd *user;
     user = getpwnam("root");
     printf("name: %s\n", user->pw_name);
     printf("uid: %d\n", user->pw_uid);
     printf("home: %s\n", user->pw_dir);
+#endif
 }
 
 /***
@@ -1644,11 +1687,13 @@ void wd_getpwnam(void) {
  返回passwd结构数据，如果返回NULL则表示已无，或有错误发生。
  */
 void wd_getwuid(void) {
+#ifdef UBUNTU_SYSTEM
     struct passwd *user;
     user = getpwuid(6);
     printf("name: %s\n", user->pw_name);
     printf("uid: %d\n", user->pw_uid);
     printf("home: %s\n", user->pw_dir);
+#endif
 }
 
 /***
@@ -1708,6 +1753,7 @@ void wd_getwuid(void) {
  完毕后可使用endutent()来关闭该utmp文件。
  */
 void wd_getutent(void) {
+#ifdef UBUNTU_SYSTEM
     struct utmp *u;
 
     while ((u = getutent())) {
@@ -1718,6 +1764,7 @@ void wd_getutent(void) {
     }
 
     endutent();
+#endif
 }
 
 /***
@@ -1732,6 +1779,7 @@ void wd_getutent(void) {
  返回utmp结构数据，如果返回NULL则表示已无数据，或有错误发生。
  */
 void wd_getutid(void) {
+#ifdef UBUNTU_SYSTEM
     struct utmp ut, *u;
     ut.ut_type = RUN_LVL;
 
@@ -1739,6 +1787,7 @@ void wd_getutid(void) {
         printf("%d %s %s %s\n",
                u->ut_type, u->ut_user, u->ut_line, u->ut_host);
     }
+#endif
 }
 
 /***
@@ -1750,6 +1799,7 @@ void wd_getutid(void) {
  返回utmp结构数据，如果返回NULL则表示已无数据，或有错误发生。
  */
 void wd_getutline(void) {
+#ifdef UBUNTU_SYSTEM
     struct utmp ut, *u;
     strcpy(ut.ut_line, "pts/l");
 
@@ -1757,6 +1807,7 @@ void wd_getutline(void) {
         printf("%d %s %s %s\n",
                u->ut_type, u->ut_user, u->ut_line, u->ut_host);
     }
+#endif
 }
 
 /***

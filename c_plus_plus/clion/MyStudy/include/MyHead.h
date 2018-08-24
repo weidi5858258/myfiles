@@ -5,6 +5,8 @@
 #ifndef MYSTUDY_MYHEAD_H
 #define MYSTUDY_MYHEAD_H
 
+#define UBUNTU_SYSTEM
+
 //#include <sys/socket.h>
 //#include <sys/epoll.h>
 //#include <netinet/in.h>
@@ -20,14 +22,12 @@
 #include <errno.h>
 #include <setjmp.h>
 #include <libgen.h>
-#include <cstddef>
 #include <inttypes.h>
 #include <math.h>
 //下面三个头文件使用open函数时用到
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/mount.h>
 #include <wchar.h>
 #include <string.h>
 #include <time.h>
@@ -40,6 +40,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <map>
+#include <pthread.h>
 
 extern "C" {// 不能少
 #include <libavcodec/avcodec.h>
@@ -74,23 +75,30 @@ extern "C" {// 不能少
 #include <libavutil/error.h>
 #include <libavutil/time.h>
 
-#include <lame.h>
-
-//录音
-#include <alsa/asoundlib.h>
-
 #include <SDL2/SDL.h>
 
-#include <GL/glut.h>
+#ifdef UBUNTU_SYSTEM
+    #include <lame.h>
+    #include <cstddef>
+    //录音
+    #include <alsa/asoundlib.h>
+    #include <sys/mount.h>
+    #include <GL/glut.h>
+#else
+    #include <glut.h>
+#endif
+
+#ifdef UBUNTU_SYSTEM
+#else
+#endif
 
 //    #include <jconfig.h>
 //    #include <jerror.h>
 //    #include <jmorecfg.h>
 //    #include <jpeglib.h>
 //    #include <turbojpeg.h>
-};
 
-#define UBUNTU_SYSTEM
+};
 
 #define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
 #define AUDIO_INBUF_SIZE 20480

@@ -7,14 +7,24 @@
 #ifndef MYSTUDY_B0
 #define MYSTUDY_B0
 
+#ifdef UBUNTU_SYSTEM
 #include "../src/B0.cpp"
+#else
+#include "B0.cpp"
+#endif
 
 #endif //MYSTUDY_B0
 
 #ifndef MYSTUDY_POINTER
 #define MYSTUDY_POINTER
 
+#include "MyHead2.h"
+
+#ifdef UBUNTU_SYSTEM
 #include "../src/Pointer.cpp"
+#else
+#include "Pointer.cpp"
+#endif
 
 #endif //MYSTUDY_POINTER
 
