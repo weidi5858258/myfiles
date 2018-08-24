@@ -1219,7 +1219,68 @@ Linux网络服务与Shell脚本攻略
 
 
 
+MediaCodec.INFO_TRY_AGAIN_LATER = -1
+MediaCodec.INFO_OUTPUT_FORMAT_CHANGED = -2
+MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED = -3
+1.
+MediaCodec.INFO_TRY_AGAIN_LATER
+int index = mediaEncode.dequeueOutputBuffer(MediaCodec.BufferInfo info, long timeoutUs);
+如果调用上面的代码时,timeoutUs为一个正整数(表示超时)时,
+在运行过程中发生超时情况,那么得到的index就为-1.
+发生这种情况时可以这样处理:
+退出本次循环,然后从头开始循环.
+2.
+MediaCodec.INFO_OUTPUT_FORMAT_CHANGED
+输出格式发生了变化，随后的数据将按照新格式。
+然后再调用上面代码得到的index就为-2.
+发生这种情况时可以这样处理:
+mMediaFormat = mVideoEncoder.getOutputFormat();
+outputVideoTrack = mMediaMuxer.addTrack(mMediaFormat);
+重新调整一下视频或者音频的TrackIndex,然后continue.
+3.
+MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED
+发生这种情况时可以这样处理:
+outputBuffers = mVideoEncoder.getOutputBuffers();
+重新调整一下房间,然后continue.
 
+/***
+这样去理解:
+mediaDecode.configure(format, null, null, 0);
+mediaDecode.start();
+上面代码调用之后,使用
+mediaDecode.getInputBuffers();
+可以得到这样一个ByteBuffer数组,
+每一个数组元素想像成一个小房间,
+房间之间都是连续的,每个小房间里存放数据.
+*/
+// MediaCodec在此ByteBuffer[]中获取输入数据
+ByteBuffer[] decodeInputBuffers = mediaDecode.getInputBuffers();
+// MediaCodec将解码后的数据放到此ByteBuffer[]中 我们可以直接在这里面得到PCM数据
+ByteBuffer[] decodeOutputBuffers = mediaDecode.getOutputBuffers();
+// 用于描述解码得到的byte[]数据的相关信息
+decodeBufferInfo = new MediaCodec.BufferInfo();
+
+int inputIndex = mediaDecode.dequeueInputBuffer(-1);
+把inputIndex想像成房间号,如果这个房间号小于0,就表示
+暂时没有空闲的房间可以用来存放需要解码的数据;
+如果大于0,就表示有空闲的房间可以用来存放需要解码的数据.
+然后通过
+ByteBuffer inputBuffer = decodeInputBuffers[inputIndex];
+inputBuffer.clear();
+得到对应房间号的房间,inputBuffer就是用来存放需要解码的数据,
+拿到这个房间后先打扫一下,然后再放数据才是好的做法.
+需要解码的数据是这样来的,代码为
+int sampleSize = mediaExtractor.readSampleData(inputBuffer, 0);
+调用之后,需要解码的数据就被放入到了inputBuffer中了.
+如果sampleSize小于0,表示需要解码的数据没了,不用再解码了,退出好了.
+如果sampleSize大于0,那么调用这样的代码:
+// 通知MediaDecode解码刚刚传入的数据
+mediaDecode.queueInputBuffer(inputIndex, 0, sampleSize, 0, 0);
+这句代码的意思可以想像成,通知一下mediaDecode,我已经把需要
+解码的数据给你了,你可以进行解码的工作了.
+然后调用下面代码进行下一次的工作.
+// MediaExtractor移动到下一取样处
+mediaExtractor.advance();
 
 
 

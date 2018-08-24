@@ -107,6 +107,7 @@ https://www.jetbrains.com/clion/download/?fromIDE= clion
 git clone https://github.com/mirror/x264.git
 https://blog.csdn.net/yuzeze/article/list/1 yuzeze的专栏
 http://mozai.iteye.com/blog/2426860 最新IT书籍PDF研究学习使用链接汇总
+https://www.jianshu.com/p/0c948db795ab Android NDK开发之旅 目录
 
 
 
