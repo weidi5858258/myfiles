@@ -6,10 +6,10 @@ set username "weidi5858258@sina.com"
 set password "wangliwei1986"
 #
 spawn git add .
-sleep 5
+sleep 15
 #
 spawn git commit -m "${current_time}"
-sleep 5
+sleep 15
 #
 spawn git push
 #
