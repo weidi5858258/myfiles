@@ -4,8 +4,6 @@
 #ifndef MYSTUDY_STUDY
 #define MYSTUDY_STUDY
 
-#include "MyHead2.h"
-
 #ifndef MYSTUDY_B0
 #define MYSTUDY_B0
 
@@ -19,6 +17,8 @@
 
 #ifndef MYSTUDY_POINTER
 #define MYSTUDY_POINTER
+
+#include "MyHead2.h"
 
 #ifdef UBUNTU_SYSTEM
 #include "../src/Pointer.cpp"
