@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="MyStudy"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="MyStudy">
+				<Option output="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/MyStudy" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/include"/>
+					<Add directory="/root/mydev/tools/ffmpeg/include"/>
+					<Add directory="/usr/include/SDL2"/>
+					<Add directory="/usr/local/include/lame"/>
+					<Add directory="/usr/include/c++/4.8"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8"/>
+					<Add directory="/usr/include/c++/4.8/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 MyStudy"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="MyStudy/fast">
+				<Option output="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/MyStudy" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/include"/>
+					<Add directory="/root/mydev/tools/ffmpeg/include"/>
+					<Add directory="/usr/include/SDL2"/>
+					<Add directory="/usr/local/include/lame"/>
+					<Add directory="/usr/include/c++/4.8"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8"/>
+					<Add directory="/usr/include/c++/4.8/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 MyStudy/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/ffmpeg.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/include/GuessNumber.h">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/include/Method.h">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/include/MyHead.h">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/include/Test.h">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/main.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/B0.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/GuessNumber.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/Method.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/MyHead2.h">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/Pointer.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/Study.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/StudyFFmpeg.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/Test.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/ffmpeg_sample.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/function_study.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/leixiaohua1020.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/music_player.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/music_player2.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/src/player.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

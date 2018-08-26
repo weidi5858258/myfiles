@@ -690,7 +690,8 @@ include_directories(system/weaved/libweaved)
 include_directories(system/webservd/libwebserv)
 include_directories(system/webservd/webservd)
 
-add_executable(android_c_c_plus_plus
+add_executable(
+        android_c_c_plus_plus
         frameworks/av/camera/camera2/CaptureRequest.cpp
         frameworks/av/camera/camera2/OutputConfiguration.cpp
         frameworks/av/camera/camera2/SubmitInfo.cpp
@@ -3267,12 +3268,6 @@ add_executable(android_c_c_plus_plus
         frameworks/base/core/jni/fd_utils-inl.h
         frameworks/base/core/jni/GraphicsExternGlue.h
         frameworks/base/core/jni/GraphicsRegisterGlue.h
-        frameworks/base/core/tests/coretests/apks/install_jni_lib/com_android_frameworks_coretests_JNITest.cpp
-        frameworks/base/core/tests/hosttests/test-apps/SharedUid/32/jni/native.cpp
-        frameworks/base/core/tests/hosttests/test-apps/SharedUid/64/jni/native.cpp
-        frameworks/base/core/tests/hosttests/test-apps/SharedUid/dual/jni/native.cpp
-        frameworks/base/core/tests/utiltests/jni/android_util_MemoryIntArrayTest.cpp
-        frameworks/base/core/tests/utiltests/jni/registration.cpp
         frameworks/base/drm/jni/android_drm_DrmManagerClient.cpp
         frameworks/base/include/android_runtime/android_app_NativeActivity.h
         frameworks/base/include/android_runtime/android_content_res_Configuration.h
@@ -10297,7 +10292,6 @@ set(ANDROID_INCLUDE_PATH
         /root/mydev/android_source/lineageos)
 
 include_directories(
-
         ${ANDROID_INCLUDE_PATH}/external/curl/include
         ${ANDROID_INCLUDE_PATH}/external/expat/lib
         ${ANDROID_INCLUDE_PATH}/external/skia/include/core
@@ -10309,7 +10303,10 @@ include_directories(
         ${ANDROID_INCLUDE_PATH}/libnativehelper/include/nativehelper
         ${ANDROID_INCLUDE_PATH}/external/libchrome
         ${ANDROID_INCLUDE_PATH}/external/libbrillo
-        ${ANDROID_INCLUDE_PATH}//hardware/libhardware/include
+        ${ANDROID_INCLUDE_PATH}/hardware/libhardware/include
+        ${ANDROID_INCLUDE_PATH}/external/skia/src/core
+        ${ANDROID_INCLUDE_PATH}/external/kernel-headers/original/uapi
+
 
         frameworks/av/include
         frameworks/base/core/jni
@@ -10376,14 +10373,14 @@ include_directories(
         system/update_engine/include
         system/update_engine/client_library/include
 
-#        C:/MinGW/include
-#        C:/MinGW/mingw32/include
-#        C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/include
-#        C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/install-tools/include
-#        C:/MinGW/share/doc/gcc/include
-#        C:/MinGW/share/doc/gdb/include
-#        C:/cygwin64/usr/include
-#        C:/cygwin64/usr/include/bash
-#        D:/ubuntu/head_files/usr/local/include
-#        D:/ubuntu/head_files/usr/usr/lib/gcc/x86_64-linux-gnu/5/include
+        #        C:/MinGW/include
+        #        C:/MinGW/mingw32/include
+        #        C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/include
+        #        C:/MinGW/msys/1.0/lib/gcc/i686-pc-msys/3.4.4/install-tools/include
+        #        C:/MinGW/share/doc/gcc/include
+        #        C:/MinGW/share/doc/gdb/include
+        #        C:/cygwin64/usr/include
+        #        C:/cygwin64/usr/include/bash
+        #        D:/ubuntu/head_files/usr/local/include
+        #        D:/ubuntu/head_files/usr/usr/lib/gcc/x86_64-linux-gnu/5/include
 )
