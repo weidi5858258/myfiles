@@ -68,6 +68,10 @@
           <entry key="ObjectiveC" value="89" />
         </counts>
       </usages-collector>
+<<<<<<< da5347fc36a9375d350d3ad7fe4a99b0139d9e5f
+=======
+      <usages-collector id="statistics.cidr.testingFrameworks.usages" />
+>>>>>>> 201808261606
     </session>
   </component>
   <component name="FileEditorManager">
