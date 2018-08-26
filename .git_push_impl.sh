@@ -5,28 +5,32 @@ set current_time [lindex $argv 0]
 set username "weidi5858258@sina.com"
 set password "wangliwei1986"
 #
-spawn git add .
+# spawn git add .
 #
-spawn git commit -m "${current_time}"
+# spawn git commit -m "${current_time}"
 #
 spawn git push
 #
 expect {
-	-re "Username for 'https://github.com'"
-	{
-		send "${username}\r"
-	}
+	# -re "Username for 'https://github.com'"
+	# {
+	# 	send "${username}\r"
+	# }
 	-re "Username for"
 	{
 		send "${username}\r"
 	}
-}
-#
-expect {
-	-re -re "Password for 'https://weidi5858258@sina.com@github.com'"
+	-re "Password for" 
 	{
 		send "${password}\r"
 	}
+}
+#
+expect {
+	# -re -re "Password for 'https://weidi5858258@sina.com@github.com'"
+	# {
+	# 	send "${password}\r"
+	# }
 	-re "Password for" 
 	{
 		send "${password}\r"
