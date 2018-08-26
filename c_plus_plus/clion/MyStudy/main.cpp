@@ -4,8 +4,10 @@
 #include "./include/MyHead.h"
 #include "./include/Method.h"
 #else
+
 #include "MyHead.h"
 #include "Method.h"
+
 #endif
 
 #ifndef MYSTUDY_STUDY
@@ -17,6 +19,10 @@
 
 
 void test();
+
+int WinMain(int argc, char *argv[]) {
+    return 0;
+}
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -34,14 +40,10 @@ int main(int argc, char *argv[]) {
     printf("------------------------------------------\n");
 
 
-
-
-
     printf("------------------------------------------\n");
     printf("\n");
     return 0;
 }
-
 
 
 typedef struct stud {

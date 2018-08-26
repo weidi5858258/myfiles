@@ -1862,10 +1862,6 @@ D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/Test.h
 
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/Test.h
 
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/ffmpeg.cpp
-include/MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
-
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/GuessNumber.h
 MyHead.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
@@ -2005,6 +2001,8 @@ D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/Test.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/Test.h
 
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/main.cpp
+src/MyHead2.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead2.h
 ./include/MyHead.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/./include/MyHead.h
 ./include/Method.h
@@ -2015,44 +2013,44 @@ Method.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/Method.h
 src/Study.cpp
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Study.cpp
-src/StudyFFmpeg.cpp
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/StudyFFmpeg.cpp
-ffmpeg.cpp
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/ffmpeg.cpp
-src/ffmpeg_sample.cpp
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/ffmpeg_sample.cpp
-src/player.cpp
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/player.cpp
-src/leixiaohua1020.cpp
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/leixiaohua1020.cpp
-src/music_player.cpp
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/music_player.cpp
 
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/B0.cpp
+MyHead2.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead2.h
 ../include/MyHead.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
 MyHead.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead.h
 
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/GuessNumber.cpp
+MyHead2.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead2.h
 ../include/GuessNumber.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/GuessNumber.h
 GuessNumber.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/GuessNumber.h
 
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Method.cpp
+MyHead2.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead2.h
 ../include/Method.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/Method.h
 Method.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Method.h
 
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead2.h
+
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Pointer.cpp
+MyHead2.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead2.h
 ../include/MyHead.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
 MyHead.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead.h
 
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Study.cpp
+MyHead2.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead2.h
 ../src/B0.cpp
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/B0.cpp
 B0.cpp
@@ -2068,19 +2066,9 @@ stack
 string
 -
 
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/StudyFFmpeg.cpp
-../include/MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
-MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead.h
-
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Test.cpp
-../include/MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
-MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead.h
-
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/ffmpeg_sample.cpp
+MyHead2.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead2.h
 ../include/MyHead.h
 D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
 MyHead.h
@@ -2109,6 +2097,8 @@ fcntl.h
 -
 math.h
 -
+MyHead2.h
+D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead2.h
 sys/mman.h
 -
 grp.h
@@ -2117,28 +2107,4 @@ pwd.h
 -
 utmp.h
 -
-
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/leixiaohua1020.cpp
-../include/MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
-MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead.h
-
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/music_player.cpp
-../include/MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
-MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead.h
-
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/music_player2.cpp
-../include/MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
-MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead.h
-
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/player.cpp
-../include/MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/MyHead.h
-MyHead.h
-D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/MyHead.h
 

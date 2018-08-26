@@ -5,6 +5,6 @@
 #ifndef MYSTUDY_MYHEAD2_H
 #define MYSTUDY_MYHEAD2_H
 
-#define UBUNTU_SYSTEM
+//#define UBUNTU_SYSTEM
 
 #endif //MYSTUDY_MYHEAD2_H

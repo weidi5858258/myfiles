@@ -122,33 +122,6 @@ MyStudy/fast:
 	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/build
 .PHONY : MyStudy/fast
 
-ffmpeg.obj: ffmpeg.cpp.obj
-
-.PHONY : ffmpeg.obj
-
-# target to build an object file
-ffmpeg.cpp.obj:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/ffmpeg.cpp.obj
-.PHONY : ffmpeg.cpp.obj
-
-ffmpeg.i: ffmpeg.cpp.i
-
-.PHONY : ffmpeg.i
-
-# target to preprocess a source file
-ffmpeg.cpp.i:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/ffmpeg.cpp.i
-.PHONY : ffmpeg.cpp.i
-
-ffmpeg.s: ffmpeg.cpp.s
-
-.PHONY : ffmpeg.s
-
-# target to generate assembly for a file
-ffmpeg.cpp.s:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/ffmpeg.cpp.s
-.PHONY : ffmpeg.cpp.s
-
 main.obj: main.cpp.obj
 
 .PHONY : main.obj
@@ -311,33 +284,6 @@ src/Study.cpp.s:
 	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/Study.cpp.s
 .PHONY : src/Study.cpp.s
 
-src/StudyFFmpeg.obj: src/StudyFFmpeg.cpp.obj
-
-.PHONY : src/StudyFFmpeg.obj
-
-# target to build an object file
-src/StudyFFmpeg.cpp.obj:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/StudyFFmpeg.cpp.obj
-.PHONY : src/StudyFFmpeg.cpp.obj
-
-src/StudyFFmpeg.i: src/StudyFFmpeg.cpp.i
-
-.PHONY : src/StudyFFmpeg.i
-
-# target to preprocess a source file
-src/StudyFFmpeg.cpp.i:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/StudyFFmpeg.cpp.i
-.PHONY : src/StudyFFmpeg.cpp.i
-
-src/StudyFFmpeg.s: src/StudyFFmpeg.cpp.s
-
-.PHONY : src/StudyFFmpeg.s
-
-# target to generate assembly for a file
-src/StudyFFmpeg.cpp.s:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/StudyFFmpeg.cpp.s
-.PHONY : src/StudyFFmpeg.cpp.s
-
 src/Test.obj: src/Test.cpp.obj
 
 .PHONY : src/Test.obj
@@ -364,33 +310,6 @@ src/Test.s: src/Test.cpp.s
 src/Test.cpp.s:
 	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/Test.cpp.s
 .PHONY : src/Test.cpp.s
-
-src/ffmpeg_sample.obj: src/ffmpeg_sample.cpp.obj
-
-.PHONY : src/ffmpeg_sample.obj
-
-# target to build an object file
-src/ffmpeg_sample.cpp.obj:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/ffmpeg_sample.cpp.obj
-.PHONY : src/ffmpeg_sample.cpp.obj
-
-src/ffmpeg_sample.i: src/ffmpeg_sample.cpp.i
-
-.PHONY : src/ffmpeg_sample.i
-
-# target to preprocess a source file
-src/ffmpeg_sample.cpp.i:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/ffmpeg_sample.cpp.i
-.PHONY : src/ffmpeg_sample.cpp.i
-
-src/ffmpeg_sample.s: src/ffmpeg_sample.cpp.s
-
-.PHONY : src/ffmpeg_sample.s
-
-# target to generate assembly for a file
-src/ffmpeg_sample.cpp.s:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/ffmpeg_sample.cpp.s
-.PHONY : src/ffmpeg_sample.cpp.s
 
 src/function_study.obj: src/function_study.cpp.obj
 
@@ -419,114 +338,6 @@ src/function_study.cpp.s:
 	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/function_study.cpp.s
 .PHONY : src/function_study.cpp.s
 
-src/leixiaohua1020.obj: src/leixiaohua1020.cpp.obj
-
-.PHONY : src/leixiaohua1020.obj
-
-# target to build an object file
-src/leixiaohua1020.cpp.obj:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/leixiaohua1020.cpp.obj
-.PHONY : src/leixiaohua1020.cpp.obj
-
-src/leixiaohua1020.i: src/leixiaohua1020.cpp.i
-
-.PHONY : src/leixiaohua1020.i
-
-# target to preprocess a source file
-src/leixiaohua1020.cpp.i:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/leixiaohua1020.cpp.i
-.PHONY : src/leixiaohua1020.cpp.i
-
-src/leixiaohua1020.s: src/leixiaohua1020.cpp.s
-
-.PHONY : src/leixiaohua1020.s
-
-# target to generate assembly for a file
-src/leixiaohua1020.cpp.s:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/leixiaohua1020.cpp.s
-.PHONY : src/leixiaohua1020.cpp.s
-
-src/music_player.obj: src/music_player.cpp.obj
-
-.PHONY : src/music_player.obj
-
-# target to build an object file
-src/music_player.cpp.obj:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/music_player.cpp.obj
-.PHONY : src/music_player.cpp.obj
-
-src/music_player.i: src/music_player.cpp.i
-
-.PHONY : src/music_player.i
-
-# target to preprocess a source file
-src/music_player.cpp.i:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/music_player.cpp.i
-.PHONY : src/music_player.cpp.i
-
-src/music_player.s: src/music_player.cpp.s
-
-.PHONY : src/music_player.s
-
-# target to generate assembly for a file
-src/music_player.cpp.s:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/music_player.cpp.s
-.PHONY : src/music_player.cpp.s
-
-src/music_player2.obj: src/music_player2.cpp.obj
-
-.PHONY : src/music_player2.obj
-
-# target to build an object file
-src/music_player2.cpp.obj:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/music_player2.cpp.obj
-.PHONY : src/music_player2.cpp.obj
-
-src/music_player2.i: src/music_player2.cpp.i
-
-.PHONY : src/music_player2.i
-
-# target to preprocess a source file
-src/music_player2.cpp.i:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/music_player2.cpp.i
-.PHONY : src/music_player2.cpp.i
-
-src/music_player2.s: src/music_player2.cpp.s
-
-.PHONY : src/music_player2.s
-
-# target to generate assembly for a file
-src/music_player2.cpp.s:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/music_player2.cpp.s
-.PHONY : src/music_player2.cpp.s
-
-src/player.obj: src/player.cpp.obj
-
-.PHONY : src/player.obj
-
-# target to build an object file
-src/player.cpp.obj:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/player.cpp.obj
-.PHONY : src/player.cpp.obj
-
-src/player.i: src/player.cpp.i
-
-.PHONY : src/player.i
-
-# target to preprocess a source file
-src/player.cpp.i:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/player.cpp.i
-.PHONY : src/player.cpp.i
-
-src/player.s: src/player.cpp.s
-
-.PHONY : src/player.s
-
-# target to generate assembly for a file
-src/player.cpp.s:
-	$(MAKE) -f CMakeFiles\MyStudy.dir\build.make CMakeFiles/MyStudy.dir/src/player.cpp.s
-.PHONY : src/player.cpp.s
-
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -536,9 +347,6 @@ help:
 	@echo ... MyStudy
 	@echo ... edit_cache
 	@echo ... rebuild_cache
-	@echo ... ffmpeg.obj
-	@echo ... ffmpeg.i
-	@echo ... ffmpeg.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
@@ -557,30 +365,12 @@ help:
 	@echo ... src/Study.obj
 	@echo ... src/Study.i
 	@echo ... src/Study.s
-	@echo ... src/StudyFFmpeg.obj
-	@echo ... src/StudyFFmpeg.i
-	@echo ... src/StudyFFmpeg.s
 	@echo ... src/Test.obj
 	@echo ... src/Test.i
 	@echo ... src/Test.s
-	@echo ... src/ffmpeg_sample.obj
-	@echo ... src/ffmpeg_sample.i
-	@echo ... src/ffmpeg_sample.s
 	@echo ... src/function_study.obj
 	@echo ... src/function_study.i
 	@echo ... src/function_study.s
-	@echo ... src/leixiaohua1020.obj
-	@echo ... src/leixiaohua1020.i
-	@echo ... src/leixiaohua1020.s
-	@echo ... src/music_player.obj
-	@echo ... src/music_player.i
-	@echo ... src/music_player.s
-	@echo ... src/music_player2.obj
-	@echo ... src/music_player2.i
-	@echo ... src/music_player2.s
-	@echo ... src/player.obj
-	@echo ... src/player.i
-	@echo ... src/player.s
 .PHONY : help
 
 

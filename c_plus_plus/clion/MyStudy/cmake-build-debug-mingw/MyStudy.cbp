@@ -114,9 +114,6 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/ffmpeg.cpp">
-			<Option target="MyStudy"/>
-		</Unit>
 		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/include/GuessNumber.h">
 			<Option target="MyStudy"/>
 		</Unit>
@@ -150,28 +147,10 @@
 		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Study.cpp">
 			<Option target="MyStudy"/>
 		</Unit>
-		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/StudyFFmpeg.cpp">
-			<Option target="MyStudy"/>
-		</Unit>
 		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Test.cpp">
 			<Option target="MyStudy"/>
 		</Unit>
-		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/ffmpeg_sample.cpp">
-			<Option target="MyStudy"/>
-		</Unit>
 		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/function_study.cpp">
-			<Option target="MyStudy"/>
-		</Unit>
-		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/leixiaohua1020.cpp">
-			<Option target="MyStudy"/>
-		</Unit>
-		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/music_player.cpp">
-			<Option target="MyStudy"/>
-		</Unit>
-		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/music_player2.cpp">
-			<Option target="MyStudy"/>
-		</Unit>
-		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/player.cpp">
 			<Option target="MyStudy"/>
 		</Unit>
 		<Unit filename="D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/CMakeLists.txt">

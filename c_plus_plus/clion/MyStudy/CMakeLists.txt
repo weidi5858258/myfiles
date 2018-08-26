@@ -55,19 +55,19 @@ if (WIN32)
 
     target_link_libraries(
             MyStudy
-            -L${FFMPEG_LIB_PATH} -lavformat
-            -L${FFMPEG_LIB_PATH} -lavcodec
-            -L${FFMPEG_LIB_PATH} -lavdevice
-            -L${FFMPEG_LIB_PATH} -lavfilter
-            -L${FFMPEG_LIB_PATH} -lavutil
-            -L${FFMPEG_LIB_PATH} -lswscale
-            -L${FFMPEG_LIB_PATH} -lswresample
-            -L${FFMPEG_LIB_PATH} -lpostproc
-            -L${SDL2_LIB_PATH} -lSDL2
-            -L${SDL2_LIB_PATH} -lSDL2main
-            -L${GLUTDLLS37BETA_LIB_PATH} -lglut32
-            -lz -lm -lpthread
-            -L"C:/MinGW/lib" -lmingw32
+#            -L${FFMPEG_LIB_PATH} -lavformat
+#            -L${FFMPEG_LIB_PATH} -lavcodec
+#            -L${FFMPEG_LIB_PATH} -lavdevice
+#            -L${FFMPEG_LIB_PATH} -lavfilter
+#            -L${FFMPEG_LIB_PATH} -lavutil
+#            -L${FFMPEG_LIB_PATH} -lswscale
+#            -L${FFMPEG_LIB_PATH} -lswresample
+#            -L${FFMPEG_LIB_PATH} -lpostproc
+#            -L${SDL2_LIB_PATH} -lSDL2
+#            -L${SDL2_LIB_PATH} -lSDL2main
+#            -L${GLUTDLLS37BETA_LIB_PATH} -lglut32
+#            -lz -lm -lpthread
+#            -L"C:/MinGW/lib" -lmingw32
     )
 
 else ()
