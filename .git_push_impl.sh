@@ -5,9 +5,11 @@ set current_time [lindex $argv 0]
 set username "weidi5858258@sina.com"
 set password "wangliwei1986"
 #
-# spawn git add .
+spawn git add .
+sleep 5
 #
-# spawn git commit -m "${current_time}"
+spawn git commit -m "${current_time}"
+sleep 5
 #
 spawn git push
 #
