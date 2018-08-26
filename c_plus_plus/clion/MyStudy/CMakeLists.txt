@@ -7,7 +7,6 @@ add_definitions(-std=c++11)
 add_executable(
         MyStudy
         main.cpp
-        ffmpeg.cpp
         include/Test.h
         include/MyHead.h
         include/Method.h
@@ -16,14 +15,8 @@ add_executable(
         src/B0.cpp
         src/Test.cpp
         src/Pointer.cpp
-        src/StudyFFmpeg.cpp
         src/Study.cpp
-        src/ffmpeg_sample.cpp
-        src/leixiaohua1020.cpp
         src/Method.cpp
-        src/player.cpp
-        src/music_player.cpp
-        src/music_player2.cpp
         src/function_study.cpp
         src/GuessNumber.cpp
         src/MyHead2.h)
