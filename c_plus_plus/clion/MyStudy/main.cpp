@@ -1,6 +1,10 @@
+#include "src/MyHead2.h"
+
 #ifdef UBUNTU_SYSTEM
+
 #include "./include/MyHead.h"
 #include "./include/Method.h"
+
 #else
 #include "MyHead.h"
 #include "Method.h"
@@ -121,7 +125,9 @@ int separate_media_to_yuv_and_aac();
 int simplest_yuv420p_split(char *url, int w, int h, int num);
 
 #ifdef UBUNTU_SYSTEM
+
 int audio_recorder(const char *out_file_path);
+
 #endif
 
 int alexander_video_player_sdl2();
@@ -159,7 +165,6 @@ int alexander_playback_pcm();
 int alexander_music_player(const char *in_file_name);
 
 int alexander_audio_or_video_demuxer();
-
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -221,6 +226,8 @@ int main(int argc, char *argv[]) {
     printf("\n");
     return 0;
 }
+
+
 
 typedef struct stud {
     int num;

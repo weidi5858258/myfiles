@@ -218,6 +218,7 @@ echo "Y" | sudo apt-get install yasm
 echo "Y" | sudo apt-get install policycoreutils
 # pcm player
 echo "Y" | sudo apt-get install sox
+echo "Y" | sudo apt-get install gradle
 echo "Y" | sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  
 echo "Y" | sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20  
 echo "Y" | sudo update-alternatives --config gcc 
