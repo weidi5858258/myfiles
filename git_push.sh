@@ -1,7 +1,6 @@
 #! /usr/bin/expect -f
 
 current_time=`date "+%Y%m%d%H%M%S"`
-echo ${current_time}
 #
 git add .
 #
