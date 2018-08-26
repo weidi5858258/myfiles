@@ -1,23 +1,24 @@
 #! /usr/bin/expect -f
 
-current_time=`date "+%Y%m%d%H%M%S"`
+# set current_time `date "+%Y%m%d%H%M%S"`
+set current_time "201808262258"
+set username "weidi5858258@sina.com"
+set Password "wangliwei1986"
 #
-git add .
+spawn git add .
 #
-git commit -m "${current_time}"
+spawn git commit -m "${current_time}"
 #
 spawn git push
 #
 expect {
 	-re "Username for 'https://github.com'" 
 	{
-		# send "yes\r"
-		echo "Username"
+		send "${username}\r"
 	} 
 	-re "Password for 'https://weidi5858258@sina.com@github.com'" 
 	{
-		# send "${loginpass}\r"
-		echo "Username"
+		send "${Password}\r"
 	} 
 }
 
