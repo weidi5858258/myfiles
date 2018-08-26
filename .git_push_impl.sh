@@ -27,7 +27,6 @@ expect {
 		send "${password}\r"
 	}
 }
-sleep 5
 #
 expect {
 	# -re -re "Password for 'https://weidi5858258@sina.com@github.com'"
