@@ -1,0 +1,127 @@
+布局,绘制,触摸反馈
+自定义绘制
+动画:
+1.
+属性动画ViewPropertyAnimator
+功能:设置时长,设置插值器,设置监听器
+//向右移动500像素,默认动画300毫秒
+imageView.animate().translationX(500)
+				   .setDuration(2000)
+				   .setIntarpolator(new LinearInterpolator());
+imageView.animate().translationY(500);
+imageView.animate().rotation(90);
+imageView.animate().scaleX(1).scaleY(1).alpha(1);
+速度模型(就是"插值器",有匀速,先加速再减速)
+设置速度模型setInterpolator()
+默认的插值器是AccelerateDecelerateInterpolator(先加速再减速)
+LinearInterpolator(线性插值器,匀速)
+
+
+View中的方法		功能 				对应的ViewPropertyAnimator中的方法
+setTranslationX()	设置x轴偏移			translationX() translationXBy()
+setTranslationY()	设置y轴偏移			translationY() translationYBy()	
+setTranslationZ()	设置z轴偏移			translationZ() translationZBy()
+setX()				设置x轴绝对位置		x()				xBy()
+setY()				设置y轴绝对位置		y()				yBy()
+setZ()				设置z轴绝对位置		z()				zBy()
+setRotation()		设置平面旋转		rotation()		rotationBy()
+setRotationX()		设置沿x轴旋转		rotationX()		rotationXBy()
+setRotationY()		设置沿y轴旋转		rotationY()		rotationYBy()
+setScaleX()			设置横向放缩		scaleX()		scaleXBy()
+setScaleY()			设置纵向放缩		scaleY()		scaleYBy()
+setAlpha()			设置透明度			alpha()			alphaBy()
+
+2.
+对象动画ObjectAnimator
+//会根据属性名(translationX)去找View中相应的setXXX方法进行动画
+ObjectAnimator animator = ObjectAnimator.ofFloat(imageView, "translationX", 500);
+animator.start();
+
+ObjectAnimator.ofFloat()
+ObjectAnimator.ofInt()
+ObjectAnimator.ofArgb()
+ObjectAnimator.ofObject()
+ObjectAnimator.ofMultiFloat()
+ObjectAnimator.ofMultiInt()
+ObjectAnimator.ofPropertyValuesHolder()
+属性名只能使用View中已有的setXXX方法的属性(如translationX)
+如果View中没有定义相关的setXXX方法,就去使用某个属性名,那是没有效果的.
+需要如下操作:
+在自定义View中写相关的setXXX和getXXX方法.如:
+public float getProgress() {
+	return progress;
+}
+public void setProgress(float progress) {
+	this.progress = progress;
+	//通知界面重绘,如果不调用的话是没有效果的.
+	invalidate();
+}
+使用:
+//0是起始位置,65是结束位置
+ObjectAnimator animator = ObjectAnimator.ofFloat(imageView, "progress", 0, 65);
+animator.start();
+
+float newTranslation = 0;
+Runnable runnable = new Runnable() {
+	public void run() {
+		//每次向右挪动5像素,100次就是500像素
+		newTranslation += 5;
+		imageView.setTranslationX(newTranslation);
+	}
+};
+for(int i=0;i<100;i++){
+	//每10毫秒改变一次位置,反复100次
+	imageView.postDelayed(runnable, i*10);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
