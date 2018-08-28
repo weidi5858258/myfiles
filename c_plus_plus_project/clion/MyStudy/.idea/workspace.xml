@@ -1,0 +1,1100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="true">
+    <generated>
+      <config projectName="MyStudy" targetName="MyStudy" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a5ff8206-0864-4122-9f54-28eb9d4c9197" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../C++.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../C++语法.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Linux_C函数库参考手册.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_or_c_plus_plus_function.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/Qt/MyStudy/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/Qt/MyStudy/MyStudy.pro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/Qt/MyStudy/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/Qt/build-MyStudy-Desktop_Qt_5_8_0_MinGW_32bit-Debug/.qmake.stash" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/Qt/build-MyStudy-Desktop_Qt_5_8_0_MinGW_32bit-Debug/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/Qt/build-MyStudy-Desktop_Qt_5_8_0_MinGW_32bit-Debug/Makefile.Debug" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/Qt/build-MyStudy-Desktop_Qt_5_8_0_MinGW_32bit-Debug/Makefile.Release" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/Qt/build-MyStudy-Desktop_Qt_5_8_0_MinGW_32bit-Debug/debug/MyStudy.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/Qt/build-MyStudy-Desktop_Qt_5_8_0_MinGW_32bit-Debug/debug/main.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeCache.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeCXXCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeRCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeSystem.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/3.9.6/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/3.9.6/CompilerIdC/a.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/3.9.6/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/3.9.6/CompilerIdCXX/a.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/CMakeDirectoryInformation.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/CMakeOutput.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/Makefile.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/Makefile2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/CXX.includecache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/DependInfo.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/build.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/cmake_clean.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/depend.internal" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/depend.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/flags.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/includes_CXX.rsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/link.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/linklibs.rsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/objects.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/objects1.rsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/progress.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/B0.cpp.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Method.cpp.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Study.cpp.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Test.cpp.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/function_study.cpp.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/Progress/1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/Progress/count.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/TargetDirectories.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/clion-environment.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/clion-log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/cmake.check_cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/feature_tests.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/feature_tests.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/feature_tests.cxx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/progress.marks" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/MyStudy.cbp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/cmake_install.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/include/GuessNumber.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/include/Method.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/include/MyHead.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/include/Test.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/make.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/src/B0.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/src/GuessNumber.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/src/Method.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/src/Pointer.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/src/Study.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/src/Test.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/src/function_study.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/MyStudy/src/platform.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/TestLibJpegTurbo.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/TestLibJpegTurbo2.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/TestLibJpegTurbo3.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/player.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/clion/temp20180713.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/cpp/c_function.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/epoll.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/.idea/ffmpeg_study.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeCache.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeCXXCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeRCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/3.9.6/CMakeSystem.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/3.9.6/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/3.9.6/CompilerIdC/a.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/3.9.6/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/3.9.6/CompilerIdCXX/a.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/CMakeDirectoryInformation.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/CMakeOutput.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/Makefile.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/Makefile2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/CXX.includecache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/DependInfo.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/build.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/cmake_clean.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/depend.internal" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/depend.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/flags.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/includes_CXX.rsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/link.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/linklibs.rsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/objects.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/objects1.rsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/progress.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/Progress/1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/Progress/2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/Progress/3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/Progress/4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/Progress/count.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/TargetDirectories.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/clion-environment.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/clion-log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/cmake.check_cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/feature_tests.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/feature_tests.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/feature_tests.cxx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/CMakeFiles/progress.marks" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/MyStudy.cbp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug-mingw/cmake_install.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeCache.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/3.12.0/CMakeCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/3.12.0/CMakeCXXCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/3.12.0/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/3.12.0/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/3.12.0/CMakeSystem.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/3.12.0/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/3.12.0/CompilerIdC/a.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/3.12.0/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/3.12.0/CompilerIdCXX/a.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/CMakeDirectoryInformation.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/MyStudy.dir/DependInfo.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/MyStudy.dir/build.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/MyStudy.dir/cmake_clean.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/MyStudy.dir/depend.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/MyStudy.dir/flags.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/MyStudy.dir/link.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/MyStudy.dir/progress.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/TargetDirectories.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/clion-environment.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/cmake.check_cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/feature_tests.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/feature_tests.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/feature_tests.cxx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/CXX.includecache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/DependInfo.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/build.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/cmake_clean.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/depend.internal" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/depend.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/ffmpeg.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/flags.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/link.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/main.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/progress.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/src/StudyFFmpeg.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/src/ffmpeg_sample.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/src/leixiaohua1020.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/src/music_player.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/src/music_player2.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir/src/player.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/progress.marks" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/MyStudy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/MyStudy.cbp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/cmake_install.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/ffmpeg_study" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/cmake-build-debug/ffmpeg_study.cbp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/ffmpeg.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/include/MyHead.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/make.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/run_me" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/src/StudyFFmpeg.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/src/ffmpeg_sample.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/src/leixiaohua1020.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/src/music_player.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/src/music_player2.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/ffmpeg_study/src/player.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/CMakeLists.txt.ubuntu" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/CMakeLists.txt.windows" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeCache.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.4/CMakeCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.4/CMakeCXXCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.4/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.4/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.4/CMakeSystem.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.4/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.4/CompilerIdC/a.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.4/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.4/CompilerIdCXX/a.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.6/CMakeCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.6/CMakeCXXCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.6/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.6/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.6/CMakeSystem.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.6/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.6/CompilerIdC/a.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.6/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/3.9.6/CompilerIdCXX/a.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/CMakeDirectoryInformation.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/CMakeError.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/CMakeOutput.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/Makefile.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/Makefile2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/Progress/6" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/Progress/count.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/TargetDirectories.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/clion-environment.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/clion-log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/cmake.check_cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/feature_tests.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/feature_tests.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/feature_tests.cxx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/CXX.includecache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/DependInfo.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/build.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/cmake_clean.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/depend.internal" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/depend.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/flags.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/link.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/linuxhttp/LinuxSocket.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/main.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/method/Method.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/mylog/MyLog.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/progress.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/grammar.dir/wd_grammar.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/CMakeFiles/progress.marks" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/cmake_install.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/cmake-build-debug-bundled/grammar.cbp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/linuxhttp/LinuxSocket.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/linuxhttp/LinuxSocket.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/method/Method.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/method/Method.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/mylog/MyLog.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/mylog/MyLog.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/wd_grammar.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/grammar/wd_grammar.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/include/wd_c_function.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/readme.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/socket.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/socket.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/.idea/tcp_ip.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/LinuxSocket.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/LinuxSocket.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeCache.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/3.12.0/CMakeCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/3.12.0/CMakeCXXCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/3.12.0/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/3.12.0/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/3.12.0/CMakeSystem.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/3.12.0/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/3.12.0/CompilerIdC/a.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/3.12.0/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/3.12.0/CompilerIdCXX/a.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/CMakeDirectoryInformation.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/TargetDirectories.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/clion-environment.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/cmake.check_cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/feature_tests.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/feature_tests.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/feature_tests.cxx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/progress.marks" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/CXX.includecache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/DependInfo.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/LinuxSocket.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/build.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/cmake_clean.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/depend.internal" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/depend.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/flags.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/link.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/main.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/progress.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/cmake_install.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/tcp_ip_client" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/cmake-build-debug/tcp_ip_client.cbp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_client/makefile.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/CMakeLists.txt.ubuntu" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/CMakeLists.txt.windows" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/linuxhttp/LinuxSocket.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/linuxhttp/LinuxSocket.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/makefile.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/signal/HandleSignal.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/signal/HandleSignal.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/sqlite/SQLiteOpenHelper.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/sqlite/SQLiteOpenHelper.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/tcp_ip_server/test.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/.vs/MyStudy/v15/.suo" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/.vs/MyStudy/v15/Browse.VC.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/Debug/MyStudy.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/Debug/MyStudy.ilk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/Debug/MyStudy.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy.sln" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/MyStudy.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/MyStudy.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/MyStudy.pch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/MyStudy.tlog/CL.command.1.tlog" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/MyStudy.tlog/CL.read.1.tlog" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/MyStudy.tlog/CL.write.1.tlog" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/MyStudy.tlog/MyStudy.lastbuildstate" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/MyStudy.tlog/link.command.1.tlog" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/MyStudy.tlog/link.read.1.tlog" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/MyStudy.tlog/link.write.1.tlog" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/stdafx.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/vc141.idb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/Debug/vc141.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/MyStudy.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/MyStudy.vcxproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/MyStudy.vcxproj.filters" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/MyStudy.vcxproj.user" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/stdafx.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/stdafx.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/visual_studio/MyStudy/MyStudy/targetver.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_grammar.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_grammar.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_math.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_math.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_opencv.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_opencv.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_stdio.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_stdio.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_string.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_string.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_struct.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_time.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_wchar.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../c_plus_plus/wd_wchar.h" beforeDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FUSProjectUsageTrigger">
+    <session id="24748821">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="13" />
+          <entry key="project.open.time.0" value="5" />
+          <entry key="project.open.time.1" value="2" />
+          <entry key="project.open.time.13" value="1" />
+          <entry key="project.open.time.2" value="1" />
+          <entry key="project.open.time.22" value="1" />
+          <entry key="project.open.time.40" value="1" />
+          <entry key="project.open.time.5" value="2" />
+          <entry key="project.open.time.6" value="1" />
+          <entry key="project.open.time.70" value="1" />
+          <entry key="project.open.time.8" value="4" />
+          <entry key="project.opened" value="19" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="cpp" value="1701" />
+          <entry key="h" value="131" />
+          <entry key="txt" value="26" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="CMakeLists.txt" value="26" />
+          <entry key="Doxygen file" value="91" />
+          <entry key="ObjectiveC" value="1741" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="MyStudy (disassembly)" value="1" />
+          <entry key="cpp" value="23" />
+          <entry key="h" value="12" />
+          <entry key="map" value="2" />
+          <entry key="sh" value="3" />
+          <entry key="txt" value="1" />
+          <entry key="unordered_map" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Bash" value="3" />
+          <entry key="CMakeLists.txt" value="1" />
+          <entry key="Disassembly" value="1" />
+          <entry key="ObjectiveC" value="38" />
+        </counts>
+      </usages-collector>
+    </session>
+    <session id="-1376183340">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.open.time.0" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="set" value="1" />
+          <entry key="txt" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="ObjectiveC" value="1" />
+          <entry key="PLAIN_TEXT" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="cpp" value="202" />
+          <entry key="h" value="32" />
+          <entry key="txt" value="747" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="ObjectiveC" value="234" />
+          <entry key="PLAIN_TEXT" value="747" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="MyStudy" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/include/MyHead.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="494">
+              <caret line="40" column="15" selection-start-line="40" selection-start-column="10" selection-end-line="40" selection-end-column="15" />
+              <folding>
+                <element signature="e#91#119#0" expanded="true" />
+                <element signature="e#420#438#0" expanded="true" />
+                <element signature="e#586#603#0" expanded="true" />
+                <element signature="e#644#658#0" expanded="true" />
+                <element signature="e#1796#1819#0" expanded="true" />
+                <element signature="e#1961#1988#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/main.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="178">
+              <caret line="47" column="27" lean-forward="true" selection-start-line="47" selection-start-column="27" selection-end-line="47" selection-end-column="27" />
+              <folding>
+                <element signature="e#48#77#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Study.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="328" selection-start-line="328" selection-end-line="328" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../c_plus_plus/C++语法.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1540">
+              <caret line="466" column="19" lean-forward="true" selection-start-line="466" selection-start-column="19" selection-end-line="466" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Method.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="252">
+              <caret line="7" selection-start-line="7" selection-end-line="7" />
+              <folding>
+                <element signature="e#128#147#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/function_study.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="72324">
+              <caret line="2009" column="21" selection-start-line="2009" selection-start-column="21" selection-end-line="2009" selection-end-column="21" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>len1</find>
+      <find>audio_swr_context</find>
+      <find>get_nb_samples_from_decoded_avframe</find>
+      <find>sdl_audio_spec.format</find>
+      <find>SDL_CondWait start</find>
+      <find>SDL_PushEvent(&amp;event)</find>
+      <find>FF_QUIT_EVENT</find>
+      <find>SDL_OpenAudio</find>
+      <find>avpacket</find>
+      <find>SDL_CondWait</find>
+      <find>SDL_CondSignal</find>
+      <find>sdl_rect</find>
+      <find>Error occurred when opening audio output file</find>
+      <find>ofmt_ctx_a</find>
+      <find>ResampleCtx</find>
+      <find>time.h</find>
+      <find>fgets</find>
+      <find>person</find>
+      <find>wd_open</find>
+      <find>wd_isalnum</find>
+      <find>wd_close</find>
+      <find>strlen</find>
+      <find>simplest_yuv420p_split</find>
+      <find>sys/types.h</find>
+      <find>sys/stat.h</find>
+      <find>unistd</find>
+      <find>///////////</find>
+      <find>deque</find>
+      <find>queue</find>
+      <find>///////////////////////////</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>#if</replace>
+      <replace>\n</replace>
+      <replace>avframe</replace>
+      <replace>video_avcodec_context</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/make.sh" />
+        <option value="$PROJECT_DIR$/src/decode_audio.c" />
+        <option value="$PROJECT_DIR$/src/decode_audio.cpp" />
+        <option value="$PROJECT_DIR$/src/simplest_audio_play_sdl2.cpp" />
+        <option value="$PROJECT_DIR$/ffmpeg.cpp" />
+        <option value="$PROJECT_DIR$/src/ffmpeg_sample.cpp" />
+        <option value="$PROJECT_DIR$/src/Pointer.cpp" />
+        <option value="$PROJECT_DIR$/src/music_player.cpp" />
+        <option value="$PROJECT_DIR$/include/Method.h" />
+        <option value="$PROJECT_DIR$/include/wd_string.h" />
+        <option value="$PROJECT_DIR$/src/wd_string.cpp" />
+        <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/src/c_function.cpp" />
+        <option value="$PROJECT_DIR$/src/Method.cpp" />
+        <option value="$PROJECT_DIR$/src/player.cpp" />
+        <option value="$PROJECT_DIR$/src/leixiaohua1020.cpp" />
+        <option value="$PROJECT_DIR$/src/StudyFFmpeg.cpp" />
+        <option value="$PROJECT_DIR$/src/platform.h" />
+        <option value="$PROJECT_DIR$/src/Study.cpp" />
+        <option value="$PROJECT_DIR$/include/MyHead.h" />
+        <option value="$PROJECT_DIR$/../../../c_plus_plus/C++语法.txt" />
+        <option value="$PROJECT_DIR$/main.cpp" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="OCFindUsagesOptions" text="false" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectFrameBounds" extendedState="5">
+    <option name="x" value="960" />
+    <option name="y" value="27" />
+    <option name="width" value="960" />
+    <option name="height" value="1053" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="MyStudy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MyStudy" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MyStudy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MyStudy" type="462c0819:PsiDirectoryNode" />
+              <item name="include" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MyStudy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MyStudy" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MyStudy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="MyStudy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Header Search Paths" type="70bed36:NamedLibraryElementNode" />
+            </path>
+            <path>
+              <item name="MyStudy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Header Search Paths" type="70bed36:NamedLibraryElementNode" />
+              <item name="include" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MyStudy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Header Search Paths" type="70bed36:NamedLibraryElementNode" />
+              <item name="include" type="462c0819:PsiDirectoryNode" />
+              <item name="c++" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MyStudy" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Header Search Paths" type="70bed36:NamedLibraryElementNode" />
+              <item name="include" type="462c0819:PsiDirectoryNode" />
+              <item name="c++" type="462c0819:PsiDirectoryNode" />
+              <item name="4.8" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../../workspace_android/TestSupportService" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$/include" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.MyStudy">
+    <configuration name="make.sh" type="BashConfigurationType" factoryName="Bash" temporary="true">
+      <module name="MyStudy" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/make.sh" />
+      <option name="PARAMETERS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="MyStudy" RUN_TARGET_NAME="MyStudy" EXPLICIT_BUILD_TARGET_NAME="all">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MyStudy" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MyStudy" TARGET_NAME="MyStudy" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="MyStudy" RUN_TARGET_NAME="MyStudy">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Build All" />
+      <item itemvalue="Application.MyStudy" />
+      <item itemvalue="Bash.make.sh" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Bash.make.sh" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a5ff8206-0864-4122-9f54-28eb9d4c9197" name="Default" comment="" />
+      <created>1531401152713</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1531401152713</updated>
+      <workItem from="1531401153986" duration="2463000" />
+      <workItem from="1531404357624" duration="6608000" />
+      <workItem from="1531411884700" duration="41000" />
+      <workItem from="1531411947479" duration="441000" />
+      <workItem from="1531541243040" duration="182000" />
+      <workItem from="1531542363232" duration="406000" />
+      <workItem from="1531542784589" duration="31326000" />
+      <workItem from="1531594048216" duration="641000" />
+      <workItem from="1531595583478" duration="76000" />
+      <workItem from="1531618792026" duration="12391000" />
+      <workItem from="1531699307343" duration="729000" />
+      <workItem from="1531701487728" duration="123000" />
+      <workItem from="1531701656413" duration="4707000" />
+      <workItem from="1531718660703" duration="25167000" />
+      <workItem from="1531894643477" duration="4115000" />
+      <workItem from="1531959632566" duration="16084000" />
+      <workItem from="1532306315799" duration="22068000" />
+      <workItem from="1532399398332" duration="19000" />
+      <workItem from="1532399497662" duration="31000" />
+      <workItem from="1532399558004" duration="77488000" />
+      <workItem from="1533101551138" duration="186000" />
+      <workItem from="1533101812420" duration="72000" />
+      <workItem from="1533103656231" duration="1433000" />
+      <workItem from="1533106987195" duration="5601000" />
+      <workItem from="1533171812049" duration="13960000" />
+      <workItem from="1533601575049" duration="220000" />
+      <workItem from="1533601808378" duration="82000" />
+      <workItem from="1533687391558" duration="5807000" />
+      <workItem from="1533715990135" duration="186000" />
+      <workItem from="1533716205369" duration="7551000" />
+      <workItem from="1533774592035" duration="7597000" />
+      <workItem from="1534289906840" duration="560000" />
+      <workItem from="1534291815330" duration="1359000" />
+      <workItem from="1534378218521" duration="1003000" />
+      <workItem from="1534835248505" duration="1013000" />
+      <workItem from="1534897605464" duration="796000" />
+      <workItem from="1534901013332" duration="2128000" />
+      <workItem from="1535008077998" duration="621000" />
+      <workItem from="1535071898711" duration="1859000" />
+      <workItem from="1535418946943" duration="548000" />
+      <workItem from="1535420400392" duration="11092000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="268780000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="960" y="27" width="960" height="1053" extended-state="4" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.5005599" weight="0.27450982" />
+      <window_info id="Favorites" order="1" sideWeight="0.50167227" side_tool="true" weight="0.14643237" />
+      <window_info id="Structure" order="2" sideWeight="0.49832776" weight="0.18104367" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32922733" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.30100334" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39910814" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32972974" />
+      <window_info anchor="bottom" id="Messages" order="7" weight="0.33779263" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32972974" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" weight="0.32972974" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="CMake" order="11" />
+      <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/../../../../../tools/ffmpeg/include/libavutil/error.h" />
+    <entry file="file://$PROJECT_DIR$/src/simplest_audio_play_sdl2.cpp" />
+    <entry file="file://$PROJECT_DIR$/src/simplest_ffmpeg_audio_encoder_pure.cpp" />
+    <entry file="file://$PROJECT_DIR$/src/encode_audio.c" />
+    <entry file="file:///usr/include/math.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15012">
+          <caret line="417" column="9" selection-start-line="417" selection-start-column="9" selection-end-line="417" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../ffmpeg/libavcodec/libx264.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="279" selection-start-line="279" selection-end-line="279" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/time.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="188" column="15" selection-start-line="188" selection-start-column="15" selection-end-line="188" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../tools/ffmpeg/include/libswscale/swscale.h" />
+    <entry file="file:///usr/include/SDL2/SDL_pixels.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="264" column="4" selection-start-line="264" selection-start-column="4" selection-end-line="264" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/alsa/pcm.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4680">
+          <caret line="130" column="4" selection-start-line="130" selection-start-column="4" selection-end-line="130" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/lame/lame.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="443" column="10" selection-start-line="443" selection-start-column="10" selection-end-line="443" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/SDL2/SDL_rect.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="67" column="2" selection-start-line="67" selection-start-column="2" selection-end-line="67" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/SDL2/SDL_events.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1641">
+          <caret line="556" column="2" selection-start-line="556" selection-start-column="2" selection-end-line="556" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../tools/ffmpeg/include/libavutil/avutil.h" />
+    <entry file="file:///usr/include/SDL2/SDL_thread.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="141" selection-start-line="141" selection-end-line="141" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../tools/ffmpeg/include/libavutil/mem.h" />
+    <entry file="file:///usr/include/string.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="127" column="13" selection-start-line="127" selection-start-column="13" selection-end-line="127" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../tools/ffmpeg/include/libavutil/channel_layout.h" />
+    <entry file="file://$PROJECT_DIR$/../../../../../tools/ffmpeg/include/libavformat/avformat.h" />
+    <entry file="file://$PROJECT_DIR$/../../../../../tools/ffmpeg/include/libavcodec/avcodec.h" />
+    <entry file="file://$PROJECT_DIR$/../../../../../tools/ffmpeg/include/libavutil/frame.h" />
+    <entry file="file://$PROJECT_DIR$/../../../../../tools/ffmpeg/include/libswresample/swresample.h" />
+    <entry file="file://$PROJECT_DIR$/src/ffmpeg_sample.cpp" />
+    <entry file="file:///usr/include/SDL2/SDL_render.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="13644">
+          <caret line="379" column="28" selection-start-line="379" selection-start-column="28" selection-end-line="379" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/SDL2/SDL_mutex.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2556">
+          <caret line="71" column="28" selection-start-line="71" selection-start-column="28" selection-end-line="71" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/SDL2/SDL_audio.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4392">
+          <caret line="122" column="8" selection-start-line="122" selection-start-column="8" selection-end-line="122" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ffmpeg.cpp" />
+    <entry file="file://$PROJECT_DIR$/src/Test.cpp">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Pointer.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="4" column="30" lean-forward="true" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/music_player.cpp" />
+    <entry file="file:///usr/include/stdio.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="530">
+          <caret line="637" column="13" selection-start-line="637" selection-start-column="13" selection-end-line="637" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/wd_string.h" />
+    <entry file="file://$PROJECT_DIR$/src/wd_string.cpp" />
+    <entry file="file://$PROJECT_DIR$/include/Method.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="23" column="15" selection-start-line="23" selection-start-column="15" selection-end-line="23" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../../tools/ffmpeg/include/libavutil/samplefmt.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="57" column="5" selection-start-line="57" selection-start-column="5" selection-end-line="57" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="17" column="23" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/c++/4.8/unordered_map">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1404" />
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/c++/4.8/map">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1856" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/player.cpp" />
+    <entry file="file://$PROJECT_DIR$/src/StudyFFmpeg.cpp" />
+    <entry file="file://$PROJECT_DIR$/src/leixiaohua1020.cpp" />
+    <entry file="file://$PROJECT_DIR$/../../../../../tools/ffmpeg/include/libavutil/pixfmt.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="772">
+          <caret line="61" column="4" selection-start-line="61" selection-start-column="4" selection-end-line="61" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/platform.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="9" column="27" selection-start-line="9" selection-start-column="27" selection-end-line="9" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/make.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2088">
+          <caret line="58" column="8" selection-start-line="58" selection-start-column="8" selection-end-line="58" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Method.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+          <folding>
+            <element signature="e#128#147#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/function_study.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72324">
+          <caret line="2009" column="21" selection-start-line="2009" selection-start-column="21" selection-end-line="2009" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Study.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="328" selection-start-line="328" selection-end-line="328" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/c++/4.8/set">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/MyHead.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="40" column="15" selection-start-line="40" selection-start-column="10" selection-end-line="40" selection-end-column="15" />
+          <folding>
+            <element signature="e#91#119#0" expanded="true" />
+            <element signature="e#420#438#0" expanded="true" />
+            <element signature="e#586#603#0" expanded="true" />
+            <element signature="e#644#658#0" expanded="true" />
+            <element signature="e#1796#1819#0" expanded="true" />
+            <element signature="e#1961#1988#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../c_plus_plus/C++语法.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1540">
+          <caret line="466" column="19" lean-forward="true" selection-start-line="466" selection-start-column="19" selection-end-line="466" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="47" column="27" lean-forward="true" selection-start-line="47" selection-start-column="27" selection-end-line="47" selection-end-column="27" />
+          <folding>
+            <element signature="e#48#77#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

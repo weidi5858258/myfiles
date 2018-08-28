@@ -1,0 +1,739 @@
+C++基础知识
+
+///////////////////////////零碎知识点部分///////////////////////////
+
+静态变量(static)
+外部变量(extern)
+寄存器变量
+自动存储变量
+
+            具体写法                  简写形式
+有符号短整型	short int           ---> short
+有符号长整型	long int            ---> long（数值后面加“l”或者“L”）
+无符号短整型	unsigned short int  ---> unsigned short
+无符号长整型	unsigned long int   ---> unsigned long
+有符号整型    signed int          ---> int
+无符号整型	unsigned int        ---> unsigned
+
+C++语言的基本数据类型
+1)布尔型:
+    bool
+2)字符型:
+    char
+  双字符型:
+    双字节型(wchar_t)
+    宽字符型
+3)整型:
+    无符号型(unsigned int)
+    短整型(short int)
+    长整型(long int)
+4)浮点型:
+    单精度浮点型(float)
+    双精度浮点型(double)
+    长双精度浮点型(long double)
+
+类型                         占用字节数       取值范围
+bool                            1           true or false
+
+char                            1           -128~127(256个字符)
+wchar_t 			                                 256个字符
+
+short int                       2           -32768~32767
+unsigned short int                          0~65535
+
+int                             4           -2147483648~2147483647
+long int                        4           -2147483648~2147483647
+unsigned int（或者unsigned）                 0~4294967295（32位系统）
+unsigned long int                           0~4294967295
+
+float                           4
+double                          8
+long double                     12
+
+进程的终止方式：
+1.从main返回
+2.调用exit
+3.调用_exit
+4.调用abort
+5.由一个信号终止
+进程在终止的时候，系统会释放进程所拥有的资源，如内存、文件描述符、内核结构等。
+
+进程之间的通信
+进程之间的通信有多种方式，其中管道、共享内存和消息队列是最常用的方式。
+1.
+管道
+是UNIX族中进程通信的最古老的方式，它利用内核在两个进程之间建立通道，
+它的特点是与文件的操作类似，仅仅在管道的一端只读，另一端只写。
+利用读写的方式在进程之间传递数据。
+2.
+共享内存
+在多个进程之间共享,多个进程利用获得的共享内存的地址来直接对内存进行操作。
+3.
+消息
+是在内核中建立一个链表，发送方按照一定的标识将数据发送到内核中，
+内核将其放入量表后，等待接收方的请求。接收方发送请求后，
+内核按照消息的标识，从内核中将消息从链表中摘下，传递给接收方。
+消息是一种完全的异步操作方式。
+
+进程之间的同步
+多个进程之间需要写作完成任务时，经常发生业务之间的依赖现象，
+从而出现了进程的同步问题。Linux下进程的同步方式主要有消息、信号量等。
+信号量是一个共享的表示数量的值。用于多个进程之间操作或者共享资源的保护，
+它是进程之间同步的最主要方式。
+
+函数名: getenv
+功  能: 从环境中取字符串,获取环境变量的值
+头文件: stdlib.h
+用  法: char *getenv(char *envvar);
+函数说明:
+getenv()用来取得参数envvar环境变量的内容。
+参数envvar为环境变量的名称，如果该变量存在
+则会返回指向该内容的指针。环境变量的格式为
+envvar=value。
+getenv函数的返回值存储在一个全局二维数组里，
+当你再次使用getenv函数时不用担心会覆盖上次的调用结果。
+返回值: 执行成功则返回指向该内容的指针，
+找不到符合的环境变量名称则返回NULL。
+如果变量存在但无关联值，它将运行成功并返回一个空字符串，
+即该字符的第一个字节是null。
+
+
+
+构造函数的作用：
+1、构造对象
+2、初始化对象
+3、
+
+类型不一样进行赋值时，中间必须要借助一个临时变量。
+如果这个临时变量产生不了，那么这个赋值操作就会失败。
+产生的中间变量的类型为赋值操作的左值的类型，
+然后把右值当作这个临时变量的初始值从而生成一个中间变量，
+最后把这个中间变量赋给左值。
+
+产生随机数
+#include <cstdlib>
+void srand(unsigned seed)
+ctime头文件中的time函数
+srand(time(NULL))
+chrono头文件中的std::chrono::system_clock
+srand(std::chrono::system_clock::to_time_t(
+        std::chrono::system_clock::now()));
+
+cin遇到不可见字符和空字符就停止输入（不可见字符指的
+是制表符和空格），而cout则只是遇到空字符才停止输出。
+这就量为什么将空字符作为字符串结束标志的原因，
+cin和cout遇到空字符都会结束输入和输出操作。
+
+
+
+静态联编：编译时、运行时
+动态联编：联编工作是在编译时确定的
+class A
+{
+public:
+	virtual int get()
+	{
+		return 0;
+	}
+};
+class B : public A
+{
+	int get()
+	{
+		return 1;
+	}
+};
+int main()
+{
+	B b;
+	A* p = &b;
+	cout<<p->get()<<endl;// 1
+	cout<<p->A::get()<<endl;// 0
+}
+
+未测试
+class A
+{
+public:
+	int get()
+	{
+		return 0;
+	}
+};
+class B : public A
+{
+	int get()
+	{
+		return 1;
+	}
+};
+int main()
+{
+	B b;
+	A* p = &b;
+	cout<<p->get()<<endl;
+	cout<<p->B::get()<<endl;
+}
+
+一个派生类对象在创建时会首先调用基类的构造函数，
+然后调用该类的构造函数，一般情况下，在使用虚函数时，
+我们都会将派生类对象传递给指向基类的指针，那么假如
+指向派生类对象的指针删除时会发生什么情况呢？如果
+析构函数是虚函数，那么就会进行正确的操作，它会先调用
+派生类的析构函数，由于一般情况下任何类的析构函数都可
+声明为虚析构函数，当指针被删除时，系统会获得对象运行
+时的类型并调用正确的析构函数。
+但是要注意三点：
+1.由于析构函数不允许有参数，因此它不可能实现重载，
+    那么一个类就只能有一个虚析构函数。
+2.只要基类的析构函数被说明为虚函数，那么派生类的析构函数无论说明与否，
+    都自然成为虚函数。
+3.在C++中虚构造函数是不存在的，因此也无法声明。
+
+dynamic_cast<son>(father)
+typeid()
+
+
+
+运算符*被称为间接引用运算符,当使用*时,就读取它后面变量中所保存的地址处的值.
+概念:
+指针地址:            指针自身的地址.
+指针保存的地址:       指针保存的地址.
+指针地址的值:         指针保存的地址处的值.
+
+
+
+#include<stdio.h>
+#include<limits.h> 整数的极限
+#include<float.h>  浮点数的极限
+#include<math.h>   数学
+#include<stdlib.h>
+#include<Windows.h>
+
+int a1 = 10;十进制
+int a2 = 010;八进制
+int a3 = 0x10;十六进制
+int a4 = 101u;无符号整数
+int a5 = 102l;长整数
+int a6 = 103ll;长长整数
+int a7 = 0101u;
+
+
+short int nummax = SHRT_MAX;  32767
+short int nummin = SHRT_MIN; -32768
+%d sizeof(short int); 2个字节
+标准写法是short int, 不过int可以省略,但是最好不要省略
+
+unsigned short nummax = USHRT_MAX; 65535
+unsigned short nummin = USHRT_MIN; 0
+USHRT_MAX加1后就变成0
+unsigned int的极大值要大于int,但是unsigned int不能表示负数,因为最小为0
+
+int intmax = INT_MAX;  2147483647
+int intmin = INT_MIN; -2147483648
+long int longmax = LONG_MAX;  2147483647
+long int longmin = LONG_MIN; -2147483648
+标准写法是long int, 不过int可以省略,但是最好不要省略
+sizeof(int) 4个字节
+sizeof(long int) 4个字节
+int与long int在32位及以上的机器是等价的,都占用4个字节
+在16位机器上,int与short int是等价的,都占用2个字节
+
+LONG_MAX;   2147483647L
+LONG_MIN;  -2147483647L-1
+ULONG_MAX;  0xffffffffUL
+LLONG_MAX;  9223372036854775807I64
+LLONG_MIN; -9223372036854775807I64-1
+ULLONG_MAX; 0xffffffffffffffffui64
+long long phone = 18565603244; 存储QQ, phone
+printf("%lld", phone);
+unsigned long long max = ULLONG_MAX; 存储身份证号
+printf("%llu", max); 18446744073709551615
+
+float f1 = 10.5;
+printf("%f", f);
+32bits or 64bits are same.
+sizeof(10.5);  8个字节 实数双精度常量 sizeof(double)
+sizeof(10.5f); 4个字节 实数单精度常量 sizeof(float)
+long double >= double指的是内存空间(取决于编译器)
+
+int num = 3 / 5;
+printf("%d", num); 0
+num = 3.2;
+printf("%d", num); 3 赋值号会自动转换类型,printf不会
+
+float f2 = 19e8;
+printf("%f", f2); 1900000000.000000
+f2 = 19.3456e-25; e 10,指数只能是整数
+3.14        double 8个字节 32bits 有效数字6~7位
+3.14f 3.14F float  4个字节 64bits 有效数字15~16位
+
+== 成立是1,不成立是0
+
+float f3 = 1.0000000000001; 有效数字6~7位
+float f4 = 1.0000000000000005;
+priintf("%d", f3 == f4); 1
+
+%.50f 保留小数点后50位
+printf("%f, %f", FLT_MAX, FLT_MIN);
+printf("%f, %f", DBL_MAX, DBL_MIN);
+
+double S = sqrt(p*(p-a)*(p-b)*(p-c));
+
+
+
+char ch = 'A'; 1个字节(字符常量)
+wchar_t wch = L'字'; 宽字符
+putchar(ch);
+printf("%c", ch);
+sizeof(ch);  1个字节
+sizeof('A'); 4个字节(为了兼容和拓展宽字符,一般情况下占4个字节)
+sizeof(wch); 2个字节
+
+system("color 4f");
+system("title weidi");
+system("pause");
+
+printf("%d", sizeof(""));  1个字节
+printf("%d", sizeof("A")); 2个字节(字符串/0结束,等于每个字符,尾部加上'\0')
+printf("%d", sizeof("节")); 2个字节,再加结束符1个
+
+字符串不能作用于单个字符
+1
+'1'
+0    %d 48 %c 0
+'0'  %d 0  %c 空字符
+'\0' %d 0  %c 空字符
+
+int num = 1;
+char ch = '1';
+printf("%d, %d", sizeof(num), sizeof(ch)); 4 1 内存大小不一样
+printf("%d", ch); 屏幕上输出的这个字符对应的整数,相当于求ASCCII码,ASCCII码就是整数
+printf("%c", ch); 打印字符,是个字符1,不是数字1
+printf("%d", num); 打印数字1
+printf("%c", num); 打印数字1对应的字符
+char ch1 = '\0';
+char ch2 = '0';
+char ch3 = 0; ch1与ch3是等价的
+int num = 0;
+printf("%d,%d,%d", sizeof(ch1), sizeof(ch2), sizeof(num));
+printf("\n%d", ch1); '\0'的编号是0
+printf("\n[%c]", ch1); '\0'空字符
+printf("\n%d", ch2); 48
+printf("\n%c", ch2); 0  求字符本身
+printf("\n%d", ch3);
+printf("\n%c", ch3);
+
+getchar(); 等待
+putchar(ch);
+
+char str[5] = {'c','a','3','e','@'};
+system(str);//windows下打开计算器
+printf("%s", str);
+char str[100] = {0};
+sprintf(str,"color %c%c" ,'5','e');
+system(str);
+char str[100] = {0};
+sprintf(str, "title %s的杰作", "weidi");
+system(str);
+
+int a;
+&a; ok
+&&a; error
+
+const int a = 10;
+int *p = 100;
+printf("a = %d\n", a);
+
+const int a; int const a; // same
+int *const p;
+const int *const p;
+
+const int a; // c can this
+const int a = 100; // c++ must this
+
+char *p = malloc(100); // c can this
+char *p = malloc(100); // c++ cann't this
+char *p = (char*)malloc(100);
+
+#include<iostream>
+std::cout<<"...\t";
+std::cout<<"...\n";
+std::cout<<std::endl;
+"endl"与"\n"的区别是前者不仅有后者的功能,还有调用输出流的flush的功能.
+std::是个命名空间标识符,C++标准库中的函数或者对象都是在命名空间std中定义的,
+所以我们要使用的标准库中的函数或者对象都要用std来限定.
+使用标准库文件iostream时,要写上std;使用非标准库文件iostream.h时,则不用写.
+如果在使用标准库文件iostream时,不喜欢重复地使用std,
+我们可以使用一种类似通告的形式来告诉编译器我们将使用标准库函数cout和endl.
+在方法中这样使用:
+using std::cout;
+using std::endl;
+cout<<"...\t";
+cout<<endl;
+另外一种方式是(也在方法中使用):
+using namespace std;
+iostream.h是C语言格式的,iostream是C++语言格式的
+
+在程序中使用函数时,必须先声明它然后再定义,
+声明的目的是告诉编译器即将要定义的函数的名字是什么,
+返回值的类型是什么以及参数是什么.
+而定义则是告诉编译器这个函数的功能是什么.
+假如不声明,那么该函数就不能被其他函数调用.
+通常我们把函数声明叫做函数原型,而把函数定义叫函数实现.
+
+面向对象: 抽象,封装,继承,多态
+
+//内联函数:把这个函数的所有代码复制到调用处,这样程序执行时不用来回跳转
+inline int func(int);
+在不知道具体怎么操作时,最好先不要使用内联函数.
+等完成程序的大部分功能时,再对符合要求的函数进行内联操作.
+将类中的函数声明和函数定义合并在一起时,该函数会自动成为内联函数.
+
+
+
+///////////////////////////模板///////////////////////////
+
+模板部分
+templeate<typename Type>
+typeid(Type).name()
+
+用于方法
+template<typename T> 
+T sum(T a, T b);
+用于类
+template<typename T1, typename T2>
+class Point
+{
+private:
+	T1 x;
+	T2 y;
+public:
+	Point(T1 _x, T2 _y): x(_x), y(_y){}
+	T1 getX();
+	void setX(T1 x);
+	T2 getY();
+	void setY(T2 y);
+};
+举例子:
+template<class T>
+swap(T &rx, T &ry) {
+    T temp = rx;
+    rx = ry;
+    ry = temp;
+}
+
+///////////////////////////字符串///////////////////////////
+
+美帝 窄字符
+天朝 宽字符
+
+#include <string>
+#include <string.h>
+using namespace std;
+
+空字符串的ASCLL为32，而空字符（空格）的ASCLL为0。
+' ' == 32
+cin.get（str， 1000）能接收空格。
+char name[] = {'a','b',32,'c',0,'\0'};
+后面要自己添加上'\0'，这样字符数组才能转化成字符串。
+char name[] = {"abc efg"};
+后面不需要自己再添加'\0'。
+strlen(name):不包括不可见字符（不可见：结束符）
+sizeof(name):包括不可见字符
+strcmp(ch1, ch2)
+不能把一个数组名赋给另一个数组名
+strcpy(ch1, ch2)把ch2赋给ch1
+strcpy函数会将ch2中的所有字符，包括结束标志'\0'一块复制到ch1中去
+str1.assign(str2, 3, 1)
+strcat(ch1, ch2)
+下面几个函数都是计算字符串的可见长度
+strlen(str1.c_str())
+str1.size()
+str1.length()
+
+strncat(ch1, ch2, 5)
+str1.append(str2, 5, 3)
+
+string a("c++");
+string b(a);
+string c(4, 'a');
+cout<<a<<endl;//c++
+cout<<b<<endl;//c++
+cout<<c<<endl;//aaaa
+string s1;
+string s2(s1);
+cout<<s1<<endl;//空行
+cout<<s2<<endl;//空行
+
+
+///////////////////////////STL///////////////////////////
+
+vector<typename T> c;
+c.at(index);
+c.front();
+c.back();
+c[index];
+c.push_back(obj);
+
+迭代器相关的函数：
+begin容器中第一个元素
+end最后一个元素的下一个位置
+rbegin逆向迭代器的第一个元素
+rend逆向迭代器的最后一个元素的下一个元素
+
+find():Temlpate<class InputIterator, class T> inline
+find_if():Temlpate<class InputIterator, class T, class Predicate> inline
+
+for_each(c.begin(), c.end(), print);
+Vector<int>::iterator location_index;
+location_index = find(c.begin(), c.end(), 5);
+location_index = find_if(c.begin(), c.end(), bind2nd(greater<int>(), 5));
+
+STL的组成构件
+STL的组件中最主要的是容器、迭代器、算法和仿函数。
+容器:用来管理某类对象的集合
+迭代器:用来在一个对象群集的元素上进行遍历动作
+算法:用来处理群集内的元素
+
+标准模板库：
+1.容器：
+1-1.顺序容器
+vector：从后面快速的插入与删除，直接访问任何元素
+deque：从前面或后面快速的插入与删除，直接访问任何元素
+list：双链表，从任何地方快速插入与删除
+#include <vector>
+#include <deque>
+#include <list>
+vector<string> vt;
+deque<int> dq;
+list<student> lt;
+C<T> c:创建一个名为c的容器，容器类型为C，如vector
+或list，T为容器内元素的类型。适用于所有容器。
+C c2(c)：创建一个c容器的副本，c2和c必须具有相同的容器类型和元素类型，适用于所有容器。
+C c(b, e)：创建一个名为c的容器，元素是迭代器b，
+e标示范围内的副本，适用于所有容器。
+C c(n, t)：创建一个名为c的容器，元素为
+n个个数，值为t，t的类型必须是容器C的元素类型或可以转换为该类型，只适用于顺序容器。
+C c(n):创建一个名为c的容器，元素为n个初始化元素的值，元素类型为值n的类型，只适用于顺序容器。
+
+函数：
+a)begin和end
+返回容器的迭代器，通过迭代器我们可以访问容器内的元素。
+std::vector<int>::iterator iter = c.begin();
+c.begin();
+c.end();
+c.rebegin();
+c.rend();
+
+b)添加元素
+c.push_back():在容器尾部添加值为t的元素，
+返回void。
+c.push_front()：在容器头部添加值为t的元素，
+返回void，只适用于list和deque。
+c.insert(p, t)：在迭代器p所指向的元素前面插入
+值为t的元素，返回指向t的迭代器。
+c.insert(p, n, t)：在迭代器p所指向的元素前面插入
+n个值为t的元素，返回void。
+c.insert(p, b, e)：在迭代器p所指向的元素前面插入
+由迭代器b和e标记的范围内的元素，返回void。
+
+c)获得容器大小
+c.size()：返回容器内元素个数，
+返回类型为c::size_type。
+c.max_size()：返回容器内最多可容纳的元素个数，
+返回类型为c::size_type。
+c.empty()：测试容器内是否有元素。
+c.resize()：重新调整容器大小，使其能容纳n个元素。
+c.resize(n, t)：重新调整容器大小，逾期能容纳n个
+元素，新添加元素以值t进行初始化。
+
+d)访问容器元素
+c.front()：返回容器内第一个元素的引用，如果c为
+空，该操作未定义。
+c.back()：返回容器内最后一个元素的引用，如果c为
+空，该操作未定义。
+c[n] at方法：返回下标为n的引用，n越界时，该操作
+未定义，只用于vector和deque。
+
+e)删除元素
+c.erase(p)：删除迭代器p指向的元素，返回一个指向
+被删除元素后面的元素的迭代器。
+c.erase(b, e)：删除迭代器b和e标记范围内的所有
+元素，返回一个指向被删除元素段后面的元素的
+迭代器。
+c.clear()：删除容器内的所有元素，返回void。
+c.pop_front()：删除容器的第一个元素，返回void，只
+适用于list和deque。
+c.pop_back()：删除容器的最后一个元素，返回void。
+
+f)赋值操作
+c1 = c2：删除c1的所有元素，将c2的所有元素复制
+给c1，c1和c2的容器类型及元素类型必须相同。
+c1.swap(c2)：交换c1和c2中的所有元素，c1和c2的容器
+类型及元素类型必须相同。
+c.assign(b, e)：重新给c赋值，内容为b和e所标记范围内
+的元素，b和e必须不是指向c中的元素的迭代器。
+c.assign(n, t)：将c中的元素重新调转为n个值为t的
+元素。
+
+1-2.关联容器
+set：快速查找，不允许有重复的值
+    //没有multiset这样的头文件
+    multiset：快速查找，允许有重复的值
+map：一对多映射，基于关键字快速查找，不允许有重复的值
+    //没有multimap这样的头文件
+    multimap：一对多映射，基于关键字快速查找，允许有重复的值
+
+1-3.容器适配器
+stack：先进后出
+queue：先进先出
+    //没有priority_queue这样的头文件
+    priority_queue：最高优先级元素，问题第一个出列
+
+2、迭代器
+3、算法
+4、仿函数
+
+///////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Android.mk:
+可执行文件,动态库,静态库
+Jar包,APK
+
+LOCAL_PATH:Android.mk文件所在的目录
+LOCAL_PATH := $(call my-dir)
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := test
+LOCAL_SRC_FILES := test.c
+
+使用系统提供的函数添加源文件到Android.mk中
+LOCAL_C_ALL_FILES := $(call all-c-files-under)
+LOCAL_SRC_FILES := $(LOCAL_C_ALL_FILES)
+
+LOCAL_MODULE_PATH := $(LOCAL_PATH)
+include $(BUILD_EXECUTABLE)
+
+all-c-files-under函数
+build/core/definitions.mk
+
+cat external/test/test.c
+mmm external/test/
+build/core/definitions.mk环境变量的配置文件
+build/core/config.mk
+build/core/main.mk
+build/core/clear_vars.mk
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
