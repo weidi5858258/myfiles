@@ -1,3 +1,0 @@
-/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/edit_cache.dir
-/root/mydev/workspace_github/myfiles/c_plus_plus/ffmpeg_study/cmake-build-debug/CMakeFiles/ffmpeg_study.dir
