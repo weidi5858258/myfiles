@@ -1,12 +1,15 @@
 .git
 .gitmodules
 c_plus_plus_project/grammar/.idea
-c_plus_plus_project/clion/MyStudy/run_me
 c_plus_plus_project/grammar/cmake-build-debug
+c_plus_plus_project/grammar/cmake-build-debug-mingw
 c_plus_plus_project/tcp_ip_server/.idea
 c_plus_plus_project/tcp_ip_server/cmake-build-debug
+c_plus_plus_project/tcp_ip_server/cmake-build-debug-mingw
+c_plus_plus_project/MyStudy/run_me
 c_plus_plus_project/MyStudy/.idea
 c_plus_plus_project/MyStudy/cmake-build-debug
+c_plus_plus_project/MyStudy/cmake-build-debug-mingw
 c_plus_plus_project/ffmpeg_study/.idea
 c_plus_plus_project/ffmpeg_study/cmake-build-debug
 c_plus_plus_project/ffmpeg_study/cmake-build-debug-mingw
