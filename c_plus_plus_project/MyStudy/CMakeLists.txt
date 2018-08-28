@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.12)
 project(MyStudy)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 add_definitions(-std=c++11)
 
 add_executable(
@@ -55,18 +55,18 @@ if (WIN32)
 
     target_link_libraries(
             MyStudy
-#            -L${FFMPEG_LIB_PATH} -lavformat
-#            -L${FFMPEG_LIB_PATH} -lavcodec
-#            -L${FFMPEG_LIB_PATH} -lavdevice
-#            -L${FFMPEG_LIB_PATH} -lavfilter
-#            -L${FFMPEG_LIB_PATH} -lavutil
-#            -L${FFMPEG_LIB_PATH} -lswscale
-#            -L${FFMPEG_LIB_PATH} -lswresample
-#            -L${FFMPEG_LIB_PATH} -lpostproc
-#            -L${SDL2_LIB_PATH} -lSDL2
-#            -L${SDL2_LIB_PATH} -lSDL2main
+            -L${FFMPEG_LIB_PATH} -lavformat
+            -L${FFMPEG_LIB_PATH} -lavcodec
+            -L${FFMPEG_LIB_PATH} -lavdevice
+            -L${FFMPEG_LIB_PATH} -lavfilter
+            -L${FFMPEG_LIB_PATH} -lavutil
+            -L${FFMPEG_LIB_PATH} -lswscale
+            -L${FFMPEG_LIB_PATH} -lswresample
+            -L${FFMPEG_LIB_PATH} -lpostproc
+            -L${SDL2_LIB_PATH} -lSDL2
+            -L${SDL2_LIB_PATH} -lSDL2main
+            -lz -lm -lpthread
 #            -L${GLUTDLLS37BETA_LIB_PATH} -lglut32
-#            -lz -lm -lpthread
 #            -L"C:/MinGW/lib" -lmingw32
     )
 

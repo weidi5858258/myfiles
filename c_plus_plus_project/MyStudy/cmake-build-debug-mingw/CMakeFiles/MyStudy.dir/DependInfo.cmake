@@ -4,14 +4,14 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/main.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/main.cpp.obj"
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/B0.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/B0.cpp.obj"
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/GuessNumber.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.obj"
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Method.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Method.cpp.obj"
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Pointer.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj"
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Study.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Study.cpp.obj"
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/Test.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Test.cpp.obj"
-  "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/src/function_study.cpp" "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/function_study.cpp.obj"
+  "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/main.cpp" "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/main.cpp.obj"
+  "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/B0.cpp" "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/B0.cpp.obj"
+  "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/GuessNumber.cpp" "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.obj"
+  "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Method.cpp" "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Method.cpp.obj"
+  "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Pointer.cpp" "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Pointer.cpp.obj"
+  "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Study.cpp" "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Study.cpp.obj"
+  "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Test.cpp" "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/Test.cpp.obj"
+  "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/function_study.cpp" "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-mingw/CMakeFiles/MyStudy.dir/src/function_study.cpp.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

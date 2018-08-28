@@ -1,4 +1,4 @@
-# Install script for directory: D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy
+# Install script for directory: D:/workspace_github/myfiles/c_plus_plus_project/MyStudy
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -27,6 +27,11 @@ if(NOT CMAKE_INSTALL_COMPONENT)
   endif()
 endif()
 
+# Is this installation the result of a crosscompile?
+if(NOT DEFINED CMAKE_CROSSCOMPILING)
+  set(CMAKE_CROSSCOMPILING "FALSE")
+endif()
+
 if(CMAKE_INSTALL_COMPONENT)
   set(CMAKE_INSTALL_MANIFEST "install_manifest_${CMAKE_INSTALL_COMPONENT}.txt")
 else()
@@ -35,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "D:/workspace_github/myfiles/c_plus_plus/clion/MyStudy/cmake-build-debug-mingw/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-mingw/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

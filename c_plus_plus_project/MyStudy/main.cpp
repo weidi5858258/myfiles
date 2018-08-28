@@ -1,10 +1,8 @@
 #include "src/platform.h"
 
 #ifdef UBUNTU_SYSTEM
-
 #include "./include/MyHead.h"
 #include "./include/Method.h"
-
 #else
 
 #include "MyHead.h"
@@ -22,9 +20,6 @@
 
 void test();
 
-int WinMain(int argc, char *argv[]) {
-    return 0;
-}
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -47,8 +42,21 @@ int main(int argc, char *argv[]) {
     tVector.push_back("a");
     tVector.push_back("c");
 
-    char ch = ' ';
-    printf("%c %d\n", ch, ch);
+    char ch1[100] = "what't your name? ";
+    char ch2[] = "my name is Jack.";
+    memmove(ch1, ch2, 10);
+    cout << ch1 << endl;
+
+    string str1 = "what't your name? ";
+    string str2 = "my name is Jack.";
+    str1.erase(8, 2);
+    cout << str1 << endl;
+    str1.erase(5);
+    cout << str1 << endl;
+    str1.erase();
+    cout << str1 << endl;
+    //whmy nt't your name?
+
 
     printf("------------------------------------------\n");
     printf("\n");

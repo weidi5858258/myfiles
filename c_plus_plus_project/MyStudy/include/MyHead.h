@@ -5,7 +5,7 @@
 #ifndef MYSTUDY_MYHEAD_H
 #define MYSTUDY_MYHEAD_H
 
-#include "../src/platform.h"
+//#define UBUNTU_SYSTEM
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -80,14 +80,14 @@ extern "C" {// 不能少
 #include <libavutil/error.h>
 #include <libavutil/time.h>
 
-#include <SDL2/SDL.h>
 
 #ifdef UBUNTU_SYSTEM
     #include <sys/socket.h>
     #include <sys/epoll.h>
     #include <netinet/in.h>
     #include <arpa/inet.h>
-
+    //undefined reference to `WinMain@16'
+    #include <SDL2/SDL.h>
     #include <lame.h>
     #include <cstddef>
     //录音
