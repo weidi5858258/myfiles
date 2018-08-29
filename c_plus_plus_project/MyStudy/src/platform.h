@@ -5,6 +5,6 @@
 #ifndef MYSTUDY_PLATFORM_H
 #define MYSTUDY_PLATFORM_H
 
-//#define UBUNTU_SYSTEM
+#define UBUNTU_SYSTEM
 
 #endif //MYSTUDY_PLATFORM_H

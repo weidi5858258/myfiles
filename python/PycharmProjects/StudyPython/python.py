@@ -25,7 +25,7 @@ from urllib.parse import urlencode
 # from PyQt4 import QtGui
 
 '''
-单引号
+三个单引号注释
 http://code.google.com/p/android-scripting/58d4e639cae7e70d3d00199d
 
 两种编码方式（前面有#）：
@@ -395,7 +395,7 @@ while True:
 '''
 
 """
-双引号注释
+三个双引号注释
 
 
 """
@@ -1179,7 +1179,7 @@ pygame.init()
 # 创建一个窗口，用来显示内容
 screen = pygame.display.set_mode((480, 852), 0, 32)
 # 创建一个和窗口大小一样的图片，用来充当背景
-background = pygame.image.load('/root/Pictures/500px//images//249358865.jpg')
+background = pygame.image.load('/root/Pictures/500px/images/249358865.jpg')
 
 hero = pygame.image.load('/root/Pictures/drawable-hdpi/actionbar_dlna_connected.png')
 

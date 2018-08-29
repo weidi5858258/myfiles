@@ -5,7 +5,7 @@
 #ifndef MYSTUDY_MYHEAD_H
 #define MYSTUDY_MYHEAD_H
 
-//#define UBUNTU_SYSTEM
+#define UBUNTU_SYSTEM
 
 #include <stdio.h>
 #include <stdlib.h>
