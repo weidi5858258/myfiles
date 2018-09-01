@@ -2155,13 +2155,39 @@ find ./ -nameAndroid.mk -exec grep -l app_process {}\;
 git config --global core.editor "subl -w"
 
 
+function judge_content_is_same(){
+    echo "5"
+    return 10
+}
+result=`judge_content_is_same`
+echo $?
+echo ${result}
+结果:
+10
+5
 
+line='afdj dsflskjf sdlfk'
+for i in `seq 1 ${#line}`
+do
+   a=`echo $line | cut -c $i`
+   # echo -ne "$a"
+   # 一个字符一个字符输出
+   echo ${a}
+done
 
+# 特殊字符需要用到转义字符
+# \' \" \* \? \\ \~ \` \! \# \$ \&  \| \{ \} \; \< \> \^
+# 下面是特殊字符
+# . * [ ] ^ $ { } \ + ? | ( )
 
+# 在shell中判断单个字符是否相同,下面是两个看起来相同的字符进行比较的结果(如果! 与 !比是否相同)
+# 相同: ` ~ ! @ # $ % ^ * ( ) _ + -  = { } | [ ] \ : " ; ' < > ? , . /
+# 不同: \
 
-
-
-
+# 去掉字符串前后的空格
+name_string=`echo "${name_string}" | grep -o "[^ ]\+\( \+[^ ]\+\)*"`
+# 去掉字符串首尾各一个字符
+name_string=${name_string:1:-1}
 
 
 
