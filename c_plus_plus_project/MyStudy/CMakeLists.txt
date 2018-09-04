@@ -19,7 +19,7 @@ add_executable(
         src/Method.cpp
         src/function_study.cpp
         src/GuessNumber.cpp
-        src/platform.h)
+        src/HandleAndroidString.cpp include/HandleAndroidString.h)
 
 if (WIN32)
 

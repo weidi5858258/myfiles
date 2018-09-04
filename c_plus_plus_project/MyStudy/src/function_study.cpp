@@ -10,9 +10,9 @@
 #include <fcntl.h>
 #include <math.h>
 
-#include "platform.h"
-
-#ifdef UBUNTU_SYSTEM
+#ifdef WIN32
+#endif
+#ifdef linux
 #include <sys/mman.h>
 #include <grp.h>
 #include <pwd.h>

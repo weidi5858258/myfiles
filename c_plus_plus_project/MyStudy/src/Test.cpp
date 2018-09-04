@@ -2,12 +2,12 @@
 // Created by weidi on 2018/5/5.
 //
 
-#include "platform.h"
-
-#ifdef UBUNTU_SYSTEM
-#include "../include/MyHead.h"
-#else
+#ifdef WIN32
 #include "MyHead.h"
+#endif
+#ifdef linux
+#include "../include/MyHead.h"
+#include "../include/Test.h"
 #endif
 
 Test::Test() {

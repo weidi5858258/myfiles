@@ -390,6 +390,121 @@ inline int func(int);
 等完成程序的大部分功能时,再对符合要求的函数进行内联操作.
 将类中的函数声明和函数定义合并在一起时,该函数会自动成为内联函数.
 
+#include <stdio.h>
+char buf[10] = {10,10,10,10,10,10,10,10,10,10};
+FILE *fp = fopen("c:\\test.dat","w");
+fwrite(buf,1,10,fp);
+fclose(fp);
+FILE *fp1 = fopen("c:\\test1.dat","wb");
+fwrite(buf,1,10,fp);
+fclose(fp1);
+我们注意到，程序的第一段定义一个数组，每个分量的值为：10,等价的十六进制为0A。
+第二段，先是打开一个文件test.dat进行写操作，再是把10个数据写入文件，最后关闭文件。
+第三段，功能差不多，只是文件名换成了test1.dat,打开文件的模式换成了wb.
+第二段和第三段有什么区别呢？我们看一下最后的文件内容：
+test.dat:  0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A
+test1.dat： 0A 0A 0A 0A 0A 0A 0A 0A 0A 0A
+原因是为什么呢？这就是w 和 wb的区别，
+w是以文本方式打开文件，wb是二进制方式打开文件，
+以文本方式打开文件时，fwrite函数每碰到一个0x0A时，
+就在它的前面加入0x0D.其它内容不做添加操作。
+r 以只读方式打开文件，该文件必须存在。
+　　r+ 以可读写方式打开文件，该文件必须存在。
+　　rb+ 读写打开一个二进制文件，只允许读写数据。
+　　rt+ 读写打开一个文本文件，允许读和写。
+　　w 打开只写文件，若文件存在则文件长度清为0，即该文件内容会消失。若文件不存在则建立该文件。
+　　w+ 打开可读写文件，若文件存在则文件长度清为零，即该文件内容会消失。若文件不存在则建立该文件。
+　　a 以附加的方式打开只写文件。若文件不存在，则会建立该文件，如果文件存在，写入的数据会被加到文件尾，即文件原先的内容会被保留。（EOF符保留）
+　　a+ 以附加方式打开可读写的文件。若文件不存在，则会建立该文件，如果文件存在，写入的数据会被加到文件尾后，即文件原先的内容会被保留。 （原来的EOF符不保留）
+　　wb 只写打开或新建一个二进制文件；只允许写数据。
+　　wb+ 读写打开或建立一个二进制文件，允许读和写。
+　　wt+ 读写打开或着建立一个文本文件；允许读写。
+　　at+ 读写打开一个文本文件，允许读或在文本末追加数据。
+　　ab+ 读写打开一个二进制文件，允许读或在文件末追加数据。
+　　上述的形态字符串都可以再加一个b字符，如rb、w+b或ab＋等组合，加入b 字符用来告诉函数库打开的文件为二进制文件，而非纯文字文件。不过在POSIX系统，包含Linux都会忽略该字符。由fopen()所建立的新文件会具有S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH(0666)权限，此文件权限也会参考umask 值
+
+判断文件夹是否存在：
+在windows环境下头文件为：
+#include <io.h>
+在linux环境下头文件为：
+#include <unistd.h>
+int access(const char* _Filename, int _AccessMode)
+上述函数在windows和linux环境下均可使用
+该函数功能为确定文件或文件夹的访问权限，如果指定的访问权限有效，则函数返回0，否则返回-1
+Filename可以是文件路径，也可以是文件夹路径，可以使用绝对路径或相对路径
+_AccessMode表示要验证的文件访问权限，有可读、可写、可执行以及是否存在四种权限，当Filename表示文件夹时仅能查询文件夹是否存在
+_AccessMode：
+头文件unistd.h中有如下定义：
+    #define R_OK 4 /* Test for read permission. */
+    #define W_OK 2 /* Test for write permission. */
+    #define X_OK 1 /* Test for execute permission. */
+    #define F_OK 0 /* Test for existence. */
+    具体含义如下：
+    R_OK 只判断是否有读权限
+    W_OK 只判断是否有写权限
+    X_OK 判断是否有执行权限
+    F_OK 只判断是否存在
+    在宏定义里面分别对应：
+    00 只存在
+    02 写权限
+    04 读权限
+    06 读和写权限
+_AccessMode=00表示只判断是否存在
+_AccessMode=02表示文件是否可执行
+_AccessMode=04表示文件是否可写
+_AccessMode=06表示文件是否可读
+
+创建新的文件夹:
+windows环境下头文件为:
+#include <direct.h>
+函数原型为：
+int mkdir(const char *_Path)
+该函数功能为建立一个新的目录，创建成功则返回0，否则返回-1
+_Path：新建文件夹路径，可使用绝对路径，可也用相对路径
+windows环境下也可用函数_mkdir:
+_mkdir(const char *_Path)
+默认mode是0777，表示最大可能的访问权
+linux环境下头文件为:
+    #include <sys/types.h>
+    #include <sys/stat.h>
+函数原型为：
+int mkdir(const char *pathname, mode_t mode);
+该函数功能为创建一个新的目录，并指定它的执行权限。如果创建成功则返回0，否则，返回-1
+S_IRWXU
+00700权限，代表该文件所有者拥有读，写和执行操作的权限
+S_IRUSR(S_IREAD)
+00400权限，代表该文件所有者拥有可读的权限
+S_IWUSR(S_IWRITE)
+00200权限，代表该文件所有者拥有可写的权限
+S_IXUSR(S_IEXEC)
+00100权限，代表该文件所有者拥有执行的权限
+S_IRWXG
+00070权限，代表该文件用户组拥有读，写和执行操作的权限
+S_IRGRP
+00040权限，代表该文件用户组拥有可读的权限
+S_IWGRP
+00020权限，代表该文件用户组拥有可写的权限
+S_IXGRP
+00010权限，代表该文件用户组拥有执行的权限
+S_IRWXO
+00007权限，代表其他用户拥有读，写和执行操作的权限
+S_IROTH
+00004权限，代表其他用户拥有可读的权限
+S_IWOTH
+00002权限，代表其他用户拥有可写的权限
+S_IXOTH
+00001权限，代表其他用户拥有执行的权限
+可叠加使用，如0755表示S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH。表示该文件所有者拥有读，写和执行操作权限去，该文件用户组拥有可读，可执行的权限，其他用户拥有可读，可执行的权限。 
+
+删除文件夹：
+windows环境下头文件：
+#include <direct.h>
+linux环境下头文件：
+#include <dirent.h>
+函数原型为：
+int rmdir(const char *_Path)
+函数功能是删除参数指定的文件夹，成功返回0，否则返回-1
+在windows环境下也可使用函数_rmdir
 
 
 ///////////////////////////模板///////////////////////////

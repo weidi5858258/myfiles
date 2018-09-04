@@ -2,10 +2,9 @@
 // Created by root on 18-8-8.
 //
 
-#include "platform.h"
-
-#ifdef UBUNTU_SYSTEM
-#include "../include/GuessNumber.h"
-#else
+#ifdef WIN32
 #include "GuessNumber.h"
+#endif
+#ifdef linux
+#include "../include/GuessNumber.h"
 #endif

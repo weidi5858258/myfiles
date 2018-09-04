@@ -5,11 +5,10 @@
 #ifndef MYSTUDY_MYHEAD_H
 #define MYSTUDY_MYHEAD_H
 
-#define UBUNTU_SYSTEM
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -20,6 +19,7 @@
 #include <libgen.h>
 #include <inttypes.h>
 #include <math.h>
+#include <dirent.h>
 //下面三个头文件使用open函数时用到
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -80,8 +80,10 @@ extern "C" {// 不能少
 #include <libavutil/error.h>
 #include <libavutil/time.h>
 
-
-#ifdef UBUNTU_SYSTEM
+#ifdef WIN32
+    #include <glut.h>
+#endif
+#ifdef linux
     #include <sys/socket.h>
     #include <sys/epoll.h>
     #include <netinet/in.h>
@@ -94,12 +96,11 @@ extern "C" {// 不能少
     #include <alsa/asoundlib.h>
     #include <sys/mount.h>
     #include <GL/glut.h>
-#else
-    #include <glut.h>
 #endif
 
-#ifdef UBUNTU_SYSTEM
-#else
+#ifdef WIN32
+#endif
+#ifdef linux
 #endif
 
 //    #include <jconfig.h>
@@ -113,8 +114,5 @@ extern "C" {// 不能少
 #define PI 3.14159265
 
 using namespace std;
-
-#include "Test.h"
-
 
 #endif //MYSTUDY_MYHEAD_H

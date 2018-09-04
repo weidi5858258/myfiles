@@ -1,12 +1,15 @@
-#include "src/platform.h"
-
-#ifdef UBUNTU_SYSTEM
-#include "./include/MyHead.h"
-#include "./include/Method.h"
-#else
-
+#ifdef WIN32
 #include "MyHead.h"
+#include "Test.h"
 #include "Method.h"
+#include "HandleAndroidString.h"
+#endif
+#ifdef linux
+
+#include "./include/MyHead.h"
+#include "./include/Test.h"
+#include "./include/Method.h"
+#include "./include/HandleAndroidString.h"
 
 #endif
 
@@ -56,6 +59,9 @@ int main(int argc, char *argv[]) {
     str1.erase();
     cout << str1 << endl;
     //whmy nt't your name?
+
+    HandleAndroidString handleAndroidString;
+    handleAndroidString.init();
 
 
     printf("------------------------------------------\n");

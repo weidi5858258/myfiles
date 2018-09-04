@@ -2,12 +2,11 @@
 // Created by weidi5858258 on 2018/1/1.
 //
 
-#include "platform.h"
-
-#ifdef UBUNTU_SYSTEM
-#include "../include/Method.h"
-#else
+#ifdef WIN32
 #include "Method.h"
+#endif
+#ifdef linux
+#include "../include/Method.h"
 #endif
 
 /***

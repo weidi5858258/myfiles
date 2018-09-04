@@ -4,7 +4,12 @@
 #ifndef MYSTUDY_STUDY
 #define MYSTUDY_STUDY
 
-#include "platform.h"
+#ifdef WIN32
+#include "Test.h"
+#endif
+#ifdef linux
+#include "../include/Test.h"
+#endif
 
 #ifndef MYSTUDY_B0
 #define MYSTUDY_B0
