@@ -45,23 +45,23 @@ int main(int argc, char *argv[]) {
     tVector.push_back("a");
     tVector.push_back("c");
 
-    char ch1[100] = "what't your name? ";
-    char ch2[] = "my name is Jack.";
-    memmove(ch1, ch2, 10);
-    cout << ch1 << endl;
-
-    string str1 = "what't your name? ";
-    string str2 = "my name is Jack.";
-    str1.erase(8, 2);
-    cout << str1 << endl;
-    str1.erase(5);
-    cout << str1 << endl;
-    str1.erase();
-    cout << str1 << endl;
+//    char ch1[100] = "what't your name? ";
+//    char ch2[] = "my name is Jack.";
+//    memmove(ch1, ch2, 10);
+//    cout << ch1 << endl;
+//
+//    string str1 = "what't your name? ";
+//    string str2 = "my name is Jack.";
+//    str1.erase(8, 2);
+//    cout << str1 << endl;
+//    str1.erase(5);
+//    cout << str1 << endl;
+//    str1.erase();
+//    cout << str1 << endl;
     //whmy nt't your name?
 
     HandleAndroidString handleAndroidString;
-    handleAndroidString.init();
+    handleAndroidString.doSomething();
 
 
     printf("------------------------------------------\n");

@@ -7,15 +7,21 @@
 
 #include "MyHead.h"
 
+#define CUR_DIR "/media/root/Weidi/Users/weidi5858258/Documents/temp_dir"
+
 class HandleAndroidString {
 public:
+    void doSomething();
+private:
     void init();
 private:
-    string curDir;
     string srcDir;
     string destDir;
     string cacheDir;
-    map<string, string> englishStringMap;
+    string srcStringFilePath;
+    string destStringFilePath;
+    map<string, string> nameAndContentMap;
+
 
 
 };

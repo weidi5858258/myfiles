@@ -10,11 +10,59 @@
 
 #endif
 
+/***
+ 1.
+ 把values/strings.xml中的name和content保存到变量中
+ 2.
+ 把src/res下的有关文件保存到变量中
+ 3.
+
+ */
+
+/***
+<string name="cancel_edit_permission" sony_id="4">Cancel</string>
+<string name="mv_toast_unsupported_operation_txt" sony_id="40112" xliff:restype="x-GENERIC/TOAST/TEXT">
+ Feature not available with this content
+ </string>
+*/
+void split(vector<string> &vecStr, const string &srcStr, const string &delim) {
+    if (!vecStr.empty()) {
+        vecStr.clear();
+    }
+    string tempSrcStr(srcStr);
+    while (1) {
+        int index = tempSrcStr.find(delim);
+        if (index == -1) {
+            return;
+        }
+        int delimLen = delim.length();
+        vecStr.push_back(srcStr.substr(0, index));
+        string tempStr = srcStr.substr(index + delimLen);
+
+    }
+
+}
+
+void HandleAndroidString::doSomething() {
+    init();
+
+    string test("0123abc4567abc879");
+    const char *c_str = test.c_str();
+    cout << c_str << endl;
+    int index = test.find("abc");
+    cout << index << endl;
+    cout << test.substr(0, index) << endl;// 0 ~ index-1
+    cout << test.substr(index + 3) << endl;// index ~
+
+    cout << test << endl;
+    test.clear();
+    cout << test << endl;
+}
+
 void HandleAndroidString::init() {
-    curDir = "/root/下载/translation_list";
-    srcDir = curDir + "/src/res";
-    destDir = curDir + "dest/res";
-    cacheDir = curDir + "/cache";
+    srcDir = string(CUR_DIR) + "/src/res";
+    destDir = string(CUR_DIR) + "dest/res";
+    cacheDir = string(CUR_DIR) + "/cache";
 
     int result = access(cacheDir.c_str(), F_OK);
     if (result == -1) {
@@ -22,6 +70,16 @@ void HandleAndroidString::init() {
     } else {
         fprintf(stdout, "return:%d %s目录存在\n", result, cacheDir.c_str());
     }
+
+//    fstream file(srcDir + "/values/strings.xml");
+//    string alineString;
+//    while (getline(file, alineString)) {
+//        if (!alineString.empty()
+//            && alineString.find("sony_id=") != string::npos
+//            && alineString.find("sony_id=\"M") == string::npos) {
+//            cout << alineString << endl;
+//        }
+//    }
 
 //    FILE *cacheFile = fopen(cacheDir.c_str(), "w");
 //    if (cacheFile == NULL) {
@@ -75,5 +133,7 @@ void HandleAndroidString::init() {
 //
 //    cout << "end..." << endl;
 //    cin.get();
+
+
 
 }
