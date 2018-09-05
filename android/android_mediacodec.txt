@@ -1,30 +1,3 @@
-使用android camera得到的yuv数据是NV21格式,
-如果想把这种格式的数据编码为YUV420SP格式(也就是NV12格式),
-那么需要把NV21转成NV12.
-private void NV21ToNV12(byte[] nv21, byte[] nv12, int width, int height) {
-    if (nv21 == null || nv12 == null) {
-        return;
-    }
-    int framesize = width * height;
-    int i = 0, j = 0;
-    System.arraycopy(nv21, 0, nv12, 0, framesize);
-    for (i = 0; i < framesize; i++) {
-        nv12[i] = nv21[i];
-    }
-    for (j = 0; j < framesize / 2; j += 2) {
-        nv12[framesize + j - 1] = nv21[j + framesize];
-    }
-    for (j = 0; j < framesize / 2; j += 2) {
-        nv12[framesize + j] = nv21[j + framesize - 1];
-    }
-}
-
-Android平台
-使用Camera采集预览nv21格式数据，
-使用AudioRecord采集音频pcm数据，
-使用MediaCodec分别进行h264和AAC硬编码，
-通过MediaMuxer合成MP4.
-
 ffmpeg -re -i "/root/视频/tomcat_video/fragment.flv" -vcodec copy -acodec copy -f flv rtmp://192.168.0.108/live/mydemo
 
 http://192.168.0.108:8080/
@@ -34,3 +7,21 @@ rtmp://192.168.0.108:1935/live/mydemo
 rtmp://192.168.0.108:1935/zhongjihao/myh264
 
 rtmp://192.168.0.108:1935/live/demo?vhost=players
+
+YUV，分为三个分量，“Y”表示明亮度(Luminance或Luma)，也就是灰度值；
+而“U”和“V” 表示的则是色度(Chrominance或Chroma)，
+作用是描述影像色彩及饱和度，用于指定像素的颜色。 
+YUV也是一种颜色编码方法，主要用于电视系统以及模拟视频领域，
+它将亮度信息（Y）与色彩信息（UV）分离，没有UV信息一样可以
+显示完整的图像，只不过是黑白的，这样的设计很好地解决了彩色
+电视机与黑白电视的兼容问题。并且，YUV不像RGB那样要求三个
+独立的视频信号同时传输，所以用YUV方式传送占用极少的频宽。
+
+YUV码流的存储格式其实与其采样的方式密切相关，
+主流的采样方式有三种: YUV4:4:4，YUV4:2:2，YUV4:2:0
+
+先记住下面这段话，以后提取每个像素的YUV分量会用到。
+    YUV 4:4:4采样，每一个Y对应一组UV分量。
+    YUV 4:2:2采样，每两个Y共用一组UV分量。 
+    YUV 4:2:0采样，每四个Y共用一组UV分量。  
+
