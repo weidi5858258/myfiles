@@ -1026,6 +1026,28 @@ int result = s1.compare(1, 1, s2, 0, 1);
 s1[1]与c[0]进行比较
 result = s1.compare(1, 1, c, 1);
 
+判断string型字符串是否为空
+成员函数empty()
+如果字符串为空则empty()返回真(true),否则返回假(false).
+
+swap()交换两个字符串的内容
+交换两个char型字符串的函数swab(),只能交换字符串中的相邻的偶数字节和奇数字节的位置.
+char ch1[15] = "ofru";
+char ch2[15] = "";
+swab(ch1, ch2, strlen(ch1));
+//ofru
+cout << ch2 << endl;
+//four
+cout << ch1 << endl;
+
+
+
+
+
+
+
+
+
 ///////////////////////////STL///////////////////////////
 
 vector<typename T> c;
@@ -1149,6 +1171,27 @@ stack：先进后出
 queue：先进先出
     //没有priority_queue这样的头文件
     priority_queue：最高优先级元素，问题第一个出列
+    
+C++ map注意事项
+1、在map中，由key查找value时，首先要判断map中是否包含key。
+2、如果不检查，直接返回map[key]，可能会出现意想不到的行为。如果map包含key，没有问题，如果map不包含key，使用下标有一个危险的副作用，会在map中插入一个key的元素，value取默认值，返回value。也就是说，map[key]不可能返回null。
+3、map提供了两种方式，查看是否包含key，m.count(key)，m.find(key)。
+4、m.count(key)：由于map不包含重复的key，因此m.count(key)取值为0，或者1，表示是否包含。
+5、m.find(key)：返回迭代器，判断是否存在。
+6、对于下面的场景，存在key就使用，否则返回null，有下面两种写法：
+1 if(m.count(key)>0)
+2 {
+3     return m[key];
+4 }
+5 return null;
+
+1 iter = m.find(key);
+2 if(iter!=m.end())
+3 {
+4     return iter->second;
+5 }
+6 return null;
+这里需要注意：前一种方法很直观，但是效率差很多。因为前面的方法，需要执行两次查找。因此，推荐使用后一种方法。
 
 2、迭代器
 3、算法

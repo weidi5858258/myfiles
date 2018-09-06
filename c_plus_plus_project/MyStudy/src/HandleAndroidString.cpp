@@ -38,25 +38,101 @@ void split(vector<string> &vecStr, const string &srcStr, const string &delim) {
         int delimLen = delim.length();
         vecStr.push_back(srcStr.substr(0, index));
         string tempStr = srcStr.substr(index + delimLen);
-
     }
-
 }
 
 void HandleAndroidString::doSomething() {
     init();
 
-    string test("0123abc4567abc879");
-    const char *c_str = test.c_str();
-    cout << c_str << endl;
-    int index = test.find("abc");
-    cout << index << endl;
-    cout << test.substr(0, index) << endl;// 0 ~ index-1
-    cout << test.substr(index + 3) << endl;// index ~
+//    string test("0123abc4567abc879");
+//    const char *c_str = test.c_str();
+//    cout << c_str << endl;
+//    int index = test.find("abc");
+//    cout << index << endl;
+//    cout << test.substr(0, index) << endl;// 0 ~ index-1
+//    cout << test.substr(index + 3) << endl;// index ~
+//
+//    cout << test << endl;
+//    test.clear();
+//    cout << test << endl;
+}
 
-    cout << test << endl;
-    test.clear();
-    cout << test << endl;
+void HandleAndroidString::recurseDir(const char *curDir) {
+    if (NULL == curDir) {
+        cout << "curDir is NULL" << endl;
+        return;
+    }
+
+    struct stat s;
+    lstat(curDir, &s);
+    if (!S_ISDIR(s.st_mode)) {
+        cout << "curDir is not a valid directory" << endl;
+        return;
+    }
+
+    struct dirent *fileName = NULL;    // return value for readdir()
+    DIR *dir = NULL;                   // return value for opendir()
+    dir = opendir(curDir);
+    if (NULL == dir) {
+        cout << "Can not open dir " << curDir << endl;
+        return;
+    }
+
+    string tempDir;
+    while ((fileName = readdir(dir)) != NULL) {
+        // get rid of "." and ".."
+        tempDir = fileName->d_name;
+        if (strcmp(fileName->d_name, ".") == 0
+            || strcmp(fileName->d_name, "..") == 0
+            || tempDir.find("dp") != string::npos
+            || tempDir.find("land") != string::npos
+            || tempDir.find("values-") == string::npos
+            || isContainNum(tempDir) == 0) {
+            continue;
+        }
+
+        cout << tempDir << endl;
+        if (tempDir.length() == 13) {
+            tempDir = tempDir.substr(0, 9);
+        }
+        //不包含
+        if (countryMap.find(tempDir) == countryMap.end()) {
+            vector<string> countryVector;
+            countryVector.push_back(fileName->d_name);
+            countryMap.insert(map<string, vector<string>>::value_type(tempDir, countryVector));
+        } else {
+//            vector<string> countryVector = countryMap[tempDir];
+//            countryVector.push_back(fileName->d_name);
+//            countryMap.insert(map<string, vector<string>>::value_type(tempDir, countryVector));
+
+            map<string, vector<string>>::iterator iter;
+            for (iter = countryMap.begin(); iter != countryMap.end(); ++iter) {
+                if (tempDir.compare(0, tempDir.length(), fileName->d_name, 9) == 0) {
+//                    vector<string> countryVector = iter->second;
+                    vector<string> countryVector = countryMap[tempDir];
+                    cout << &countryVector << endl;
+                    countryVector.push_back(fileName->d_name);
+                    break;
+                }
+            }
+        }
+//        string tempFileName(curDir);
+//        tempFileName = tempFileName + "/" + fileName->d_name;
+//        cout << tempFileName << endl;
+    }
+}
+
+int HandleAndroidString::isContainNum(const string &srcStr) {
+    if (srcStr.empty()) {
+        return 1;
+    }
+    int length = srcStr.length();
+    for (int i = 0; i < length; i++) {
+        if ((srcStr[i] >= 48 && srcStr[i] <= 57)) {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 void HandleAndroidString::init() {
@@ -71,15 +147,84 @@ void HandleAndroidString::init() {
         fprintf(stdout, "return:%d %s目录存在\n", result, cacheDir.c_str());
     }
 
-//    fstream file(srcDir + "/values/strings.xml");
-//    string alineString;
-//    while (getline(file, alineString)) {
-//        if (!alineString.empty()
-//            && alineString.find("sony_id=") != string::npos
-//            && alineString.find("sony_id=\"M") == string::npos) {
-//            cout << alineString << endl;
+    fstream file(srcDir + "/values/strings.xml");
+    string alineString;
+    while (getline(file, alineString)) {
+        if (!alineString.empty()
+            && alineString.find("sony_id=") != string::npos
+            && alineString.find("sony_id=\"M") == string::npos) {
+            int index1 = alineString.find("\"");
+            if (index1 != string::npos) {
+                int index2 = alineString.find("\"", index1 + 1);
+                if (index2 != string::npos) {
+                    string nameStr = alineString.substr(index1 + 1, index2 - index1 - 1);
+                    index1 = alineString.find(">");
+                    if (index1 != string::npos) {
+                        index2 = alineString.find("</", index1 + 1);
+                        if (index2 != string::npos) {
+                            string contentStr = alineString.substr(index1 + 1, index2 - index1 - 1);
+                            nameAndContentMap.insert(map<string, string>::value_type(nameStr, contentStr));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+//    map<string, string>::iterator iter;
+//    for (iter = nameAndContentMap.begin(); iter != nameAndContentMap.end(); iter++) {
+//        cout << iter->first << " = " << iter->second << endl;
+//    }
+
+    recurseDir(srcDir.c_str());
+    cout << "----------------------------------------" << endl;
+    map<string, vector<string>>::iterator iter;
+    for (iter = countryMap.begin(); iter != countryMap.end(); ++iter) {
+        cout << iter->first << endl;
+        vector<string> countryVector = iter->second;
+        cout << &countryVector << endl;
+        for (vector<string>::iterator it = countryVector.begin(); it != countryVector.end(); ++it) {
+            cout << *it << "\t";
+        }
+    }
+    cout << endl;
+
+    string temp = "values-vi";
+    char *temp2 = "values-vi-rHE";
+    if (temp.compare(0, temp.length(), temp2, 9) == 0) {
+        cout << "adfasdf" << endl;
+    }
+
+//    vector<string> countryVector;
+//    countryVector.push_back("hello");
+//    countryMap.insert(map<string, vector<string>>::value_type("test", countryVector));
+//
+//    map<string, vector<string>>::iterator iter;
+//    for (iter = countryMap.begin(); iter != countryMap.end(); iter++) {
+//        cout << iter->first << endl;
+//        vector<string> countryVector = iter->second;
+//        cout << &countryVector << endl;
+//        for (vector<string>::iterator it = countryVector.begin(); it != countryVector.end(); ++it) {
+//            cout << *it << "\t";
 //        }
 //    }
+//    cout << endl;
+//
+//    for (iter = countryMap.begin(); iter != countryMap.end(); iter++) {
+//        cout << iter->first << endl;
+//        vector<string> countryVector = iter->second;
+//        countryVector.push_back("world");
+//        cout << &countryVector << endl;
+//        for (vector<string>::iterator it = countryVector.begin(); it != countryVector.end(); ++it) {
+//            cout << *it << "\t";
+//        }
+//    }
+//    cout << endl;
+
+
+
+
+
 
 //    FILE *cacheFile = fopen(cacheDir.c_str(), "w");
 //    if (cacheFile == NULL) {

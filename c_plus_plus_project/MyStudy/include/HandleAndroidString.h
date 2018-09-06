@@ -12,8 +12,14 @@
 class HandleAndroidString {
 public:
     void doSomething();
+
 private:
     void init();
+
+    void recurseDir(const char *curDir);
+
+    int isContainNum(const string &srcStr);
+
 private:
     string srcDir;
     string destDir;
@@ -21,7 +27,7 @@ private:
     string srcStringFilePath;
     string destStringFilePath;
     map<string, string> nameAndContentMap;
-
+    map<string, vector<string>> countryMap;
 
 
 };
