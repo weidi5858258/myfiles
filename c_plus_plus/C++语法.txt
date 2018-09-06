@@ -9,7 +9,7 @@ C++基础知识
 
             具体写法                  简写形式
 有符号短整型	short int           ---> short
-有符号长整型	long int            ---> long（数值后面加“l”或者“L”）
+有符号长整型	long int            ---> long(数值后面加“l”或者“L”)
 无符号短整型	unsigned short int  ---> unsigned short
 无符号长整型	unsigned long int   ---> unsigned long
 有符号整型    signed int          ---> int
@@ -43,7 +43,7 @@ unsigned short int                          0~65535
 
 int                             4           -2147483648~2147483647
 long int                        4           -2147483648~2147483647
-unsigned int（或者unsigned）                 0~4294967295（32位系统）
+unsigned int(或者unsigned）                 0~4294967295(32位系统）
 unsigned long int                           0~4294967295
 
 float                           4
@@ -119,7 +119,7 @@ chrono头文件中的std::chrono::system_clock
 srand(std::chrono::system_clock::to_time_t(
         std::chrono::system_clock::now()));
 
-cin遇到不可见字符和空字符就停止输入（不可见字符指的
+cin遇到不可见字符和空字符就停止输入(不可见字符指的
 是制表符和空格），而cout则只是遇到空字符才停止输出。
 这就量为什么将空字符作为字符串结束标志的原因，
 cin和cout遇到空字符都会结束输入和输出操作。
@@ -414,8 +414,8 @@ r 以只读方式打开文件，该文件必须存在。
 　　rt+ 读写打开一个文本文件，允许读和写。
 　　w 打开只写文件，若文件存在则文件长度清为0，即该文件内容会消失。若文件不存在则建立该文件。
 　　w+ 打开可读写文件，若文件存在则文件长度清为零，即该文件内容会消失。若文件不存在则建立该文件。
-　　a 以附加的方式打开只写文件。若文件不存在，则会建立该文件，如果文件存在，写入的数据会被加到文件尾，即文件原先的内容会被保留。（EOF符保留）
-　　a+ 以附加方式打开可读写的文件。若文件不存在，则会建立该文件，如果文件存在，写入的数据会被加到文件尾后，即文件原先的内容会被保留。 （原来的EOF符不保留）
+　　a 以附加的方式打开只写文件。若文件不存在，则会建立该文件，如果文件存在，写入的数据会被加到文件尾，即文件原先的内容会被保留。(EOF符保留）
+　　a+ 以附加方式打开可读写的文件。若文件不存在，则会建立该文件，如果文件存在，写入的数据会被加到文件尾后，即文件原先的内容会被保留。 (原来的EOF符不保留）
 　　wb 只写打开或新建一个二进制文件；只允许写数据。
 　　wb+ 读写打开或建立一个二进制文件，允许读和写。
 　　wt+ 读写打开或着建立一个文本文件；允许读写。
@@ -547,14 +547,155 @@ swap(T &rx, T &ry) {
 #include <string.h>
 using namespace std;
 
-空字符串的ASCLL为32，而空字符（空格）的ASCLL为0。
+下列码表含有全部128个ASCII十进制、八进制、十六进制及字符编码。
+十进制 	八进制 	十六进制 	字符
+0 		  0 		  00 	    NUL(空）
+1 	    1 	    01 	    SOH(标题开始）
+2 	    2 	    02 	    STX(正文开始）
+3 	    3 	    03 	    ETX(正文结束）
+4 	    4 	    04 	    EOT(传送结束)
+5 	    5 	    05 	    ENQ(询问)
+6 	    6 	    06 	    ACK(确认)
+7 	    7 	    07 	    BEL(响铃)
+8 	    10 	    08 	    BS(退格)
+9 	    11 	    09 	    HT(横向制表)
+10 	    12 	    0a 	    LF(换行)
+11 	    13 	    0b 	    VT(纵向制表)
+12 	    14 	    0c 	    FF(换页)
+13 	    15 	    0d 	    CR(回车)
+14 	    16 	    0e 	    SO(移出)
+15 	    17 	    0f 	    SI(移入)
+16 	    20 	    10 	    DLE(退出数据链)
+17 	    21 	    11 	    DC1(设备控制1)
+18 	    22 	    12 	    DC2(设备控制2)
+19 	    23 	    13 	    DC3(设备控制3)
+20 	    24 	    14 	    DC4(设备控制4)
+21 	    25 	    15 	    NAK(反确认)
+22 	26 	16 	SYN(同步空闲)
+23 	27 	17 	ETB(传输块结束)
+24 	30 	18 	CAN(取消)
+25 	31 	19 	EM(媒介结束)
+26 	32 	1a 	SUB(替换)
+27 	33 	1b 	ESC(退出)
+28 	34 	1c 	FS(文件分隔符)
+29 	35 	1d 	GS(组分隔符)
+30 	36 	1e 	RS(记录分隔符)
+31 	37 	1f 	US(单元分隔符)
+32 	40 	20 	(空格)
+33 	41 	21 	!
+34 	42 	22 	"
+35 	43 	23 	#
+36 	44 	24 	$
+37 	45 	25 	%
+38 	46 	26 	&
+39 	47 	27 	'
+40 	50 	28 	(
+41 	51 	29 	)
+42 	52 	2a 	*
+43 	53 	2b 	+
+44 	54 	2c 	,
+45 	55 	2d 	-
+46 	56 	2e 	.
+47 	57 	2f 	/
+48 	60 	30 	0
+49 	61 	31 	1
+50 	62 	32 	2
+51 	63 	33 	3
+52 	64 	34 	4
+53 	65 	35 	5
+54 	66 	36 	6
+55 	67 	37 	7
+56 	70 	38 	8
+57 	71 	39 	9
+58 	72 	3a 	:
+59 	73 	3b 	;
+60 	74 	3c 	<
+61 	75 	3d 	=
+62 	76 	3e 	>
+63 	77 	3f 	?
+64 	100 	40 	@
+65 	101 	41 	A
+66 	102 	42 	B
+67 	103 	43 	C
+68 	104 	44 	D
+69 	105 	45 	E
+70 	106 	46 	F
+71 	107 	47 	G
+72 	110 	48 	H
+73 	111 	49 	I
+74 	112 	4a 	J
+75 	113 	4b 	K
+76 	114 	4c 	L
+77 	115 	4d 	M
+78 	116 	4e 	N
+79 	117 	4f 	O
+80 	120 	50 	P
+81 	121 	51 	Q
+82 	122 	52 	R
+83 	123 	53 	S
+84 	124 	54 	T
+85 	125 	55 	U
+86 	126 	56 	V
+87 	127 	57 	W
+88 	130 	58 	X
+89 	131 	59 	Y
+90 	132 	5a 	Z
+91 	133 	5b 	[
+92 	134 	5c 	\
+93 	135 	5d 	]
+94 	136 	5e 	^
+95 	137 	5f 	_
+96 	140 	60 	`
+97 	141 	61 	a
+98 	142 	62 	b
+99 	143 	63 	c
+100 	144 	64 	d
+101 	145 	65 	e
+102 	146 	66 	f
+103 	147 	67 	g
+104 	150 	68 	h
+105 	151 	69 	i
+106 	152 	6a 	j
+107 	153 	6b 	k
+108 	154 	6c 	l
+109 	155 	6d 	m
+110 	156 	6e 	n
+111 	157 	6f 	o
+112 	160 	70 	p
+113 	161 	71 	q
+114 	162 	72 	r
+115 	163 	73 	s
+116 	164 	74 	t
+117 	165 	75 	u
+118 	166 	76 	v
+119 	167 	77 	w
+120 	170 	78 	x
+121 	171 	79 	y
+122 	172 	7a 	z
+123 	173 	7b 	{
+124 	174 	7c 	|
+125 	175 	7d 	}
+126 	176 	7e 	~
+127 	177 	7f 	DEL(删除)
+
+string型字符串的赋值(直接进行赋值操作)
+string型字符串的合并
+string型字符串的部分合并
+string型字符串的替换
+string型字符串的复制
+string型字符串的插入
+string型字符串的删除
+string型字符串的查找
+string型字符串的比较
+判断string型字符串是否为空(empty())
+
 ' ' == 32
-cin.get（str， 1000）能接收空格。
+cin.get(str， 1000)能接收空格。
 char name[] = {'a','b',32,'c',0,'\0'};
 后面要自己添加上'\0'，这样字符数组才能转化成字符串。
 char name[] = {"abc efg"};
 后面不需要自己再添加'\0'。
-strlen(name):不包括不可见字符（不可见：结束符）
+strlen(name):不包括不可见字符(不可见：结束符)
 sizeof(name):包括不可见字符
 strcmp(ch1, ch2)
 不能把一个数组名赋给另一个数组名
@@ -582,7 +723,7 @@ cout<<s1<<endl;//空行
 cout<<s2<<endl;//空行
 
 字符串是以空字符结尾的字符数组.
-"\0"是一个空字符标志,它的ASCII码为0.
+"\0"是一个空字符(NULL)标志,它的ASCII码为0.
 哪些是空字符呢:
 1.
 空格
@@ -749,11 +890,141 @@ str1.erase();
 cout << str1 << endl;
 
 string型字符串的查找(使用find函数)
+C方式:
+char ch1[15];
+char *p, c = 'w';
+strcpy(ch1, "hello world");
+p = strchr(ch1, c);
+if (p) {
+    //字符w位于第6
+    cout << "字符" << c << "位于第" << p - ch1 << endl;
+} else {
+    cout << "没有找到" << endl;
+}
+C++方式:
+string str1("hello world");
+int f = str1.find("w", 0);
+if (f != string::npos) {
+    //在第6个字符
+    cout << "在第" << f << "个字符" << endl;
+} else {
+    cout << "没有找到" << endl;
+}
+find函数:第1个参数为要搜索的字符w,第2个参数0表示从字符串str1中的第1个字符
+开始搜索.找到的话会返回该字符在str1中的位置.假如有两个w,返回第1个w的位置,
+没找到的话,返回npos,也就是-1.不同的平台中可能不一样.
+find_first_not_of():查找第一个与value中的某值不相等的字符
+find_first_of():查找第一个与value中的某值相等的字符
+find_last_of():查找最后一个与value中的某值相等的字符
+find_last_not_of():查找最后一个与value中的所有值都不相等的字符
+rfind():查找最后一个与value相等的字符(逆向查找)
+例:"hello world" 查找'w'字符,在第6个位置(从0开始)
+如果这个__pos小于等于6,那么结果返回都是6,因为从__pos位置开始查找都能找到;
+如果这个__pos大于6,由于源字符串中在第6个位置后没有'w'字符了,
+因此找不到就返回string::npos.
 
+__n是针对__s而言的,就是匹配__s中前几个字符(字符是连续的).
+如果这几个字符在源字符串中第一次出现了,那么就返回这个位置;
+如果找不到就返回string::npos.
+当__n的值大于__s中的字符个数时,返回string::npos.
+当__n的值等于__s中的字符个数或者不传时,那么就是需要完全匹配.
+当__n的值为0时,表示任何一个字符都匹配,因此返回的是第0个位置.
+str.find(char __c, size_type __pos);
+str.find(const char *__s, size_type __pos);
+str.find(const char *__s, size_type __pos, size_type __n);
+str.find(const basic_string &__str, size_type __pos);
+例:
+string testStr = "gfdvjfjbjv#vgkbznfbvcl#v#vfb#ivkngxyz";
+string::size_type index = testStr.find("#v#vf", 0, 4);//22
 
+__n是针对__s而言的,只要匹配__s中前几个字符中的某一个字符就行了.
+如果这几个字符中的某一个字符在源字符串中第一次出现了,那么就返回这个位置;
+如果找不到就返回string::npos.
+当__n的值大于__s中的字符个数时,返回string::npos.
+当__n的值等于__s中的字符个数或者不传时,那么就是需要完全匹配.
+当__n的值为0时,表示任何一个字符都匹配,因此返回的是第0个位置.
+str.find_first_of(char __c, size_type __pos);
+str.find_first_of(const char *__s, size_type __pos);
+str.find_first_of(const char *__s, size_type __pos, size_type __n);
+str.find_first_of(const basic_string &__str, size_type __pos);
+例:
+string testStr = "gfdvjfjbjv#vgkbznfbvcl#v#vfb#ivkngxyz";
+string::size_type index = testStr.find_first_of("#v#vf", 0, 4);//3
 
+__n的值好像没有范围,传0,小于等于,大于__s字符串的个数时都没关系.
+只要在源字符串中找到跟__s字符串中任何一个字符不同这样一个字符,
+那么就返回一个字符的位置,如果源字符串中的各个字符都是__s中的
+某个字符,那么就是查找不到,返回string::npos.
+str.find_first_not_of(char __c, size_type __pos);
+__pos从哪个位置开始查找(一般设为0),查找与__c内容不相同的第1个字符的位置,
+如果有那么一个位置则返回的就是这个位置,如果没有返回string::npos.
+str.find_first_not_of(const char *__s, size_type __pos);
+str.find_first_not_of(const char *__s, size_type __pos, size_type __n);
+str.find_first_not_of(const basic_string &__str, size_type __pos);
+例:
+string testStr = "gfdvjfjbjv#vgkbznfbvcl#v#vfb#ivkngxyz";
+string::size_type index = testStr.find_first_of("#v#vf", 0, 4);//0
 
+str.find_last_of(char __c, size_type __pos);
+str.find_last_of(const char *__s, size_type __pos);
+str.find_last_of(const char *__s, size_type __pos, size_type __n);
+str.find_last_of(const basic_string &__str, size_type __pos);
+例:
+string testStr = "gfdvjfjbjv#vgkbznfbvcl#v#vfb#ivkngxyz";
+index = testStr.find_last_of("#v#vf", testStr.npos, 4);//30
 
+str.find_last_not_of(char __c, size_type __pos);
+str.find_last_not_of(const char *__s, size_type __pos);
+str.find_last_not_of(const char *__s, size_type __pos, size_type __n);
+str.find_last_not_of(const basic_string &__str, size_type __pos);
+例:
+string testStr = "gfdvjfjbjv#vgkbznfbvcl#v#vfb#ivkngxyz";
+index = testStr.find_last_not_of("#v#vf", testStr.npos, 4);//36
+
+str.rfind(char __c, size_type __pos);
+str.rfind(const char *__s, size_type __pos);
+str.rfind(const char *__s, size_type __pos, size_type __n);
+str.rfind(const basic_string &__str, size_type __pos);
+例:
+string testStr = "gfdvjfjbjv#vgkbznfbvcl#v#vfb#ivkngxyz";
+index = testStr.rfind("#v", testStr.npos);//24
+
+string型字符串的比较
+string s1 = "155";
+string s2 = "52";
+char c[] = "34";
+int i, o, k, l, m, n;
+i = s1.compare(s2);
+o = s2.compare(c);
+k = s1.compare(0, 2, s2);
+l = s1.compare(1, 1, s2, 0, 1);
+m = s1.compare(1, 1, c, 0, 1);
+n = s1.compare(1, 1, c, 1);
+cout << s1 << " : " << s2 << " = " << i << endl;
+cout << s2 << " : " << c << " = " << o << endl;
+cout << s1[0] << s1[1] << " : " << s2 << " = " << k << endl;
+cout << s1[1] << " : " << s2[0] << " = " << l << endl;
+cout << s1[1] << " : " << c[0] << " = " << m << endl;
+cout << s1[1] << " : " << c[0] << " = " << n << endl;
+
+s1与s2相同时,返回0;
+s1大于s2时,返回正整数;
+s1小于s2时,返回负整数.
+__pos1从s1的哪个位置开始比较,__n1取s1的前几个字符进行比较.
+s1.compare(const char *__s2);
+s1.compare(const basic_string &__s2);
+s1.compare(size_type __pos1, size_type __n1, const char *__s2);
+s1.compare(size_type __pos1, size_type __n1, const basic_string &__s2);
+s1.compare(size_type __pos1, size_type __n1, const char *__s2, size_type __n2);
+s1.compare(size_type __pos1, size_type __n1, const basic_string &__s2, size_type __pos2, size_type __n2);
+例:
+string s1 = "155";
+string s2 = "52";
+char c[] = "34";
+s1[1]与s2[0]进行比较
+int result = s1.compare(1, 1, s2, 0, 1);
+s1[1]与c[0]进行比较
+result = s1.compare(1, 1, c, 1);
 
 ///////////////////////////STL///////////////////////////
 

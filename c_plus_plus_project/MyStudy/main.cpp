@@ -50,18 +50,11 @@ int main(int argc, char *argv[]) {
 //    memmove(ch1, ch2, 10);
 //    cout << ch1 << endl;
 //
-//    string str1 = "what't your name? ";
-//    string str2 = "my name is Jack.";
-//    str1.erase(8, 2);
-//    cout << str1 << endl;
-//    str1.erase(5);
-//    cout << str1 << endl;
-//    str1.erase();
-//    cout << str1 << endl;
-    //whmy nt't your name?
 
-    HandleAndroidString handleAndroidString;
-    handleAndroidString.doSomething();
+
+
+//    HandleAndroidString handleAndroidString;
+//    handleAndroidString.doSomething();
 
 
     printf("------------------------------------------\n");
