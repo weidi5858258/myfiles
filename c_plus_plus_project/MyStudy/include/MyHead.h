@@ -20,7 +20,7 @@
 #include <inttypes.h>
 #include <math.h>
 #include <dirent.h>
-#include <sys/mman.h>
+
 //下面三个头文件使用open函数时用到
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -85,6 +85,7 @@ extern "C" {// 不能少
     #include <glut.h>
 #endif
 #ifdef linux
+    #include <sys/mman.h>
     #include <sys/socket.h>
     #include <sys/epoll.h>
     #include <netinet/in.h>

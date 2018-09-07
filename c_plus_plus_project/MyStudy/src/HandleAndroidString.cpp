@@ -2,7 +2,9 @@
 // Created by root on 18-9-3.
 //
 #ifdef WIN32
+
 #include "HandleAndroidString.h"
+
 #endif
 #ifdef linux
 
@@ -65,7 +67,9 @@ void HandleAndroidString::doSomething() {
     }
 
     //根据元素查找索引
-    std::vector<string>::iterator iter = std::find(std::begin(testVector), std::end(testVector), "test4");
+    std::vector<string>::iterator iter = std::find(std::begin(testVector),
+                                                   std::end(testVector),
+                                                   "test4");
     auto index = std::distance(std::begin(testVector), iter);
     cout << "index: " << index << endl;
 
@@ -93,12 +97,14 @@ void HandleAndroidString::recurseDir(const char *curDir) {
         return;
     }
 
+#ifdef linux
     struct stat s;
     lstat(curDir, &s);
     if (!S_ISDIR(s.st_mode)) {
         cout << "curDir is not a valid directory" << endl;
         return;
     }
+#endif
 
     struct dirent *fileName = NULL;    // return value for readdir()
     DIR *dir = NULL;                   // return value for opendir()
@@ -130,7 +136,9 @@ void HandleAndroidString::recurseDir(const char *curDir) {
 //            cout << "不包含: " << fileName->d_name << endl;
             vector<string> countryVector;
             countryVector.push_back(fileName->d_name);
-            countryMap.insert(map<string, vector<string>>::value_type(tempDir, countryVector));
+            countryMap.insert(
+                    map<string, vector<string>>::value_type(
+                            tempDir, countryVector));
         } else {
 //            cout << "包含: " << fileName->d_name << endl;
             map<string, vector<string>>::iterator iter;
@@ -167,7 +175,8 @@ int HandleAndroidString::isContainNum(const string &srcStr) {
     return 1;
 }
 
-void HandleAndroidString::handleMerge(const string &srcFilePath, const string &destFilePath) {
+void HandleAndroidString::handleMerge(const string &srcFilePath,
+                                      const string &destFilePath) {
     cout << "handleMerge()" << endl;
     cout << "srcFilePath: " << srcFilePath << endl;
     cout << "destFilePath: " << destFilePath << endl;
@@ -184,7 +193,8 @@ void HandleAndroidString::handleMerge(const string &srcFilePath, const string &d
         contentStr.clear();
         getNameAndContent(alineString, nameStr, contentStr);
         if (!nameStr.empty() && !contentStr.empty()) {
-            localDestFileNameContentMap.insert(map<string, string>::value_type(nameStr, contentStr));
+            localDestFileNameContentMap.insert(
+                    map<string, string>::value_type(nameStr, contentStr));
         }
     }
     file.close();
@@ -199,12 +209,15 @@ void HandleAndroidString::handleMerge(const string &srcFilePath, const string &d
                 string valuesContentStr = nameAndContentMap[nameStr];
                 //内容已经翻译过了
                 if (nameStr.compare(valuesContentStr) != 0) {
-                    if (localDestFileNameContentMap.find(nameStr) == localDestFileNameContentMap.end()) {
+                    if (localDestFileNameContentMap.find(nameStr)
+                        == localDestFileNameContentMap.end()) {
                         //add
-                        cout<<"handleMerge() add "<<nameStr<<":"<<valuesContentStr<<endl;
+                        cout << "handleMerge() add " << nameStr << ":"
+                             << valuesContentStr << endl;
                     } else {
                         //modify
-                        cout<<"handleMerge() modify "<<nameStr<<":"<<valuesContentStr<<endl;
+                        cout << "handleMerge() modify " << nameStr << ":"
+                             << valuesContentStr << endl;
                     }
                 }
             }
@@ -214,7 +227,8 @@ void HandleAndroidString::handleMerge(const string &srcFilePath, const string &d
 
 }
 
-void HandleAndroidString::handleCopy(const string &srcFilePath, const string &destFilePath) {
+void HandleAndroidString::handleCopy(const string &srcFilePath,
+        const string &destFilePath) {
     cout << "handleCopy()" << endl;
     cout << "srcFilePath: " << srcFilePath << endl;
     cout << "destFilePath: " << destFilePath << endl;
@@ -230,7 +244,8 @@ void HandleAndroidString::handleOneCountry(const string &country) {
     if (country.length() > 9) {
         if (result == -1) {
             fprintf(stdout, "%s文件不存在\n", strFilePathDest.c_str());
-            strFilePathDest = destDir + "/" + country.substr(0, 9) + "/strings.xml";
+            strFilePathDest =
+                    destDir + "/" + country.substr(0, 9) + "/strings.xml";
             result = access(strFilePathDest.c_str(), F_OK);
             if (result == -1) {
                 fprintf(stdout, "%s文件不存在\n", strFilePathDest.c_str());
@@ -266,7 +281,9 @@ void HandleAndroidString::handleMoreCountry(vector<string> &countryVector) {
     string alineString;
     string nameStr;
     string contentStr;
-    for (vector<string>::iterator iter = countryVector.begin(); iter != countryVector.end(); ++iter) {
+    for (vector<string>::iterator iter = countryVector.begin();
+    iter != countryVector.end();
+    ++iter) {
         cout << *iter << endl;
 //        cout << *iter << "\t";
 //        string srcFilePath = srcDir + "/" + *iter + "/strings.xml";
@@ -598,7 +615,7 @@ void replace(const char *src, const char *dst, int fd, unsigned char *buffer, un
 
 
 //删除注释.path:文件名
-void replace(const char *src, const char *dest, const char *path) {
+/*void replace(const char *src, const char *dest, const char *path) {
     int fd = open(path, O_RDWR);
 
     //获取文件大小
@@ -606,7 +623,7 @@ void replace(const char *src, const char *dest, const char *path) {
     fstat(fd, &sb);
 
     unsigned char *buffer = (unsigned char *) mmap(NULL, sb.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    /* 判断是否映射成功 */
+    *//* 判断是否映射成功 *//*
     if (buffer == MAP_FAILED) {
         printf("映射失败，文件过大或者没有权限");
         return;
@@ -615,5 +632,5 @@ void replace(const char *src, const char *dest, const char *path) {
     replace(src, dest, fd, buffer, sb.st_size);
 
     close(fd);
-    munmap(buffer, sb.st_size); /* 解除映射 */
-}
+    munmap(buffer, sb.st_size); *//* 解除映射 *//*
+}*/

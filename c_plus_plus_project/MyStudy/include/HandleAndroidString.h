@@ -8,7 +8,8 @@
 #include "MyHead.h"
 
 //#define CUR_DIR "/media/root/Weidi/Users/weidi5858258/Documents/temp_dir"
-#define CUR_DIR "/root/temp_dir/merge_string"
+//#define CUR_DIR "/root/temp_dir/merge_string"
+#define CUR_DIR "C:\\Users\\weidi5858258\\Documents\\temp_dir"
 
 class HandleAndroidString {
 public:
@@ -35,7 +36,9 @@ private:
 
     void handleDiffContent(vector<string> &);
 
-    void getNameAndContent(const string &content, string &nameStr, string &contentStr);
+    void getNameAndContent(const string &content,
+            string &nameStr,
+            string &contentStr);
 
 private:
     string srcDir;
