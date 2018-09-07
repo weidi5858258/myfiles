@@ -423,7 +423,7 @@ r 以只读方式打开文件，该文件必须存在。
 　　ab+ 读写打开一个二进制文件，允许读或在文件末追加数据。
 　　上述的形态字符串都可以再加一个b字符，如rb、w+b或ab＋等组合，加入b 字符用来告诉函数库打开的文件为二进制文件，而非纯文字文件。不过在POSIX系统，包含Linux都会忽略该字符。由fopen()所建立的新文件会具有S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH(0666)权限，此文件权限也会参考umask 值
 
-判断文件夹是否存在：
+判断文件夹或者文件是否存在：
 在windows环境下头文件为：
 #include <io.h>
 在linux环境下头文件为：
@@ -454,7 +454,7 @@ _AccessMode=02表示文件是否可执行
 _AccessMode=04表示文件是否可写
 _AccessMode=06表示文件是否可读
 
-创建新的文件夹:
+创建文件夹:
 windows环境下头文件为:
 #include <direct.h>
 函数原型为：

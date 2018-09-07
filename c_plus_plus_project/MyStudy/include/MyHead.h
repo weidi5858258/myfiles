@@ -20,6 +20,7 @@
 #include <inttypes.h>
 #include <math.h>
 #include <dirent.h>
+#include <sys/mman.h>
 //下面三个头文件使用open函数时用到
 #include <fcntl.h>
 #include <sys/stat.h>
