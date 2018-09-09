@@ -52,7 +52,7 @@ void HandleAndroidString::doSomething() {
 //    localNameAndContentMap.insert(map<string, string>::value_type("test", "hello"));
 //    localNameAndContentMap.insert(map<string, string>::value_type("test2", "hello2"));
 //    localNameAndContentMap.insert(map<string, string>::value_type("test3", "hello3"));
-//
+//    161022[64]
 //    string value = localNameAndContentMap["test2"];
 //    cout << value << endl;
 
@@ -180,13 +180,20 @@ void HandleAndroidString::handleMerge(const string &srcFilePath,
     cout << "handleMerge()" << endl;
     cout << "srcFilePath: " << srcFilePath << endl;
     cout << "destFilePath: " << destFilePath << endl;
+    vector<string> localSrcFileContentVector;
     vector<string> localDestFileContentVector;
     map<string, string> localDestFileNameContentMap;
     fstream file;
-    file.open(destFilePath);
+    file.open(srcFilePath);
     string alineString;
     string nameStr;
     string contentStr;
+    while (getline(file, alineString)) {
+        localSrcFileContentVector.push_back(alineString);
+    }
+    file.close();
+
+    file.open(destFilePath);
     while (getline(file, alineString)) {
         localDestFileContentVector.push_back(alineString);
         nameStr.clear();
@@ -214,21 +221,72 @@ void HandleAndroidString::handleMerge(const string &srcFilePath,
                         //add
                         cout << "handleMerge() add " << nameStr << ":"
                              << valuesContentStr << endl;
+                        //1.在src中先找到要add的那行的行号
+                        //2.查看有没有注释.如果有,那么需要复制过去,如果没有,则不做.
+                        //3.在src中先往上找邻居位置,这个邻居位置在dest中是否存在.
+                        std::vector<string>::iterator iter =
+                                std::find(std::begin(localSrcFileContentVector),
+                                          std::end(localSrcFileContentVector),
+                                          alineString);
+                        auto index = std::distance(
+                                std::begin(localSrcFileContentVector), iter);
+                        cout << "index: " << index << endl;
+                        int index2 = index;
+                        int index3 = index;
+                        bool isFindAtDestFilePath = false;
+                        while (1) {
+                            index--;
+                            string tempContentStr = localSrcFileContentVector[index];
+                            if (tempContentStr.empty()) {
+                                continue;
+                            }
+                            if (tempContentStr.find("<string=") != string::npos
+                                && tempContentStr.find("</string>") != string::npos) {
+
+                            } else if (tempContentStr.find("<!--") != string::npos
+                                       && tempContentStr.find("-->") != string::npos){
+
+                            }
+                            if (tempContentStr.find("<resources") != string::npos) {
+                                break;
+                            }
+                        }
+
                     } else {
                         //modify
                         cout << "handleMerge() modify " << nameStr << ":"
                              << valuesContentStr << endl;
+                        string tempNameStr;
+                        string tempContentStr;
+                        for (auto tempContent : localDestFileContentVector) {
+                            tempNameStr.clear();
+                            tempContentStr.clear();
+                            getNameAndContent(tempContent, tempNameStr, tempContentStr);
+                            if (nameStr.compare(tempNameStr) == 0) {
+                                std::vector<string>::iterator iter =
+                                        std::find(std::begin(localDestFileContentVector),
+                                                  std::end(localDestFileContentVector),
+                                                  alineString);
+                                auto index = std::distance(
+                                        std::begin(localDestFileContentVector), iter);
+                                cout << "index: " << index << endl;
+                                localDestFileContentVector[index] = contentStr;
+                                break;
+                            }
+                        }
                     }
                 }
             }
         }
     }
+    //把localDestFileContentVector内容写到文件中就行了
+
     file.close();
 
 }
 
 void HandleAndroidString::handleCopy(const string &srcFilePath,
-        const string &destFilePath) {
+                                     const string &destFilePath) {
     cout << "handleCopy()" << endl;
     cout << "srcFilePath: " << srcFilePath << endl;
     cout << "destFilePath: " << destFilePath << endl;
@@ -251,13 +309,18 @@ void HandleAndroidString::handleOneCountry(const string &country) {
                 fprintf(stdout, "%s文件不存在\n", strFilePathDest.c_str());
                 handleCopy(strFilePathSrc, strFilePathDest);
             } else {
-                fprintf(stdout, "return:%d %s文件存在\n", result, strFilePathDest.c_str());
+                fprintf(stdout,
+                        "return:%d %s文件存在\n",
+                        result, strFilePathDest.c_str());
                 handleMerge(strFilePathSrc, strFilePathDest);
             }
         } else {
-            fprintf(stdout, "return:%d %s文件存在\n", result, strFilePathDest.c_str());
+            fprintf(stdout,
+                    "return:%d %s文件存在\n",
+                    result, strFilePathDest.c_str());
             handleMerge(strFilePathSrc, strFilePathDest);
-            strFilePathDest = destDir + "/" + country.substr(0, 9) + "/strings.xml";
+            strFilePathDest =
+                    destDir + "/" + country.substr(0, 9) + "/strings.xml";
             result = access(strFilePathDest.c_str(), F_OK);
             if (result != -1) {
                 handleMerge(strFilePathSrc, strFilePathDest);
@@ -282,8 +345,8 @@ void HandleAndroidString::handleMoreCountry(vector<string> &countryVector) {
     string nameStr;
     string contentStr;
     for (vector<string>::iterator iter = countryVector.begin();
-    iter != countryVector.end();
-    ++iter) {
+         iter != countryVector.end();
+         ++iter) {
         cout << *iter << endl;
 //        cout << *iter << "\t";
 //        string srcFilePath = srcDir + "/" + *iter + "/strings.xml";
@@ -355,12 +418,15 @@ void HandleAndroidString::handleMoreCountry(vector<string> &countryVector) {
 
 void HandleAndroidString::handleSameContent(vector<string> &countryVector) {
     string localCountry;
-    for (vector<string>::iterator iter = countryVector.begin(); iter != countryVector.end(); ++iter) {
+    for (vector<string>::iterator iter = countryVector.begin();
+         iter != countryVector.end();
+         ++iter) {
         localCountry = *iter;
         string srcFilePath = srcDir + "/" + *iter + "/strings.xml";
         string destFilePath = destDir + "/" + *iter + "/strings.xml";
         if (localCountry.length() > 9) {
-            string destFilePath2 = destDir + "/" + localCountry.substr(0, 9) + "/strings.xml";
+            string destFilePath2 =
+                    destDir + "/" + localCountry.substr(0, 9) + "/strings.xml";
             int result = access(destFilePath.c_str(), F_OK);
             if (result != -1) {
                 handleMerge(srcFilePath, destFilePath);
@@ -377,12 +443,15 @@ void HandleAndroidString::handleSameContent(vector<string> &countryVector) {
 
 void HandleAndroidString::handleDiffContent(vector<string> &countryVector) {
     string localCountry;
-    for (vector<string>::iterator iter = countryVector.begin(); iter != countryVector.end(); ++iter) {
+    for (vector<string>::iterator iter = countryVector.begin();
+         iter != countryVector.end();
+         ++iter) {
         localCountry = *iter;
         string srcFilePath = srcDir + "/" + *iter + "/strings.xml";
         string destFilePath = destDir + "/" + *iter + "/strings.xml";
         if (localCountry.length() > 9) {
-            string destFilePath2 = destDir + "/" + localCountry.substr(0, 9) + "/strings.xml";
+            string destFilePath2 =
+                    destDir + "/" + localCountry.substr(0, 9) + "/strings.xml";
             int result = access(destFilePath.c_str(), F_OK);
             if (result != -1) {
                 handleMerge(srcFilePath, destFilePath);
@@ -424,7 +493,8 @@ void HandleAndroidString::getNameAndContent(
                 if (index1 != string::npos) {
                     index2 = content.find("</", index1 + 1);
                     if (index2 != string::npos) {
-                        contentStr = content.substr(index1 + 1, index2 - index1 - 1);
+                        contentStr = content.substr(
+                                index1 + 1, index2 - index1 - 1);
                     }
                 }
             }
@@ -453,7 +523,8 @@ void HandleAndroidString::init() {
         contentStr.clear();
         getNameAndContent(alineString, nameStr, contentStr);
         if (!nameStr.empty() && !contentStr.empty()) {
-            nameAndContentMap.insert(map<string, string>::value_type(nameStr, contentStr));
+            nameAndContentMap.insert(
+                    map<string, string>::value_type(nameStr, contentStr));
         }
     }
     file.close();
@@ -542,7 +613,11 @@ void HandleAndroidString::init() {
 //求子串
 char *substr(const char *str, unsigned long start, unsigned long end);
 
-void replace(const char *src, const char *dst, int fd, unsigned char *buffer, unsigned long size);
+void replace(const char *src,
+             const char *dst,
+             int fd,
+             unsigned char *buffer,
+             unsigned long size);
 
 //替换文本. ori:将要替换的字符串、dst:替换的目的字符串, path:文件名
 void replace(const char *src, const char *dest, const char *path);
@@ -557,7 +632,11 @@ char *substr(const char *str, unsigned long start, unsigned long end) {
 }
 
 
-void replace(const char *src, const char *dst, int fd, unsigned char *buffer, unsigned long size) {
+void replace(const char *src,
+             const char *dst,
+             int fd,
+             unsigned char *buffer,
+             unsigned long size) {
     unsigned char *buf = new unsigned char[size];
     unsigned long i = 0;
 

@@ -1,8 +1,11 @@
 #! /bin/bash
 
+# cd /etc/apt
+
 # sudo mv /var/lib/dpkg/info/ /var/lib/dpkg/info_old/
 # sudo mkdir /var/lib/dpkg/info/
 
+# # ** (appstreamcli:31712): CRITICAL **: Error while moving old database out of the way.
 # sudo mv /var/cache/app-info/xapian/default /var/cache/app-info/xapian/default_old
 # sudo mv /var/cache/app-info/xapian/default_old /var/cache/app-info/xapian/default
 
@@ -221,6 +224,9 @@ echo "Y" | sudo apt-get install sox
 echo "Y" | sudo apt-get install gradle
 # spawn expect
 echo "Y" | sudo apt-get install tcl tk expect
+echo "Y" | sudo apt-get install phablet-tools
+echo "Y" | sudo apt-get install repo
+echo "Y" | sudo apt-get install alsa-utils
 echo "Y" | sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  
 echo "Y" | sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20  
 echo "Y" | sudo update-alternatives --config gcc 
@@ -247,6 +253,9 @@ echo "y" | sudo apt-get install zlib1g-dev:i386
 echo "y" | sudo apt-get install libx11-dev:i386
 echo "y" | sudo apt-get install libncurses5-dev:i386
 echo "y" | sudo apt-get install libreadline6-dev:i386
+
+# display gnome-terminal
+# unity-control-center
 
 # echo "y" | sudo add-apt-repository ppa:openjdk-r/ppa
 # echo "y" | sudo apt-get update

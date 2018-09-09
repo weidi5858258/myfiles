@@ -430,11 +430,13 @@ r 以只读方式打开文件，该文件必须存在。
 #include <unistd.h>
 int access(const char* _Filename, int _AccessMode)
 上述函数在windows和linux环境下均可使用
-该函数功能为确定文件或文件夹的访问权限，如果指定的访问权限有效，则函数返回0，否则返回-1
-Filename可以是文件路径，也可以是文件夹路径，可以使用绝对路径或相对路径
-_AccessMode表示要验证的文件访问权限，有可读、可写、可执行以及是否存在四种权限，当Filename表示文件夹时仅能查询文件夹是否存在
+该函数功能为确定文件或文件夹的访问权限，如果指定的访问权限有效，
+则函数返回0，否则返回-1
+_Filename可以是文件路径，也可以是文件夹路径，可以使用绝对路径或相对路径
+_AccessMode表示要验证的文件访问权限，有可读、可写、可执行以及是否存在四种权限，
+当_Filename表示文件夹时仅能查询文件夹是否存在
 _AccessMode：
-头文件unistd.h中有如下定义：
+	头文件unistd.h中有如下定义：
     #define R_OK 4 /* Test for read permission. */
     #define W_OK 2 /* Test for write permission. */
     #define X_OK 1 /* Test for execute permission. */

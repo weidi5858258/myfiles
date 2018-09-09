@@ -37,8 +37,12 @@ private:
     void handleDiffContent(vector<string> &);
 
     void getNameAndContent(const string &content,
-            string &nameStr,
-            string &contentStr);
+                           string &nameStr,
+                           string &contentStr);
+
+    void handleMergeAddContent();
+
+    void handleMergeModifyContent();
 
 private:
     string srcDir;
