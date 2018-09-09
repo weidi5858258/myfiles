@@ -110,6 +110,8 @@ http://mozai.iteye.com/blog/2426860 最新IT书籍PDF研究学习使用链接汇
 https://www.jianshu.com/p/0c948db795ab Android NDK开发之旅 目录
 http://www.chuiyue.com/eg/26752/ 黄宪高滑稽越剧全集
 http://www.xfplay.org/wyjc/ 成人
+https://source.android.com/source/build-numbers#source-code-tags-and-builds android
+代号、标记和细分版本号
 
 
 

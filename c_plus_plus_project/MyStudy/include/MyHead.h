@@ -97,7 +97,7 @@ extern "C" {// 不能少
     #include <arpa/inet.h>
     //undefined reference to `WinMain@16'
     #include <SDL2/SDL.h>
-    #include <lame.h>
+//    #include <lame.h>
     #include <cstddef>
     //录音
     #include <alsa/asoundlib.h>

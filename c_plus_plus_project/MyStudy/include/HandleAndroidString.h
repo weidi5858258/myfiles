@@ -9,7 +9,8 @@
 
 //#define CUR_DIR "/media/root/Weidi/Users/weidi5858258/Documents/temp_dir"
 //#define CUR_DIR "/root/temp_dir/merge_string"
-#define CUR_DIR "C:\\Users\\weidi5858258\\Documents\\temp_dir"
+//#define CUR_DIR "C:\\Users\\weidi5858258\\Documents\\temp_dir"
+#define CUR_DIR "/mnt/c/Users/weidi5858258/Documents/temp_dir"
 
 class HandleAndroidString {
 public:
@@ -40,9 +41,14 @@ private:
                            string &nameStr,
                            string &contentStr);
 
-    void handleMergeAddContent();
+    void handleMergeAddContent(vector<string> &,
+                               vector<string> &,
+                               const string &);
 
-    void handleMergeModifyContent();
+    void handleMergeModifyContent(vector<string> &,
+                                  const string &,
+                                  const string &,
+                                  const string &);
 
 private:
     string srcDir;

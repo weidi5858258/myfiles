@@ -857,17 +857,27 @@ assert()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+Android 7.1.1源码下载
+1、下载安装repo 工具
+mkdir ~/bin
+PATH=~/bin:$PATH
+curl https://storage-googleapis.proxy.ustclug.org/git-repo-downloads/repo > ~/bin/repo
+chmod a+x ~/bin/repo
+2、建立一个放android源码的目录，名字随意
+mkdir android_sourcecode
+cd android_sourcecode
+3、初始化repo库
+repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest
+4、如果需要下载某个特定的android版本，只需通过 －b指定版本号就行
+repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest -b android-7.1.1_r22
+5、repo库初始化后，就可以直接下载指定版本的android源码，也可以通过指定下载路径，来下载源码中某一个模块
+#下载repo库里所有的android源码
+repo sync 
+＃指定下载路径，下载某个模块代码
+repo sync packages/providers/ContactsProvider
+repo sync命令后接的path，在执行repo init目录下（此处即android _sourcecode）有个.repo文件夹，可以通过
+.repo/manifest.xml 查看各个模块的路径，然后通过repo sycn path来下载学习最新的android源码，查看googel大神们写的代码
+如果以后android源码更新了，只需改变步骤4中－b后指定的路径，Android所有版本列表
 
 
 

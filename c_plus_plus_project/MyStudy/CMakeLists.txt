@@ -95,12 +95,13 @@ else ()
             -L${FFMPEG_LIB_PATH} -lavutil
             -L${FFMPEG_LIB_PATH} -lswresample
             -L${FFMPEG_LIB_PATH} -lswscale
-            -L${FFMPEG_LIB_PATH} -lpostproc
+#            -L${FFMPEG_LIB_PATH} -lpostproc
             -L${SDL2_LIB_PATH} -lSDL2
             -L${SDL2_LIB_PATH} -lSDL2main
-            -lmp3lame
+#            -lmp3lame
             -lx264
             #-lx265
+            #opengl
             -llzma
             -lasound
             -lsndio
@@ -110,14 +111,13 @@ else ()
             -lsqlite3
             -lz -lrt -lm -lpthread
             -ldl
-            #opengl
             -lglut -lGL -lGLU
             #录音
             -lasound
             -lfdk-aac
             -lcrypto
             -lssl
-            -lvpx
+#            -lvpx
     )
 
 endif ()

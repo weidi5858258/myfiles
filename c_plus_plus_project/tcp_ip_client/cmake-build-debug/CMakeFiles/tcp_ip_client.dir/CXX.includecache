@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/LinuxSocket.cpp
+/mnt/d/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/LinuxSocket.cpp
 LinuxSocket.h
-/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/LinuxSocket.h
+/mnt/d/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/LinuxSocket.h
 
-/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/LinuxSocket.h
+/mnt/d/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/LinuxSocket.h
 sys/types.h
 -
 sys/stat.h
@@ -42,7 +42,7 @@ linux/in.h
 arpa/inet.h
 -
 
-/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/main.cpp
+/mnt/d/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/main.cpp
 LinuxSocket.h
-/root/mydev/workspace_github/myfiles/c_plus_plus/tcp_ip_client/LinuxSocket.h
+/mnt/d/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/LinuxSocket.h
 

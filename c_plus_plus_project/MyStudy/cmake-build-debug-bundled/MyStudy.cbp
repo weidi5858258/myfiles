@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="MyStudy"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="MyStudy">
+				<Option output="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/MyStudy" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include"/>
+					<Add directory="/root/mydev/tools/ffmpeg/include"/>
+					<Add directory="/usr/include/SDL2"/>
+					<Add directory="/usr/local/include/lame"/>
+					<Add directory="/usr/include/c++/4.8"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8"/>
+					<Add directory="/usr/include/c++/4.8/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 MyStudy"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="MyStudy/fast">
+				<Option output="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/MyStudy" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include"/>
+					<Add directory="/root/mydev/tools/ffmpeg/include"/>
+					<Add directory="/usr/include/SDL2"/>
+					<Add directory="/usr/local/include/lame"/>
+					<Add directory="/usr/include/c++/4.8"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8"/>
+					<Add directory="/usr/include/c++/4.8/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 MyStudy/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include/GuessNumber.h">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include/HandleAndroidString.h">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include/Method.h">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include/MyHead.h">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include/Test.h">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/main.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/B0.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/GuessNumber.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/HandleAndroidString.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Method.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Pointer.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Study.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Test.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/function_study.cpp">
+			<Option target="MyStudy"/>
+		</Unit>
+		<Unit filename="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

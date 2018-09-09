@@ -206,6 +206,11 @@ void HandleAndroidString::handleMerge(const string &srcFilePath,
     }
     file.close();
 
+    /*for (auto str : localDestFileContentVector) {
+        cout << str << endl;
+    }
+    if (true)return;*/
+
     file.open(srcFilePath);
     while (getline(file, alineString)) {
         nameStr.clear();
@@ -215,74 +220,44 @@ void HandleAndroidString::handleMerge(const string &srcFilePath,
             if (nameAndContentMap.find(nameStr) != nameAndContentMap.end()) {
                 string valuesContentStr = nameAndContentMap[nameStr];
                 //内容已经翻译过了
-                if (nameStr.compare(valuesContentStr) != 0) {
+                if (contentStr.compare(valuesContentStr) != 0) {
                     if (localDestFileNameContentMap.find(nameStr)
                         == localDestFileNameContentMap.end()) {
                         //add
-                        cout << "handleMerge() add " << nameStr << ":"
-                             << valuesContentStr << endl;
-                        //1.在src中先找到要add的那行的行号
-                        //2.查看有没有注释.如果有,那么需要复制过去,如果没有,则不做.
-                        //3.在src中先往上找邻居位置,这个邻居位置在dest中是否存在.
-                        std::vector<string>::iterator iter =
-                                std::find(std::begin(localSrcFileContentVector),
-                                          std::end(localSrcFileContentVector),
-                                          alineString);
-                        auto index = std::distance(
-                                std::begin(localSrcFileContentVector), iter);
-                        cout << "index: " << index << endl;
-                        int index2 = index;
-                        int index3 = index;
-                        bool isFindAtDestFilePath = false;
-                        while (1) {
-                            index--;
-                            string tempContentStr = localSrcFileContentVector[index];
-                            if (tempContentStr.empty()) {
-                                continue;
-                            }
-                            if (tempContentStr.find("<string=") != string::npos
-                                && tempContentStr.find("</string>") != string::npos) {
-
-                            } else if (tempContentStr.find("<!--") != string::npos
-                                       && tempContentStr.find("-->") != string::npos){
-
-                            }
-                            if (tempContentStr.find("<resources") != string::npos) {
-                                break;
-                            }
-                        }
-
+                        cout << "handleMerge() add "
+                             << nameStr << ":" << valuesContentStr << endl;
+                        handleMergeAddContent(localSrcFileContentVector,
+                                              localDestFileContentVector,
+                                              alineString);
                     } else {
                         //modify
-                        cout << "handleMerge() modify " << nameStr << ":"
-                             << valuesContentStr << endl;
-                        string tempNameStr;
-                        string tempContentStr;
-                        for (auto tempContent : localDestFileContentVector) {
-                            tempNameStr.clear();
-                            tempContentStr.clear();
-                            getNameAndContent(tempContent, tempNameStr, tempContentStr);
-                            if (nameStr.compare(tempNameStr) == 0) {
-                                std::vector<string>::iterator iter =
-                                        std::find(std::begin(localDestFileContentVector),
-                                                  std::end(localDestFileContentVector),
-                                                  alineString);
-                                auto index = std::distance(
-                                        std::begin(localDestFileContentVector), iter);
-                                cout << "index: " << index << endl;
-                                localDestFileContentVector[index] = contentStr;
-                                break;
-                            }
-                        }
+                        cout << "handleMerge() modify "
+                             << nameStr << ":" << valuesContentStr << endl;
+                        handleMergeModifyContent(localDestFileContentVector,
+                                                 alineString,
+                                                 nameStr,
+                                                 contentStr);
                     }
                 }
             }
         }
     }
-    //把localDestFileContentVector内容写到文件中就行了
-
     file.close();
 
+//    for (auto destContent : localDestFileContentVector) {
+//        cout << destContent << endl;
+//    }
+
+    //把localDestFileContentVector内容写到文件中就行了
+    FILE *destFile = fopen(destFilePath.c_str(), "w");
+    for (auto destContent : localDestFileContentVector) {
+        if (destContent.find("</resources>") == string::npos) {
+            fputs((destContent + "\n").c_str(), destFile);
+        } else {
+            fputs((destContent).c_str(), destFile);
+        }
+    }
+    fclose(destFile);
 }
 
 void HandleAndroidString::handleCopy(const string &srcFilePath,
@@ -498,6 +473,159 @@ void HandleAndroidString::getNameAndContent(
                     }
                 }
             }
+        }
+    }
+}
+
+void HandleAndroidString::handleMergeAddContent(vector<string> &localSrcFileContentVector,
+                                                vector<string> &localDestFileContentVector,
+                                                const string &alineString) {
+    //1.在src中先找到要add的那行的行号
+    //2.查看有没有注释.如果有,那么需要复制过去,如果没有,则不做.
+    //3.在src中先往上找邻居位置,这个邻居位置在dest中是否存在.
+    std::vector<string>::iterator iter =
+            std::find(std::begin(localSrcFileContentVector),
+                      std::end(localSrcFileContentVector),
+                      alineString);
+    auto index = std::distance(
+            std::begin(localSrcFileContentVector), iter);
+    cout << "index: " << index << endl;
+    int index2 = index;
+    bool isFindAtDestFilePath = false;
+    string tempContentStr;
+    string notesStr;
+    while (1) {
+        index--;
+        tempContentStr = localSrcFileContentVector[index];
+        if (tempContentStr.empty()) {
+            continue;
+        }
+        if (tempContentStr.find("<!--") != string::npos
+            && tempContentStr.find("-->") != string::npos
+            && index == index2 - 1) {
+            notesStr = tempContentStr;
+        }
+        if (tempContentStr.find("<string") != string::npos
+            && tempContentStr.find("</string>") != string::npos) {
+            string tempName1;
+            string tempContent1;
+            string tempName2;
+            string tempContent2;
+            tempName1.clear();
+            tempContent1.clear();
+            getNameAndContent(tempContentStr, tempName1, tempContent1);
+            for (auto tempContent : localDestFileContentVector) {
+                if (tempContent.find("<string") != string::npos
+                    && tempContent.find("</string>") != string::npos) {
+                    tempName2.clear();
+                    tempContent2.clear();
+                    getNameAndContent(tempContent, tempName2, tempContent2);
+                    if (tempName1.compare(tempName2) == 0) {
+                        isFindAtDestFilePath = true;
+                        std::vector<string>::iterator iter_ =
+                                std::find(std::begin(localDestFileContentVector),
+                                          std::end(localDestFileContentVector),
+                                          tempContent);
+                        auto index_ = std::distance(
+                                std::begin(localDestFileContentVector), iter_);
+//                        cout << "index_ up: " << index_ << endl;
+                        if (notesStr.empty()) {
+                            localDestFileContentVector.insert(
+                                    localDestFileContentVector.begin() + index_ + 1, alineString);
+                        } else {
+                            localDestFileContentVector.insert(
+                                    localDestFileContentVector.begin() + index_ + 1, notesStr);
+                            localDestFileContentVector.insert(
+                                    localDestFileContentVector.begin() + index_ + 2, alineString);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+        if (tempContentStr.find("<resources") != string::npos) {
+            break;
+        }
+    }
+    if (isFindAtDestFilePath) {
+        return;
+    }
+    index = index2;
+    while (1) {
+        index++;
+        tempContentStr = localSrcFileContentVector[index];
+        if (tempContentStr.empty()) {
+            continue;
+        }
+        if (tempContentStr.find("<!--") != string::npos
+            && tempContentStr.find("-->") != string::npos
+            && index == index2 + 1) {
+            notesStr = tempContentStr;
+        }
+        if (tempContentStr.find("<string") != string::npos
+            && tempContentStr.find("</string>") != string::npos) {
+            string tempName1;
+            string tempContent1;
+            string tempName2;
+            string tempContent2;
+            tempName1.clear();
+            tempContent1.clear();
+            getNameAndContent(tempContentStr, tempName1, tempContent1);
+            for (auto tempContent : localDestFileContentVector) {
+                if (tempContent.find("<string") != string::npos
+                    && tempContent.find("</string>") != string::npos) {
+                    tempName2.clear();
+                    tempContent2.clear();
+                    getNameAndContent(tempContent, tempName2, tempContent2);
+                    if (tempName1.compare(tempName2) == 0) {
+                        std::vector<string>::iterator iter_ =
+                                std::find(std::begin(localDestFileContentVector),
+                                          std::end(localDestFileContentVector),
+                                          tempContent);
+                        auto index_ = std::distance(
+                                std::begin(localDestFileContentVector), iter_);
+//                        cout << "index_ down: " << index_ << endl;
+                        if (notesStr.empty()) {
+                            localDestFileContentVector.insert(
+                                    localDestFileContentVector.begin() + index_ - 1, alineString);
+                        } else {
+                            localDestFileContentVector.insert(
+                                    localDestFileContentVector.begin() + index_ - 1, notesStr);
+                            localDestFileContentVector.insert(
+                                    localDestFileContentVector.begin() + index_ - 2, alineString);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+        if (tempContentStr.find("</resources>") != string::npos) {
+            break;
+        }
+    }
+}
+
+void HandleAndroidString::handleMergeModifyContent(vector<string> &localDestFileContentVector,
+                                                   const string &alineString,
+                                                   const string &nameStr,
+                                                   const string &contentStr) {
+    string tempNameStr;
+    string tempContentStr;
+    for (auto tempContent : localDestFileContentVector) {
+        tempNameStr.clear();
+        tempContentStr.clear();
+        getNameAndContent(tempContent, tempNameStr, tempContentStr);
+        if (nameStr.compare(tempNameStr) == 0) {
+            std::vector<string>::iterator iter =
+                    std::find(std::begin(localDestFileContentVector),
+                              std::end(localDestFileContentVector),
+                              tempContent);
+            auto index = std::distance(
+                    std::begin(localDestFileContentVector), iter);
+            cout << "index: " << index << endl;
+            localDestFileContentVector[index] = alineString;
+//            cout << localDestFileContentVector[index] << endl;
+            return;
         }
     }
 }
