@@ -1036,6 +1036,21 @@ s1[1]与s2[0]进行比较
 int result = s1.compare(1, 1, s2, 0, 1);
 s1[1]与c[0]进行比较
 result = s1.compare(1, 1, c, 1);
+strcasecmp函数和strncasecmp函数原型
+函数说明:
+strcasecmp()用来比较参数s1和s2字符串，
+比较时会自动忽略大小写的差异。
+返回值:
+若参数s1和s2字符串相同则返回0。
+s1长度大于s2长度则返回大于0 的值，
+s1长度若小于s2长度则返回小于0的值.
+函数说明：
+strncasecmp()用来比较参数s1和s2字符串前n个字符，
+比较时会自动忽略大小写的差异。
+返回值：
+若参数s1和s2字符串相同则返回0。
+s1若大于s2则返回大于0的值,
+s1若小于s2则返回小于0的值。
 
 判断string型字符串是否为空
 成员函数empty()
@@ -1050,6 +1065,99 @@ swab(ch1, ch2, strlen(ch1));
 cout << ch2 << endl;
 //four
 cout << ch1 << endl;
+C++方式:
+string str1 = "give me";
+string str2 = "a cup";
+str1.swap(str2);
+cout << str1 << endl;// a cup
+cout << str2 << endl;// give me
+
+将string型字符串转为char型字符串
+string类的成员函数c_str()可以返回一个指向char型
+字符串的const指针,该指针指向调用该函数的string型
+字符串对象.
+string str = "hello world";
+const char *ch;
+ch = str.c_str();
+cout<< ch <<endl;
+
+char型字符串与函数
+char型字符串也就是C风格的字符串,它由一串字符组成,
+结尾为字符串结束标志'\0'.字符串名是第1个字符的地址,
+因此我们将字符串名作为参数传递到函数中时,其实就是将
+地址传递到函数中去.由于字符串的最后一个字符是'\0',
+因此我们不必传递字符串长度,只要在函数中设置一个循环体,
+把结束字符作为循环结束的条件即可.
+char ch[15] = "hello world";
+char *p = "very well very well";
+//可见字符的长度
+cout << strlen(ch) << endl;
+//可见字符的长度
+cout << strlen(p) << endl;
+//数组在定义时的大小
+cout << sizeof(ch) << endl;
+//不管有多少个字符,大小都8(可能不同的平台大小会不一样)
+cout << sizeof(p) << endl;
+
+字符串有3种表达方式:
+1.char型数组
+char ch[12] = "study";
+2.未命名数组
+"study"
+3.指向char型数组的指针
+char *p = "study";
+由于这3种表达方式都是以指针的方式来保存字符串中
+第1个字符的内存地址,因此都可作为参数传递到函数中去.
+
+结构体是C时代的产物,到了C++之后结构体有了巨大的变化,
+可以增加函数,可以设置成员的公有,私有和保护属性,可以
+从别的类继承,也可以被别的类继承,可以有虚函数.唯一与
+类不同之处是结构体定义中默认情况下的成员是public,
+而类定义中默认情况下的成员是private.
+struct people {
+    people(double t_weight, double t_tall, int t_age,
+           string t_name, char *t_native, bool t_sex);
+
+    double weight;
+    double tall;
+    int age;
+    string name;
+    char *native;
+    bool sex;
+};
+people::people(double t_weight, double t_tall, int t_age,
+               string t_name, char *t_native, bool t_sex) {
+    weight = t_weight;
+    tall = t_tall;
+    age = t_age;
+    name = t_name;
+    native = t_native;
+    sex = t_sex;
+}
+people Jack(180.5, 179.3, 34, "Jack", "上海", 1);
+people Alice(178.8, 169.8, 30, "Alice", "上海", 1);
+
+结构体的赋值
+前提是两个结构体必须是同类型的.
+Jack = Alice;
+
+结构体与函数
+struct time_ {
+    int hour;
+    int minute;
+};
+//按址返回(这样不需要再复制数据)
+time_ &sum(time_ t1, time_ t2) {
+    time_ *total = new time_;
+    total->hour = t1.hour + t2.hour + (t1.minute + t2.minute) / 60;
+    return *total;
+}
+time_ one = {8, 15};
+time_ two = {8, 15};
+time_ day = sum(one, two);
+time_ *day_ = &sum(one, two);
+
+结构体与string
 
 
 
@@ -1207,6 +1315,10 @@ C++ map注意事项
 2、迭代器
 3、算法
 4、仿函数
+
+///////////////////////////FILE///////////////////////////
+
+
 
 ///////////////////////////
 

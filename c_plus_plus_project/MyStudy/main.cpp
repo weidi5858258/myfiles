@@ -59,15 +59,17 @@ int main(int argc, char *argv[]) {
 
 
 
-    HandleAndroidString handleAndroidString;
-    handleAndroidString.doSomething();
+
+
+
+//    HandleAndroidString handleAndroidString;
+//    handleAndroidString.doSomething();
 
 
     printf("------------------------------------------\n");
     printf("\n");
     return 0;
 }
-
 
 typedef struct stud {
     int num;

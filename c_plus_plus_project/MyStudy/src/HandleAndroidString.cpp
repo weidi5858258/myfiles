@@ -206,11 +206,6 @@ void HandleAndroidString::handleMerge(const string &srcFilePath,
     }
     file.close();
 
-    /*for (auto str : localDestFileContentVector) {
-        cout << str << endl;
-    }
-    if (true)return;*/
-
     file.open(srcFilePath);
     while (getline(file, alineString)) {
         nameStr.clear();
@@ -244,10 +239,6 @@ void HandleAndroidString::handleMerge(const string &srcFilePath,
     }
     file.close();
 
-//    for (auto destContent : localDestFileContentVector) {
-//        cout << destContent << endl;
-//    }
-
     //把localDestFileContentVector内容写到文件中就行了
     FILE *destFile = fopen(destFilePath.c_str(), "w");
     for (auto destContent : localDestFileContentVector) {
@@ -258,6 +249,10 @@ void HandleAndroidString::handleMerge(const string &srcFilePath,
         }
     }
     fclose(destFile);
+
+//    for (auto destContent : localDestFileContentVector) {
+//        cout << destContent << endl;
+//    }
 }
 
 void HandleAndroidString::handleCopy(const string &srcFilePath,
