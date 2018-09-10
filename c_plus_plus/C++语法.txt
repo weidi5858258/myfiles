@@ -124,6 +124,9 @@ cin遇到不可见字符和空字符就停止输入(不可见字符指的
 这就量为什么将空字符作为字符串结束标志的原因，
 cin和cout遇到空字符都会结束输入和输出操作。
 
+dynamic_cast<son>(father)
+typeid()
+
 
 
 静态联编：编译时、运行时
@@ -190,8 +193,7 @@ int main()
     都自然成为虚函数。
 3.在C++中虚构造函数是不存在的，因此也无法声明。
 
-dynamic_cast<son>(father)
-typeid()
+
 
 
 
@@ -389,6 +391,13 @@ inline int func(int);
 在不知道具体怎么操作时,最好先不要使用内联函数.
 等完成程序的大部分功能时,再对符合要求的函数进行内联操作.
 将类中的函数声明和函数定义合并在一起时,该函数会自动成为内联函数.
+拷贝构造函数实例
+Student(const Student&);
+Student stu;
+Student stu2 = stu;
+Student stu3(stu);
+
+
 
 #include <stdio.h>
 char buf[10] = {10,10,10,10,10,10,10,10,10,10};
