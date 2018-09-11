@@ -23,6 +23,27 @@
 
 void test();
 
+class A {
+public:
+    virtual int get() {
+        return 0;
+    }
+};
+
+class B : public A {
+public:
+    virtual int get() {
+        return 1;
+    }
+};
+
+class C : public B {
+public:
+    int get() {
+        return 2;
+    }
+};
+
 
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -56,9 +77,15 @@ int main(int argc, char *argv[]) {
 //    cout << ch1 << endl;
 //    cout << ch2 << endl;
 
+    C c;
+    A *p = &c;
+    cout << p->get() << endl;
+    cout << p->A::get() << endl;
+    // error: ‘B’ is not a base of ‘A’
+    // cout << p->B::get() << endl;
 
-
-
+    B *p2 = &c;
+    cout << p2->B::get() << endl;
 
 
 

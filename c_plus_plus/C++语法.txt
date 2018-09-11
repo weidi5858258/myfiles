@@ -1,6 +1,6 @@
 C++基础知识
 
-///////////////////////////零碎知识点部分///////////////////////////
+///////////////////////////零碎知识点///////////////////////////
 
 静态变量(static)
 外部变量(extern)
@@ -13,7 +13,7 @@ C++基础知识
 无符号短整型	unsigned short int  ---> unsigned short
 无符号长整型	unsigned long int   ---> unsigned long
 有符号整型    signed int          ---> int
-无符号整型	unsigned int        ---> unsigned
+无符号整型		 unsigned int        ---> unsigned
 
 C++语言的基本数据类型
 1)布尔型:
@@ -97,13 +97,6 @@ getenv函数的返回值存储在一个全局二维数组里，
 如果变量存在但无关联值，它将运行成功并返回一个空字符串，
 即该字符的第一个字节是null。
 
-
-
-构造函数的作用：
-1、构造对象
-2、初始化对象
-3、
-
 类型不一样进行赋值时，中间必须要借助一个临时变量。
 如果这个临时变量产生不了，那么这个赋值操作就会失败。
 产生的中间变量的类型为赋值操作的左值的类型，
@@ -119,79 +112,15 @@ chrono头文件中的std::chrono::system_clock
 srand(std::chrono::system_clock::to_time_t(
         std::chrono::system_clock::now()));
 
-cin遇到不可见字符和空字符就停止输入(不可见字符指的
-是制表符和空格），而cout则只是遇到空字符才停止输出。
-这就量为什么将空字符作为字符串结束标志的原因，
-cin和cout遇到空字符都会结束输入和输出操作。
+
 
 dynamic_cast<son>(father)
 typeid()
 
 
 
-静态联编：编译时、运行时
-动态联编：联编工作是在编译时确定的
-class A
-{
-public:
-	virtual int get()
-	{
-		return 0;
-	}
-};
-class B : public A
-{
-	int get()
-	{
-		return 1;
-	}
-};
-int main()
-{
-	B b;
-	A* p = &b;
-	cout<<p->get()<<endl;// 1
-	cout<<p->A::get()<<endl;// 0
-}
 
-未测试
-class A
-{
-public:
-	int get()
-	{
-		return 0;
-	}
-};
-class B : public A
-{
-	int get()
-	{
-		return 1;
-	}
-};
-int main()
-{
-	B b;
-	A* p = &b;
-	cout<<p->get()<<endl;
-	cout<<p->B::get()<<endl;
-}
 
-一个派生类对象在创建时会首先调用基类的构造函数，
-然后调用该类的构造函数，一般情况下，在使用虚函数时，
-我们都会将派生类对象传递给指向基类的指针，那么假如
-指向派生类对象的指针删除时会发生什么情况呢？如果
-析构函数是虚函数，那么就会进行正确的操作，它会先调用
-派生类的析构函数，由于一般情况下任何类的析构函数都可
-声明为虚析构函数，当指针被删除时，系统会获得对象运行
-时的类型并调用正确的析构函数。
-但是要注意三点：
-1.由于析构函数不允许有参数，因此它不可能实现重载，
-    那么一个类就只能有一个虚析构函数。
-2.只要基类的析构函数被说明为虚函数，那么派生类的析构函数无论说明与否，
-    都自然成为虚函数。
-3.在C++中虚构造函数是不存在的，因此也无法声明。
 
 
 
@@ -517,6 +446,104 @@ int rmdir(const char *_Path)
 函数功能是删除参数指定的文件夹，成功返回0，否则返回-1
 在windows环境下也可使用函数_rmdir
 
+在C++中如果使用到某个字符串需要转义时,
+那么可以这样使用:
+string str(R"(某个需要转义的字符串)");
+像上面这样操作后,就不需要再转义了.
+当输出str这个字符串时,里面有转义的东西也会
+原样输出(如换行).如果不按照上面这种写法,
+自己对字符串进行转义,那么输出这个字符串时会按照
+转义的命令输出.
+
+在64位的win上,如果字符串中有括号,那么这个左括号与
+前面的字符之间要有空格.
+
+///////////////////////////面向对象///////////////////////////
+
+虚函数的作用:
+使得通过基类类型的指针,可以使属于不同派生类的不同对象产生不同的行为.
+否则基类指针访问派生类对象时访问到的总是基类的同名成员.
+
+一个函数被说明为虚函数,在派生类中覆盖了该函数,那么该函数也是个
+虚函数,不过也可以把它说明为虚函数,这样看起来更好懂些.
+
+静态联编：编译时、运行时
+动态联编：联编工作是在编译时确定的
+在不使用virtual之前,C++对重载的函数使用静态联编,而使用了virtual以后,
+C++则对该函数进行动态联编.
+将一个调用函数者联结上正确的被调用函数,这一过程叫做函数联编,一般简称为联编.
+在未加virtual说明时,该函数是静态联编,即被调函数和调用函数的关系以及它们的
+内存地址在编译时都已经确立好,运行时不再发生变化.这样的好处是速度快.
+
+在编译时的静态联编
+在运行时的静态联编
+在编译时的动态联编
+在运行时的动态联编
+
+在继承中,只有当使用指针或者引用的方式来调用虚函数时,虚函数才能发挥多态性的作用.
+只有被说明为虚函数的那个成员函数才具有多态性.
+被继承的虚函数仍然是虚函数.
+
+在虚函数中使用成员名限定
+在虚函数中使用成员名限定强行解除动态联编.
+C c;
+A *p = &c;
+cout << p->get() << endl;
+//成员名限定会强制使用静态联编来调用类A的成员函数
+cout << p->A::get() << endl;
+
+class A {
+public:
+    virtual int get() {
+        return 0;
+    }
+};
+
+class B : public A {
+public:
+    virtual int get() {
+        return 1;
+    }
+};
+
+class C : public B {
+public:
+    int get() {
+        return 2;
+    }
+};
+int main() {
+	C c;
+	A* p = &c;
+	// 2
+	cout<<p->get()<<endl;
+	// 0
+	cout<<p->A::get()<<endl;
+	// error: ‘B’ is not a base of ‘A’(编译通不过)
+  // cout << p->B::get() << endl;
+  B *p2 = &c;
+  cout << p2->B::get() << endl;
+  总结:
+  如果想要父类指针指向的函数最终调用的是子类函数,
+  那么父类中的函数需要加上virtual关键字.
+  如果不加,那么调用的是父类自身的函数.
+}
+
+一个派生类对象在创建时会首先调用基类的构造函数，
+然后调用该类的构造函数，一般情况下，在使用虚函数时，
+我们都会将派生类对象传递给指向基类的指针，那么假如
+指向派生类对象的指针删除时会发生什么情况呢？如果
+析构函数是虚函数，那么就会进行正确的操作，它会先调用
+派生类的析构函数，由于一般情况下任何类的析构函数都可
+声明为虚析构函数，当指针被删除时，系统会获得对象运行
+时的类型并调用正确的析构函数。
+但是要注意三点：
+1.由于析构函数不允许有参数，因此它不可能实现重载，
+    那么一个类就只能有一个虚析构函数。
+2.只要基类的析构函数被说明为虚函数，那么派生类的析构函数无论说明与否，
+    都自然成为虚函数。
+3.在C++中虚构造函数是不存在的，因此也无法声明。
+
 
 ///////////////////////////模板///////////////////////////
 
@@ -582,12 +609,12 @@ using namespace std;
 19 	    23 	    13 	    DC3(设备控制3)
 20 	    24 	    14 	    DC4(设备控制4)
 21 	    25 	    15 	    NAK(反确认)
-22 	26 	16 	SYN(同步空闲)
-23 	27 	17 	ETB(传输块结束)
-24 	30 	18 	CAN(取消)
-25 	31 	19 	EM(媒介结束)
-26 	32 	1a 	SUB(替换)
-27 	33 	1b 	ESC(退出)
+22 	    26 	    16 	    SYN(同步空闲)
+23 	    27 	    17 	    ETB(传输块结束)
+24 	    30 	    18 	    CAN(取消)
+25 	    31 	    19 	    EM(媒介结束)
+26 	    32 	    1a 	    SUB(替换)
+27 	    33 	    1b 	    ESC(退出)
 28 	34 	1c 	FS(文件分隔符)
 29 	35 	1d 	GS(组分隔符)
 30 	36 	1e 	RS(记录分隔符)
@@ -702,6 +729,10 @@ string型字符串的比较
 
 ' ' == 32
 空格的ASCII码为32,而空字符的ASCII码为0.
+cin遇到不可见字符和空字符就停止输入(不可见字符指的
+是制表符和空格），而cout则只是遇到空字符才停止输出。
+这就量为什么将空字符作为字符串结束标志的原因，
+cin和cout遇到空字符都会结束输入和输出操作。
 cout遇到空字符就停止输出.因此其后面的内容不再输出.
 char man[] = {'a', 0, 'b'};//b不会输出
 char man[] = {'a', 32, 'b'};
@@ -1326,6 +1357,322 @@ C++ map注意事项
 4、仿函数
 
 ///////////////////////////FILE///////////////////////////
+
+C++方式:
+C++文件流：
+fstream　　 // 输入输出文件流
+ifstream　 // 输入文件流
+ofstream　 // 输出文件流
+在C++中，有一个stream这个类，所有的I/O都以这个“流”类为基础的，
+包括我们要认识的文件I/O，stream这个类有两个重要的运算符：
+1、插入器(<<)
+2、析取器(>>)
+在C++中，对文件的操作是通过stream的子类fstream(file stream)来实现的，
+所以，要用这种方式操作文件，就必须加入头文件fstream.h。
+file1 << setw(20) << "姓名:" << "廉东方" << endl;
+
+imbue(locale("chs"));设置中文模式
+
+一、打开文件
+void open(const char *filename,
+            ios_base::openmode mode = ios_base::in | ios_base::out );
+void open(const wchar_t *_Filename,
+        ios_base::openmode mode = ios_base::in | ios_base::out,
+        int prot = ios_base::_Openprot)；
+
+void open(const char* filename,int mode,int access);
+参数：
+filename:	打开的文件名
+mode:			打开文件的方式
+access:		打开文件的属性
+打开文件的方式
+在类ios(是所有流式I/O类的基类)中定义，常用的值如下：
+ios::in　　　 			文件以输入方式打开
+ios::out　　　			文件以输出方式打开
+ios::ate　　			文件打开后定位到文件尾，ios:app就包含有此属性
+ios::app　　　			以追加的方式打开文件
+ios::binary 　		以二进制方式打开文件，缺省的方式是文本方式。两种方式的区别见前文
+ios::nocreate 	不建立文件，所以文件不存在时打开失败　
+ios::noreplace	不覆盖文件，所以打开文件时如果文件存在失败
+ios::trunc		　　如果文件存在，把文件长度设为0
+
+ios::in　　　　			= 0x01,　//供读，文件不存在则创建(ifstream默认的打开方式)
+ios::out　　　 		= 0x02,　//供写，文件不存在则创建，若文件已存在则清空原内容(ofstream默认的打开方式)
+ios::ate　　　 		= 0x04,　//文件打开时，指针在文件最后。可改变指针的位置，常和in、out联合使用
+ios::app　　　 		= 0x08,　//供写，文件不存在则创建，若文件已存在则在原文件内容后写入新的内容，指针位置总在最后
+ios::trunc　　 		= 0x10,　//在读写前先将文件长度截断为0（默认）
+ios::nocreate　	= 0x20,　//文件不存在时产生错误，常和in或app联合使用
+ios::noreplace 	= 0x40,　//文件存在时产生错误，常和out联合使用
+ios::binary　　		= 0x80　 //二进制格式文件
+可以用“或”把以上属性连接起来，如ios::out|ios::binary
+打开文件的属性
+0：普通文件，打开访问
+1：只读文件
+2：隐含文件
+4：系统文件
+filebuf::openprot;　　　//默认的兼容共享方式
+filebuf::sh_none;　　　 //独占，不共享
+filebuf::sh_read;　　　 //读共享
+filebuf::sh_write;　　　//写共享
+可以用“或”或者“+”把以上属性连接起来 ，如3或1|2就是以只读和隐含属性打开文件。
+
+例如:
+第一种方式打开文件
+fstream file1("c:\config.sys");
+第二种方式打开文件
+fstream file1;
+file1.open("c:\config.sys", ios::binary|ios::in, 0);
+如果open函数只有文件名一个参数，则是以读/写普通文件打开，即：
+file1.open("c:\config.sys");
+<=>
+file1.open("c:\config.sys", ios::in|ios::out, 0);
+fstream有两个子类：
+ifstream(input file stream),默认以输入方式打开文件
+ofstream(outpu file stream),默认以输出方式打开文件
+所以，在实际应用中，根据需要的不同，选择不同的类来定义：
+如果想以输入方式打开，就用ifstream来定义；
+如果想以输出方式打开，就用ofstream来定义；
+如果想以输入/输出方式来打开，就用fstream来定义。
+//默认以ios::in的方式打开文件，文件不存在时操作失败
+ifstream f("d:\\12.txt",ios::nocreate);
+//默认以ios::out的方式打开文件
+ofstream f("d:\\12.txt");
+//以读写方式打开二进制文件
+fstream　f("d:\\12.dat",ios::in|ios::out|ios::binary);
+fstream f;
+//利用同一对象对多个文件进行操作时要用到open函数
+f.open("d:\\12.txt",ios::out);
+成功：
+　　if(f){...}　　　　　　　//对ifstream、ofstream对象可用，fstream对象不可用。
+　　if(f.good()){...}
+失败：
+　　if(!f){...}　　　　　　 // !运算符已经重载
+　　if(f.fail()){...}
+
+二、关闭文件
+打开的文件使用完成后一定要关闭，fstream提供了成员函数close()来完成此操作，
+如：
+file1.close();
+就把file1相连的文件关闭。
+
+三、读写文件
+读写文件分为文本文件和二进制文件的读写.
+1、文本文件的读写
+文本文件的读写很简单：
+用插入器(<<)向文件输出；
+用析取器(>>)从文件输入。
+file << "I Love You";//向文件写入字符串"I Love You"
+int i;
+file >> i;//从文件读取一个整数值
+操纵符 							功能										 输入/输出
+dec 								格式化为十进制数值数据			  输入和输出
+endl 								输出一个换行符并刷新此流		 输出
+ends 								输出一个空字符							输出
+hex 								格式化为十六进制数值数据 		 输入和输出
+oct 								格式化为八进制数值数据 			输入和输出
+setpxecision(int p) 设置浮点数的精度位数				输出
+例1:
+ofstream out("out.txt");
+if (out.is_open()) 
+{
+  out << "This is a line.\n";
+  out << "This is another line.\n";
+  out.close();
+}
+例2:
+char buffer[256];
+ifstream in("test.txt");
+if (!in.is_open())
+{ 
+	cout << "Error opening file"; 
+	exit (1);
+}
+while (!in.eof() )
+{
+  in.getline(buffer,100);
+  cout << buffer << endl;
+}
+2、二进制文件的读写
+使用put()函数
+put()函数向流写入一个字符，其原型是
+	ofstream &put(char ch);
+使用也比较简单，如
+file.put('c');
+就是向流写一个字符'c'。
+
+使用get()函数
+	第一个get函数
+	ifstream &get(char &ch);//与上面的put函数是对应的
+从流中读取一个字符，结果保存在引用ch中，如果到文件尾，返回空字符'\0'.
+如
+file.get(x);
+表示从文件中读取一个字符，并把读取的字符保存在x中.
+	第二个get函数
+	int get();
+从流中返回一个字符，如果到达文件尾，返回EOF.
+如
+int x=file.get();
+	第三个get函数
+	ifstream &get(char *buf, int num, char delim=' ');
+把字符读入由buf指向的数组中，直到读入了num个字符或遇到了由delim指定的字符，
+如果没使用 delim 这个参数，将使用缺省值换行符' '.
+file.get(str1, 127, 'A');
+//从文件中读取字符到字符串str1，当遇到字符'A'或读取了127个字符时终止.
+例1:
+ifstream fin("d:\\简介.txt",ios::nocreate);
+if(!fin){
+  cout<<"File open error!\n";
+  return;
+}
+char c;
+while((c=fin.get())!=EOF)cout<<c;
+fin.close();
+例2:
+ifstream fin("d:\\简介.txt",ios::nocreate);
+if(!fin){
+  cout<<"File open error!\n";
+  return;
+}
+char c[80];
+while(fin.get(c,80,'\0')!=NULL)cout<<c;
+fin.close();
+例3:
+ifstream fin("d:\\简介.txt",ios::nocreate);
+if(!fin){
+  cout<<"File open error!\n";
+  return;
+}
+char c[80];
+while(!fin.eof())            //判断文件是否读结束
+{
+  fin.read(c,80);
+  cout.write(c,fin.gcount());
+}
+fin.close();
+例4:
+ifstream fin("C:\\1.exe",ios::nocreate|ios::binary);
+if(!fin){
+  cout<<"File open error!\n";
+  return;
+}
+ofstream fout("C:\\2.exe",ios::binary);
+char c[1024];
+while(!fin.eof())
+{
+  fin.read(c,1024);
+  fout.write(c,fin.gcount());
+}
+fin.close();
+fout.close();
+cout<<"Copy over!\n";
+
+读写数据块
+读写二进制数据块，使用成员函数read()和write()成员函数.
+	read(unsigned char *buf, int num);
+	write(const unsigned char *buf, int num);
+read()从文件中读取 num 个字符到 buf 指向的缓存中，
+如果在还未读入 num 个字符时就到了文件尾，
+可以用成员函数 int gcount();来取得实际读取的字符数；
+而 write() 从buf 指向的缓存写 num 个字符到文件中，
+值得注意的是缓存的类型是 unsigned char *，有时可能需要类型转换。
+如
+unsigned char str1[]="I Love You";
+int n[5];
+ifstream in("xxx.xxx");
+ofstream out("yyy.yyy");
+//把字符串str1全部写到yyy.yyy文件中
+out.write(str1, strlen(str1));
+//从xxx.xxx文件中读取指定个整数，注意类型转换
+in.read((unsigned char*)n, sizeof(n));
+in.close();
+out.close();
+
+四、检测EOF
+成员函数eof()用来检测是否到达文件尾，
+如果到达文件尾返回非0值，否则返回0。
+原型是
+int eof();
+例：　　
+if(in.eof())ShowMessage("已经到达文件尾！");
+状态标志符的验证(Verification of state flags)
+    bad()
+    如果在读写过程中出错，返回 true 。
+    例如：当我们要对一个不是打开为写状态的文件进行写入时，
+    或者我们要写入的设备没有剩余空间的时候。
+    fail()
+    除了与bad() 同样的情况下会返回 true 以外，
+    加上格式错误时也返回true ，例如当想要读入一个整数，而获得了一个字母的时候。
+    eof()
+    如果读文件到达文件末尾，返回true。
+    good()
+    这是最通用的：如果调用以上任何一个函数返回true 的话，此函数返回 false 。
+要想重置以上成员函数所检查的状态标志，你可以使用成员函数clear()，没有参数。
+
+五、文件定位
+和C的文件操作方式不同的是，C++ I/O系统管理两个与一个文件相联系的指针。
+一个是读指针，它说明输入操作在文件中的位置；
+另一个是写指针，它下次写操作的位置。
+每次执行输入或输出时，相应的指针自动变化。
+所以，C++的文件定位分为读位置和写位置的定位，对应的成员函数是 
+istream &seekg(streamoff offset, seek_dir origin);设置读位置
+ostream &seekp(streamoff offset, seek_dir origin);设置写位置
+streamoff定义于iostream.h中，定义有偏移量offset所能取得的最大值，
+seek_dir表示移动的基准位置，是一个有以下值的枚举:
+ios::beg：　0　	文件开头
+ios::cur：　1　	文件当前位置
+ios::end：　2　	文件结尾
+这两个函数一般用于二进制文件，因为文本文件会因为系统对字符的解释而可能与预想的值不同。
+例：
+//把文件的读指针从当前位置向后移1234个字节
+file1.seekg(1234, ios::cur);
+//把文件的写指针从文件开头向后移1234个字节
+file2.seekp(1234, ios::beg);
+
+//绝对移动 输入流操作
+seekg(绝对位置);　　　　　　
+//相对操作
+seekg(相对位置,参照位置);　 
+//返回当前指针位置
+tellg();　　　　　　　　　　
+//绝对移动 输出流操作
+seekp(绝对位置);　　　　　　
+//相对操作　　　
+seekp(相对位置,参照位置);
+//返回当前指针位置
+tellp();
+
+缓存和同步(Buffers and Synchronization)
+当我们对文件流进行操作的时候，它们与一个streambuf类型的缓存(buffer)联系在一起。
+这个缓存（buffer）实际是一块内存空间，作为流(stream)和物理文件的媒介。
+例如，对于一个输出流， 每次成员函数put (写一个单个字符)被调用，
+这个字符不是直接被写入该输出流所对应的物理文件中的，而是首先被插入到该流的缓存（buffer）中。
+当缓存被排放出来(flush)时，它里面的所有数据或者被写入物理媒质中（如果是一个输出流的话），
+或者简单的被抹掉(如果是一个输入流的话)。这个过程称为同步(synchronization)，
+它会在以下任一情况下发生：
+    当文件被关闭时: 在文件被关闭之前，所有还没有被完全写出或读取的缓存都将被同步。
+    当缓存buffer 满时:缓存Buffers 有一定的空间限制。当缓存满时，它会被自动同步。
+    控制符明确指明:当遇到流中某些特定的控制符时，同步会发生。这些控制符包括：flush 和endl。
+    明确调用函数sync(): 调用成员函数sync() (无参数)可以引发立即同步。
+    这个函数返回一个int 值，等于-1 表示流没有联系的缓存或操作失败。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
