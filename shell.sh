@@ -1514,6 +1514,10 @@ echo $currentTimeStamp
 
 grep keydl -rn *
 
+# C++层log的输出，如果不全，可以调整log的级别：
+# 至少改成>=1
+adb shell dumpsys media.camera -v 1
+adb install -t *.apk
 adb kill-server && adb start-server 
 && adb root && adb remount
 # mSurface=Surface(name=com.tencent.mm/
