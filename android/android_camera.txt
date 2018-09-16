@@ -88,7 +88,34 @@ CameraDevice是Camera2中抽象出来的一个对象，直接与系统硬件摄�
     createCaptureRequest（int templateType）创建捕获请求，
     在需要预览、拍照、再次预览的时候都需要通过创建请求来完成。
 4.
-CameraCaptureSession(由CameraDevice对象去创建的)
+public void createCaptureSession(List<Surface> outputs,
+                                 CameraCaptureSession.StateCallback callback, 
+                                 Handler handler)
+由CameraDevice对象调用的方法
+参数说明:
+第一个参数是一个范型为Surface的List，这里的Surface就是我们用来创建流的，
+一般如果没有特殊的要求，那我们只需要两个Surface，一个提供预览，一个提供拍照.
+预览的Surface就是相机预览区域，buffer轮转时，预览区的buffer就是要从
+这个预览Surface当中获取的，这个Surface一定要正确，否则就会导致session创建失败，
+预览区就会黑屏了，我们在平时的工作中经常碰到这样的情况；而至于拍照Surface，
+我们一般使用ImageReader对象来获取，ImageReader是系统提供的一个类，它的创建过程
+已经为我们创建好了一个Surface，我们直接使用它来当作拍照Surface，当拍照成功后，
+我们就可以从ImageReader.OnImageAvailableListener内部类的onImageAvailable回调
+方法中获取到一个ImageReader对象，再调用getPlanes()获取到Plane数组，
+一般取第一个Plane，继续调用getBuffer()就可以获取到拍摄的照片的byte数组了，
+第二个参数callback的类型为
+frameworks\base\core\java\android\hardware\camera2\CameraCaptureSession.java
+类的内部类StateCallback，和openCamera一样，当session创建成功后，
+framework也会通过这个回调接口的
+public abstract void onConfigured(@NonNull CameraCaptureSession session)
+方法返回一个CameraCaptureSession对象给我们，
+而真正的实现是一个CameraCaptureSessionImpl对象，我们可以使用它来作很多的工作，
+比如断开session连接调用abortCaptures()；拍照调用capture()方法；
+下次预览调用setRepeatingRequest；停预览调用stopRepeating()，
+这里的设计和openCamera是完全一样的。第三个参数Handler的作用和openCamera也一样，
+还是为了保证线程不发生切换，我们在应用进程的哪个工作线程中执行createCaptureSession，
+那么framework回调我们时，也会通过这个handler把回调消息发送到
+当前handler线程的Looper循环上。
 CameraCaptureSession.CaptureCallback
 CameraCaptureSession.StateCallback
 CaptureResult
