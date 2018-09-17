@@ -112,6 +112,7 @@ http://www.chuiyue.com/eg/26752/ 黄宪高滑稽越剧全集
 http://www.xfplay.org/wyjc/ 成人
 https://source.android.com/source/build-numbers#source-code-tags-and-builds android代号、标记和细分版本号
 https://blog.csdn.net/zhangbijun1230 zhangbijun1230的专栏
+http://www.360doc.com/content/16/0531/11/8780958_563761675.shtml Link2SD无法挂载SD卡第二分区解决方案
 
 
 
