@@ -1,3 +1,61 @@
+//////////////////////////函数说明//////////////////////////
+
+pts: AV_NOPTS_VALUE
+dts: AV_NOPTS_VALUE
+pos: 0
+
+int av_parser_parse2(AVCodecParserContext *s,
+                     AVCodecContext *avctx,
+                     uint8_t **poutbuf, int *poutbuf_size,
+                     const uint8_t *buf, int buf_size,
+                     int64_t pts, int64_t dts,
+                     int64_t pos);
+
+使用AVCodecParser从输入的数据流中分离出一帧一帧的压缩编码数据。
+AVCodecParser用于解析输入的数据流并把它们分成一帧一帧的压缩编码数据。
+比较形象的说法就是把长长的一段连续的数据“切割”成一段段的数据。
+核心函数是av_parser_parse2().
+解析数据获得一个Packet， 从输入的数据流中分离出一帧一帧的压缩编码数据。
+通过av_parser_parse2拿到AVPaket数据，跟av_read_frame类似.
+输入必须是只包含视频编码数据“裸流”（例如H.264、HEVC码流文件），
+而不能是包含封装格式的媒体数据（例如AVI、MKV、MP4）.
+
+AVCodec *avcodec_find_decoder(enum AVCodecID id);
+// 通过code ID查找一个已经注册的音视频解码器
+// 引入 #include "libavcodec/avcodec.h"
+// 实现在: \ffmpeg\libavcodec\utils.c
+// 查找成功返回解码器指针,否则返回NULL
+// 音视频解码器保存在一个链表中,查找过程中,函数从头到尾遍历链表,通过比较解码器的ID来查找
+
+AVCodec *avcodec_find_decoder_by_name(const char *name);
+// 通过一个指定的名称查找一个已经注册的音视频解码器
+// 引入 #include "libavcodec/avcodec.h"
+// 实现在: \ffmpeg\libavcodec\utils.c
+// 查找成功返回解码器指针,否则返回NULL
+// 音视频解码器保存在一个链表中,查找过程中,函数从头到尾遍历链表,通过比较解码器的name来查找
+
+AVCodec *avcodec_find_encoder(enum CodecID id);
+// 通过code ID查找一个已经注册的音视频编码器
+// 引入 #include "libavcodec/avcodec.h"
+// 实现在: \ffmpeg\libavcodec\utils.c
+// 查找成功返回编码器指针,否则返回NULL
+// 音视频编码器保存在一个链表中,查找过程中,函数从头到尾遍历链表,通过比较编码器的ID来查找
+
+AVCodec *avcodec_find_encoder_by_name(const char *name);
+// 通过一个指定的名称查找一个已经注册的音视频编码器
+// 引入 #include "libavcodec/avcodec.h"
+// 实现在: \ffmpeg\libavcodec\utils.c
+// 查找成功返回编码器指针,否则返回NULL
+// 音视频编码器保存在一个链表中,查找过程中,函数从头到尾遍历链表,通过比较编码器的名称来查找
+
+//////////////////////////函数说明//////////////////////////
+
+
+
+
+
+
+
 libswscale图像格式转换与放大缩小
 简单的初始化方法
 （1）       sws_getContext()：使用参数初始化SwsContext结构体。

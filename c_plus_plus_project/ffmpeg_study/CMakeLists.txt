@@ -16,7 +16,7 @@ add_executable(
         src/player.cpp
         src/music_player.cpp
         src/music_player2.cpp
-)
+        src/decode_audio.cpp include/decode_audio.h)
 
 if (WIN32)
 

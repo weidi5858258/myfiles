@@ -1,4 +1,5 @@
 #include "./include/MyHead.h"
+#include "decode_audio.h"
 
 #ifndef MYSTUDY_STUDY_FFMPEG
 #define MYSTUDY_STUDY_FFMPEG
@@ -194,14 +195,14 @@ int main(int argc, char *argv[]) {
 //    alexander_music_player("/root/视频/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4");
 //    alexander_audio_or_video_demuxer();
 
-
-
+    decode_audio da;
+    char *name[] = {"/root/音乐/tdjm.aac", "/root/音乐/tdjm.pcm"};
+    da.main_(2, name);
 
     printf("------------------------------------------\n");
     printf("\n");
     return 0;
 }
-
 
 
 typedef struct stud {

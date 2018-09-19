@@ -50,6 +50,38 @@ float                           4
 double                          8
 long double                     12
 
+								 char									-128~127
+typedef unsigned char				uint8_t;	0~255
+typedef unsigned short int	uint16_t;	0~65535
+								 int									-32768~32767
+typedef unsigned int				uint32_t;	0~65535
+			  [signed] long [int]						-2147483648~2147483647
+typedef unsigned long int		uint64_t;	0~4294967295
+
+size_t和int
+  size_t是一些C/C++标准在stddef.h中定义的。
+  这个类型足以用来表示对象的大小。size_t的真实类型与操作系统有关。
+在32位架构中被普遍定义为：
+typedef   unsigned int size_t;
+而在64位架构中被定义为：
+typedef  unsigned long size_t;
+	size_t在32位架构上是4字节，在64位架构上是8字节，
+	在不同架构上进行编译时需要注意这个问题。
+	而int在不同架构下都是4字节，与size_t不同；
+	且int为带符号数，size_t为无符号数。
+
+ssize_t
+ssize_t是有符号整型，在32位机器上等同与int，在64位机器上等同与long int.
+
+size_t和ssize_t作用
+	 size_t一般用来表示一种计数，比如有多少东西被拷贝等。
+	 例如：sizeof操作符的结果类型是size_t，
+	 该类型保证能容纳实现所建立的最大对象的字节大小。 
+	 它的意义大致是“适于计量内存中可容纳的数据项目个数的无符号整数类型”。
+	 所以，它在数组下标和内存管理函数之类的地方广泛使用。
+	 而ssize_t这个数据类型用来表示可以被执行读写操作的数据块的大小.
+	 它和size_t类似,但必需是signed.意即：它表示的是signed size_t类型的。
+
 进程的终止方式：
 1.从main返回
 2.调用exit
