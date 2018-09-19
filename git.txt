@@ -28,7 +28,11 @@ git clean -nfd
 
 
 
-
+想要查看安卓源码版本，一般有两个方法：
+1，如果是已经编译过的，则会在源码下生成build.prop文件，我们可以通过命令查找文件
+find -name build.prop
+然后再打开查看版本信息。
+2，如果未编译过，在源码目录下的build/core/version_defaults.mk文件中也有版本信息
 
 
 
