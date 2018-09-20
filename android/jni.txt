@@ -880,6 +880,38 @@ repo sync命令后接的path，在执行repo init目录下（此处即android _s
 如果以后android源码更新了，只需改变步骤4中－b后指定的路径，Android所有版本列表
 
 
+============================================
+PLATFORM_VERSION_CODENAME=REL
+PLATFORM_VERSION=8.1.0
+TARGET_PRODUCT=aosp_arm
+TARGET_BUILD_VARIANT=eng
+TARGET_BUILD_TYPE=release
+TARGET_PLATFORM_VERSION=OPM1
+TARGET_BUILD_APPS=
+TARGET_ARCH=arm
+TARGET_ARCH_VARIANT=armv7-a
+TARGET_CPU_VARIANT=generic
+TARGET_2ND_ARCH=
+TARGET_2ND_ARCH_VARIANT=
+TARGET_2ND_CPU_VARIANT=
+HOST_ARCH=x86_64
+HOST_2ND_ARCH=x86
+HOST_OS=linux
+HOST_OS_EXTRA=Linux-4.4.0-17758-Microsoft-x86_64-with-Ubuntu-16.04-xenial
+HOST_CROSS_OS=windows
+HOST_CROSS_ARCH=x86
+HOST_CROSS_2ND_ARCH=x86_64
+HOST_BUILD_TYPE=release
+BUILD_ID=OPM6.171019.030.E1
+OUT_DIR=out
+AUX_OS_VARIANT_LIST=
+============================================
+root@WEIDI5858258:/mnt/d/android_source/android_n# make -j4
+21:21:50 ************************************************************
+21:21:50 You are building on a case-insensitive filesystem.
+21:21:50 Please move your source tree to a case-sensitive filesystem.
+21:21:50 ************************************************************
+21:21:50 Case-insensitive filesystems not supported
 
 
 
