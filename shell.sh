@@ -910,6 +910,7 @@ IFS=${IFS_old}
 adb -s e79564213584621542 shell input keyevent 
 KEYCODE_POWER
 
+currentTime=`date +"%Y/%m/%d %H:%M:%S"`
 currentTime=`date +"%y/%m/%d %H:%M:%S"`
 
 # 操作数与运算符之间不能有空格

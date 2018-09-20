@@ -56,6 +56,7 @@ void HandleAndroidString::doSomething() {
 //    string value = localNameAndContentMap["test2"];
 //    cout << value << endl;
 
+    cout << "==============================================" << endl;
     vector<string> testVector;
     testVector.push_back("test1");
     testVector.push_back("test2");

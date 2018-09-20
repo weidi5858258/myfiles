@@ -8,9 +8,9 @@
 #include "MyHead.h"
 
 //#define CUR_DIR "/media/root/Weidi/Users/weidi5858258/Documents/temp_dir"
-//#define CUR_DIR "/root/temp_dir/merge_string"
+#define CUR_DIR "/root/temp_dir/merge_string"
 //#define CUR_DIR "C:\\Users\\weidi5858258\\Documents\\temp_dir"
-#define CUR_DIR "/mnt/c/Users/weidi5858258/Documents/temp_dir"
+//#define CUR_DIR "/mnt/c/Users/weidi5858258/Documents/temp_dir"
 
 class HandleAndroidString {
 public:

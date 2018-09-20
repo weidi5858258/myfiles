@@ -77,20 +77,12 @@ int main(int argc, char *argv[]) {
 //    cout << ch1 << endl;
 //    cout << ch2 << endl;
 
-    C c;
-    A *p = &c;
-    cout << p->get() << endl;
-    cout << p->A::get() << endl;
-    // error: ‘B’ is not a base of ‘A’
-    // cout << p->B::get() << endl;
-
-    B *p2 = &c;
-    cout << p2->B::get() << endl;
 
 
 
-//    HandleAndroidString handleAndroidString;
-//    handleAndroidString.doSomething();
+
+    HandleAndroidString handleAndroidString;
+    handleAndroidString.doSomething();
 
 
     printf("------------------------------------------\n");
