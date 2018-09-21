@@ -1,8 +1,10 @@
 #ifdef WIN32
+
 #include "MyHead.h"
 #include "Test.h"
 #include "Method.h"
 #include "HandleAndroidString.h"
+
 #endif
 #ifdef linux
 
@@ -44,7 +46,6 @@ public:
     }
 };
 
-
 /***
  * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
  * @param argv
@@ -53,37 +54,25 @@ public:
 int main(int argc, char *argv[]) {
     printf("\n");
     printf("argc = %d\n", argc);
-    int j = 0;
-    for (j = 0; j < argc; j++) {
+    for (int j = 0; j < argc; j++) {
         printf("%s\n", argv[j]);
     }
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-    vector<string> tVector;
-    tVector.push_back("a");
-    tVector.push_back("b");
-    tVector.push_back("a");
-    tVector.push_back("c");
-
-//    char ch1[100] = "what't your name? ";
-//    char ch2[] = "my name is Jack.";
-//    memmove(ch1, ch2, 10);
-//    cout << ch1 << endl;
-
-//    char ch1[15] = "ofru";
-//    char ch2[15] = "";
-//    swab(ch1, ch2, strlen(ch1));
-//    cout << ch1 << endl;
-//    cout << ch2 << endl;
 
 
 
 
 
-    HandleAndroidString handleAndroidString;
-    handleAndroidString.doSomething();
 
+
+
+
+
+
+//    HandleAndroidString handleAndroidString;
+//    handleAndroidString.doSomething();
 
     printf("------------------------------------------\n");
     printf("\n");

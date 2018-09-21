@@ -490,6 +490,107 @@ string str(R"(某个需要转义的字符串)");
 在64位的win上,如果字符串中有括号,那么这个左括号与
 前面的字符之间要有空格.
 
+int a[3][4];
+下面的代码在有些编译上才能通过,在clion编译器上通不过.
+// 栈上开辟一维数组
+int *p = (int[]){0};
+// 栈上开辟二维数组
+// 4是必须的,因为一行有多少列必须要明确
+int(*px)[4]=(int[][4]){0};
+// 栈上开辟三维数组
+// 3和4是必须的,列和面必须要明确
+int(*py)[3][4]=(int[][3][4]){0};
+// 分块数据模型相比连续数据模型有什么好处
+
+C 错误处理
+errno、perror() 和 strerror()
+例:
+打开一个不存在的文件
+FILE *pf;
+pf = fopen("unexist.txt", "rb");
+if (!pf) {
+    fprintf(stderr, "错误号: %d\n", errno);
+    perror("通过perror输出错误");
+    // 如果要用到输出错误信息的操作,那么用这句代码好了
+    fprintf(stderr, "打开文件错误: %s\n", strerror(errno));
+} else {
+    fclose(pf);
+}
+输出如下:
+错误号: 2
+通过perror输出错误: No such file or directory
+打开文件错误: No such file or directory
+
+程序退出状态
+通常情况下，程序成功执行完一个操作正常退出的时候会带有值EXIT_SUCCESS。
+在这里，EXIT_SUCCESS 是宏，它被定义为 0。
+如果程序中存在一种错误情况，当您退出程序时，
+会带有状态值EXIT_FAILURE，被定义为 -1。
+exit(EXIT_FAILURE);
+exit(EXIT_SUCCESS);
+
+C 强制类型转换
+int sum = 17, count = 5;
+double mean;
+mean = (double) sum / count;
+printf("Value of mean : %f\n", mean );
+输出如下:
+Value of mean : 3.400000
+
+整数提升
+int  i = 17;
+char c = 'c'; /* ascii 值是 99 */
+int sum;
+sum = i + c;
+printf("Value of sum : %d\n", sum );
+输出如下:
+Value of sum : 116
+在执行实际加法运算时，把 'c' 的值转换为对应的 ascii 值。
+
+int ---> unsigned int ---> long ---> unsigned long --->
+long long ---> unsigned long long --->
+float ---> double ---> long double
+
+函数指针
+函数指针变量的声明：
+// 声明一个指向同样参数、返回值的函数指针类型
+typedef int (*fun_ptr)(int,int);
+int max(int x, int y)
+{
+    return x > y ? x : y;
+}
+/* p 是函数指针 */
+int (* p)(int, int) = & max; // &可以省略
+int a, b, c, d;
+printf("请输入三个数字:");
+scanf("%d %d %d", & a, & b, & c);
+/* 与直接调用函数等价，d = max(max(a, b), c) */
+d = p(p(a, b), c);
+printf("最大的数字是: %d\n", d);
+
+回调函数
+// 回调函数
+void populate_array(int *array,
+                    size_t arraySize,
+                    int (*getNextValue)(void))
+{
+    for (size_t i=0; i<arraySize; i++)
+        array[i] = getNextValue();
+}
+// 获取随机值
+int getNextRandomValue(void)
+{
+    return rand();
+}
+int myarray[10];
+populate_array(myarray, 10, getNextRandomValue);
+for(int i = 0; i < 10; i++) {
+    printf("%d ", myarray[i]);
+}
+输出如下:
+16807 282475249 1622650073 984943658 1144108930
+470211272 101027544 1457850878 1458777923 2007237709
+
 ///////////////////////////面向对象///////////////////////////
 
 虚函数的作用:
@@ -1719,73 +1820,110 @@ size_t 无符号整数类型,它是sizeof关键字的结果.
 NULL 一个空指针常量的值
 库函数
 void *memchr(const void *str, int c, size_t n);
-在参数str所指向的字符串的前n个字节中搜索第一次出现字符c(一个无符号字符)的位置.
-
+在参数str所指向的字符串的前n个字节中搜索
+第一次出现字符c(一个无符号字符)的位置.
 int memcmp(const void *str1, const void *str2, size_t n);
 把 str1 和 str2 的前 n 个字节进行比较。
-
 void *memcpy(void *dest, const void *src, size_t n);
 从 src 复制 n 个字符到 dest。
-
 void *memmove(void *dest, const void *src, size_t n);
-另一个用于从 str2 复制 n 个字符到 str1 的函数。
-
+另一个用于从str2复制n个字符到str1的函数。
+从str2复制n个字符到str1，但是在重叠内存块这方面，
+memmove()是比memcpy()更安全的方法。
+如果目标区域和源区域有重叠的话，
+memmove()能够保证源串在被覆盖之前将
+重叠区域的字节拷贝到目标区域中，
+复制后源区域的内容会被更改。
+如果目标区域与源区域没有重叠，则和 memcpy() 函数功能相同。
 void *memset(void *str, int c, size_t n);
-复制字符 c（一个无符号字符）到参数 str 所指向的字符串的前 n 个字符。
-
+复制字符 c（一个无符号字符）到参数str
+所指向的字符串的前 n 个字符。
 char *strcat(char *dest, const char *src);
-把 src 所指向的字符串追加到 dest 所指向的字符串的结尾。
-
+把src所指向的字符串追加到dest所指向的字符串的结尾。
 char *strncat(char *dest, const char *src, size_t n);
-把 src 所指向的字符串追加到 dest 所指向的字符串的结尾，直到 n 字符长度为止。
-
+把src所指向的字符串追加到dest所指向
+的字符串的结尾，直到 n 字符长度为止。
 char *strchr(const char *str, int c);
-在参数 str 所指向的字符串中搜索第一次出现字符 c（一个无符号字符）的位置.
-
+在参数 str 所指向的字符串中搜索第一次
+出现字符c（一个无符号字符）的位置.
 int strcmp(const char *str1, const char *str2);
-把 str1 所指向的字符串和 str2 所指向的字符串进行比较.
-
+把str1所指向的字符串和str2所指向的字符串进行比较.
 int strncmp(const char *str1, const char *str2, size_t n);
-把 str1 和 str2 进行比较，最多比较前 n 个字节.
-
+把str1和str2进行比较，最多比较前n个字节.
 int strcoll(const char *str1, const char *str2);
-把 str1 和 str2 进行比较，结果取决于 LC_COLLATE 的位置设置.
-
+把str1和str2进行比较，结果取决于LC_COLLATE的位置设置.
 char *strcpy(char *dest, const char *src);
-把 src 所指向的字符串复制到 dest.
-
+把src所指向的字符串复制到dest.
 char *strncpy(char *dest, const char *src, size_t n);
-把 src 所指向的字符串复制到 dest，最多复制 n 个字符.
-
+把src所指向的字符串复制到dest，最多复制n个字符.
 size_t strcspn(const char *str1, const char *str2);
-检索字符串 str1 开头连续有几个字符都不含字符串 str2 中的字符.
-
+检索字符串str1开头连续有几个字符
+都不含字符串 str2 中的字符.
 char *strerror(int errnum);
-从内部数组中搜索错误号 errnum，并返回一个指向错误消息字符串的指针.
-
+从内部数组中搜索错误号 errnum，
+并返回一个指向错误消息字符串的指针.
 size_t strlen(const char *str);
 计算字符串 str 的长度，直到空结束字符，但不包括空结束字符.
-
 char *strpbrk(const char *str1, const char *str2);
-检索字符串 str1 中第一个匹配字符串 str2 中字符的字符，不包含空结束字符.也就是说，依次检验字符串 str1 中的字符，当被检验字符在字符串 str2 中也包含时，则停止检验，并返回该字符位置.
-
+检索字符串str1中第一个匹配字符串str2中字符的字符，
+不包含空结束字符.也就是说，依次检验字符串str1中的字符，
+当被检验字符在字符串str2中也包含时，则停止检验，并返回该字符位置.
 char *strrchr(const char *str, int c);
-在参数 str 所指向的字符串中搜索最后一次出现字符 c（一个无符号字符）的位置.
-
+在参数 str 所指向的字符串中搜索最后一次
+出现字符 c（一个无符号字符）的位置.
 size_t strspn(const char *str1, const char *str2);
 检索字符串 str1 中第一个不在字符串 str2 中出现的字符下标.
-
 char *strstr(const char *haystack, const char *needle);
 在字符串 haystack 中查找第一次出现字符串 needle（不包含空结束字符）的位置.
-
 char *strtok(char *str, const char *delim);
 分解字符串 str 为一组字符串，delim 为分隔符.
-
 size_t strxfrm(char *dest, const char *src, size_t n);
 根据程序当前的区域选项中的 LC_COLLATE 来转换字符串 src 的前 n 个字符，并把它们放置在字符串 dest 中.
 
+上面各个函数的举例说明:
+const char str[] = "http://www.runoob.com";
+const char ch = ':';
+char *ret;
+ret = (char *) memchr(str, ch, strlen(str));
+if (ret) {
+    printf("|%c|之后的字符串是-|%s|\n", ch, ret + 1);
+} else {
+    printf("返回为NULL\n");
+}
+输出:
+|:|之后的字符串是-|//www.runoob.com|
 
+char str1[15];
+char str2[15];
+int ret;
+memcpy(str1, "abcdef", 6);
+memcpy(str2, "ABCDEF", 6);
+ret = memcmp(str1, str2, 5);
+if (ret > 0) {
+    printf("str1大于str2\n");
+} else if (ret < 0) {
+    printf("str1小于str2\n");
+} else {
+    printf("str1等于str2\n");
+}
+输出:
+str1大于str2
 
+const char src[50] = "http://www.runoob.com";
+char dest[50];
+memcpy(dest, src, strlen(src) + 1);
+printf("dest = %s\n", dest);
+输出:
+dest = http://www.runoob.com
+
+const char src[] = "newstringing";
+char dest[] = "oldstring";
+printf("Before memmove dest = %s, src = %s\n", dest, src);
+memmove(dest, src, strlen(src));
+printf("After  memmove dest = %s, src = %s\n", dest, src);
+输出:
+Before memmove dest = oldstring, src = newstringing
+After  memmove dest = newstringing, src = newstringing
 
 
 
