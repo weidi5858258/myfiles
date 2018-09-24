@@ -251,66 +251,147 @@ int strcmp(const char *str1, const char *str2);
 	如果返回值 > 0，则表示 str2 小于 str1。
 	如果返回值 = 0，则表示 str1 等于 str2。
 */
+char str1[15];
+char str2[15];
+int ret;
+strcpy(str1, "abcdef");
+strcpy(str2, "ABCDEF");
+ret = strcmp(str1, str2);
+if (ret > 0) {
+    printf("str1 大于 str2\n");
+} else if (ret < 0) {
+    printf("str1 小于 str2\n");
+} else {
+    printf("str1 等于 str2\n");
+}
 /***
 输出:
+str1 大于 str2
 */
 
 /***
 int strncmp(const char *str1, const char *str2, size_t n);
 把str1和str2进行比较，最多比较前n个字节.
 */
+char str1[15];
+char str2[15];
+int ret;
+strcpy(str1, "abcdef");
+strcpy(str2, "ABCDEF");
+ret = strncmp(str1, str2, 4);
+if (ret > 0) {
+    printf("str1 大于 str2\n");
+} else if (ret < 0) {
+    printf("str1 小于 str2\n");
+} else {
+    printf("str1 等于 str2\n");
+}
 /***
 输出:
+str1 大于 str2
 */
 
 /***
 int strcoll(const char *str1, const char *str2);
 把str1和str2进行比较，结果取决于LC_COLLATE的位置设置.
+该函数返回值如下：
+	如果返回值 < 0，则表示 str1 小于 str2。
+	如果返回值 > 0，则表示 str2 小于 str1。
+	如果返回值 = 0，则表示 str1 等于 str2。
 */
+char str1[15];
+char str2[15];
+int ret;
+strcpy(str1, "abc");
+strcpy(str2, "ABC");
+ret = strcoll(str1, str2);
+if (ret > 0) {
+    printf("str1 大于 str2\n");
+} else if (ret < 0) {
+    printf("str1 小于 str2\n");
+} else {
+    printf("str1 等于 str2\n");
+}
 /***
 输出:
+str1 大于 str2
 */
 
 /***
 char *strcpy(char *dest, const char *src);
 把src所指向的字符串复制到dest.
+该函数返回一个指向最终的目标字符串 dest 的指针。
 */
+char src[40];
+char dest[100];
+memset(dest, '\0', sizeof(dest));
+strcpy(src, "This is runoob.com");
+strcpy(dest, src);
+printf("最终的目标字符串: %s\n", dest);
 /***
 输出:
+最终的目标字符串: This is runoob.com
 */
 
 /***
 char *strncpy(char *dest, const char *src, size_t n);
 把src所指向的字符串复制到dest，最多复制n个字符.
 */
+char src[40];
+char dest[100];
+memset(dest, '\0', sizeof(dest));
+strcpy(src, "This is runoob.com");
+strncpy(dest, src, 10);
+printf("最终的目标字符串: %s\n", dest);
 /***
 输出:
+最终的目标字符串: This is ru
 */
 
 /***
 size_t strcspn(const char *str1, const char *str2);
 检索字符串str1开头连续有几个字符
 都不含字符串 str2 中的字符.
+该函数返回 str1 开头连续都不含字符串 str2 中字符的字符数。
 */
+const char str1[] = "ABCDEF4960910";
+const char str2[] = "013";
+int len;
+len = strcspn(str1, str2);
+printf("第一个匹配的字符是在第 %d 个位置\n", len + 1);
 /***
 输出:
+第一个匹配的字符是在第 10 个位置
 */
 
 /***
 char *strerror(int errnum);
 从内部数组中搜索错误号 errnum，
 并返回一个指向错误消息字符串的指针.
+该函数返回一个指向错误字符串的指针，该错误字符串描述了错误 errnum。
 */
+FILE *fp = NULL;
+fp = fopen("file.txt", "r");
+if (!fp) {
+    printf("Error: %s\n", strerror(errno));
+}
 /***
 输出:
+Error: No such file or directory
 */
 
 /***
 size_t strlen(const char *str);
 计算字符串 str 的长度，直到空结束字符，但不包括空结束字符.
 */
+char str[50];
+int len;
+strcpy(str, "This is runoob.com");
+len = strlen(str);
+printf("|%s| 的长度是 |%d|\n", str, len);
 /***
 输出:
+|This is runoob.com| 的长度是 |18|
 */
 
 /***
@@ -318,134 +399,385 @@ char *strpbrk(const char *str1, const char *str2);
 检索字符串str1中第一个匹配字符串str2中字符的字符，
 不包含空结束字符.也就是说，依次检验字符串str1中的字符，
 当被检验字符在字符串str2中也包含时，则停止检验，并返回该字符位置.
+该函数返回 str1 中第一个匹配字符串 str2 中字符的字符数，如果未找到字符则返回 NULL。
 */
+const char str1[] = "abcde2fghi3jk4l";
+const char str2[] = "34";
+char *ret = NULL;
+ret = strpbrk(str1, str2);
+if (ret) {
+    printf("第一个匹配的字符是: %c\n", *ret);
+} else {
+    printf("未找到字符");
+}
 /***
 输出:
+第一个匹配的字符是: 3
 */
 
 /***
 char *strrchr(const char *str, int c);
 在参数 str 所指向的字符串中搜索最后一次
-出现字符 c（一个无符号字符）的位置.
+出现字符 c（一个无符号字符,以 int 形式传递，但是最终会转换回 char 形式。）的位置.
+该函数返回 str 中最后一次出现字符 c 的位置。如果未找到该值，则函数返回一个空指针。
 */
+const char str[] = "http://www.w3cschool.cc";
+const char ch = '.';
+char *ret = NULL;
+ret = strrchr(str, ch);
+printf("|%c| 之后的字符串是 - |%s|\n", ch, ret);
 /***
 输出:
+|.| 之后的字符串是 - |.cc|
 */
 
 /***
 size_t strspn(const char *str1, const char *str2);
 检索字符串 str1 中第一个不在字符串 str2 中出现的字符下标.
+该函数返回 str1 中第一个不在字符串 str2 中出现的字符下标。
 */
+const char str1[] = "ABCDEFG019874";
+const char str2[] = "ABCD";
+int len;
+len = strspn(str1, str2);
+printf("初始段匹配长度 %d\n", len);
 /***
 输出:
+初始段匹配长度 4
 */
 
 /***
 char *strstr(const char *haystack, const char *needle);
 在字符串 haystack 中查找第一次出现字符串 needle（不包含空结束字符）的位置.
+该函数返回在 haystack 中第一次出现 needle 字符串的位置，如果未找到则返回 null。
 */
+const char haystack[20] = "RUNOOB";
+const char needle[10] = "NOOB";
+char *ret = NULL;
+ret = strstr(haystack, needle);
+printf("子字符串是: %s\n", ret);
 /***
 输出:
+子字符串是: NOOB
 */
 
 /***
 char *strtok(char *str, const char *delim);
 分解字符串 str 为一组字符串，delim 为分隔符.
+该函数返回被分解的第一个子字符串，如果没有可检索的字符串，则返回一个空指针。
 */
+char str[80] = "This is - www.runoob.com - website";
+const char s[2] = "-";
+char *token = NULL;
+token = strtok(str, s);
+while (token != NULL) {
+    printf("%s\n", token);
+    token = strtok(NULL, s);
+}
 /***
 输出:
+This is
+ www.runoob.com(前面有空格的)
+ website
 */
 
 /***
 size_t strxfrm(char *dest, const char *src, size_t n);
 根据程序当前的区域选项中的 LC_COLLATE 来转换字符串 src 的前 n 个字符，
 并把它们放置在字符串 dest 中.
+该函数返回被转换字符串的长度，不包括空结束字符。
+*/
+char src[20];
+char dest[20];
+int len;
+strcpy(src, "W3C School");
+len = strxfrm(dest, src, 20);
+printf("字符串 |%s| 的长度是: |%d|\n", dest, len);
+/***
+输出:
+字符串 |W3C School| 的长度是: |10|
+*/
+
+int fclose(FILE *stream)
+关闭流 stream。刷新所有的缓冲区。
+/***
 */
 /***
 输出:
 */
-
-
-int fclose(FILE *stream)
-关闭流 stream。刷新所有的缓冲区。
 void clearerr(FILE *stream)
 清除给定流 stream 的文件结束和错误标识符。
+/***
+*/
+/***
+输出:
+*/
 int feof(FILE *stream)
 测试给定流 stream 的文件结束标识符。
+/***
+*/
+/***
+输出:
+*/
 int ferror(FILE *stream)
 测试给定流 stream 的错误标识符。
+/***
+*/
+/***
+输出:
+*/
 int fflush(FILE *stream)
 刷新流 stream 的输出缓冲区。
+/***
+*/
+/***
+输出:
+*/
 int fgetpos(FILE *stream, fpos_t *pos)
 获取流 stream 的当前文件位置，并把它写入到 pos。
+/***
+*/
+/***
+输出:
+*/
 FILE *fopen(const char *filename, const char *mode)
 使用给定的模式 mode 打开 filename 所指向的文件。
+/***
+*/
+/***
+输出:
+*/
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 从给定流 stream 读取数据到 ptr 所指向的数组中。
+/***
+*/
+/***
+输出:
+*/
 FILE *freopen(const char *filename, const char *mode, FILE *stream)
 把一个新的文件名 filename 与给定的打开的流 stream 关联，同时关闭流中的旧文件。
+/***
+*/
+/***
+输出:
+*/
 int fseek(FILE *stream, long int offset, int whence)
 设置流 stream 的文件位置为给定的偏移 offset，参数 offset 意味着从给定的 whence 位置查找的字节数。
+/***
+*/
+/***
+输出:
+*/
 int fsetpos(FILE *stream, const fpos_t *pos)
 设置给定流 stream 的文件位置为给定的位置。参数 pos 是由函数 fgetpos 给定的位置。
+/***
+*/
+/***
+输出:
+*/
 long int ftell(FILE *stream)
 返回给定流 stream 的当前文件位置。
+/***
+*/
+/***
+输出:
+*/
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 把 ptr 所指向的数组中的数据写入到给定流 stream 中。
+/***
+*/
+/***
+输出:
+*/
 int remove(const char *filename)
 删除给定的文件名 filename，以便它不再被访问。
+/***
+*/
+/***
+输出:
+*/
 int rename(const char *old_filename, const char *new_filename)
 把 old_filename 所指向的文件名改为 new_filename。
+/***
+*/
+/***
+输出:
+*/
 void rewind(FILE *stream)
 设置文件位置为给定流 stream 的文件的开头。
+/***
+*/
+/***
+输出:
+*/
 void setbuf(FILE *stream, char *buffer)
 定义流 stream 应如何缓冲。
+/***
+*/
+/***
+输出:
+*/
 int setvbuf(FILE *stream, char *buffer, int mode, size_t size)
 另一个定义流 stream 应如何缓冲的函数。
+/***
+*/
+/***
+输出:
+*/
 FILE *tmpfile(void)
 以二进制更新模式(wb+)创建临时文件。
+/***
+*/
+/***
+输出:
+*/
 char *tmpnam(char *str)
 生成并返回一个有效的临时文件名，该文件名之前是不存在的。
+/***
+*/
+/***
+输出:
+*/
 int fprintf(FILE *stream, const char *format, ...)
 发送格式化输出到流 stream 中。
+/***
+*/
+/***
+输出:
+*/
 int printf(const char *format, ...)
 发送格式化输出到标准输出 stdout。
+/***
+*/
+/***
+输出:
+*/
 int sprintf(char *str, const char *format, ...)
 发送格式化输出到字符串。
+/***
+*/
+/***
+输出:
+*/
 int vfprintf(FILE *stream, const char *format, va_list arg)
 使用参数列表发送格式化输出到流 stream 中。
+/***
+*/
+/***
+输出:
+*/
 int vprintf(const char *format, va_list arg)
 使用参数列表发送格式化输出到标准输出 stdout。
+/***
+*/
+/***
+输出:
+*/
 int vsprintf(char *str, const char *format, va_list arg)
 使用参数列表发送格式化输出到字符串。
+/***
+*/
+/***
+输出:
+*/
 int fscanf(FILE *stream, const char *format, ...)
 从流 stream 读取格式化输入。
+/***
+*/
+/***
+输出:
+*/
 int scanf(const char *format, ...)
 从标准输入 stdin 读取格式化输入。
+/***
+*/
+/***
+输出:
+*/
 int sscanf(const char *str, const char *format, ...)
 从字符串读取格式化输入。
+/***
+*/
+/***
+输出:
+*/
 int fgetc(FILE *stream)
 从指定的流 stream 获取下一个字符（一个无符号字符），并把位置标识符往前移动。
+/***
+*/
+/***
+输出:
+*/
 char *fgets(char *str, int n, FILE *stream)
 从指定的流 stream 读取一行，并把它存储在 str 所指向的字符串内。当读取 (n-1) 个字符时，或者读取到换行符时，或者到达文件末尾时，它会停止，具体视情况而定。
+/***
+*/
+/***
+输出:
+*/
 int fputc(int char, FILE *stream)
 把参数 char 指定的字符（一个无符号字符）写入到指定的流 stream 中，并把位置标识符往前移动。
+/***
+*/
+/***
+输出:
+*/
 int fputs(const char *str, FILE *stream)
 把字符串写入到指定的流 stream 中，但不包括空字符。
+/***
+*/
+/***
+输出:
+*/
 int getc(FILE *stream)
 从指定的流 stream 获取下一个字符（一个无符号字符），并把位置标识符往前移动。
+/***
+*/
+/***
+输出:
+*/
 int getchar(void)
 从标准输入 stdin 获取一个字符（一个无符号字符）。
+/***
+*/
+/***
+输出:
+*/
 char *gets(char *str)
 从标准输入 stdin 读取一行，并把它存储在 str 所指向的字符串中。当读取到换行符时，或者到达文件末尾时，它会停止，具体视情况而定。
+/***
+*/
+/***
+输出:
+*/
 int putc(int char, FILE *stream)
 把参数 char 指定的字符（一个无符号字符）写入到指定的流 stream 中，并把位置标识符往前移动。
+/***
+*/
+/***
+输出:
+*/
 int putchar(int char)
 把参数 char 指定的字符（一个无符号字符）写入到标准输出 stdout 中。
+/***
+*/
+/***
+输出:
+*/
 int puts(const char *str)
 把一个字符串写入到标准输出 stdout，直到空字符，但不包括空字符。换行符会被追加到输出中。
+/***
+*/
+/***
+输出:
+*/
 int ungetc(int char, FILE *stream)
 把字符 char（一个无符号字符）推入到指定的流 stream 中，以便它是下一个被读取到的字符。
+/***
+*/
+/***
+输出:
+*/
 void perror(const char *str)
 把一个描述性错误消息输出到标准错误 stderr。首先输出字符串 str，后跟一个冒号，然后是一个空格。
 

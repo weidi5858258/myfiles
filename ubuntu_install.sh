@@ -227,6 +227,7 @@ echo "Y" | sudo apt-get install tcl tk expect
 echo "Y" | sudo apt-get install phablet-tools
 echo "Y" | sudo apt-get install repo
 echo "Y" | sudo apt-get install alsa-utils
+echo "Y" | sudo apt-get install schedtool
 echo "Y" | sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  
 echo "Y" | sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20  
 echo "Y" | sudo update-alternatives --config gcc 

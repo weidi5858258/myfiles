@@ -47,9 +47,15 @@ public:
 };
 
 /***
- * @param argc å‚æ•°è‡³å°‘æœ‰ä¸€ä¸ª,å› ä¸ºç¬¬ä¸€ä¸ªå‚æ•°å°±æ˜¯æœ¬èº«çš„å¯æ‰§è¡Œæ–‡ä»¶
+ * @param argc ²ÎÊıÖÁÉÙÓĞÒ»¸ö,ÒòÎªµÚÒ»¸ö²ÎÊı¾ÍÊÇ±¾ÉíµÄ¿ÉÖ´ĞĞÎÄ¼ş
  * @param argv
  * @return
+Clion Êä³öÂÒÂëÎÊÌâ
+File -> Settings -> Default Settings -> Editor -> File Encodings:
+Global Encoding: UTF-8
+Project Encoding : UTF-8
+Default encoding for properties files: UTF-8
+È»ºó»¹ÓĞ¹Ø¼üÒ»²½Öè£ºÔÚ³Ì³ÌĞò×óÏÂ½ÇĞŞ¸Äutf-8ÎªGBK
  */
 int main(int argc, char *argv[]) {
     printf("\n");
@@ -60,7 +66,12 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-    
+    char src[20];
+    char dest[20];
+    int len;
+    strcpy(src, "W3C School");
+    len = strxfrm(dest, src, 20);
+    printf("×Ö·û´® |%s| µÄ³¤¶ÈÊÇ: |%d|\n", dest, len);
 
 
 
@@ -103,7 +114,7 @@ void testLink() {
 }
 
 /***
- å¤´æ’æ³•å»ºç«‹å•é“¾è¡¨
+ Í·²å·¨½¨Á¢µ¥Á´±í
  */
 struct stud *h_create() {
     struct stud *head = NULL, *p = NULL;
@@ -125,7 +136,7 @@ struct stud *h_create() {
 }
 
 /***
- å°¾æ’æ³•å»ºç«‹å•é“¾è¡¨
+ Î²²å·¨½¨Á¢µ¥Á´±í
  */
 struct stud *r_create() {
     struct stud *head = NULL, *rear = NULL, *p = NULL;

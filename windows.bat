@@ -20,7 +20,6 @@ setlocal disabledelayedexpansion
 
 ::当前目录
 set current_dir=%~dp0
-
 ::显示变量的值
 echo %current_dir%
 
@@ -45,10 +44,9 @@ rem set previous_language="
 rem set current_language="
 
 ::赋值都要使用set关键字
-set is_usb_exist=false
 set result=0
+set is_usb_exist=false
 set language_file_path=/data/autotest/capture_pkg/language_info.xml
-set language_file_path_temp=/data/autotest/capture_pkg/language_info.xml.bak
 ::给变量设置有空格的字符串
 set "no_such_file=No such file or directory"
 
