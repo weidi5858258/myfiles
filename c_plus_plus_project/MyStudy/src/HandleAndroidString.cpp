@@ -138,7 +138,7 @@ void HandleAndroidString::handleMerge(const string &srcFilePath,
         if (!nameStr.empty() && !contentStr.empty()) {
             if (nameAndContentMap.find(nameStr) != nameAndContentMap.end()) {
                 string valuesContentStr = nameAndContentMap[nameStr];
-                //内容已经翻译过了
+                //The content has been translated.
                 if (contentStr.compare(valuesContentStr) != 0) {
                     if (localDestFileNameContentMap.find(nameStr)
                         == localDestFileNameContentMap.end()) {
@@ -163,7 +163,7 @@ void HandleAndroidString::handleMerge(const string &srcFilePath,
     }
     file.close();
 
-    //把localDestFileContentVector内容写到文件中就行了
+    //put localDestFileContentVector's contents write to file
     FILE *destFile = fopen(destFilePath.c_str(), "w");
     for (auto destContent : localDestFileContentVector) {
         if (destContent.find("</resources>") == string::npos) {
@@ -188,6 +188,7 @@ void HandleAndroidString::handleCopy(const string &srcFilePath,
 
 void HandleAndroidString::handleOneCountry(const string &country) {
     cout << "handleOneCountry()" << endl;
+    //values-af
     //values-af-rZA
     cout << country << endl;
     string strFilePathSrc = srcDir + "/" + country + "/strings.xml";
@@ -195,22 +196,22 @@ void HandleAndroidString::handleOneCountry(const string &country) {
     int result = access(strFilePathDest.c_str(), F_OK);
     if (country.length() > 9) {
         if (result == -1) {
-            fprintf(stdout, "%s文件不存在\n", strFilePathDest.c_str());
+            fprintf(stdout, "%s file not exist\n", strFilePathDest.c_str());
             strFilePathDest =
                     destDir + "/" + country.substr(0, 9) + "/strings.xml";
             result = access(strFilePathDest.c_str(), F_OK);
             if (result == -1) {
-                fprintf(stdout, "%s文件不存在\n", strFilePathDest.c_str());
+                fprintf(stdout, "%s file not exist\n", strFilePathDest.c_str());
                 handleCopy(strFilePathSrc, strFilePathDest);
             } else {
                 fprintf(stdout,
-                        "return:%d %s文件存在\n",
+                        "return:%d %s file exist\n",
                         result, strFilePathDest.c_str());
                 handleMerge(strFilePathSrc, strFilePathDest);
             }
         } else {
             fprintf(stdout,
-                    "return:%d %s文件存在\n",
+                    "return:%d %s file exist\n",
                     result, strFilePathDest.c_str());
             handleMerge(strFilePathSrc, strFilePathDest);
             strFilePathDest =
@@ -266,6 +267,7 @@ void HandleAndroidString::handleMoreCountry(vector<string> &countryVector) {
         }
         preCountry = *iter;
     }
+
     if (isAllCountryContentSame) {
         cout << "contents are same" << endl;
         handleSameContent(countryVector);
@@ -367,9 +369,6 @@ void HandleAndroidString::getNameAndContent(
 void HandleAndroidString::handleMergeAddContent(vector<string> &localSrcFileContentVector,
                                                 vector<string> &localDestFileContentVector,
                                                 const string &alineString) {
-    //1.在src中先找到要add的那行的行号
-    //2.查看有没有注释.如果有,那么需要复制过去,如果没有,则不做.
-    //3.在src中先往上找邻居位置,这个邻居位置在dest中是否存在.
     std::vector<string>::iterator iter =
             std::find(std::begin(localSrcFileContentVector),
                       std::end(localSrcFileContentVector),

@@ -34,8 +34,6 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-//    HandleAndroidString handleAndroidString;
-//    handleAndroidString.doSomething("/root/temp_dir/merge_string");
 
     if (argc >= 2) {
         string TEMP_CACHE = argv[1];

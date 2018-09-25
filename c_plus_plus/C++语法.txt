@@ -1489,6 +1489,36 @@ C++ map注意事项
 3、算法
 4、仿函数
 
+map<string, string> nameAndContentMap;
+// 插入元素
+nameAndContentMap.insert(
+	map<string, string>::value_type("", ""));
+// map输出元素
+for (map<string, string>::iterator iter = nameAndContentMap.begin();
+	iter != nameAndContentMap.end();
+	++iter) {
+    // 键:iter->first 值:iter->second
+    cout << iter->first << " = " << iter->second << endl;
+}
+// vector输出元素
+for (vector<string>::iterator it = localDestFileContentVector.begin();
+	it != localDestFileContentVector.end(); 
+	++it) {
+	cout << *it << "\t";
+}
+vector<string> localDestFileContentVector;
+localSrcFileContentVector.push_back("");
+for (auto destContent : localDestFileContentVector) {
+    if (destContent.find("</resources>") == string::npos) {
+        fputs((destContent + "\n").c_str(), destFile);
+    } else {
+        fputs((destContent).c_str(), destFile);
+    }
+}
+
+
+
+
 ///////////////////////////FILE///////////////////////////
 
 C++方式:
