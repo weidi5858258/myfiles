@@ -4,12 +4,14 @@ project(MyStudy)
 set(CMAKE_CXX_STANDARD 14)
 add_definitions(-std=c++11)
 
-add_executable(
+add_executable(MyStudy
         main.cpp
+
         include/Test.h
         include/MyHead.h
         include/Method.h
         include/GuessNumber.h
+        include/HandleAndroidString.h
 
         src/B0.cpp
         src/Test.cpp
@@ -18,7 +20,8 @@ add_executable(
         src/Method.cpp
         src/function_study.cpp
         src/GuessNumber.cpp
-        src/HandleAndroidString.cpp include/HandleAndroidString.h)
+        src/HandleAndroidString.cpp
+        )
 
 if (WIN32)
 
@@ -65,8 +68,8 @@ if (WIN32)
             -L${SDL2_LIB_PATH} -lSDL2
             -L${SDL2_LIB_PATH} -lSDL2main
             -lz -lm -lpthread
-#            -L${GLUTDLLS37BETA_LIB_PATH} -lglut32
-#            -L"C:/MinGW/lib" -lmingw32
+            #            -L${GLUTDLLS37BETA_LIB_PATH} -lglut32
+            #            -L"C:/MinGW/lib" -lmingw32
     )
 
 else ()
@@ -94,10 +97,10 @@ else ()
             -L${FFMPEG_LIB_PATH} -lavutil
             -L${FFMPEG_LIB_PATH} -lswresample
             -L${FFMPEG_LIB_PATH} -lswscale
-#            -L${FFMPEG_LIB_PATH} -lpostproc
+            #            -L${FFMPEG_LIB_PATH} -lpostproc
             -L${SDL2_LIB_PATH} -lSDL2
             -L${SDL2_LIB_PATH} -lSDL2main
-#            -lmp3lame
+            #            -lmp3lame
             -lx264
             #-lx265
             #opengl
@@ -116,7 +119,7 @@ else ()
             -lfdk-aac
             -lcrypto
             -lssl
-#            -lvpx
+            #            -lvpx
     )
 
 endif ()

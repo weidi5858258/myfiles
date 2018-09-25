@@ -21,7 +21,6 @@ function digui() {
 				# echo "It's not directory." 
 				if [[ ! ${tempDir} =~ "cmake-build-debug" ]] \
 				    && [[ ${tempDir} =~ ".c" || ${tempDir} =~ ".cc" || ${tempDir} =~ ".cpp" ]]; then
-
 					if [[ ${tempDir} =~ ${currentDir} ]]; then
 						tempDir=${tempDir#*${currentDir}}
 						codeFile=${tempDir#*/}
@@ -48,7 +47,6 @@ digui ${currentDir}
 #ln -s libpostproc-ffmpeg.so.53.3.100 libpostproc.so
 # echo ${codeFiles}
 
-
 #-I"/mnt/d/mydev/ffmpeg/include"
 
 g++ \
@@ -61,9 +59,20 @@ ${codeFiles} \
 #-lpostproc \
 if [[ -e ${currentDir}"/"run_me ]]; then
 	# run
-	./run_me "/root/temp_dir/merge_string"
+	./run_me
 fi
 ###############################################
+
+
+
+
+
+
+
+
+
+
+
 
 # 下面的代码是编译出一个可以在android手机上运行的可执行文件run_me
 # "adb push"到手机上后使用"./run_me"命令就可以行动了

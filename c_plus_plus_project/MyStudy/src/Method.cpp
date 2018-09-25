@@ -4,8 +4,7 @@
 
 #ifdef WIN32
 #include "Method.h"
-#endif
-#ifdef linux
+#else
 #include "../include/Method.h"
 #endif
 

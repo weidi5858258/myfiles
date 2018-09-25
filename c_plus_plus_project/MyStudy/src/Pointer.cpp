@@ -4,8 +4,7 @@
 
 #ifdef WIN32
 #include "MyHead.h"
-#endif
-#ifdef linux
+#else
 #include "../include/MyHead.h"
 #endif
 

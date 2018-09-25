@@ -3,8 +3,7 @@
 
 #include "HandleAndroidString.h"
 
-#endif
-#ifdef linux
+#else
 
 #include "../include/HandleAndroidString.h"
 

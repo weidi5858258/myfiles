@@ -4,13 +4,12 @@
 
 #ifdef WIN32
 
-#include "MyHead.h"
 #include "Test.h"
 
-#endif
-#ifdef linux
-#include "../include/MyHead.h"
+#else
+
 #include "../include/Test.h"
+
 #endif
 
 Test::Test() {

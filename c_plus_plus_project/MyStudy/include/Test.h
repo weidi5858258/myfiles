@@ -5,6 +5,7 @@
 #ifndef MYSTUDY_TEST_H
 #define MYSTUDY_TEST_H
 
+#include "MyHead.h"
 
 class Test {
 public:

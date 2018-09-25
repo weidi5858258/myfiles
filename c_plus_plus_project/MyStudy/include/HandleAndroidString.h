@@ -1,7 +1,20 @@
 #ifndef MYSTUDY_HANDLEANDROIDSTRING_H
 #define MYSTUDY_HANDLEANDROIDSTRING_H
 
-#include "MyHead.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <string.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <algorithm>
+#include <iterator>
+#include <vector>
+#include <map>
+
+using namespace std;
 
 class HandleAndroidString {
 public:
