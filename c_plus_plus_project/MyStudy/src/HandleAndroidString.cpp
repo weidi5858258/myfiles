@@ -54,20 +54,19 @@ void HandleAndroidString::recurseDir(const char *curDir) {
             continue;
         }
 
-//        cout << "正在处理: " << tempDir << endl;
+//        cout << "It's handling: " << tempDir << endl;
         if (tempDir.length() == 13) {
             tempDir = tempDir.substr(0, 9);
         }
-        //不包含
         if (countryMap.find(tempDir) == countryMap.end()) {
-//            cout << "不包含: " << fileName->d_name << endl;
+//            cout << "Do not contain: " << fileName->d_name << endl;
             vector<string> countryVector;
             countryVector.push_back(fileName->d_name);
             countryMap.insert(
                     map<string, vector<string>>::value_type(
                             tempDir, countryVector));
         } else {
-//            cout << "包含: " << fileName->d_name << endl;
+//            cout << "Contain: " << fileName->d_name << endl;
             map<string, vector<string>>::iterator iter;
             for (iter = countryMap.begin(); iter != countryMap.end(); ++iter) {
                 if (tempDir.compare(iter->first) == 0) {
