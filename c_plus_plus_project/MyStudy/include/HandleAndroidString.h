@@ -1,20 +1,11 @@
-//
-// Created by root on 18-9-3.
-//
-
 #ifndef MYSTUDY_HANDLEANDROIDSTRING_H
 #define MYSTUDY_HANDLEANDROIDSTRING_H
 
 #include "MyHead.h"
 
-//#define CUR_DIR "/media/root/Weidi/Users/weidi5858258/Documents/temp_dir"
-#define CUR_DIR "/root/temp_dir/merge_string"
-//#define CUR_DIR "C:\\Users\\weidi5858258\\Documents\\temp_dir"
-//#define CUR_DIR "/mnt/c/Users/weidi5858258/Documents/temp_dir"
-
 class HandleAndroidString {
 public:
-    void doSomething();
+    void doSomething(string TEMP_CACHE);
 
 private:
     void init();
@@ -51,15 +42,11 @@ private:
                                   const string &);
 
 private:
+    string TEMP_CACHE;
     string srcDir;
     string destDir;
-    string cacheDir;
-    string srcStringFilePath;
-    string destStringFilePath;
     map<string, string> nameAndContentMap;
     map<string, vector<string>> countryMap;
-
-
 };
 
 

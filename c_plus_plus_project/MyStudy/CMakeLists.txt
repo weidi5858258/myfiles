@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 14)
 add_definitions(-std=c++11)
 
 add_executable(
-        MyStudy
         main.cpp
         include/Test.h
         include/MyHead.h

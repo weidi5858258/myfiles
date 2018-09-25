@@ -66,25 +66,15 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-    char src[20];
-    char dest[20];
-    int len;
-    strcpy(src, "W3C School");
-    len = strxfrm(dest, src, 20);
-    printf("字符串 |%s| 的长度是: |%d|\n", dest, len);
+    HandleAndroidString handleAndroidString;
+    handleAndroidString.doSomething("/root/temp_dir/merge_string");
 
-
-
-
-
-
-
-
-
-
-
-//    HandleAndroidString handleAndroidString;
-//    handleAndroidString.doSomething();
+    if (argc >= 2) {
+        string TEMP_CACHE = argv[1];
+        HandleAndroidString handleAndroidString;
+//        handleAndroidString.doSomething(TEMP_CACHE);
+            handleAndroidString.doSomething("/root/temp_dir/merge_string");
+    }
 
     printf("------------------------------------------\n");
     printf("\n");

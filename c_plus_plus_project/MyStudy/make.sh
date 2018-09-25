@@ -48,10 +48,6 @@ digui ${currentDir}
 #ln -s libpostproc-ffmpeg.so.53.3.100 libpostproc.so
 # echo ${codeFiles}
 
-ffmpegIncludePath="/root/mydev/tools/ffmpeg/include"
-lameIncludePath="/usr/local/include/lame"
-ffmpegLibPath="/root/mydev/tools/ffmpeg/lib"
-sdlLibPath="/usr/include/SDL2"
 
 #-I"/mnt/d/mydev/ffmpeg/include"
 
@@ -59,41 +55,13 @@ g++ \
 -x c++ \
 -o run_me \
 -g -Wall -std=c++11 \
--I${ffmpegIncludePath} \
--I${lameIncludePath} \
 ${codeFiles} \
--L${sdlLibPath}    -lSDL2 \
--L${sdlLibPath}    -lSDL2main \
--L${ffmpegLibPath} -lavformat \
--L${ffmpegLibPath} -lavdevice \
--L${ffmpegLibPath} -lavcodec \
--L${ffmpegLibPath} -lavutil \
--L${ffmpegLibPath} -lavfilter \
--L${ffmpegLibPath} -lswscale \
--L${ffmpegLibPath} -lswresample \
--L${ffmpegLibPath} -lpostproc \
--lmp3lame \
--lx264 \
--llzma \
--lasound \
--lsndio \
--lXext \
--lX11 \
--lxcb \
--lsqlite3 \
 -lz -lrt -lm -lpthread \
--ldl \
--lglut -lGL -lGLU \
--lasound \
--lfdk-aac \
--lcrypto \
--lssl \
--lvpx \
 
 #-lpostproc \
 if [[ -e ${currentDir}"/"run_me ]]; then
 	# run
-	./run_me
+	./run_me "/root/temp_dir/merge_string"
 fi
 ###############################################
 
