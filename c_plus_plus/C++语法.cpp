@@ -1342,6 +1342,19 @@ time_ *day_ = &sum(one, two);
 
 ///////////////////////////STL///////////////////////////
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <string.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <algorithm>
+#include <iterator>
+#include <vector>
+#include <map>
+
 vector<typename T> c;
 c.at(index);
 c.front();
@@ -1365,9 +1378,10 @@ location_index = find_if(c.begin(), c.end(), bind2nd(greater<int>(), 5));
 
 STL的组成构件
 STL的组件中最主要的是容器、迭代器、算法和仿函数。
-容器:用来管理某类对象的集合
-迭代器:用来在一个对象群集的元素上进行遍历动作
-算法:用来处理群集内的元素
+容器(container):用来管理某类对象的集合
+迭代器(iterator):用来在一个对象群集的元素上进行遍历动作
+函数对象(function object)
+算法(algorithms):用来处理群集内的元素
 
 标准模板库：
 1.容器：
@@ -1489,6 +1503,7 @@ C++ map注意事项
 3、算法
 4、仿函数
 
+下面是具体使用部分:
 map<string, string> nameAndContentMap;
 // 插入元素
 nameAndContentMap.insert(
@@ -1501,13 +1516,20 @@ for (map<string, string>::iterator iter = nameAndContentMap.begin();
     cout << iter->first << " = " << iter->second << endl;
 }
 // vector输出元素
+vector<string> localDestFileContentVector;
+localDestFileContentVector.push_back("");
+size_t size = localDestFileContentVector.size();
+// 第一种方式:
+for (int i = 0; i < size; i++) {
+    cout << localDestFileContentVector[i] << endl;
+}
+// 第二种方式:
 for (vector<string>::iterator it = localDestFileContentVector.begin();
 	it != localDestFileContentVector.end(); 
 	++it) {
 	cout << *it << "\t";
 }
-vector<string> localDestFileContentVector;
-localSrcFileContentVector.push_back("");
+// 第三种方式:
 for (auto destContent : localDestFileContentVector) {
     if (destContent.find("</resources>") == string::npos) {
         fputs((destContent + "\n").c_str(), destFile);
@@ -1515,6 +1537,30 @@ for (auto destContent : localDestFileContentVector) {
         fputs((destContent).c_str(), destFile);
     }
 }
+
+vector<string> testVector;
+testVector.push_back("test1");
+testVector.push_back("test2");
+testVector.push_back("test3");
+testVector.push_back("test4");
+testVector.push_back("test3");
+for (auto tempStr : testVector) {
+    cout << tempStr << endl;
+}
+//根据元素查找索引
+std::vector<string>::iterator iter = 
+	std::find(std::begin(testVector),
+	           std::end(testVector),
+	           "test4");
+auto index = std::distance(std::begin(testVector), iter);
+cout << "index: " << index << endl;
+//根据索引修改元素
+testVector[index] = "test10";
+//根据索引删除元素
+testVector.erase(testVector.begin() + index);
+//根据索引插入元素(索引值不要超过vector的元素个数)
+//原来index的位置的元素往后移动
+testVector.insert(testVector.begin() + index, "test8");
 
 
 
@@ -1818,7 +1864,12 @@ tellp();
     明确调用函数sync(): 调用成员函数sync() (无参数)可以引发立即同步。
     这个函数返回一个int 值，等于-1 表示流没有联系的缓存或操作失败。
 
-
+fstream file("/values/strings.xml");
+string alineString;
+while (getline(file, alineString)) {
+    cout << alineString << endl;
+}
+file.close();
 
 
 

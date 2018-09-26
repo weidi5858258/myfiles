@@ -5,7 +5,7 @@
 
 #else
 
-#include "../include/HandleAndroidString.h"
+#include "HandleAndroidString.h"
 
 #endif
 
@@ -508,9 +508,9 @@ void HandleAndroidString::handleMergeModifyContent(vector<string> &localDestFile
                               tempContent);
             auto index = std::distance(
                     std::begin(localDestFileContentVector), iter);
-            cout << "index: " << index << endl;
-            localDestFileContentVector[index] = alineString;
+//            cout << "index: " << index << endl;
 //            cout << localDestFileContentVector[index] << endl;
+            localDestFileContentVector[index] = alineString;
             return;
         }
     }

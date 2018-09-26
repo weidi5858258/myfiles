@@ -5,47 +5,6 @@
 #ifndef MYSTUDY_MYHEAD_H
 #define MYSTUDY_MYHEAD_H
 
-extern "C" {// 不能少
-    #include <libavcodec/avcodec.h>
-    // 摄像头所用
-    #include <libavdevice/avdevice.h>
-    #include <libavformat/avformat.h>
-    #include <libavformat/avio.h>
-    #include "libswresample/swresample.h"
-    // libswscale是一个主要用于处理图片像素数据的类库.可以完成图片像素格式的转换,图片的拉伸等工作.
-    #include <libswscale/swscale.h>
-    #include <libavfilter/avfilter.h>
-    #include <libavfilter/buffersink.h>
-    #include <libavfilter/buffersrc.h>
-    #include <libavutil/channel_layout.h>
-    #include <libavutil/mathematics.h>
-    #include <libavutil/samplefmt.h>
-    // 这里是做分片时候重采样编码音频用的
-    #include <libavutil/audio_fifo.h>
-    #include <libavutil/imgutils.h>
-    #include <libavutil/avutil.h>
-    #include <libavutil/avassert.h>
-    #include <libavutil/avstring.h>
-    #include <libavutil/frame.h>
-    #include <libavutil/hwcontext.h>
-    #include <libavutil/parseutils.h>
-    #include <libavutil/pixdesc.h>
-    #include <libavutil/pixfmt.h>
-    #include <libavutil/fifo.h>
-    #include <libavutil/log.h>
-    #include <libavutil/opt.h>
-    #include <libavutil/mem.h>
-    #include <libavutil/error.h>
-    #include <libavutil/time.h>
-
-//    #include <jconfig.h>
-//    #include <jerror.h>
-//    #include <jmorecfg.h>
-//    #include <jpeglib.h>
-//    #include <turbojpeg.h>
-
-};
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -63,7 +22,6 @@ extern "C" {// 不能少
 #include <math.h>
 #include <dirent.h>
 #include <algorithm>
-#include <functional>
 #include <unordered_map>
 #include <unordered_set>
 #include <pthread.h>
@@ -74,11 +32,15 @@ extern "C" {// 不能少
 #include <sys/stat.h>
 #include <sys/types.h>
 ////////////////////////////////STL////////////////////////////////
+//迭代器
 #include <iterator>
+//函数对象
+#include <functional>
 //顺序容器
 #include <vector>
 #include <deque>
 #include <list>
+#include <stack>
 //关联容器
 #include <set>
 #include <map>
@@ -87,41 +49,24 @@ extern "C" {// 不能少
 #include <queue>
 
 #ifdef WIN32
-    #include <glut.h>
-    #include <io.h>
+
+#include <glut.h>
+#include <io.h>
+
 #else
-    #include <sys/mman.h>
-    #include <sys/socket.h>
-    #include <sys/epoll.h>
-    #include <netinet/in.h>
-    #include <arpa/inet.h>
-    //undefined reference to `WinMain@16'
-    #include <SDL2/SDL.h>
-//    #include <lame.h>
-    #include <cstddef>
-    //录音
-    #include <alsa/asoundlib.h>
-    #include <sys/mount.h>
-    #include <GL/glut.h>
+
+#include <sys/mman.h>
+#include <sys/socket.h>
+#include <sys/epoll.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <cstddef>
+//录音
+#include <alsa/asoundlib.h>
+#include <sys/mount.h>
+#include <GL/glut.h>
+
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #define PI 3.14159265
@@ -133,4 +78,8 @@ using namespace std;
 #ifdef WIN32
 #endif
 #ifdef linux
+#endif
+
+#ifdef WIN32
+#else
 #endif

@@ -10,7 +10,7 @@
 #include "./include/MyHead.h"
 #include "./include/Test.h"
 #include "./include/Method.h"
-#include "./include/HandleAndroidString.h"
+#include "HandleAndroidString.h"
 
 #endif
 
@@ -34,15 +34,28 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-
-    if (argc >= 2) {
-        string TEMP_CACHE = argv[1];
-        HandleAndroidString handleAndroidString;
-//        handleAndroidString.doSomething(TEMP_CACHE);
-        handleAndroidString.doSomething("/root/temp_dir/merge_string");
+    FILE *fp = nullptr;
+    char c;
+    fp = fopen("file.txt", "w");
+    c = fgetc(fp);
+    if (ferror(fp)) {
+        printf("1读取文件: file.txt时发生错误\n");
     }
+    clearerr(fp);
+    if (ferror(fp)) {
+        printf("2读取文件: file.txt时发生错误\n");
+    }
+    fclose(fp);
+
 
     printf("------------------------------------------\n");
     printf("\n");
     return 0;
 }
+/***
+
+
+
+
+
+*/

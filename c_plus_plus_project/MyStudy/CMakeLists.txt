@@ -11,7 +11,7 @@ add_executable(MyStudy
         include/MyHead.h
         include/Method.h
         include/GuessNumber.h
-        include/HandleAndroidString.h
+        HandleAndroidString.h
 
         src/B0.cpp
         src/Test.cpp
@@ -20,7 +20,7 @@ add_executable(MyStudy
         src/Method.cpp
         src/function_study.cpp
         src/GuessNumber.cpp
-        src/HandleAndroidString.cpp
+        HandleAndroidString.cpp
         )
 
 if (WIN32)

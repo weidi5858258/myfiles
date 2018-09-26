@@ -42,8 +42,8 @@ init
 
 digui ${currentDir}
 
-#-låŠ¨æ€åº“åç§°
-#å‘ç°æ²¡æœ‰libpostproc.soè¿™ä¸ªåŠ¨æ€åº“,å› æ­¤éœ€è¦åƒä¸‹é¢è¿™æ ·æ“ä½œä¸€ä¸‹
+#-l¶¯Ì¬¿âÃû³Æ
+#·¢ÏÖÃ»ÓĞlibpostproc.soÕâ¸ö¶¯Ì¬¿â,Òò´ËĞèÒªÏñÏÂÃæÕâÑù²Ù×÷Ò»ÏÂ
 #ln -s libpostproc-ffmpeg.so.53.3.100 libpostproc.so
 # echo ${codeFiles}
 
@@ -74,9 +74,9 @@ fi
 
 
 
-# ä¸‹é¢çš„ä»£ç æ˜¯ç¼–è¯‘å‡ºä¸€ä¸ªå¯ä»¥åœ¨androidæ‰‹æœºä¸Šè¿è¡Œçš„å¯æ‰§è¡Œæ–‡ä»¶run_me
-# "adb push"åˆ°æ‰‹æœºä¸Šåä½¿ç”¨"./run_me"å‘½ä»¤å°±å¯ä»¥è¡ŒåŠ¨äº†
-# "-static"ä¸èƒ½å°‘,å°‘äº†å°±è¿è¡Œä¸äº†
+# ÏÂÃæµÄ´úÂëÊÇ±àÒë³öÒ»¸ö¿ÉÒÔÔÚandroidÊÖ»úÉÏÔËĞĞµÄ¿ÉÖ´ĞĞÎÄ¼şrun_me
+# "adb push"µ½ÊÖ»úÉÏºóÊ¹ÓÃ"./run_me"ÃüÁî¾Í¿ÉÒÔĞĞ¶¯ÁË
+# "-static"²»ÄÜÉÙ,ÉÙÁË¾ÍÔËĞĞ²»ÁË
 ###############################################
 
 #arm-cortexa9-linux-gnueabihf-g++ \
@@ -90,30 +90,30 @@ fi
 ###############################################
 
 ###############################################
-#Ubuntuä¸Šå®‰è£…äº¤å‰ç¼–è¯‘ç¯å¢ƒ(arm-linux-gcc 4.9.3)
-#é¦–å…ˆä¸‹è½½å¹¶è§£å‹ç¼–è¯‘å™¨:
-#1ï¼Œgit clone https://github.com/friendlyarm/prebuilts.git
-#å¾—åˆ°prebuiltsæ–‡ä»¶å¤¹
-#2ï¼Œmkdir -p /opt/FriendlyARM/toolschain
-#3ï¼ŒæŠŠprebuilts/gcc-x64/arm-cortexa9-linux-gnueabihf-4.9.3.tar.xz
-#è¿™ä¸ªæ–‡ä»¶å¤åˆ¶åˆ°ä¸Šé¢å»ºå¥½çš„æ–‡ä»¶å¤¹ä¸‹ï¼Œ
-#è§£å‹ï¼štar xf arm-cortexa9-linux-gnueabihf-4.9.3.tar.xz
-#4ï¼Œgedit /etc/profile
-#åœ¨æœ€åé¢åŠ ä¸Šï¼š
+#UbuntuÉÏ°²×°½»²æ±àÒë»·¾³(arm-linux-gcc 4.9.3)
+#Ê×ÏÈÏÂÔØ²¢½âÑ¹±àÒëÆ÷:
+#1£¬git clone https://github.com/friendlyarm/prebuilts.git
+#µÃµ½prebuiltsÎÄ¼ş¼Ğ
+#2£¬mkdir -p /opt/FriendlyARM/toolschain
+#3£¬°Ñprebuilts/gcc-x64/arm-cortexa9-linux-gnueabihf-4.9.3.tar.xz
+#Õâ¸öÎÄ¼ş¸´ÖÆµ½ÉÏÃæ½¨ºÃµÄÎÄ¼ş¼ĞÏÂ£¬
+#½âÑ¹£ºtar xf arm-cortexa9-linux-gnueabihf-4.9.3.tar.xz
+#4£¬gedit /etc/profile
+#ÔÚ×îºóÃæ¼ÓÉÏ£º
 #export ARM_LINUX_GCC=/mydev/tool/opt/FriendlyARM/toolschain/4.9.3
 #export PATH=$ARM_LINUX_GCC/bin:$PATH
-#ä¸‹é¢è¿™ä¸ªæ²¡æœ‰è¯•
+#ÏÂÃæÕâ¸öÃ»ÓĞÊÔ
 #export PATH=/opt/FriendlyARM/toolchain/4.9.3/bin:$PATH
 #export GCC_COLORS=auto
-#5ï¼Œä½¿ç¯å¢ƒç”Ÿæ•ˆ
+#5£¬Ê¹»·¾³ÉúĞ§
 #source /etc/profile
-#æµ‹è¯•æ˜¯å¦æˆåŠŸï¼Œå¦‚æœè¾“å‡ºæœ‰ç‰ˆæœ¬å·ä¿¡æ¯ï¼Œé‚£ä¹ˆè¯´æ˜å®‰è£…æˆåŠŸ
+#²âÊÔÊÇ·ñ³É¹¦£¬Èç¹ûÊä³öÓĞ°æ±¾ºÅĞÅÏ¢£¬ÄÇÃ´ËµÃ÷°²×°³É¹¦
 #arm-linux-gcc -v
 ###############################################
 
 
 
-# å¼•ç”¨SDL2åº“ç¼–è¯‘è‡ªå·±çš„ç¨‹åº
+# ÒıÓÃSDL2¿â±àÒë×Ô¼ºµÄ³ÌĞò
 # gcc -o myprogram myprogram.c `sdl2-config --cflags --libs`
 
 #backup
@@ -132,29 +132,29 @@ fi
 #-L/usr/lib/x86_64-linux-gnu -lavutil \
 #-L/usr/lib/x86_64-linux-gnu -lswscale \
 
-#æŠŠC/C++ä»£ç ç¼–è¯‘æˆåŠ¨æ€åº“çš„è¿‡ç¨‹
+#°ÑC/C++´úÂë±àÒë³É¶¯Ì¬¿âµÄ¹ı³Ì
 #1.
-#é¦–å…ˆç»„ç»‡å¥½ä»£ç ,éœ€è¦æœ‰å¤´æ–‡ä»¶,è¿™ä¸ªå¤´æ–‡ä»¶æ˜¯å…¬å¼€çš„
+#Ê×ÏÈ×éÖ¯ºÃ´úÂë,ĞèÒªÓĞÍ·ÎÄ¼ş,Õâ¸öÍ·ÎÄ¼şÊÇ¹«¿ªµÄ
 #2.
-#åªå¯¹æ‰€æœ‰çš„.c/.cppæ–‡ä»¶è¿›è¡Œç¼–è¯‘,æ‰“åŒ…æˆsoåº“
+#Ö»¶ÔËùÓĞµÄ.c/.cppÎÄ¼ş½øĞĞ±àÒë,´ò°ü³Éso¿â
 #3.
-#å‘½ä»¤:
+#ÃüÁî:
 #g++ ${codeFiles} -fpic -shared -o libweidi.so
 #g++ ${codeFiles} -fPIC -shared -o libweidi.so
 #4.
-#ä½¿ç”¨
-#åœ¨å…¶ä»–çš„ä»£ç ä¸­æŒ‰å¹³æ—¶ä¸€æ ·å¼•ç”¨å…¬å¼€çš„å¤´æ–‡ä»¶,å†™å¥½ä»£ç å
+#Ê¹ÓÃ
+#ÔÚÆäËûµÄ´úÂëÖĞ°´Æ½Ê±Ò»ÑùÒıÓÃ¹«¿ªµÄÍ·ÎÄ¼ş,Ğ´ºÃ´úÂëºó
 #g++ ${codeFiles} -L. -lweidi -o run_me
-#è¯´æ˜:
-#-L.è¡¨ç¤ºsoåº“ä¸æºç çš„ç›¸å¯¹ä½ç½®
-#-lweidiè¡¨ç¤ºsoåº“çš„åç§°(å»æ‰libå’Œ.so)
-#-o run_meè¡¨ç¤ºç”Ÿæˆçš„å¯æ‰§è¡Œæ–‡ä»¶
+#ËµÃ÷:
+#-L.±íÊ¾so¿âÓëÔ´ÂëµÄÏà¶ÔÎ»ÖÃ
+#-lweidi±íÊ¾so¿âµÄÃû³Æ(È¥µôlibºÍ.so)
+#-o run_me±íÊ¾Éú³ÉµÄ¿ÉÖ´ĞĞÎÄ¼ş
 #5.
-#å¦‚æœè¿è¡Œå¤±è´¥,é‚£ä¹ˆ
-#export LD_LIBRARY_APTH=soåº“çš„ä½ç½®/weidi(å»æ‰libå’Œ.so)
-#æˆ–è€…
-#cp soåº“ /usr/lib
-#å†æ¬¡è¿è¡Œ
+#Èç¹ûÔËĞĞÊ§°Ü,ÄÇÃ´
+#export LD_LIBRARY_APTH=so¿âµÄÎ»ÖÃ/weidi(È¥µôlibºÍ.so)
+#»òÕß
+#cp so¿â /usr/lib
+#ÔÙ´ÎÔËĞĞ
 
 
 
@@ -166,9 +166,9 @@ fi
 
 
 
-#æŸ¥çœ‹å¼•ç”¨äº†å“ªäº›åº“
+#²é¿´ÒıÓÃÁËÄÄĞ©¿â
 #ldd run_me
-#ä¸æå€¡ä½¿ç”¨é™æ€æ–¹å¼ç¼–è¯‘,ç”Ÿæˆçš„æ–‡ä»¶å¾ˆå¤§,ç¼–è¯‘æ—¶é—´åˆé•¿
+#²»Ìá³«Ê¹ÓÃ¾²Ì¬·½Ê½±àÒë,Éú³ÉµÄÎÄ¼şºÜ´ó,±àÒëÊ±¼äÓÖ³¤
 #g++ ${codeFiles} -o run_me_static -static
 
 

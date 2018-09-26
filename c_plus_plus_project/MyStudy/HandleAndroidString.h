@@ -13,6 +13,10 @@
 #include <iterator>
 #include <vector>
 #include <map>
+//下面三个头文件使用open函数时用到
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 using namespace std;
 
