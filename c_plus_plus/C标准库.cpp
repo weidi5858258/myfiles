@@ -518,32 +518,108 @@ void clearerr(FILE *stream)
 但是如果它检测到它的参数不是一个有效的流，
 则返回 -1，并设置 errno 为 EBADF。
 */
+FILE *fp = nullptr;
+char c;
+fp = fopen("file.txt", "w");
+//试图读取一个以只写模式打开的文件,这样就会产生错误.
+c = fgetc(fp);
+if (ferror(fp)) {
+    printf("1读取文件: file.txt时发生错误\n");
+}
+clearerr(fp);
+if (ferror(fp)) {
+    printf("2读取文件: file.txt时发生错误\n");
+}
+fclose(fp);
 /***
 输出:
+1读取文件: file.txt时发生错误
+//clearerr(fp);
+1读取文件: file.txt时发生错误
+2读取文件: file.txt时发生错误
 */
 
 /***
 int feof(FILE *stream)
 测试给定流 stream 的文件结束标识符。
+当设置了与流关联的文件结束标识符时，
+该函数返回一个非零值，否则返回零。
 */
+FILE *fp = nullptr;
+int c;
+fp = fopen("file.txt", "r");
+if (!fp) {
+    perror("打开文件时发生错误\n");
+    return -1;
+}
+while (1) {
+    c = fgetc(fp);
+    if (feof(fp)) {
+        printf("\n");
+        printf("exit %c, %d\n", c, c);
+        break;
+    }
+    printf("%c", c);
+}
+fclose(fp);
 /***
 输出:
+aksfl aksdf aksdfjiwe skdf8982^*&^*
+   sdf
+  sdf sdf skdj
+sklfkl
+exit �, -1
 */
 
 /***
 int ferror(FILE *stream)
 测试给定流 stream 的错误标识符。
+如果设置了与流关联的错误标识符，
+该函数返回一个非零值，否则返回一个零值。
 */
+FILE *fp = nullptr;
+char c;
+fp = fopen("file.txt", "w");
+c = fgetc(fp);
+if (ferror(fp)) {
+    printf("1读取文件: file.txt时发生错误\n");
+}
+clearerr(fp);
+if (ferror(fp)) {
+    printf("2读取文件: file.txt时发生错误\n");
+}
+fclose(fp);
 /***
 输出:
+1读取文件: file.txt时发生错误
+//clearerr(fp);
+1读取文件: file.txt时发生错误
+2读取文件: file.txt时发生错误
 */
 
 /***
 int fflush(FILE *stream)
 刷新流 stream 的输出缓冲区。
+如果成功，该函数返回零值。
+如果发生错误，则返回 EOF，且设置错误标识符（即 feof）。
 */
+char buff[1024];
+memset(buff, '\0', sizeof(buff));
+fprintf(stdout, "启用全缓冲\n");
+setvbuf(stdout, buff, _IOFBF, 1024);
+fprintf(stdout, "这里是 runoob.com\n");
+fprintf(stdout, "该输出将保存到 buff\n");
+fflush(stdout);
+fprintf(stdout, "这将在编程时出现\n");
+fprintf(stdout, "最后休眠五秒钟\n");
+sleep(5);
 /***
 输出:
+启用全缓冲
+这里是 runoob.com
+该输出将保存到 buff
+p�g��  �ď�  -2@�    � �    -   �  ��ď�  �
+��  �= ��  �ď�  ��ď�   ;��     
 */
 
 /***

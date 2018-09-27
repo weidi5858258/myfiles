@@ -15,15 +15,15 @@
 #endif
 
 /***
- * @param argc ²ÎÊıÖÁÉÙÓĞÒ»¸ö,ÒòÎªµÚÒ»¸ö²ÎÊı¾ÍÊÇ±¾ÉíµÄ¿ÉÖ´ĞĞÎÄ¼ş
+ * @param argc å‚æ•°è‡³å°‘æœ‰ä¸€ä¸ª,å› ä¸ºç¬¬ä¸€ä¸ªå‚æ•°å°±æ˜¯æœ¬èº«çš„å¯æ‰§è¡Œæ–‡ä»¶
  * @param argv
  * @return
-Clion Êä³öÂÒÂëÎÊÌâ
+Clion è¾“å‡ºä¹±ç é—®é¢˜
 File -> Settings -> Default Settings -> Editor -> File Encodings:
 Global Encoding: UTF-8
 Project Encoding : UTF-8
 Default encoding for properties files: UTF-8
-È»ºó»¹ÓĞ¹Ø¼üÒ»²½Öè£ºÔÚ³Ì³ÌĞò×óÏÂ½ÇĞŞ¸Äutf-8ÎªGBK
+ç„¶åè¿˜æœ‰å…³é”®ä¸€æ­¥éª¤ï¼šåœ¨ç¨‹ç¨‹åºå·¦ä¸‹è§’ä¿®æ”¹utf-8ä¸ºGBK
  */
 int main(int argc, char *argv[]) {
     printf("\n");
@@ -34,18 +34,16 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-    FILE *fp = nullptr;
-    char c;
-    fp = fopen("file.txt", "w");
-    c = fgetc(fp);
-    if (ferror(fp)) {
-        printf("1¶ÁÈ¡ÎÄ¼ş: file.txtÊ±·¢Éú´íÎó\n");
-    }
-    clearerr(fp);
-    if (ferror(fp)) {
-        printf("2¶ÁÈ¡ÎÄ¼ş: file.txtÊ±·¢Éú´íÎó\n");
-    }
-    fclose(fp);
+    char buff[1024];
+    memset(buff, '\0', sizeof(buff));
+    fprintf(stdout, "å¯ç”¨å…¨ç¼“å†²\n");
+    setvbuf(stdout, buff, _IOFBF, 1024);
+    fprintf(stdout, "è¿™é‡Œæ˜¯ runoob.com\n");
+    fprintf(stdout, "è¯¥è¾“å‡ºå°†ä¿å­˜åˆ° buff\n");
+    fflush(stdout);
+    fprintf(stdout, "è¿™å°†åœ¨ç¼–ç¨‹æ—¶å‡ºç°\n");
+    fprintf(stdout, "æœ€åä¼‘çœ äº”ç§’é’Ÿ\n");
+    sleep(5);
 
 
     printf("------------------------------------------\n");
