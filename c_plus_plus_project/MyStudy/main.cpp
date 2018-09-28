@@ -34,17 +34,24 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("------------------------------------------\n");
 
-    char buff[1024];
-    memset(buff, '\0', sizeof(buff));
-    fprintf(stdout, "启用全缓冲\n");
-    setvbuf(stdout, buff, _IOFBF, 1024);
-    fprintf(stdout, "这里是 runoob.com\n");
-    fprintf(stdout, "该输出将保存到 buff\n");
-    fflush(stdout);
-    fprintf(stdout, "这将在编程时出现\n");
-    fprintf(stdout, "最后休眠五秒钟\n");
-    sleep(5);
+//    FILE *fp;
+//    fpos_t position;
+//    fp = fopen("file.txt", "w+");
+//    fgetpos(fp, &position);
+//    fprintf(stdout, "position = %d\n", position);
+//    fputs("HelloWorld", fp);
+//    fgetpos(fp, &position);
+//    fprintf(stdout, "position = %d\n", position);
+//    fsetpos(fp, &position);
+//    fprintf(stdout, "position = %d\n", position);
+//    fputs("这将覆盖之前的内容", fp);
+//    fgetpos(fp, &position);
+//    fprintf(stdout, "position = %d\n", position);
+//    fclose(fp);
 
+    HandleAndroidString handleAndroidString;
+//    handleAndroidString.doSomething("/root/temp_dir/merge_string");
+    handleAndroidString.doSomething("/root/temp_dir/merge_string/temp_cache");
 
     printf("------------------------------------------\n");
     printf("\n");

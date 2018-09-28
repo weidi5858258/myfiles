@@ -1,24 +1,16 @@
+//
+// Created by root on 18-9-3.
+//
+
 #ifndef MYSTUDY_HANDLEANDROIDSTRING_H
 #define MYSTUDY_HANDLEANDROIDSTRING_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <string.h>
-#include <dirent.h>
-#include <unistd.h>
-#include <algorithm>
-#include <iterator>
-#include <vector>
-#include <map>
-//下面三个头文件使用open函数时用到
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#include "MyHead.h"
 
-using namespace std;
+//#define TEMP_CACHE "/root/temp_dir/merge_string"
+//#define TEMP_CACHE "/media/root/Weidi/Users/weidi5858258/Documents/temp_dir"
+//#define TEMP_CACHE "C:\\Users\\weidi5858258\\Documents\\temp_dir"
+//#define TEMP_CACHE "/mnt/c/Users/weidi5858258/Documents/temp_dir"
 
 class HandleAndroidString {
 public:
@@ -62,6 +54,7 @@ private:
     string TEMP_CACHE;
     string srcDir;
     string destDir;
+    string cacheDir;
     map<string, string> nameAndContentMap;
     map<string, vector<string>> countryMap;
 };
