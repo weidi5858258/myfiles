@@ -2194,7 +2194,7 @@ name_string=`echo "${name_string}" | grep -o "[^ ]\+\( \+[^ ]\+\)*"`
 # 去掉字符串首尾各一个字符
 name_string=${name_string:1:-1}
 
-
+du -ah | grep -e "6G"
 
 
 
