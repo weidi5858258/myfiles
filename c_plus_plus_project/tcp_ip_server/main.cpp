@@ -25,26 +25,6 @@ int main(int argc, char *argv[]) {
 //    LinuxSocket linuxSocket;
 //    linuxSocket.studyHard();
 
-#define FILELENGTH 80
-    int fd = -1;
-    char buf[] = "dog lazy the over jumps fox brown quick";
-    char *ptr = NULL;
-    fd = open("mmap.txt", O_RDWR | O_CREAT | O_TRUNC, S_IRWXU);
-    if (-1 == fd) {
-        printf("Open file failure\n");
-        return EXIT_FAILURE;
-    }
-    lseek(fd, FILELENGTH - 1, SEEK_SET);
-    write(fd, "a", 1);
-    ptr = (char *) mmap(NULL, FILELENGTH, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    if ((char *) -1 == ptr) {
-        printf("mmap failure\n");
-        close(fd);
-        return EXIT_FAILURE;
-    }
-    memcpy(ptr + 16, buf, strlen(buf));
-    munmap(ptr, FILELENGTH);
-    close(fd);
 
 
     printf("---------------------------------------------------\n");
