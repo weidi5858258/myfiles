@@ -2197,6 +2197,7 @@ name_string=${name_string:1:-1}
 du -ah | grep -e "6G"
 
 ps -ax | grep xinetd
+ps -x  | grep 父进程ID
 
 
 
