@@ -2199,8 +2199,8 @@ du -ah | grep -e "6G"
 ps -ax | grep xinetd
 ps -x  | grep 父进程ID
 
-
-
+# 解析域名
+nslookup www.163.com
 
 
 
