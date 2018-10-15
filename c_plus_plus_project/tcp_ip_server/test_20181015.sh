@@ -83,11 +83,11 @@ function handle_string_src() {
                 if [[ ${content_string} =~ '\n' ]]; then
                     echo ${1}
                     echo ${new_string}
-                    new_string=`echo ${new_string} | sed 's/\\n/######/g'`
-                    new_string=`echo ${new_string} | sed ":a;N;s/\n/######/g;ta"`
-                    new_string=`echo ${new_string} | sed ':a;N;$!ba;s/\n/######/g'`
-                    sed ':a;N;$!ba;s/\n/ /g' file.txt
+                    new_string=`echo ${new_string} | sed 's/\\\\n/######/g'`
                     echo ${new_string}
+                    sed -i -e "/resources>/i\\    ${new_string}" ${dest_res_values_strings_path}
+                    sed -i -e 's/######/\\n/g' ${dest_res_values_strings_path}
+                    continue
                 fi
 
                 sed -i -e "/resources>/i\\    ${new_string}" ${dest_res_values_strings_path}
@@ -131,3 +131,37 @@ function digui_src_res() {
 #digui_src_res ${src_dir_musicslideshow_res}
 #digui_src_res ${src_dir_searchhomenetwork_res}
 digui_src_res ${src_dir_video_res}
+
+#COUNTER=0
+#while [[ $COUNTER -lt 5 ]]
+#do
+#    echo -e "ae\c" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+#    let COUNTER+=1
+#done
+
+#new_string="Hierdie bediener is nie gevind nie.\nKontroleer asseblief die bedienerverbindings en netwerkinstellings, of druk die SELECT-knoppie om die bediener met die WOL- (Wake On LAN) funksie aan te skakel."
+#string1="Hierdie bediener is nie gevind nie.\nKontroleer asseblief die bedienerverbindings en netwerkinstellings, of druk die SELECT-knoppie om die bediener met die WOL- (Wake On LAN) funksie aan te skakel."
+#echo "=======================" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+#for i in `seq 1 ${#string1}`
+#do
+#    a_char=`echo ${string1} | cut -c $i`
+#    if [[ ${a_char} == '\' ]]; then
+#        a_char="\\\\"
+#    fi
+##    echo ${a_char}
+#    echo -e "${a_char}\c" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+#done
+#echo "" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+#echo "abc" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+
+#echo "---------------------------" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+#echo -e "agb.\c" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+#echo -e "\\\\\c" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+#echo -e "nadk\c" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+#echo "---------------------------" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+
+#new_string=`echo ${new_string} | sed 's/\\\\n/######/g'`
+#echo ${new_string}
+
+
+#sed -i -e 's/######/\\n/g' /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
