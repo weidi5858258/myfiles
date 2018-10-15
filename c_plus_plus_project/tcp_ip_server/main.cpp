@@ -58,11 +58,14 @@ int howToCreateChildProcess() {
 }
 
 int test() {
+#define K 1024
+#define WRITELEN (128*K)
+
     int result = -1;
     int fd[2];
     pid_t pid;
-    char string[] = "你好,管道";
-    char readbuffer[80];
+    char string[WRITELEN] = "你好,管道";
+    char readbuffer[10*K];
     int *write_fd = &fd[1];
     int *read_fd = &fd[0];
     result = pipe(fd);
@@ -77,6 +80,8 @@ int test() {
     }
     if (0 == pid) {
         printf("子进程\n");
+        int write_size=WRITELEN;
+        result=0;
         close(*read_fd);
         result = write(*write_fd, string, strlen(string));
         printf("发送了 %d 个数据\n", result);
