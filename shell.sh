@@ -2202,12 +2202,39 @@ ps -x  | grep 父进程ID
 # 解析域名
 nslookup www.163.com
 
+# 在字符串"resources>"的上面插入new_string字符串
+# new_string字符串前面加了4个空格
+sed -i -e "/resources>/i\\    ${new_string}" ${dest_res_values_strings_path}
 
+if [[ ${content_string} =~ '\n' ]]; then
+	# 把new_string字符串中的所有"\n"都替换成"######"
+    new_string=`echo ${new_string} | sed 's/\\\\n/######/g'`
+    # 然后把替换过的字符串写入文件
+    sed -i -e "/resources>/i\\    ${new_string}" ${dest_res_values_strings_path}
+    # 最后再把已经写到文件的"######"替换回"\n"
+    sed -i -e 's/######/\\n/g' ${dest_res_values_strings_path}
+    continue
+fi
 
+# 结果为:
+# ---------------------------
+# agb.\nadk---------------------------
+echo "---------------------------" >> test.txt
+echo -e "agb.\c" >> test.txt
+echo -e "\\\\\c" >> test.txt
+echo -e "nadk\c" >> test.txt
+echo "---------------------------" >> test.txt
 
-
-
-
+# 一个字符一个字符地写入到文件test.txt中
+string1="Hierdie bediener is nie gevind nie.\nKontroleer asseblief die bedienerverbindings en netwerkinstellings, of druk die SELECT-knoppie om die bediener met die WOL- (Wake On LAN) funksie aan te skakel."
+for i in `seq 1 ${#string1}`
+do
+    a_char=`echo ${string1} | cut -c $i`
+    if [[ ${a_char} == '\' ]]; then
+        a_char="\\\\"
+    fi
+    echo -e "${a_char}\c" >> test.txt
+done
 
 
 

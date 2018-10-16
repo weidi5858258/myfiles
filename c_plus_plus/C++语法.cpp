@@ -9,7 +9,7 @@ C++基础知识
 
             具体写法                  简写形式
 有符号短整型	short int           ---> short
-有符号长整型	long int            ---> long(数值后面加“l”或者“L”)
+有符号长整型	long int            ---> long(数值后面加"l"或者"L")
 无符号短整型	unsigned short int  ---> unsigned short
 无符号长整型	unsigned long int   ---> unsigned long
 有符号整型    signed int          ---> int
@@ -59,28 +59,28 @@ typedef unsigned int				uint32_t;	0~65535
 typedef unsigned long int		uint64_t;	0~4294967295
 
 size_t和int
-  size_t是一些C/C++标准在stddef.h中定义的。
-  这个类型足以用来表示对象的大小。size_t的真实类型与操作系统有关。
+  size_t是一些C/C++标准在stddef.h中定义的.
+  这个类型足以用来表示对象的大小.size_t的真实类型与操作系统有关.
 在32位架构中被普遍定义为：
 typedef   unsigned int size_t;
 而在64位架构中被定义为：
 typedef  unsigned long size_t;
-	size_t在32位架构上是4字节，在64位架构上是8字节，
-	在不同架构上进行编译时需要注意这个问题。
-	而int在不同架构下都是4字节，与size_t不同；
-	且int为带符号数，size_t为无符号数。
+	size_t在32位架构上是4字节,在64位架构上是8字节,
+	在不同架构上进行编译时需要注意这个问题.
+	而int在不同架构下都是4字节,与size_t不同；
+	且int为带符号数,size_t为无符号数.
 
 ssize_t
-ssize_t是有符号整型，在32位机器上等同与int，在64位机器上等同与long int.
+ssize_t是有符号整型,在32位机器上等同与int,在64位机器上等同与long int.
 
 size_t和ssize_t作用
-	 size_t一般用来表示一种计数，比如有多少东西被拷贝等。
-	 例如：sizeof操作符的结果类型是size_t，
-	 该类型保证能容纳实现所建立的最大对象的字节大小。 
-	 它的意义大致是“适于计量内存中可容纳的数据项目个数的无符号整数类型”。
-	 所以，它在数组下标和内存管理函数之类的地方广泛使用。
+	 size_t一般用来表示一种计数,比如有多少东西被拷贝等.
+	 例如：sizeof操作符的结果类型是size_t,
+	 该类型保证能容纳实现所建立的最大对象的字节大小. 
+	 它的意义大致是"适于计量内存中可容纳的数据项目个数的无符号整数类型".
+	 所以,它在数组下标和内存管理函数之类的地方广泛使用.
 	 而ssize_t这个数据类型用来表示可以被执行读写操作的数据块的大小.
-	 它和size_t类似,但必需是signed.意即：它表示的是signed size_t类型的。
+	 它和size_t类似,但必需是signed.意即：它表示的是signed size_t类型的.
 
 进程的终止方式：
 1.从main返回
@@ -88,52 +88,52 @@ size_t和ssize_t作用
 3.调用_exit
 4.调用abort
 5.由一个信号终止
-进程在终止的时候，系统会释放进程所拥有的资源，如内存、文件描述符、内核结构等。
+进程在终止的时候,系统会释放进程所拥有的资源,如内存、文件描述符、内核结构等.
 
 进程之间的通信
-进程之间的通信有多种方式，其中管道、共享内存和消息队列是最常用的方式。
+进程之间的通信有多种方式,其中管道、共享内存和消息队列是最常用的方式.
 1.
 管道
-是UNIX族中进程通信的最古老的方式，它利用内核在两个进程之间建立通道，
-它的特点是与文件的操作类似，仅仅在管道的一端只读，另一端只写。
-利用读写的方式在进程之间传递数据。
+是UNIX族中进程通信的最古老的方式,它利用内核在两个进程之间建立通道,
+它的特点是与文件的操作类似,仅仅在管道的一端只读,另一端只写.
+利用读写的方式在进程之间传递数据.
 2.
 共享内存
-在多个进程之间共享,多个进程利用获得的共享内存的地址来直接对内存进行操作。
+在多个进程之间共享,多个进程利用获得的共享内存的地址来直接对内存进行操作.
 3.
 消息
-是在内核中建立一个链表，发送方按照一定的标识将数据发送到内核中，
-内核将其放入量表后，等待接收方的请求。接收方发送请求后，
-内核按照消息的标识，从内核中将消息从链表中摘下，传递给接收方。
-消息是一种完全的异步操作方式。
+是在内核中建立一个链表,发送方按照一定的标识将数据发送到内核中,
+内核将其放入量表后,等待接收方的请求.接收方发送请求后,
+内核按照消息的标识,从内核中将消息从链表中摘下,传递给接收方.
+消息是一种完全的异步操作方式.
 
 进程之间的同步
-多个进程之间需要写作完成任务时，经常发生业务之间的依赖现象，
-从而出现了进程的同步问题。Linux下进程的同步方式主要有消息、信号量等。
-信号量是一个共享的表示数量的值。用于多个进程之间操作或者共享资源的保护，
-它是进程之间同步的最主要方式。
+多个进程之间需要写作完成任务时,经常发生业务之间的依赖现象,
+从而出现了进程的同步问题.Linux下进程的同步方式主要有消息、信号量等.
+信号量是一个共享的表示数量的值.用于多个进程之间操作或者共享资源的保护,
+它是进程之间同步的最主要方式.
 
 函数名: getenv
 功  能: 从环境中取字符串,获取环境变量的值
 头文件: stdlib.h
 用  法: char *getenv(char *envvar);
 函数说明:
-getenv()用来取得参数envvar环境变量的内容。
-参数envvar为环境变量的名称，如果该变量存在
-则会返回指向该内容的指针。环境变量的格式为
-envvar=value。
-getenv函数的返回值存储在一个全局二维数组里，
-当你再次使用getenv函数时不用担心会覆盖上次的调用结果。
-返回值: 执行成功则返回指向该内容的指针，
-找不到符合的环境变量名称则返回NULL。
-如果变量存在但无关联值，它将运行成功并返回一个空字符串，
-即该字符的第一个字节是null。
+getenv()用来取得参数envvar环境变量的内容.
+参数envvar为环境变量的名称,如果该变量存在
+则会返回指向该内容的指针.环境变量的格式为
+envvar=value.
+getenv函数的返回值存储在一个全局二维数组里,
+当你再次使用getenv函数时不用担心会覆盖上次的调用结果.
+返回值: 执行成功则返回指向该内容的指针,
+找不到符合的环境变量名称则返回NULL.
+如果变量存在但无关联值,它将运行成功并返回一个空字符串,
+即该字符的第一个字节是null.
 
-类型不一样进行赋值时，中间必须要借助一个临时变量。
-如果这个临时变量产生不了，那么这个赋值操作就会失败。
-产生的中间变量的类型为赋值操作的左值的类型，
-然后把右值当作这个临时变量的初始值从而生成一个中间变量，
-最后把这个中间变量赋给左值。
+类型不一样进行赋值时,中间必须要借助一个临时变量.
+如果这个临时变量产生不了,那么这个赋值操作就会失败.
+产生的中间变量的类型为赋值操作的左值的类型,
+然后把右值当作这个临时变量的初始值从而生成一个中间变量,
+最后把这个中间变量赋给左值.
 
 产生随机数
 #include <cstdlib>
@@ -360,123 +360,7 @@ Student stu3(stu);
 
 
 
-#include <stdio.h>
-char buf[10] = {10,10,10,10,10,10,10,10,10,10};
-FILE *fp = fopen("c:\\test.dat","w");
-fwrite(buf,1,10,fp);
-fclose(fp);
-FILE *fp1 = fopen("c:\\test1.dat","wb");
-fwrite(buf,1,10,fp);
-fclose(fp1);
-我们注意到，程序的第一段定义一个数组，每个分量的值为：10,等价的十六进制为0A。
-第二段，先是打开一个文件test.dat进行写操作，再是把10个数据写入文件，最后关闭文件。
-第三段，功能差不多，只是文件名换成了test1.dat,打开文件的模式换成了wb.
-第二段和第三段有什么区别呢？我们看一下最后的文件内容：
-test.dat:  0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A
-test1.dat： 0A 0A 0A 0A 0A 0A 0A 0A 0A 0A
-原因是为什么呢？这就是w 和 wb的区别，
-w是以文本方式打开文件，wb是二进制方式打开文件，
-以文本方式打开文件时，fwrite函数每碰到一个0x0A时，
-就在它的前面加入0x0D.其它内容不做添加操作。
-r 以只读方式打开文件，该文件必须存在。
-　　r+ 以可读写方式打开文件，该文件必须存在。
-　　rb+ 读写打开一个二进制文件，只允许读写数据。
-　　rt+ 读写打开一个文本文件，允许读和写。
-　　w 打开只写文件，若文件存在则文件长度清为0，即该文件内容会消失。若文件不存在则建立该文件。
-　　w+ 打开可读写文件，若文件存在则文件长度清为零，即该文件内容会消失。若文件不存在则建立该文件。
-　　a 以附加的方式打开只写文件。若文件不存在，则会建立该文件，如果文件存在，写入的数据会被加到文件尾，即文件原先的内容会被保留。(EOF符保留）
-　　a+ 以附加方式打开可读写的文件。若文件不存在，则会建立该文件，如果文件存在，写入的数据会被加到文件尾后，即文件原先的内容会被保留。 (原来的EOF符不保留）
-　　wb 只写打开或新建一个二进制文件；只允许写数据。
-　　wb+ 读写打开或建立一个二进制文件，允许读和写。
-　　wt+ 读写打开或着建立一个文本文件；允许读写。
-　　at+ 读写打开一个文本文件，允许读或在文本末追加数据。
-　　ab+ 读写打开一个二进制文件，允许读或在文件末追加数据。
-　　上述的形态字符串都可以再加一个b字符，如rb、w+b或ab＋等组合，加入b 字符用来告诉函数库打开的文件为二进制文件，而非纯文字文件。不过在POSIX系统，包含Linux都会忽略该字符。由fopen()所建立的新文件会具有S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH(0666)权限，此文件权限也会参考umask 值
 
-判断文件夹或者文件是否存在：
-在windows环境下头文件为：
-#include <io.h>
-在linux环境下头文件为：
-#include <unistd.h>
-int access(const char* _Filename, int _AccessMode)
-上述函数在windows和linux环境下均可使用
-该函数功能为确定文件或文件夹的访问权限，如果指定的访问权限有效，
-则函数返回0，否则返回-1
-_Filename可以是文件路径，也可以是文件夹路径，可以使用绝对路径或相对路径
-_AccessMode表示要验证的文件访问权限，有可读、可写、可执行以及是否存在四种权限，
-当_Filename表示文件夹时仅能查询文件夹是否存在
-_AccessMode：
-	头文件unistd.h中有如下定义：
-    #define R_OK 4 /* Test for read permission. */
-    #define W_OK 2 /* Test for write permission. */
-    #define X_OK 1 /* Test for execute permission. */
-    #define F_OK 0 /* Test for existence. */
-    具体含义如下：
-    R_OK 只判断是否有读权限
-    W_OK 只判断是否有写权限
-    X_OK 判断是否有执行权限
-    F_OK 只判断是否存在
-    在宏定义里面分别对应：
-    00 只存在
-    02 写权限
-    04 读权限
-    06 读和写权限
-_AccessMode=00表示只判断是否存在
-_AccessMode=02表示文件是否可执行
-_AccessMode=04表示文件是否可写
-_AccessMode=06表示文件是否可读
-
-创建文件夹:
-windows环境下头文件为:
-#include <direct.h>
-函数原型为：
-int mkdir(const char *_Path)
-该函数功能为建立一个新的目录，创建成功则返回0，否则返回-1
-_Path：新建文件夹路径，可使用绝对路径，可也用相对路径
-windows环境下也可用函数_mkdir:
-_mkdir(const char *_Path)
-默认mode是0777，表示最大可能的访问权
-linux环境下头文件为:
-    #include <sys/types.h>
-    #include <sys/stat.h>
-函数原型为：
-int mkdir(const char *pathname, mode_t mode);
-该函数功能为创建一个新的目录，并指定它的执行权限。如果创建成功则返回0，否则，返回-1
-S_IRWXU
-00700权限，代表该文件所有者拥有读，写和执行操作的权限
-S_IRUSR(S_IREAD)
-00400权限，代表该文件所有者拥有可读的权限
-S_IWUSR(S_IWRITE)
-00200权限，代表该文件所有者拥有可写的权限
-S_IXUSR(S_IEXEC)
-00100权限，代表该文件所有者拥有执行的权限
-S_IRWXG
-00070权限，代表该文件用户组拥有读，写和执行操作的权限
-S_IRGRP
-00040权限，代表该文件用户组拥有可读的权限
-S_IWGRP
-00020权限，代表该文件用户组拥有可写的权限
-S_IXGRP
-00010权限，代表该文件用户组拥有执行的权限
-S_IRWXO
-00007权限，代表其他用户拥有读，写和执行操作的权限
-S_IROTH
-00004权限，代表其他用户拥有可读的权限
-S_IWOTH
-00002权限，代表其他用户拥有可写的权限
-S_IXOTH
-00001权限，代表其他用户拥有执行的权限
-可叠加使用，如0755表示S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH。表示该文件所有者拥有读，写和执行操作权限去，该文件用户组拥有可读，可执行的权限，其他用户拥有可读，可执行的权限。 
-
-删除文件夹：
-windows环境下头文件：
-#include <direct.h>
-linux环境下头文件：
-#include <dirent.h>
-函数原型为：
-int rmdir(const char *_Path)
-函数功能是删除参数指定的文件夹，成功返回0，否则返回-1
-在windows环境下也可使用函数_rmdir
 
 在C++中如果使用到某个字符串需要转义时,
 那么可以这样使用:
@@ -522,10 +406,10 @@ if (!pf) {
 打开文件错误: No such file or directory
 
 程序退出状态
-通常情况下，程序成功执行完一个操作正常退出的时候会带有值EXIT_SUCCESS。
-在这里，EXIT_SUCCESS 是宏，它被定义为 0。
-如果程序中存在一种错误情况，当您退出程序时，
-会带有状态值EXIT_FAILURE，被定义为 -1。
+通常情况下,程序成功执行完一个操作正常退出的时候会带有值EXIT_SUCCESS.
+在这里,EXIT_SUCCESS 是宏,它被定义为 0.
+如果程序中存在一种错误情况,当您退出程序时,
+会带有状态值EXIT_FAILURE,被定义为 -1.
 exit(EXIT_FAILURE);
 exit(EXIT_SUCCESS);
 
@@ -545,7 +429,7 @@ sum = i + c;
 printf("Value of sum : %d\n", sum );
 输出如下:
 Value of sum : 116
-在执行实际加法运算时，把 'c' 的值转换为对应的 ascii 值。
+在执行实际加法运算时,把 'c' 的值转换为对应的 ascii 值.
 
 int ---> unsigned int ---> long ---> unsigned long --->
 long long ---> unsigned long long --->
@@ -564,7 +448,7 @@ int (* p)(int, int) = & max; // &可以省略
 int a, b, c, d;
 printf("请输入三个数字:");
 scanf("%d %d %d", & a, & b, & c);
-/* 与直接调用函数等价，d = max(max(a, b), c) */
+/* 与直接调用函数等价,d = max(max(a, b), c) */
 d = p(p(a, b), c);
 printf("最大的数字是: %d\n", d);
 
@@ -662,20 +546,20 @@ int main() {
   如果不加,那么调用的是父类自身的函数.
 }
 
-一个派生类对象在创建时会首先调用基类的构造函数，
-然后调用该类的构造函数，一般情况下，在使用虚函数时，
-我们都会将派生类对象传递给指向基类的指针，那么假如
+一个派生类对象在创建时会首先调用基类的构造函数,
+然后调用该类的构造函数,一般情况下,在使用虚函数时,
+我们都会将派生类对象传递给指向基类的指针,那么假如
 指向派生类对象的指针删除时会发生什么情况呢？如果
-析构函数是虚函数，那么就会进行正确的操作，它会先调用
-派生类的析构函数，由于一般情况下任何类的析构函数都可
-声明为虚析构函数，当指针被删除时，系统会获得对象运行
-时的类型并调用正确的析构函数。
+析构函数是虚函数,那么就会进行正确的操作,它会先调用
+派生类的析构函数,由于一般情况下任何类的析构函数都可
+声明为虚析构函数,当指针被删除时,系统会获得对象运行
+时的类型并调用正确的析构函数.
 但是要注意三点：
-1.由于析构函数不允许有参数，因此它不可能实现重载，
-    那么一个类就只能有一个虚析构函数。
-2.只要基类的析构函数被说明为虚函数，那么派生类的析构函数无论说明与否，
-    都自然成为虚函数。
-3.在C++中虚构造函数是不存在的，因此也无法声明。
+1.由于析构函数不允许有参数,因此它不可能实现重载,
+    那么一个类就只能有一个虚析构函数.
+2.只要基类的析构函数被说明为虚函数,那么派生类的析构函数无论说明与否,
+    都自然成为虚函数.
+3.在C++中虚构造函数是不存在的,因此也无法声明.
 
 
 ///////////////////////////模板///////////////////////////
@@ -718,7 +602,7 @@ swap(T &rx, T &ry) {
 #include <string.h>
 using namespace std;
 
-下列码表含有全部128个ASCII十进制、八进制、十六进制及字符编码。
+下列码表含有全部128个ASCII十进制、八进制、十六进制及字符编码.
 十进制 	八进制 	十六进制 	字符
 0 		  0 		  00 	    NUL(空）
 1 	    1 	    01 	    SOH(标题开始）
@@ -863,9 +747,9 @@ string型字符串的比较
 ' ' == 32
 空格的ASCII码为32,而空字符的ASCII码为0.
 cin遇到不可见字符和空字符就停止输入(不可见字符指的
-是制表符和空格），而cout则只是遇到空字符才停止输出。
-这就量为什么将空字符作为字符串结束标志的原因，
-cin和cout遇到空字符都会结束输入和输出操作。
+是制表符和空格）,而cout则只是遇到空字符才停止输出.
+这就量为什么将空字符作为字符串结束标志的原因,
+cin和cout遇到空字符都会结束输入和输出操作.
 cout遇到空字符就停止输出.因此其后面的内容不再输出.
 char man[] = {'a', 0, 'b'};//b不会输出
 char man[] = {'a', 32, 'b'};
@@ -874,17 +758,17 @@ char man[] = {'a', 32, 'b'};
 时候,发生了越界,所以就输出了乱码.因此需要加入一个
 字符串的结束标志来防止越界操作.
 
-cin.get(str， 1000)能接收空格。
+cin.get(str, 1000)能接收空格.
 char name[] = {'a','b',32,'c',0,'\0'};
-后面要自己添加上'\0'，这样字符数组才能转化成字符串。
+后面要自己添加上'\0',这样字符数组才能转化成字符串.
 char name[] = {"abc efg"};
-后面不需要自己再添加'\0'。
+后面不需要自己再添加'\0'.
 strlen(name):不包括不可见字符(不可见：结束符)
 sizeof(name):包括不可见字符
 strcmp(ch1, ch2)
 不能把一个数组名赋给另一个数组名
 strcpy(ch1, ch2)把ch2赋给ch1
-strcpy函数会将ch2中的所有字符，包括结束标志'\0'一块复制到ch1中去
+strcpy函数会将ch2中的所有字符,包括结束标志'\0'一块复制到ch1中去
 str1.assign(str2, 3, 1)
 strcat(ch1, ch2)
 下面几个函数都是计算字符串的可见长度
@@ -1211,19 +1095,19 @@ s1[1]与c[0]进行比较
 result = s1.compare(1, 1, c, 1);
 strcasecmp函数和strncasecmp函数原型
 函数说明:
-strcasecmp()用来比较参数s1和s2字符串，
-比较时会自动忽略大小写的差异。
+strcasecmp()用来比较参数s1和s2字符串,
+比较时会自动忽略大小写的差异.
 返回值:
-若参数s1和s2字符串相同则返回0。
-s1长度大于s2长度则返回大于0 的值，
+若参数s1和s2字符串相同则返回0.
+s1长度大于s2长度则返回大于0 的值,
 s1长度若小于s2长度则返回小于0的值.
 函数说明：
-strncasecmp()用来比较参数s1和s2字符串前n个字符，
-比较时会自动忽略大小写的差异。
+strncasecmp()用来比较参数s1和s2字符串前n个字符,
+比较时会自动忽略大小写的差异.
 返回值：
-若参数s1和s2字符串相同则返回0。
+若参数s1和s2字符串相同则返回0.
 s1若大于s2则返回大于0的值,
-s1若小于s2则返回小于0的值。
+s1若小于s2则返回小于0的值.
 
 判断string型字符串是否为空
 成员函数empty()
@@ -1377,7 +1261,7 @@ location_index = find(c.begin(), c.end(), 5);
 location_index = find_if(c.begin(), c.end(), bind2nd(greater<int>(), 5));
 
 STL的组成构件
-STL的组件中最主要的是容器、迭代器、算法和仿函数。
+STL的组件中最主要的是容器、迭代器、算法和仿函数.
 容器(container):用来管理某类对象的集合
 迭代器(iterator):用来在一个对象群集的元素上进行遍历动作
 函数对象(function object)
@@ -1386,27 +1270,27 @@ STL的组件中最主要的是容器、迭代器、算法和仿函数。
 标准模板库：
 1.容器：
 1-1.顺序容器
-vector：从后面快速的插入与删除，直接访问任何元素
-deque：从前面或后面快速的插入与删除，直接访问任何元素
-list：双链表，从任何地方快速插入与删除
+vector：从后面快速的插入与删除,直接访问任何元素
+deque：从前面或后面快速的插入与删除,直接访问任何元素
+list：双链表,从任何地方快速插入与删除
 #include <vector>
 #include <deque>
 #include <list>
 vector<string> vt;
 deque<int> dq;
 list<student> lt;
-C<T> c:创建一个名为c的容器，容器类型为C，如vector
-或list，T为容器内元素的类型。适用于所有容器。
-C c2(c)：创建一个c容器的副本，c2和c必须具有相同的容器类型和元素类型，适用于所有容器。
-C c(b, e)：创建一个名为c的容器，元素是迭代器b，
-e标示范围内的副本，适用于所有容器。
-C c(n, t)：创建一个名为c的容器，元素为
-n个个数，值为t，t的类型必须是容器C的元素类型或可以转换为该类型，只适用于顺序容器。
-C c(n):创建一个名为c的容器，元素为n个初始化元素的值，元素类型为值n的类型，只适用于顺序容器。
+C<T> c:创建一个名为c的容器,容器类型为C,如vector
+或list,T为容器内元素的类型.适用于所有容器.
+C c2(c)：创建一个c容器的副本,c2和c必须具有相同的容器类型和元素类型,适用于所有容器.
+C c(b, e)：创建一个名为c的容器,元素是迭代器b,
+e标示范围内的副本,适用于所有容器.
+C c(n, t)：创建一个名为c的容器,元素为
+n个个数,值为t,t的类型必须是容器C的元素类型或可以转换为该类型,只适用于顺序容器.
+C c(n):创建一个名为c的容器,元素为n个初始化元素的值,元素类型为值n的类型,只适用于顺序容器.
 
 函数：
 a)begin和end
-返回容器的迭代器，通过迭代器我们可以访问容器内的元素。
+返回容器的迭代器,通过迭代器我们可以访问容器内的元素.
 std::vector<int>::iterator iter = c.begin();
 c.begin();
 c.end();
@@ -1414,77 +1298,77 @@ c.rebegin();
 c.rend();
 
 b)添加元素
-c.push_back():在容器尾部添加值为t的元素，
-返回void。
-c.push_front()：在容器头部添加值为t的元素，
-返回void，只适用于list和deque。
+c.push_back():在容器尾部添加值为t的元素,
+返回void.
+c.push_front()：在容器头部添加值为t的元素,
+返回void,只适用于list和deque.
 c.insert(p, t)：在迭代器p所指向的元素前面插入
-值为t的元素，返回指向t的迭代器。
+值为t的元素,返回指向t的迭代器.
 c.insert(p, n, t)：在迭代器p所指向的元素前面插入
-n个值为t的元素，返回void。
+n个值为t的元素,返回void.
 c.insert(p, b, e)：在迭代器p所指向的元素前面插入
-由迭代器b和e标记的范围内的元素，返回void。
+由迭代器b和e标记的范围内的元素,返回void.
 
 c)获得容器大小
-c.size()：返回容器内元素个数，
-返回类型为c::size_type。
-c.max_size()：返回容器内最多可容纳的元素个数，
-返回类型为c::size_type。
-c.empty()：测试容器内是否有元素。
-c.resize()：重新调整容器大小，使其能容纳n个元素。
-c.resize(n, t)：重新调整容器大小，逾期能容纳n个
-元素，新添加元素以值t进行初始化。
+c.size()：返回容器内元素个数,
+返回类型为c::size_type.
+c.max_size()：返回容器内最多可容纳的元素个数,
+返回类型为c::size_type.
+c.empty()：测试容器内是否有元素.
+c.resize()：重新调整容器大小,使其能容纳n个元素.
+c.resize(n, t)：重新调整容器大小,逾期能容纳n个
+元素,新添加元素以值t进行初始化.
 
 d)访问容器元素
-c.front()：返回容器内第一个元素的引用，如果c为
-空，该操作未定义。
-c.back()：返回容器内最后一个元素的引用，如果c为
-空，该操作未定义。
-c[n] at方法：返回下标为n的引用，n越界时，该操作
-未定义，只用于vector和deque。
+c.front()：返回容器内第一个元素的引用,如果c为
+空,该操作未定义.
+c.back()：返回容器内最后一个元素的引用,如果c为
+空,该操作未定义.
+c[n] at方法：返回下标为n的引用,n越界时,该操作
+未定义,只用于vector和deque.
 
 e)删除元素
-c.erase(p)：删除迭代器p指向的元素，返回一个指向
-被删除元素后面的元素的迭代器。
+c.erase(p)：删除迭代器p指向的元素,返回一个指向
+被删除元素后面的元素的迭代器.
 c.erase(b, e)：删除迭代器b和e标记范围内的所有
-元素，返回一个指向被删除元素段后面的元素的
-迭代器。
-c.clear()：删除容器内的所有元素，返回void。
-c.pop_front()：删除容器的第一个元素，返回void，只
-适用于list和deque。
-c.pop_back()：删除容器的最后一个元素，返回void。
+元素,返回一个指向被删除元素段后面的元素的
+迭代器.
+c.clear()：删除容器内的所有元素,返回void.
+c.pop_front()：删除容器的第一个元素,返回void,只
+适用于list和deque.
+c.pop_back()：删除容器的最后一个元素,返回void.
 
 f)赋值操作
-c1 = c2：删除c1的所有元素，将c2的所有元素复制
-给c1，c1和c2的容器类型及元素类型必须相同。
-c1.swap(c2)：交换c1和c2中的所有元素，c1和c2的容器
-类型及元素类型必须相同。
-c.assign(b, e)：重新给c赋值，内容为b和e所标记范围内
-的元素，b和e必须不是指向c中的元素的迭代器。
+c1 = c2：删除c1的所有元素,将c2的所有元素复制
+给c1,c1和c2的容器类型及元素类型必须相同.
+c1.swap(c2)：交换c1和c2中的所有元素,c1和c2的容器
+类型及元素类型必须相同.
+c.assign(b, e)：重新给c赋值,内容为b和e所标记范围内
+的元素,b和e必须不是指向c中的元素的迭代器.
 c.assign(n, t)：将c中的元素重新调转为n个值为t的
-元素。
+元素.
 
 1-2.关联容器
-set：快速查找，不允许有重复的值
+set：快速查找,不允许有重复的值
     //没有multiset这样的头文件
-    multiset：快速查找，允许有重复的值
-map：一对多映射，基于关键字快速查找，不允许有重复的值
+    multiset：快速查找,允许有重复的值
+map：一对多映射,基于关键字快速查找,不允许有重复的值
     //没有multimap这样的头文件
-    multimap：一对多映射，基于关键字快速查找，允许有重复的值
+    multimap：一对多映射,基于关键字快速查找,允许有重复的值
 
 1-3.容器适配器
 stack：先进后出
 queue：先进先出
     //没有priority_queue这样的头文件
-    priority_queue：最高优先级元素，问题第一个出列
+    priority_queue：最高优先级元素,问题第一个出列
     
 C++ map注意事项
-1、在map中，由key查找value时，首先要判断map中是否包含key。
-2、如果不检查，直接返回map[key]，可能会出现意想不到的行为。如果map包含key，没有问题，如果map不包含key，使用下标有一个危险的副作用，会在map中插入一个key的元素，value取默认值，返回value。也就是说，map[key]不可能返回null。
-3、map提供了两种方式，查看是否包含key，m.count(key)，m.find(key)。
-4、m.count(key)：由于map不包含重复的key，因此m.count(key)取值为0，或者1，表示是否包含。
-5、m.find(key)：返回迭代器，判断是否存在。
-6、对于下面的场景，存在key就使用，否则返回null，有下面两种写法：
+1、在map中,由key查找value时,首先要判断map中是否包含key.
+2、如果不检查,直接返回map[key],可能会出现意想不到的行为.如果map包含key,没有问题,如果map不包含key,使用下标有一个危险的副作用,会在map中插入一个key的元素,value取默认值,返回value.也就是说,map[key]不可能返回null.
+3、map提供了两种方式,查看是否包含key,m.count(key),m.find(key).
+4、m.count(key)：由于map不包含重复的key,因此m.count(key)取值为0,或者1,表示是否包含.
+5、m.find(key)：返回迭代器,判断是否存在.
+6、对于下面的场景,存在key就使用,否则返回null,有下面两种写法：
 1 if(m.count(key)>0)
 2 {
 3     return m[key];
@@ -1497,7 +1381,7 @@ C++ map注意事项
 4     return iter->second;
 5 }
 6 return null;
-这里需要注意：前一种方法很直观，但是效率差很多。因为前面的方法，需要执行两次查找。因此，推荐使用后一种方法。
+这里需要注意：前一种方法很直观,但是效率差很多.因为前面的方法,需要执行两次查找.因此,推荐使用后一种方法.
 
 2、迭代器
 3、算法
@@ -1567,63 +1451,246 @@ testVector.insert(testVector.begin() + index, "test8");
 
 ///////////////////////////FILE///////////////////////////
 
+判断文件或者目录是否存在：
+在windows环境下头文件为：
+#include <io.h>
+在linux环境下头文件为：
+#include <unistd.h>
+int access(const char* _Filename, int _AccessMode);
+上述函数在windows和linux环境下均可使用
+该函数功能为确定文件或目录的访问权限,
+如果指定的访问权限有效,则函数返回0,否则返回-1.
+参数说明:
+_Filename可以是文件路径,也可以是目录路径,
+         可以使用绝对路径或相对路径.
+_AccessMode表示要验证的文件访问权限,
+           有可读、可写、可执行以及是否存在四种权限,
+           当_Filename表示目录时仅能查询目录是否存在.
+_AccessMode：
+    头文件unistd.h中有如下定义：
+    #define R_OK 4 /* Test for read permission. */
+    #define W_OK 2 /* Test for write permission. */
+    #define X_OK 1 /* Test for execute permission. */
+    #define F_OK 0 /* Test for existence. */
+    具体含义如下：
+    R_OK 只判断是否有读权限
+    W_OK 只判断是否有写权限
+    X_OK 判断是否有执行权限
+    F_OK 只判断是否存在
+    在宏定义里面分别对应：
+    00 只存在
+    02 写权限
+    04 读权限
+    06 读和写权限
+_AccessMode=00表示只判断是否存在
+_AccessMode=02表示文件是否可执行
+_AccessMode=04表示文件是否可写
+_AccessMode=06表示文件是否可读
+// 判断目录是否存在
+int result = access("/root/temp_dir/test/", F_OK);
+if (result == -1) {
+    // root和temp_dir必须先存在
+    // test表示目录的话,最好在其后面加上"/"
+    mkdir("/root/temp_dir/test/", S_IRWXU);
+}
+// 判断文件是否存在
+result = access("/root/temp_dir/test/strings.xml", F_OK);
+if (result == -1) {
+    destFile = fopen("/root/temp_dir/test/strings.xml", "w");
+    fclose(destFile);
+    destFile = nullptr;
+}
+
+创建目录:
+父目录必须存在,只要有一个父目录不存在,则创建失败.
+如果父目录不存在,则只能一级一级先创建好父目录.
+windows环境下头文件为:
+#include <direct.h>
+函数原型为：
+int mkdir(const char *_Path);
+该函数功能为建立一个新的目录,创建成功则返回0,否则返回-1.
+_Path：新建目录路径,可使用绝对路径,可也用相对路径.
+windows环境下也可用函数_mkdir:
+_mkdir(const char *_Path)
+默认mode是0777,表示最大可能的访问权
+linux环境下头文件为:
+#include <sys/types.h>
+#include <sys/stat.h>
+函数原型为：
+int mkdir(const char *pathname, mode_t mode);
+该函数功能为创建一个新的目录,并指定它的执行权限.
+如果创建成功则返回0,否则,返回-1.
+S_IRWXU(如果是我使用的话就用这个吧)
+00700权限,代表该文件所有者拥有读,写和执行操作的权限
+S_IRUSR(S_IREAD)
+00400权限,代表该文件所有者拥有可读的权限
+S_IWUSR(S_IWRITE)
+00200权限,代表该文件所有者拥有可写的权限
+S_IXUSR(S_IEXEC)
+00100权限,代表该文件所有者拥有执行的权限
+S_IRWXG()
+00070权限,代表该文件用户组拥有读,写和执行操作的权限
+S_IRGRP()
+00040权限,代表该文件用户组拥有可读的权限
+S_IWGRP()
+00020权限,代表该文件用户组拥有可写的权限
+S_IXGRP()
+00010权限,代表该文件用户组拥有执行的权限
+S_IRWXO()
+00007权限,代表其他用户拥有读,写和执行操作的权限
+S_IROTH()
+00004权限,代表其他用户拥有可读的权限
+S_IWOTH()
+00002权限,代表其他用户拥有可写的权限
+S_IXOTH()
+00001权限,代表其他用户拥有执行的权限
+可叠加使用,
+如0755表示S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH.
+表示该文件所有者拥有读,写和执行操作权限去,
+该文件用户组拥有可读,可执行的权限,
+其他用户拥有可读,可执行的权限. 
+
+创建多级目录,其中某些父目录是不存在的
+void split(vector<string> &resultVector,
+           const string &content,
+           const string &pattern) {
+    char *strTemp1 = new char[strlen(content.c_str()) + 1];
+    strcpy(strTemp1, content.c_str());
+    char *strTemp2 = strtok(strTemp1, pattern.c_str());
+    while (strTemp2 != NULL) {
+        resultVector.push_back(string(strTemp2));
+        strTemp2 = strtok(NULL, pattern.c_str());
+    }
+    delete[] strTemp1;
+    strTemp1 = NULL;
+    strTemp2 = NULL;
+}
+string path = "/root/temp_dir/weidi/weidi/weidi/";
+vector<string> resultVector;
+split(resultVector, path, "/");
+int resultVectorSize = resultVector.size();
+string pathTemp;
+for (int i = 0; i < resultVectorSize; i++) {
+    if (!pathTemp.empty() && pathTemp.rfind("/") == string::npos) {
+        pathTemp = pathTemp + "/" + resultVector[i] + "/";
+    } else {
+        pathTemp = pathTemp + "/" + resultVector[i];
+    }
+    if (i == resultVectorSize - 1) {
+        pathTemp += "/";
+    }
+    int ret = access(pathTemp.c_str(), F_OK);
+    if (ret == -1) {
+        mkdir(pathTemp.c_str(), S_IRWXU);
+    }
+}
+cout << pathTemp << endl;
+
+删除目录(只能删除空的目录)：
+windows环境下头文件：
+#include <direct.h>
+linux环境下头文件：
+#include <dirent.h>
+函数原型为：
+int rmdir(const char *_Path);
+函数功能是删除参数指定的目录,成功返回0,否则返回-1.
+在windows环境下也可使用函数_rmdir.
+
 C++方式:
 C++文件流：
 fstream　　 // 输入输出文件流
 ifstream　 // 输入文件流
 ofstream　 // 输出文件流
-在C++中，有一个stream这个类，所有的I/O都以这个“流”类为基础的，
-包括我们要认识的文件I/O，stream这个类有两个重要的运算符：
+在C++中,有一个stream这个类,所有的I/O都以这个"流"类为基础的,
+包括我们要认识的文件I/O,stream这个类有两个重要的运算符：
 1、插入器(<<)
 2、析取器(>>)
-在C++中，对文件的操作是通过stream的子类fstream(file stream)来实现的，
-所以，要用这种方式操作文件，就必须加入头文件fstream.h。
+在C++中,对文件的操作是通过stream的子类fstream(file stream)
+来实现的,所以,要用这种方式操作文件,就必须加入头文件fstream.h.
 file1 << setw(20) << "姓名:" << "廉东方" << endl;
 
 imbue(locale("chs"));设置中文模式
 
-一、打开文件
-void open(const char *filename,
-            ios_base::openmode mode = ios_base::in | ios_base::out );
-void open(const wchar_t *_Filename,
-        ios_base::openmode mode = ios_base::in | ios_base::out,
-        int prot = ios_base::_Openprot)；
+#include <stdio.h>
+char buf[10] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
+FILE *fp1 = fopen("c:\\test.dat", "w");
+fwrite(buf, 1, 10, fp1);
+fclose(fp1);
+FILE *fp2 = fopen("c:\\test1.dat", "wb");
+fwrite(buf, 1, 10, fp2);
+fclose(fp2);
+我们注意到,
+第一段定义一个数组,每个分量的值为：10,等价的十六进制为0A.
+第二段先是打开一个文件test1.dat进行写操作,
+     再是把10个数据写入文件,最后关闭文件.
+第三段功能差不多,只是文件名换成了test2.dat,
+     打开文件的模式换成了wb.
+第二段和第三段有什么区别呢？我们看一下最后的文件内容：
+test1.dat:  0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A 0D 0A
+test2.dat:  0A 0A 0A 0A 0A 0A 0A 0A 0A 0A
+原因是为什么呢？这就是w 和 wb的区别,
+w是以文本方式打开文件,wb是二进制方式打开文件,
+以文本方式打开文件时,fwrite函数每碰到一个0x0A时,
+就在它的前面加入0x0D.其它内容不做添加操作.
+r 以只读方式打开文件,该文件必须存在.
+r+ 以可读写方式打开文件,该文件必须存在.
+rb+ 读写打开一个二进制文件,只允许读写数据.
+rt+ 读写打开一个文本文件,允许读和写.
+w 打开只写文件,若文件存在则文件长度清为0,即该文件内容会消失.若文件不存在则建立该文件.
+w+ 打开可读写文件,若文件存在则文件长度清为零,即该文件内容会消失.若文件不存在则建立该文件.
+a 以附加的方式打开只写文件.若文件不存在,则会建立该文件,如果文件存在,写入的数据会被加到文件尾,即文件原先的内容会被保留.(EOF符保留）
+a+ 以附加方式打开可读写的文件.若文件不存在,则会建立该文件,如果文件存在,写入的数据会被加到文件尾后,即文件原先的内容会被保留. (原来的EOF符不保留）
+wb 只写打开或新建一个二进制文件；只允许写数据.
+wb+ 读写打开或建立一个二进制文件,允许读和写.
+wt+ 读写打开或着建立一个文本文件；允许读写.
+at+ 读写打开一个文本文件,允许读或在文本末追加数据.
+ab+ 读写打开一个二进制文件,允许读或在文件末追加数据.
+　　上述的形态字符串都可以再加一个b字符,如rb、w+b或ab＋等组合,加入b 字符用来告诉函数库打开的文件为二进制文件,而非纯文字文件.不过在POSIX系统,包含Linux都会忽略该字符.由fopen()所建立的新文件会具有S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH(0666)权限,此文件权限也会参考umask 值
 
-void open(const char* filename,int mode,int access);
+
+一、打开文件
+void open(const char* filename, int mode, int access);
+// 有默认值
+void open(const char *filename,
+            ios_base::openmode mode = ios_base::in | ios_base::out);
+void open(const wchar_t *_Filename,
+            ios_base::openmode mode = ios_base::in | ios_base::out,
+            int prot = ios_base::_Openprot)；
 参数：
 filename:	打开的文件名
-mode:			打开文件的方式
+mode:		打开文件的方式
 access:		打开文件的属性
 打开文件的方式
-在类ios(是所有流式I/O类的基类)中定义，常用的值如下：
+在类ios(是所有流式I/O类的基类)中定义,常用的值如下：
 ios::in　　　 			文件以输入方式打开
 ios::out　　　			文件以输出方式打开
-ios::ate　　			文件打开后定位到文件尾，ios:app就包含有此属性
+ios::ate　　			文件打开后定位到文件尾,ios:app就包含有此属性
 ios::app　　　			以追加的方式打开文件
-ios::binary 　		以二进制方式打开文件，缺省的方式是文本方式。两种方式的区别见前文
-ios::nocreate 	不建立文件，所以文件不存在时打开失败　
-ios::noreplace	不覆盖文件，所以打开文件时如果文件存在失败
-ios::trunc		　　如果文件存在，把文件长度设为0
+ios::trunc		　　  如果文件存在,把文件长度设为0
+ios::nocreate       不建立文件,所以文件不存在时打开失败　
+ios::noreplace      不覆盖文件,所以打开文件时如果文件存在失败
+ios::binary 　       以二进制方式打开文件,缺省的方式是文本方式.两种方式的区别见前文
 
-ios::in　　　　			= 0x01,　//供读，文件不存在则创建(ifstream默认的打开方式)
-ios::out　　　 		= 0x02,　//供写，文件不存在则创建，若文件已存在则清空原内容(ofstream默认的打开方式)
-ios::ate　　　 		= 0x04,　//文件打开时，指针在文件最后。可改变指针的位置，常和in、out联合使用
-ios::app　　　 		= 0x08,　//供写，文件不存在则创建，若文件已存在则在原文件内容后写入新的内容，指针位置总在最后
+ios::in　　　　			= 0x01,　//供读,文件不存在则创建(ifstream默认的打开方式)
+ios::out　　　 		= 0x02,　//供写,文件不存在则创建,若文件已存在则清空原内容(ofstream默认的打开方式)
+ios::ate　　　 		= 0x04,　//文件打开时,指针在文件最后.可改变指针的位置,常和in、out联合使用
+ios::app　　　 		= 0x08,　//供写,文件不存在则创建,若文件已存在则在原文件内容后写入新的内容,指针位置总在最后
 ios::trunc　　 		= 0x10,　//在读写前先将文件长度截断为0（默认）
-ios::nocreate　	= 0x20,　//文件不存在时产生错误，常和in或app联合使用
-ios::noreplace 	= 0x40,　//文件存在时产生错误，常和out联合使用
+ios::nocreate　	    = 0x20,　//文件不存在时产生错误,常和in或app联合使用
+ios::noreplace 	    = 0x40,　//文件存在时产生错误,常和out联合使用
 ios::binary　　		= 0x80　 //二进制格式文件
-可以用“或”把以上属性连接起来，如ios::out|ios::binary
+可以用"或"把以上属性连接起来,如ios::out|ios::binary
 打开文件的属性
-0：普通文件，打开访问
+0：普通文件,打开访问
 1：只读文件
 2：隐含文件
 4：系统文件
 filebuf::openprot;　　　//默认的兼容共享方式
-filebuf::sh_none;　　　 //独占，不共享
+filebuf::sh_none;　　　 //独占,不共享
 filebuf::sh_read;　　　 //读共享
 filebuf::sh_write;　　　//写共享
-可以用“或”或者“+”把以上属性连接起来 ，如3或1|2就是以只读和隐含属性打开文件。
+可以用"或"或者"+"把以上属性连接起来,
+如3或1|2就是以只读和隐含属性打开文件.
 
 例如:
 第一种方式打开文件
@@ -1631,18 +1698,19 @@ fstream file1("c:\config.sys");
 第二种方式打开文件
 fstream file1;
 file1.open("c:\config.sys", ios::binary|ios::in, 0);
-如果open函数只有文件名一个参数，则是以读/写普通文件打开，即：
+如果open函数只有文件名一个参数,则是以读/写普通文件打开,即：
 file1.open("c:\config.sys");
 <=>
 file1.open("c:\config.sys", ios::in|ios::out, 0);
+
 fstream有两个子类：
 ifstream(input file stream),默认以输入方式打开文件
 ofstream(outpu file stream),默认以输出方式打开文件
-所以，在实际应用中，根据需要的不同，选择不同的类来定义：
-如果想以输入方式打开，就用ifstream来定义；
-如果想以输出方式打开，就用ofstream来定义；
-如果想以输入/输出方式来打开，就用fstream来定义。
-//默认以ios::in的方式打开文件，文件不存在时操作失败
+所以,在实际应用中,根据需要的不同,选择不同的类来定义：
+如果想以输入方式打开,就用ifstream来定义；
+如果想以输出方式打开,就用ofstream来定义；
+如果想以输入/输出方式来打开,就用fstream来定义.
+//默认以ios::in的方式打开文件,文件不存在时操作失败
 ifstream f("d:\\12.txt",ios::nocreate);
 //默认以ios::out的方式打开文件
 ofstream f("d:\\12.txt");
@@ -1652,24 +1720,24 @@ fstream f;
 //利用同一对象对多个文件进行操作时要用到open函数
 f.open("d:\\12.txt",ios::out);
 成功：
-　　if(f){...}　　　　　　　//对ifstream、ofstream对象可用，fstream对象不可用。
+　　if(f){...}　　　　　　　//对ifstream、ofstream对象可用,fstream对象不可用.
 　　if(f.good()){...}
 失败：
 　　if(!f){...}　　　　　　 // !运算符已经重载
 　　if(f.fail()){...}
 
 二、关闭文件
-打开的文件使用完成后一定要关闭，fstream提供了成员函数close()来完成此操作，
+打开的文件使用完成后一定要关闭,fstream提供了成员函数close()来完成此操作,
 如：
 file1.close();
-就把file1相连的文件关闭。
+就把file1相连的文件关闭.
 
 三、读写文件
 读写文件分为文本文件和二进制文件的读写.
 1、文本文件的读写
 文本文件的读写很简单：
 用插入器(<<)向文件输出；
-用析取器(>>)从文件输入。
+用析取器(>>)从文件输入.
 file << "I Love You";//向文件写入字符串"I Love You"
 int i;
 file >> i;//从文件读取一个整数值
@@ -1703,30 +1771,30 @@ while (!in.eof() )
 }
 2、二进制文件的读写
 使用put()函数
-put()函数向流写入一个字符，其原型是
+put()函数向流写入一个字符,其原型是
 	ofstream &put(char ch);
-使用也比较简单，如
+使用也比较简单,如
 file.put('c');
-就是向流写一个字符'c'。
+就是向流写一个字符'c'.
 
 使用get()函数
 	第一个get函数
 	ifstream &get(char &ch);//与上面的put函数是对应的
-从流中读取一个字符，结果保存在引用ch中，如果到文件尾，返回空字符'\0'.
+从流中读取一个字符,结果保存在引用ch中,如果到文件尾,返回空字符'\0'.
 如
 file.get(x);
-表示从文件中读取一个字符，并把读取的字符保存在x中.
+表示从文件中读取一个字符,并把读取的字符保存在x中.
 	第二个get函数
 	int get();
-从流中返回一个字符，如果到达文件尾，返回EOF.
+从流中返回一个字符,如果到达文件尾,返回EOF.
 如
 int x=file.get();
 	第三个get函数
 	ifstream &get(char *buf, int num, char delim=' ');
-把字符读入由buf指向的数组中，直到读入了num个字符或遇到了由delim指定的字符，
-如果没使用 delim 这个参数，将使用缺省值换行符' '.
+把字符读入由buf指向的数组中,直到读入了num个字符或遇到了由delim指定的字符,
+如果没使用 delim 这个参数,将使用缺省值换行符' '.
 file.get(str1, 127, 'A');
-//从文件中读取字符到字符串str1，当遇到字符'A'或读取了127个字符时终止.
+//从文件中读取字符到字符串str1,当遇到字符'A'或读取了127个字符时终止.
 例1:
 ifstream fin("d:\\简介.txt",ios::nocreate);
 if(!fin){
@@ -1776,14 +1844,14 @@ fout.close();
 cout<<"Copy over!\n";
 
 读写数据块
-读写二进制数据块，使用成员函数read()和write()成员函数.
+读写二进制数据块,使用成员函数read()和write()成员函数.
 	read(unsigned char *buf, int num);
 	write(const unsigned char *buf, int num);
-read()从文件中读取 num 个字符到 buf 指向的缓存中，
-如果在还未读入 num 个字符时就到了文件尾，
+read()从文件中读取 num 个字符到 buf 指向的缓存中,
+如果在还未读入 num 个字符时就到了文件尾,
 可以用成员函数 int gcount();来取得实际读取的字符数；
-而 write() 从buf 指向的缓存写 num 个字符到文件中，
-值得注意的是缓存的类型是 unsigned char *，有时可能需要类型转换。
+而 write() 从buf 指向的缓存写 num 个字符到文件中,
+值得注意的是缓存的类型是 unsigned char *,有时可能需要类型转换.
 如
 unsigned char str1[]="I Love You";
 int n[5];
@@ -1791,46 +1859,46 @@ ifstream in("xxx.xxx");
 ofstream out("yyy.yyy");
 //把字符串str1全部写到yyy.yyy文件中
 out.write(str1, strlen(str1));
-//从xxx.xxx文件中读取指定个整数，注意类型转换
+//从xxx.xxx文件中读取指定个整数,注意类型转换
 in.read((unsigned char*)n, sizeof(n));
 in.close();
 out.close();
 
 四、检测EOF
-成员函数eof()用来检测是否到达文件尾，
-如果到达文件尾返回非0值，否则返回0。
+成员函数eof()用来检测是否到达文件尾,
+如果到达文件尾返回非0值,否则返回0.
 原型是
 int eof();
 例：　　
 if(in.eof())ShowMessage("已经到达文件尾！");
 状态标志符的验证(Verification of state flags)
     bad()
-    如果在读写过程中出错，返回 true 。
-    例如：当我们要对一个不是打开为写状态的文件进行写入时，
-    或者我们要写入的设备没有剩余空间的时候。
+    如果在读写过程中出错,返回 true .
+    例如：当我们要对一个不是打开为写状态的文件进行写入时,
+    或者我们要写入的设备没有剩余空间的时候.
     fail()
-    除了与bad() 同样的情况下会返回 true 以外，
-    加上格式错误时也返回true ，例如当想要读入一个整数，而获得了一个字母的时候。
+    除了与bad() 同样的情况下会返回 true 以外,
+    加上格式错误时也返回true ,例如当想要读入一个整数,而获得了一个字母的时候.
     eof()
-    如果读文件到达文件末尾，返回true。
+    如果读文件到达文件末尾,返回true.
     good()
-    这是最通用的：如果调用以上任何一个函数返回true 的话，此函数返回 false 。
-要想重置以上成员函数所检查的状态标志，你可以使用成员函数clear()，没有参数。
+    这是最通用的：如果调用以上任何一个函数返回true 的话,此函数返回 false .
+要想重置以上成员函数所检查的状态标志,你可以使用成员函数clear(),没有参数.
 
 五、文件定位
-和C的文件操作方式不同的是，C++ I/O系统管理两个与一个文件相联系的指针。
-一个是读指针，它说明输入操作在文件中的位置；
-另一个是写指针，它下次写操作的位置。
-每次执行输入或输出时，相应的指针自动变化。
-所以，C++的文件定位分为读位置和写位置的定位，对应的成员函数是 
+和C的文件操作方式不同的是,C++ I/O系统管理两个与一个文件相联系的指针.
+一个是读指针,它说明输入操作在文件中的位置；
+另一个是写指针,它下次写操作的位置.
+每次执行输入或输出时,相应的指针自动变化.
+所以,C++的文件定位分为读位置和写位置的定位,对应的成员函数是 
 istream &seekg(streamoff offset, seek_dir origin);设置读位置
 ostream &seekp(streamoff offset, seek_dir origin);设置写位置
-streamoff定义于iostream.h中，定义有偏移量offset所能取得的最大值，
-seek_dir表示移动的基准位置，是一个有以下值的枚举:
+streamoff定义于iostream.h中,定义有偏移量offset所能取得的最大值,
+seek_dir表示移动的基准位置,是一个有以下值的枚举:
 ios::beg：　0　	文件开头
 ios::cur：　1　	文件当前位置
 ios::end：　2　	文件结尾
-这两个函数一般用于二进制文件，因为文本文件会因为系统对字符的解释而可能与预想的值不同。
+这两个函数一般用于二进制文件,因为文本文件会因为系统对字符的解释而可能与预想的值不同.
 例：
 //把文件的读指针从当前位置向后移1234个字节
 file1.seekg(1234, ios::cur);
@@ -1851,18 +1919,18 @@ seekp(相对位置,参照位置);
 tellp();
 
 缓存和同步(Buffers and Synchronization)
-当我们对文件流进行操作的时候，它们与一个streambuf类型的缓存(buffer)联系在一起。
-这个缓存（buffer）实际是一块内存空间，作为流(stream)和物理文件的媒介。
-例如，对于一个输出流， 每次成员函数put (写一个单个字符)被调用，
-这个字符不是直接被写入该输出流所对应的物理文件中的，而是首先被插入到该流的缓存（buffer）中。
-当缓存被排放出来(flush)时，它里面的所有数据或者被写入物理媒质中（如果是一个输出流的话），
-或者简单的被抹掉(如果是一个输入流的话)。这个过程称为同步(synchronization)，
+当我们对文件流进行操作的时候,它们与一个streambuf类型的缓存(buffer)联系在一起.
+这个缓存（buffer）实际是一块内存空间,作为流(stream)和物理文件的媒介.
+例如,对于一个输出流, 每次成员函数put (写一个单个字符)被调用,
+这个字符不是直接被写入该输出流所对应的物理文件中的,而是首先被插入到该流的缓存（buffer）中.
+当缓存被排放出来(flush)时,它里面的所有数据或者被写入物理媒质中（如果是一个输出流的话）,
+或者简单的被抹掉(如果是一个输入流的话).这个过程称为同步(synchronization),
 它会在以下任一情况下发生：
-    当文件被关闭时: 在文件被关闭之前，所有还没有被完全写出或读取的缓存都将被同步。
-    当缓存buffer 满时:缓存Buffers 有一定的空间限制。当缓存满时，它会被自动同步。
-    控制符明确指明:当遇到流中某些特定的控制符时，同步会发生。这些控制符包括：flush 和endl。
-    明确调用函数sync(): 调用成员函数sync() (无参数)可以引发立即同步。
-    这个函数返回一个int 值，等于-1 表示流没有联系的缓存或操作失败。
+    当文件被关闭时: 在文件被关闭之前,所有还没有被完全写出或读取的缓存都将被同步.
+    当缓存buffer 满时:缓存Buffers 有一定的空间限制.当缓存满时,它会被自动同步.
+    控制符明确指明:当遇到流中某些特定的控制符时,同步会发生.这些控制符包括：flush 和endl.
+    明确调用函数sync(): 调用成员函数sync() (无参数)可以引发立即同步.
+    这个函数返回一个int 值,等于-1 表示流没有联系的缓存或操作失败.
 
 fstream file("/values/strings.xml");
 string alineString;

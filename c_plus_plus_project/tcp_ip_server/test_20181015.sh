@@ -132,36 +132,37 @@ function digui_src_res() {
 #digui_src_res ${src_dir_searchhomenetwork_res}
 digui_src_res ${src_dir_video_res}
 
-#COUNTER=0
-#while [[ $COUNTER -lt 5 ]]
+#new_string="%1$d av"
+#if [[ ${new_string} =~ "$d" ]]; then
+##    new_string=`echo ${new_string} | sed 's/$d/######/g'`
+#    new_string1=`echo ${new_string} | awk  -F "$d" '{print $1}'`
+#    new_string2=`echo ${new_string} | awk  -F '$d' '{print $2}'`
+#    echo "--->"${new_string1} ${new_string2}
+#fi
+#printf "%s" ${new_string}
+#for i in `seq 1 ${#new_string}`
 #do
-#    echo -e "ae\c" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
-#    let COUNTER+=1
-#done
-
-#new_string="Hierdie bediener is nie gevind nie.\nKontroleer asseblief die bedienerverbindings en netwerkinstellings, of druk die SELECT-knoppie om die bediener met die WOL- (Wake On LAN) funksie aan te skakel."
-#string1="Hierdie bediener is nie gevind nie.\nKontroleer asseblief die bedienerverbindings en netwerkinstellings, of druk die SELECT-knoppie om die bediener met die WOL- (Wake On LAN) funksie aan te skakel."
-#echo "=======================" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
-#for i in `seq 1 ${#string1}`
-#do
-#    a_char=`echo ${string1} | cut -c $i`
-#    if [[ ${a_char} == '\' ]]; then
-#        a_char="\\\\"
+#    a_char=`echo ${new_string} | cut -c $i`
+#    if [[ ${a_char} == "\$" ]]; then
+#        a_char="######"
 #    fi
 ##    echo ${a_char}
-#    echo -e "${a_char}\c" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+##    echo -e "${a_char}\c" >> test.txt
+#    new_string_temp=${new_string_temp}${a_char}
 #done
-#echo "" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
-#echo "abc" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+#new_string=`echo ${new_string} | sed 's/$/######/g'`
+#echo ${new_string_temp}
+#sed -i -e "/resources>/i\\    ${new_string}" ${dest_res_values_strings_path}
+#sed -i -e 's/######/$/g' ${dest_res_values_strings_path}
 
-#echo "---------------------------" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
-#echo -e "agb.\c" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
-#echo -e "\\\\\c" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
-#echo -e "nadk\c" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
-#echo "---------------------------" >> /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
-
-#new_string=`echo ${new_string} | sed 's/\\\\n/######/g'`
+#echo who am i | grep -q "^Kenny$d"
+#if [ $? -ne 0 ] ;then
+#    echo "grep return a none-zero value, not find Kenny"
+#else
+#    echo "grep return zero value, find Kenny"
+#fi
+#
+#new_string="%1######abcd"
+#new_string=`echo ${new_string} | sed 's/######/$d/g'`
 #echo ${new_string}
-
-
-#sed -i -e 's/######/\\n/g' /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_server/cmake-build-debug/test.txt
+#echo "$to already exists. overwrite (yes/no)? \c"
