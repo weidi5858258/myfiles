@@ -53,13 +53,12 @@ void process_conn_client(int ss) {
     for (;;) {
         // 从套接字中读取数据放到缓冲区buffer中
         // 从屏幕中读取用户输入的内容
+        memset(&buffer, '\0', sizeof(buffer));
         size = read(0, buffer, 1024);
         printf("client size: %ld\n", size);
         if (size > 0) {
             // 发给服务器端
             write(ss, buffer, size);
-            size = read(ss, buffer, 1024);
-            write(1, buffer, size);
         }
     }
 }

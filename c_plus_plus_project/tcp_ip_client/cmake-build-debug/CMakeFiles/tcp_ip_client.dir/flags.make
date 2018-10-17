@@ -6,5 +6,5 @@ CXX_FLAGS = -g   -std=c++11 -std=gnu++11
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/mnt/d/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/include -I/root/mydev/tools/ffmpeg/include -I/usr/include/SDL2 -I/usr/local/include/lame 
+CXX_INCLUDES = -I/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/include -I/root/mydev/tools/ffmpeg/include -I/usr/include/SDL2 -I/usr/local/include/lame 
 

@@ -1,4 +1,11 @@
 #include <signal.h>
+#include <thread>
+
+#include <stddef.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+
 #include "linuxhttp/LinuxSocket.h"
 #include "signal/HandleSignal.h"
 
@@ -19,8 +26,8 @@ int main(int argc, char *argv[]) {
     printf("The run result:\n");
     printf("---------------------------------------------------\n");
 
-    signal(SIGINT, handleSigIntSignal);
-    signal(SIGPIPE, handleSigPipeSignal);
+//    signal(SIGINT, handleSigIntSignal);
+//    signal(SIGPIPE, handleSigPipeSignal);
 
 //    howToCreateChildProcess();
 
@@ -57,40 +64,91 @@ int howToCreateChildProcess() {
     }
 }
 
+
 int test() {
-#define K 1024
-#define WRITELEN (128*K)
+#define MY_SOCK_PATH "/somepath"
 
-    int result = -1;
-    int fd[2];
-    pid_t pid;
-    char string[WRITELEN] = "你好,管道";
-    char readbuffer[10*K];
-    int *write_fd = &fd[1];
-    int *read_fd = &fd[0];
-    result = pipe(fd);
-    if (-1 == result) {
-        printf("建立管道失败\n");
-        return EXIT_FAILURE;
+    int sfd;
+    // AF_UNIX对应的结构
+    struct sockaddr_un my_addr;
+    sfd = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (sfd == -1) {
+        perror("socket");
+        exit(EXIT_FAILURE);
     }
-    pid = fork();
-    if (-1 == pid) {
-        printf("fork进程失败\n");
-        return EXIT_FAILURE;
+    // 对结构体进行初始化(清零)
+    memset(&my_addr, 0, sizeof(struct sockaddr_un));
+    my_addr.sun_family = AF_UNIX;
+    // 复制路径到地址结构
+    strncpy(my_addr.sun_path,
+            MY_SOCK_PATH,
+            sizeof(my_addr.sun_path) - 1);
+    if (bind(sfd,
+             (struct sockaddr *) &my_addr,
+             sizeof(struct sockaddr_un)) == -1) {
+        perror("bind");
+        exit(EXIT_FAILURE);
     }
-    if (0 == pid) {
-        printf("子进程\n");
-        int write_size=WRITELEN;
-        result=0;
-        close(*read_fd);
-        result = write(*write_fd, string, strlen(string));
-        printf("发送了 %d 个数据\n", result);
-    } else {
-        printf("父进程\n");
-        close(*write_fd);
-        memset(readbuffer, '\0', sizeof(readbuffer));
-        result = read(*read_fd, readbuffer, sizeof(readbuffer));
-        printf("接收到 %d 个数据,内容为:\n%s\n", result, readbuffer);
-    }
-
+    // ...
+    close(sfd);
 }
+/***
+子线程
+#include <thread>
+线程类thread
+主要方法:
+join()
+detach()
+joinable()
+使用说明:
+join()让主线程等待子线程的完成
+detach()让主线程与子线程分离,子线程就成了后台线程.
+如果主线程退出了,子线程就不再执行.
+joinable()条件判断.
+返回true时,线程对象可以join()或者detach();
+返回false时,线程对象不能join()或者detach().
+如果调用了join()后就不能再调用join()或者detach(),
+如果调用了detach()后也不能再调用join()或者detach().
+因此最好的做法是调用join()或者detach()之前,
+先调用joinable()方法判断一下,返回true时再调用.
+第一种使用线程方法:
+1.
+void testThread() {
+    cout << "我是子线程,现在正在执行任务..." << endl;
+}
+2.
+thread childThread(testThread);
+if (childThread.joinable()) {
+    childThread.join();
+}
+
+第二种使用线程方法:
+1.创建类,void operator()() {...}这个方法少不了
+class MyThread {
+public:
+    // 如果没有这个方法,那么使用MyThread类创建的对象就不是可调用对象.
+    // 如果不是可调用对象,那么这个类就是普通类,不能作为线程对象的参数.
+    void operator()() {
+        cout << "我是子线程,现在正在执行任务..." << endl;
+    }
+};
+2.
+MyThread myThread;
+// thread类对象参数必须是可调用对象.
+thread childThread(myThread);
+if (childThread.joinable()) {
+    childThread.join();
+}
+
+第三种使用线程方法:
+用lambda表达式.
+auto testThread = [] {
+    cout << "我是子线程,现在正在执行任务..." << endl;
+};
+thread childThread(testThread);
+if (childThread.joinable()) {
+    childThread.join();
+}
+
+
+ */

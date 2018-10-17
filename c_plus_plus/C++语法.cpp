@@ -43,7 +43,7 @@ unsigned short int                          0~65535
 
 int                             4           -2147483648~2147483647
 long int                        4           -2147483648~2147483647
-unsigned int(或者unsigned）                 0~4294967295(32位系统）
+unsigned int(或者unsigned)                 0~4294967295(32位系统)
 unsigned long int                           0~4294967295
 
 float                           4
@@ -67,7 +67,7 @@ typedef   unsigned int size_t;
 typedef  unsigned long size_t;
 	size_t在32位架构上是4字节,在64位架构上是8字节,
 	在不同架构上进行编译时需要注意这个问题.
-	而int在不同架构下都是4字节,与size_t不同；
+	而int在不同架构下都是4字节,与size_t不同;
 	且int为带符号数,size_t为无符号数.
 
 ssize_t
@@ -151,7 +151,18 @@ typeid()
 
 
 
-
+int a = 100;
+void *p = (void *) (&a);
+// b78f8bf0
+printf("%x\n", &a);
+// b78f8bf0
+printf("%x\n", p);
+// b78f8bf0
+printf("%x\n", (int*)p);
+int b;
+b = *(int *) p;
+b = *((int *) p);
+cout << "b = " << b << endl;
 
 
 
@@ -604,10 +615,10 @@ using namespace std;
 
 下列码表含有全部128个ASCII十进制、八进制、十六进制及字符编码.
 十进制 	八进制 	十六进制 	字符
-0 		  0 		  00 	    NUL(空）
-1 	    1 	    01 	    SOH(标题开始）
-2 	    2 	    02 	    STX(正文开始）
-3 	    3 	    03 	    ETX(正文结束）
+0 		  0 		  00 	    NUL(空)
+1 	    1 	    01 	    SOH(标题开始)
+2 	    2 	    02 	    STX(正文开始)
+3 	    3 	    03 	    ETX(正文结束)
 4 	    4 	    04 	    EOT(传送结束)
 5 	    5 	    05 	    ENQ(询问)
 6 	    6 	    06 	    ACK(确认)
@@ -747,7 +758,7 @@ string型字符串的比较
 ' ' == 32
 空格的ASCII码为32,而空字符的ASCII码为0.
 cin遇到不可见字符和空字符就停止输入(不可见字符指的
-是制表符和空格）,而cout则只是遇到空字符才停止输出.
+是制表符和空格),而cout则只是遇到空字符才停止输出.
 这就量为什么将空字符作为字符串结束标志的原因,
 cin和cout遇到空字符都会结束输入和输出操作.
 cout遇到空字符就停止输出.因此其后面的内容不再输出.
@@ -1638,11 +1649,11 @@ rb+ 读写打开一个二进制文件,只允许读写数据.
 rt+ 读写打开一个文本文件,允许读和写.
 w 打开只写文件,若文件存在则文件长度清为0,即该文件内容会消失.若文件不存在则建立该文件.
 w+ 打开可读写文件,若文件存在则文件长度清为零,即该文件内容会消失.若文件不存在则建立该文件.
-a 以附加的方式打开只写文件.若文件不存在,则会建立该文件,如果文件存在,写入的数据会被加到文件尾,即文件原先的内容会被保留.(EOF符保留）
-a+ 以附加方式打开可读写的文件.若文件不存在,则会建立该文件,如果文件存在,写入的数据会被加到文件尾后,即文件原先的内容会被保留. (原来的EOF符不保留）
-wb 只写打开或新建一个二进制文件；只允许写数据.
+a 以附加的方式打开只写文件.若文件不存在,则会建立该文件,如果文件存在,写入的数据会被加到文件尾,即文件原先的内容会被保留.(EOF符保留)
+a+ 以附加方式打开可读写的文件.若文件不存在,则会建立该文件,如果文件存在,写入的数据会被加到文件尾后,即文件原先的内容会被保留. (原来的EOF符不保留)
+wb 只写打开或新建一个二进制文件;只允许写数据.
 wb+ 读写打开或建立一个二进制文件,允许读和写.
-wt+ 读写打开或着建立一个文本文件；允许读写.
+wt+ 读写打开或着建立一个文本文件;允许读写.
 at+ 读写打开一个文本文件,允许读或在文本末追加数据.
 ab+ 读写打开一个二进制文件,允许读或在文件末追加数据.
 　　上述的形态字符串都可以再加一个b字符,如rb、w+b或ab＋等组合,加入b 字符用来告诉函数库打开的文件为二进制文件,而非纯文字文件.不过在POSIX系统,包含Linux都会忽略该字符.由fopen()所建立的新文件会具有S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH(0666)权限,此文件权限也会参考umask 值
@@ -1655,7 +1666,7 @@ void open(const char *filename,
             ios_base::openmode mode = ios_base::in | ios_base::out);
 void open(const wchar_t *_Filename,
             ios_base::openmode mode = ios_base::in | ios_base::out,
-            int prot = ios_base::_Openprot)；
+            int prot = ios_base::_Openprot);
 参数：
 filename:	打开的文件名
 mode:		打开文件的方式
@@ -1675,7 +1686,7 @@ ios::in　　　　			= 0x01,　//供读,文件不存在则创建(ifstream默认
 ios::out　　　 		= 0x02,　//供写,文件不存在则创建,若文件已存在则清空原内容(ofstream默认的打开方式)
 ios::ate　　　 		= 0x04,　//文件打开时,指针在文件最后.可改变指针的位置,常和in、out联合使用
 ios::app　　　 		= 0x08,　//供写,文件不存在则创建,若文件已存在则在原文件内容后写入新的内容,指针位置总在最后
-ios::trunc　　 		= 0x10,　//在读写前先将文件长度截断为0（默认）
+ios::trunc　　 		= 0x10,　//在读写前先将文件长度截断为0(默认)
 ios::nocreate　	    = 0x20,　//文件不存在时产生错误,常和in或app联合使用
 ios::noreplace 	    = 0x40,　//文件存在时产生错误,常和out联合使用
 ios::binary　　		= 0x80　 //二进制格式文件
@@ -1707,8 +1718,8 @@ fstream有两个子类：
 ifstream(input file stream),默认以输入方式打开文件
 ofstream(outpu file stream),默认以输出方式打开文件
 所以,在实际应用中,根据需要的不同,选择不同的类来定义：
-如果想以输入方式打开,就用ifstream来定义；
-如果想以输出方式打开,就用ofstream来定义；
+如果想以输入方式打开,就用ifstream来定义;
+如果想以输出方式打开,就用ofstream来定义;
 如果想以输入/输出方式来打开,就用fstream来定义.
 //默认以ios::in的方式打开文件,文件不存在时操作失败
 ifstream f("d:\\12.txt",ios::nocreate);
@@ -1736,7 +1747,7 @@ file1.close();
 读写文件分为文本文件和二进制文件的读写.
 1、文本文件的读写
 文本文件的读写很简单：
-用插入器(<<)向文件输出；
+用插入器(<<)向文件输出;
 用析取器(>>)从文件输入.
 file << "I Love You";//向文件写入字符串"I Love You"
 int i;
@@ -1849,7 +1860,7 @@ cout<<"Copy over!\n";
 	write(const unsigned char *buf, int num);
 read()从文件中读取 num 个字符到 buf 指向的缓存中,
 如果在还未读入 num 个字符时就到了文件尾,
-可以用成员函数 int gcount();来取得实际读取的字符数；
+可以用成员函数 int gcount();来取得实际读取的字符数;
 而 write() 从buf 指向的缓存写 num 个字符到文件中,
 值得注意的是缓存的类型是 unsigned char *,有时可能需要类型转换.
 如
@@ -1887,7 +1898,7 @@ if(in.eof())ShowMessage("已经到达文件尾！");
 
 五、文件定位
 和C的文件操作方式不同的是,C++ I/O系统管理两个与一个文件相联系的指针.
-一个是读指针,它说明输入操作在文件中的位置；
+一个是读指针,它说明输入操作在文件中的位置;
 另一个是写指针,它下次写操作的位置.
 每次执行输入或输出时,相应的指针自动变化.
 所以,C++的文件定位分为读位置和写位置的定位,对应的成员函数是 
@@ -1920,10 +1931,10 @@ tellp();
 
 缓存和同步(Buffers and Synchronization)
 当我们对文件流进行操作的时候,它们与一个streambuf类型的缓存(buffer)联系在一起.
-这个缓存（buffer）实际是一块内存空间,作为流(stream)和物理文件的媒介.
+这个缓存(buffer)实际是一块内存空间,作为流(stream)和物理文件的媒介.
 例如,对于一个输出流, 每次成员函数put (写一个单个字符)被调用,
-这个字符不是直接被写入该输出流所对应的物理文件中的,而是首先被插入到该流的缓存（buffer）中.
-当缓存被排放出来(flush)时,它里面的所有数据或者被写入物理媒质中（如果是一个输出流的话）,
+这个字符不是直接被写入该输出流所对应的物理文件中的,而是首先被插入到该流的缓存(buffer)中.
+当缓存被排放出来(flush)时,它里面的所有数据或者被写入物理媒质中(如果是一个输出流的话),
 或者简单的被抹掉(如果是一个输入流的话).这个过程称为同步(synchronization),
 它会在以下任一情况下发生：
     当文件被关闭时: 在文件被关闭之前,所有还没有被完全写出或读取的缓存都将被同步.
@@ -1956,6 +1967,269 @@ file.close();
 
 
 
+
+
+///////////////////////////子线程///////////////////////////
+
+并发: 指在同一时刻,只能有一条指令执行,
+      但多个进程被快速轮换执行,使得在宏观上具有
+      多个进程同时执行的效果(单核).
+并行: 指在同一时刻,有多条指令在多个处理器上
+      同时执行(真正的同时发生,多核).
+同步: 彼此有依赖关系的调用不应该"同时发生",
+      而同步就是要阻止那些"同时发生"的事情.
+异步: 任何两个彼此独立的操作是异步的,它表明事情独立的发生.
+
+对于我来说,第三种方式使用方便点,因此在一般情况下用第三种好了.
+
+#include <thread>
+线程类thread
+主要方法:
+join()
+detach()
+joinable()
+使用说明:
+join()让主线程等待子线程的完成
+detach()让主线程与子线程分离,子线程就成了后台线程.
+如果主线程退出了,子线程就不再执行.
+joinable()条件判断.
+返回true时,线程对象可以join()或者detach();
+返回false时,线程对象不能join()或者detach().
+如果调用了join()后就不能再调用join()或者detach(),
+如果调用了detach()后也不能再调用join()或者detach().
+因此最好的做法是调用join()或者detach()之前,
+先调用joinable()方法判断一下,返回true时再调用.
+第一种使用线程方法:
+1.
+void testThread() {
+    cout << "我是子线程,现在正在执行任务..." << endl;
+}
+2.
+thread childThread(testThread);
+if (childThread.joinable()) {
+    childThread.join();
+}
+
+第二种使用线程方法:
+1.创建类,void operator()() {...}这个方法少不了
+class MyThread {
+public:
+    // 如果没有这个方法,那么使用MyThread类创建的对象就不是可调用对象.
+    // 如果不是可调用对象,那么这个类就是普通类,不能作为线程对象的参数.
+    void operator()() {
+        cout << "我是子线程,现在正在执行任务..." << endl;
+    }
+};
+2.
+MyThread myThread;
+// thread类对象参数必须是可调用对象.
+thread childThread(myThread);
+if (childThread.joinable()) {
+    childThread.join();
+}
+
+第三种使用线程方法:
+用lambda表达式.
+auto testThread = [] {
+    cout << "我是子线程,现在正在执行任务..." << endl;
+};
+thread childThread(testThread);
+if (childThread.joinable()) {
+    childThread.join();
+}
+
+
+
+
+cat /usr/include/asm-generic/errno.h
+man pthread_create
+
+gcc -o test_thread test_thread.c -lpthread
+
+linux多线程
+#include <pthread.h>
+Linux系统下的多线程遵循POSIX标准,叫做pthread.
+编写Linux下的线程需要包含头文件pthread.h,在生成
+可执行文件的时候需要链接库
+libpthread.a或者libpthread.so.
+
+                线程                  进程
+标识符类型      pthread_t            pid_t
+获取id         pthread_self()       getpid()
+创建           pthread_create()     fork()
+
+
+typedef unsigned long int pthread_t;线程标识符
+
+extern int pthread_create __P (
+    // 参数一: pthread_t指针,因此传递的参数是一个地址
+    pthread_t *__thread,
+    // 参数二: 线程属性
+    __const pthread_attr_t *__attr,
+    // 参数三: 函数指针
+    void *(*__start_routine)(void *),
+    // 参数四: 函数参数
+    void *__arg);
+参数说明:
+第一个参数为指向线程标识符的指针.
+第二个参数用来设置线程属性,
+    为NULL时将生成默认属性的线程
+第三个参数是线程运行函数的起始地址(意思就是执行线程代码的函数),
+第四个参数是运行函数的参数,不需要传递参数时赋为NULL.
+返回值说明:
+当创建线程成功时,函数返回0,
+若不为0则说明创建线程失败,常见的错误返回代码为EAGAIN和EINVAL.
+前者表示系统限制创建新的线程,例如线程数目过多了;
+后者表示第二个参数代表的线程属性值非法.
+
+extern int pthread_join __P ((
+     // 参数一: 线程id
+     pthread_t __th,
+     // 参数二:
+     void **__thread_return));
+第一个参数为被等待的线程标识符,
+第二个参数为一个用户定义的指针,
+    它可以用来存储被等待线程的返回值.
+这个函数是一个线程阻塞的函数,
+调用它的函数将一直等待到被等待的线程结束为止.
+当函数返回时,被等待线程的资源被收回.
+
+extern void pthread_exit __P ((void *__retval)) 
+        __attribute__ ((__noreturn__));
+唯一的参数是函数的返回代码,
+只要pthread_join中的第二个参数thread_return不是NULL,
+这个值将被传递给thread_return.
+最后要说明的是,一个线程不能被多个线程等待,
+否则第一个接收到信号的线程成功返回,
+其余调用pthread_join的线程则返回错误代码ESRCH.
+
+总结:
+pthread_exit等各个线程退出后,进程才结束;
+否则main进程强制结束了,线程可能还没反应过来,因此线程不会执行.
+pthread_join后面的代码只有待线程里的代码全部执行完了才会执行.
+pthread_exit后面的代码不会被执行.
+pthread_join与pthread_exit只需要用一个,
+一起使用也没有关系,只是pthread_exit后面不会被执行.
+
+
+其他说明:
+创建线程成功后,新创建的线程则运行参数三和参数四确定的函数,
+原来的线程则继续运行下一行代码.
+
+属性结构(/usr/include/pthread.h)
+pthread_attr_t
+属性值不能直接设置,须使用相关函数进行操作,
+初始化的函数为
+pthread_attr_init
+这个函数必须在pthread_create函数之前调用.
+属性对象主要包括是否绑定、是否分离、堆栈地址、堆栈大小、优先级.
+默认的属性为非绑定、非分离、缺省1M的堆栈、
+与父进程同样级别的优先级.
+
+关于线程的绑定,牵涉到另外一个概念：
+轻进程(LWP：Light Weight Process).
+轻进程可以理解为内核线程,它位于用户层和系统层之间.
+系统对线程资源的分配、对线程的控制是通过轻进程来实现的,
+一个轻进程可以控制一个或多个线程.
+默认状况下,启动多少轻进程、哪些轻进程来控制哪些线程是由
+系统来控制的,这种状况即称为非绑定的.
+绑定状况下,则顾名思义,即某个线程固定的"绑"在一个轻进程之上.
+被绑定的线程具有较高的响应速度,这是因为CPU时间片的调度是
+面向轻进程的,
+绑定的线程可以保证在需要的时候它总有一个轻进程可用.
+通过设置被绑定的轻进程的优先级和调度级可以使得
+绑定的线程满足诸如实时反应之类的要求.
+设置线程绑定状态的函数为
+pthread_attr_setscope,
+它有两个参数,
+第一个是指向属性结构的指针,
+第二个是绑定类型,它有两个取值：
+PTHREAD_SCOPE_SYSTEM(绑定的)
+PTHREAD_SCOPE_PROCESS(非绑定的)
+
+设置线程是否分离
+线程的分离状态决定一个线程以什么样的方式来终止自己.
+线程的默认属性即为非分离状态,这种情况下,
+原有的线程等待创建的线程结束.
+只有当pthread_join()函数返回时,
+创建的线程才算终止,才能释放自己占用的系统资源.
+而分离线程不是这样子的,它没有被其他的线程所等待,
+自己运行结束了,线程也就终止了,马上释放系统资源.
+程序员应该根据自己的需要,选择适当的分离状态.
+设置线程分离状态的函数为
+pthread_attr_setdetachstate(
+     pthread_attr_t *attr,
+     int detachstate);
+第二个参数可选为
+PTHREAD_CREATE_DETACHED(分离线程)
+PTHREAD_CREATE_JOINABLE(非分离线程)
+这里要注意的一点是,如果设置一个线程为分离线程,
+而这个线程运行又非常快,
+它很可能在pthread_create函数返回之前就终止了,
+它终止以后就可能将线程号和系统资源移交给其他的线程使用,
+这样调用pthread_create的线程就得到了错误的线程号.
+要避免这种情况可以采取一定的同步措施,最简单的方法之一是
+可以在被创建的线程里调用pthread_cond_timewait函数,
+让这个线程等待一会儿,留出足够的时间让函数pthread_create返回.
+设置一段等待时间,是在多线程编程里常用的方法.
+但是注意不要使用诸如wait()之类的函数,
+它们是使整个进程睡眠,并不能解决线程同步的问题.
+另外一个可能常用的属性是线程的优先级,
+它存放在结构sched_param中.
+用函数pthread_attr_getschedparam
+和函数pthread_attr_setschedparam进行存放,
+一般说来,我们总是先取优先级,对取得的值修改后再存放回去.
+
+互斥锁
+创建pthread_mutex_init;
+销毁pthread_mutex_destroy;
+加锁pthread_mutex_lock;
+解锁pthread_mutex_unlock.
+
+条件锁
+创建pthread_cond_init;
+销毁pthread_cond_destroy;
+触发pthread_cond_signal;
+广播pthread_cond_broadcast S;
+等待pthread_cond_wait
+
+void *say_hello_thread(void *args) {
+    sleep(3);
+    printf("Hello Runoob pid: %u\n", pthread_self());
+}
+
+void test_pthread(void) {
+    pthread_t p_tids[PTHREADS_NUM];
+    // 定义一个属性
+    pthread_attr_t attr;
+    // 初始化属性值,均设为默认值
+    pthread_attr_init(&attr);
+    pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+    sched_param param;
+    pthread_attr_getschedparam(&attr, &param);
+    param.sched_priority = 20;
+    pthread_attr_setschedparam(&attr, &param);
+    for (int i = 0; i < PTHREADS_NUM; ++i) {
+        printf("&p_tids\[%d\] = %p\n", i, &p_tids[i]);
+        int ret = pthread_create(&p_tids[i], &attr, say_hello_thread, NULL);
+        if (ret != 0) {
+            printf("pthread_create error: error_code = %d\n", ret);
+        }
+    }
+
+    printf("pthread_join\n");
+
+    for (int i = 0; i < PTHREADS_NUM; ++i) {
+        //say_hello_thread函数里面的代码执行完了pthread_join才会返回结果
+        int joinResult = pthread_join(p_tids[i], NULL);
+        printf("joinResult = %d, %p\n", joinResult, &p_tids[i]);
+    }
+
+    //使用pthread_exit的话其后的代码就不会再执行了
+    //pthread_exit(NULL);
+
+    printf("Game Over\n");
+}
 
 
 ///////////////////////////

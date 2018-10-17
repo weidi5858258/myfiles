@@ -233,6 +233,7 @@ echo "Y" | sudo apt-get install schedtool
 echo "Y" | sudo apt-get install nmap
 echo "Y" | sudo apt-get install sqlmap
 echo "Y" | sudo apt-get install metasploit
+echo "Y" | sudo apt-get install libhugetlbfs-dev
 echo "Y" | sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  
 echo "Y" | sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20  
 echo "Y" | sudo update-alternatives --config gcc 

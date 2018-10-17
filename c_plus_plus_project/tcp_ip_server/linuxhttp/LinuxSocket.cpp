@@ -718,28 +718,136 @@ if (0 == pid) {
     printf("接收到 %d 个数据,内容为:\n%s\n", result, readbuffer);
 }
 管道阻塞和管道操作的原子性
- 当管道的写端没有关闭时,如果写请求的字节数目大于阈值PIPE_BUF,
- 写操作的返回值是管道中目前的数据字节数,如是请求的字节数目
- 不大于PIPE_BUF,则返回管道中现有数据字节数
- (此时,管道中数据量小于请求的数据量);
- 或者返回语法的字节数
- (此时,管道中数据量不小于请求的数据量).
- PIPE_BUF在include/Linux/limits.h中定义,不同的内核版本
- 可能会有所不同.Posix.1要求PIPE_BUF至少为512字节.
- 管道进行写入操作的时候,当写入数据的数目小于128K时写入是
- 非原子的,如果把父进程中的两次写入字节数都改为128K,可以
- 发现:写入管道的数据量大于128K字节时,缓冲区的数据将被连续地
- 写入管道,直到数据全部写完为止,如果没有进程读数据,则一直阻塞.
- 下面的代码为一个管道读写的例子.在成功建立管道后,子进程向
- 管道中写入数据,父进程从管道中读出数据.子进程一次写入128K个
- 字节的数据,父进程每次读取10K字节的数据.当父进程没有数据可读
- 的时候退出.
+当管道的写端没有关闭时,如果写请求的字节数目大于阈值PIPE_BUF,
+写操作的返回值是管道中目前的数据字节数,如是请求的字节数目
+不大于PIPE_BUF,则返回管道中现有数据字节数
+(此时,管道中数据量小于请求的数据量);
+或者返回语法的字节数
+(此时,管道中数据量不小于请求的数据量).
+PIPE_BUF在include/Linux/limits.h中定义,不同的内核版本
+可能会有所不同.Posix.1要求PIPE_BUF至少为512字节.
+管道进行写入操作的时候,当写入数据的数目小于128K时写入是
+非原子的,如果把父进程中的两次写入字节数都改为128K,可以
+发现:写入管道的数据量大于128K字节时,缓冲区的数据将被连续地
+写入管道,直到数据全部写完为止,如果没有进程读数据,则一直阻塞.
+下面的代码为一个管道读写的例子.在成功建立管道后,子进程向
+管道中写入数据,父进程从管道中读出数据.子进程一次写入128K个
+字节的数据,父进程每次读取10K字节的数据.当父进程没有数据可读
+的时候退出.
+#define K 1024
+#define WRITELEN (128*K)
+int result = -1;
+int fd[2], nbytes = -1;
+pid_t pid;
+char string[WRITELEN] = "你好,管道";
+char readbuffer[10 * K];
+int *write_fd = &fd[1];
+int *read_fd = &fd[0];
+result = pipe(fd);
+if (-1 == result) {
+    printf("建立管道失败\n");
+    return EXIT_FAILURE;
+}
+pid = fork();
+if (-1 == pid) {
+    printf("fork进程失败\n");
+    return EXIT_FAILURE;
+}
+if (0 == pid) {
+    printf("子进程\n");
+    int write_size = WRITELEN;
+    result = 0;
+    close(*read_fd);
+    while (write_size >= 0) {
+        result = write(*write_fd, string, write_size);
+        if (result > 0) {
+            write_size -= result;
+            printf("写入 %d 个数据,剩余 %d 个数据\n", result, write_size);
+        } else {
+            break;
+        }
+    }
+} else {
+    printf("父进程\n");
+    close(*write_fd);
+    while (1) {
+        memset(readbuffer, '\0', sizeof(readbuffer));
+        nbytes = read(*read_fd, readbuffer, sizeof(readbuffer));
+        if (nbytes <= 0) {
+            printf("没有数据写入了\n");
+            break;
+        }
+        printf("接收到 %d 个数据,内容为:\n%s\n", nbytes, readbuffer);
+    }
+}
+
+2.命名管道
+#include <sys/types.h>
+#include <sys/stat.h>
+int mkfifo(const char *pathname, mode_t mode);
+在文件系统中命名管道是以设备特殊文件的形式存在的.
+不同的进程可以通过命名管道共享数据.
+创建FIFO
+在目录/ipc下建立一个名字为namedfifo的命名管道:
+mkfifo /ipc/namedfifo
+FIFO操作
+对命名管道FIFO来说,IO操作与普通的管道IO操作基本上是一样的,
+二者之间存在着一个主要的区别.在FIFO中,必须使用一个open()
+函数来显式地建立连接到管道的通道.一般来说FIFO总是处于阻塞状态.
+也就是说,如果命名管道FIFO打开时设置了读权限,则读进程将一直"阻塞",
+一直到其他进程打开该FIFO并且向管道中写入数据.这个阻塞动作反过来
+也是成立的,如果一个进程打开一个管道写入数据,当没有进程向管道中
+读取数据的时候,写管道的操作也是阻塞的,直到已经写入的数据被读出后,
+才能进行写入操作.如果不希望在进行命名管道操作的时候发生阻塞,可以
+在open()调用中使用O_NONBLOCK标志,以关闭默认的阻塞动作.
+
+ 3.消息队列
+ 消息队列是内核地址空间中的内部链表,通过Linux内核在各个进程
+ 之间传递内容.消息顺序地发送到消息队列,并以几种不同的方式从
+ 队列中获取,每个消息队列可以用IPC标识符唯一的进行标识.内核中
+ 的消息队列是通过IPC的标识符来区别的,不同的消息队列之间是相对
+ 独立的.每个消息队列中的消息,又构成一个独立的链表.
+ 消息缓冲区结构
+ 常用的结构是msgbuf结构.程序员可以以这个结构为模板定义自己的
+ 消息结构.在头文件<linux/msg.h>中,它的定义如下:
+ struct msgbuf {
+    long mtype;
+    char mtext[1];
+ };
+ mtype:
+ 消息类型,以正数表示.用户可以给某个消息设定一个类型,可以在消息队列
+ 中正确地发送和接收自己的消息.例如.在socket编程过程中,一个服务器
+ 可以失道接受多个客户端的连接,可以为每个客户端设定一个消息类型,
+ 服务器和客户端之间的通信可以通过此消息类型来发送和接收消息,并且多个
+ 客户端之间通过消息类型来区分.
+ mtest:
+ 消息数据.在构建自己的消息结构时,这个域并不一定要设为char
+ 或者长度为1.可以根据实际的情况进行设定,这个域能存放任意
+ 形式的任意数据,程序员可以重新定义msgbuf结构.例如:
+ struct msgmbuf {
+    long mtype;
+    char mtext[10];
+    long length;
+ };
+ 上面定义的消息结构与系统模板定义的不一致,但是mtype是一致的.
+ 消息在通过内核在进程之间收发时,内核不对mtext域进行转换,
+ 任意的消息都可以发送.具体的转换工作是在应用程序之间进行的.
+ 但是,消息的大小,存在一个内部的限制.在Linux中,它在
+ linux/msg.h中的定义如下:
+ #define MSGMAX 8192
+ 消息总的大小不能超过8192个字节,这其中包括mtype成员,它的长度
+ 是4个字节(long类型).
+ 结构msgid_ds
 
 
 
 
 
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <stddef.h>
+#include <sys/un.h>
 
 TCP网络编程基础
 基于TCP的Socket编程的服务器流程：
@@ -894,6 +1002,15 @@ int socket(
     // 协议编号为protocol的套接字文件描述符
     int protocol);
 
+使用socket()函数的时候需要设置上述3个参数,
+例如:
+第1个参数domain设置为AF_INET,
+第2个参数设置为SOCK_STREAM,
+第3个参数设置为0,建立一个流式套接字.
+常用的一种方式:
+int sock = socket(AF_INET, SOCK_STREAM, 0);
+
+参数说明:
 domain的值及含义
 值                      含义
 PF_UNIX,PF_LOCAL        本地通信
@@ -921,7 +1038,7 @@ SOCK_SEQPACKET          序列化包,提供一个序列化的,
                         传输通道,数据长度定常.
                         每次调用读系统调用时数据需要
                         将全部数据读出.
-SOCK_RAM                RAW类型,提供原始网络协议访问.
+SOCK_RAW                RAW类型,提供原始网络协议访问.
 SOCK_RDM                提供可靠的数据报文,不过可能
                         数据会有乱序.
 SOCK_PACKET             专用类型,不能在通用程序中
@@ -929,6 +1046,7 @@ SOCK_PACKET             专用类型,不能在通用程序中
                         设备驱动接收数据.
 并不是所有的协议族都实现了这些协议类型,
 如AF_INET协议族就没有实现SOCK_SEQPACKET协议类型.
+主要使用SOCK_STREAM和SOCK_DGRAM.
 
 protocol
 用于指定某个协议的特定类型,即type类型中的某个类型.
@@ -936,6 +1054,19 @@ protocol
 参数仅能设置为0；但是有些协议有多种特定的类型,
 就需要设置这个参数来选择特定的类型.
 
+注意:
+类型为SOCK_STREAM的套接字表示一个双向的字节流,与管道类似.
+流式的套接字在进行数据收发之前必须已经连接,连接使用
+connect()函数进行.一旦连接,可以使用read()或者write()
+函数进行数据的传输.流式通信方式保证数据不会丢失或者重复
+接收,当数据在一段时间内仍然没有接收完毕,可以将这个连接认为
+已经死掉.
+SOCK_DGRAM和SOCK_RAW这两种套接字可以使用函数sendto()来
+发送数据,使用recvfrom()函数接收数据,recvfrom()接收来自
+指定IP地址的发送方的数据.
+SOCK_PACKET是一种专用的数据包,它直接从设备驱动接收数据.
+
+socket错误
 函数socket()并不总是执行成功,有可能会出现错误,
 错误的产生有多种原因,可以通过errno获得.
 通常情况下造成
@@ -956,14 +1087,7 @@ ENOBUFS/ENOMEM          内存不足.socket只有到资源
                         足够或者有进程释放内存
 EPROTONOSUPPORT         指定的协议type在domain中
                         不存在
-其他
-
-使用socket()函数的时候需要设置上述3个参数,
-如将socket()函数的
-第1个参数domain设置为AF_INET,
-第2个参数设置为SOCK_STREAM,
-第3个参数设置为0,建立一个流式套接字.
-int sock = socket(AF_INET, SOCK_STREAM, 0);
+其他                     ...
 
 2.应用层函数socket()和内核函数之间的关系
 用户设置套接字的参数后,函数要能够起作用,
@@ -973,7 +1097,7 @@ int sock = socket(AF_INET, SOCK_STREAM, 0);
 绑定一个地址端口对bind()函数
 在建立套接字文件描述符成功后,需要对套接字进行
 地址和端口的绑定,才能进行数据的接收和发送操作.
-bind()函数介绍
+1.bind()函数介绍
 bind()函数将长度为addlen的struct sockadd类型的
 参数my_addr与sockfd绑定在一起,将sockfd绑定到
 某个端口上,如果
@@ -985,22 +1109,25 @@ int bind(
     int sockfd,
     const struct sockaddr *my_addr,
     socklen_t addrlen);
+参数说明:
 参数一：用socket()函数创建的文件描述符.
 参数二：指向一个结构为sockaddr参数的指针,
-sockaddr中包含了地址,端口和IP地址的信息.
-在进行地址绑定的时候,需要先
-将地址结构中的IP地址,端口,类型等
-结构struct sockaddr中的域进行设置后才能进行绑定,
-这样绑定后才能将套接字文件描述符与地址等结合在一起.
+    sockaddr中包含了地址,端口和IP地址的信息.
+    在进行地址绑定的时候,需要先
+    将地址结构中的IP地址,端口,类型等
+    结构struct sockaddr中的域进行设置后才能进行绑定,
+    这样绑定后才能将套接字文件描述符与地址等结合在一起.
 参数三：是参数二这个结构的长度,可以设置成
-sizeof(struct sockaddr).
-使用sizeof(struct sockaddr)来设置addlen
-是一个良好的习惯,虽然一般情况下使用AF_INET
-来设置套接字的类型和其对应的结构,
-但是不同类型的套接字有不同的地址描述符结构,
-如果对地址长度进行了强制的指定,
-可能会造成不可预料的结果.
-bind()函数的返回值为0时表示绑定成功,
+    sizeof(struct sockaddr).
+    使用sizeof(struct sockaddr)来设置addlen
+    是一个良好的习惯,虽然一般情况下使用AF_INET
+    来设置套接字的类型和其对应的结构,
+    但是不同类型的套接字有不同的地址描述符结构,
+    如果对地址长度进行了强制的指定,
+    可能会造成不可预料的结果.
+
+bind()函数的返回值为
+ 0时表示绑定成功,
 -1时表示绑定失败.
 errno的错误值如下.
 值                     含义
@@ -1027,6 +1154,48 @@ ENOMEM                 内存内核不足 UNIX协议族,
 ENOTDIR                不是目录 UNIX协议族,AF_UNIX
 EROFS                  socket节点应该在只读文件
                        系统上 UNIX协议族,AF_UNIX
+
+例子:
+初始化一个AF_UNIX族中的SOCK_STREAM类型的套接字,
+先使用结构struct sockaddr_un初始化my_addr,
+然后进行绑定,结构struct sockaddr_un的定义为:
+struct sockaddr_un {
+    // 协议族,应该设置为AF_UNIX
+    sa_family_t sun_family;
+    // 路径名,UNIX_PATH_MAX的值为108
+    char sun_path[UNIX_PATH_MAX];
+};
+#define MY_SOCK_PATH "/somepath"
+int sfd;
+// AF_UNIX对应的结构
+struct sockaddr_un my_addr;
+sfd = socket(AF_UNIX, SOCK_STREAM, 0);
+if (sfd == -1) {
+    perror("socket");
+    exit(EXIT_FAILURE);
+}
+// 对结构体进行清零
+memset(&my_addr, 0, sizeof(struct sockaddr_un));
+my_addr.sun_family = AF_UNIX;
+// 复制路径到地址结构
+strncpy(my_addr.sun_path,
+        MY_SOCK_PATH,
+        sizeof(my_addr.sun_path) - 1);
+if (bind(sfd,
+         (struct sockaddr *) &my_addr,
+         sizeof(struct sockaddr_un)) == -1) {
+    perror("bind");
+    exit(EXIT_FAILURE);
+}
+// ...
+close(sfd);
+
+Linux的GCC编译器有一个特点,一个结构的最后一个成员为数组时,
+这个结构可以通过最后一个成员进行扩展,可以在程序运行时第一次
+调用此变量的时候动态生成结构的大小,例如上面的代码,并不会因为
+struct sockaddr_un比struct sockaddr大而溢出.
+
+
 
 监听本地端口listen()函数
 函数listen()用来初始化服务器可连接队列,
@@ -1311,226 +1480,24 @@ void test_write(void);
 
 void test_lseek(void);
 
-void test_create_server_socket(void);
+int test_create_server_socket(void);
 
 void test_pthread(void);
 
 void test_class(void);
 
-void test_sqlite3(void);
-
 void LinuxSocket::studyHard() {
 
-    test_pthread();
+    test_create_server_socket();
 
 }
 
 /////////////////////////////实现/////////////////////////////
 
-void test_open(void) {
-    int fd = -1;
-    char filename[] = "test.txt";
-    // char filename[] = "/dev/sda1";
-    fd = open(filename, O_RDWR);
-    if (fd == -1) {
-        printf("Open file failure\n");
-    } else {
-        printf("Open file success 1\n");
-    }
 
-    close(fd);
-
-    // 打开文件,如果文件存在则返回-1
-    fd = open(filename, O_RDWR | O_CREAT | O_EXCL, S_IRWXU);
-    if (fd == -1) {
-        printf("File exist, reopen it\n");
-        // 重新打开
-        fd = open(filename, O_RDWR);
-        // MyLog::i(TAG, to_string(fd), NEEDLOG);
-    } else {
-        // 文件不存在,成功创建并打开
-        printf("Open file success 2\n");
-    }
-
-    close(fd);
-
-    int j = 0;
-    for (j = 0; fd >= 0; ++j) {
-        fd = open(filename, O_RDONLY);
-        sleep(1);
-        if (fd > 0) {
-            printf("%d\n", fd);
-        } else {
-            printf("error, can't open file\n");
-            // exit(0);
-        }
-        // 如果打开的文件即时被关闭了,那么这个文件描述符可以重复使用
-        close(fd);
-    }
-}
-
-void test_read(void) {
-    int fd = -1, i;
-    ssize_t size = -1;
-    char buf[10];
-    char filename[] = "test.txt";
-
-    fd = open(filename, O_RDONLY);
-    if (fd == -1) {
-        printf("Open file %s failure, fd:%d\n", filename, fd);
-    } else {
-        printf("Open file %s success, fd:%d\n", filename, fd);
-    }
-    while (size) {
-        size = read(fd, buf, 10);
-        // 读取数据时出错
-        if (size == -1) {
-            printf("read file error occurs\n");
-            break;
-        } else {
-            if (size > 0) {
-                printf("read %d bytes: ", size);
-                // printf("\"");
-                for (i = 0; i < size; ++i) {
-                    printf("%c", *(buf + i));
-                }
-                printf("\n");
-            } else {
-                printf("read %d bytes\n", size);
-                printf("reach the end of file\n");
-            }
-        }
-    }
-    close(fd);
-}
-
-void test_write(void) {
-    int fd = -1, i;
-    ssize_t size = -1;
-    int input = 0;
-    char buf[] = "quick brown fox jumps over the lazy dog 我是谁 ";
-    char filename[] = "test.txt";
-    fd = open(filename, O_RDWR | O_TRUNC);
-    if (fd == -1) {
-        printf("Open file %s failure, fd: %d\n", filename, fd);
-    } else {
-        printf("Open file %s success, fd: %d\n", filename, fd);
-    }
-    size = write(fd, buf, strlen(buf));
-    printf("write %d bytes to file %s\n", size, filename);
-    close(fd);
-}
-
-void test_lseek(void) {
-    off_t offset = -1;
-    // 第一个参数0代表标准输入
-    offset = lseek(0, 0, SEEK_CUR);
-    if (offset == -1) {
-        printf("STDIN can't seek\n");
-    } else {
-        printf("STDIN can seek\n");
-    }
-
-    int fd = -1, i;
-    ssize_t size = -1;
-    char buf1[] = "01234567";
-    char buf2[] = "ABCDEFGH";
-    char filename[] = "test.txt";
-    int len = 8;
-    fd = open(filename, O_RDWR | O_TRUNC, S_IRWXU);
-    if (fd == -1) {
-        printf("Open file %s failure, fd: %d\n", filename, fd);
-        return;
-    }
-    size = write(fd, buf1, len);
-    if (size != len) {
-        printf("write %d bytes to file %s\n", size, filename);
-        return;
-    }
-    offset = lseek(fd, 32, SEEK_SET);
-    if (offset == -1) {
-        return;
-    }
-    size = write(fd, buf2, len);
-    if (size != len) {
-        printf("write %d bytes to file %s\n", size, filename);
-        return;
-    }
-    close(fd);
-}
-
-void process_conn_server(int);
-
-void test_create_server_socket(void) {
-    // ss为服务器端的socket描述符,sc为客户端的socket描述符
-    int ss, sc;
-    // 服务器端地址结构
-    struct sockaddr_in server_addr;
-    // 客户端地址结构
-    struct sockaddr_in client_addr;
-    // 返回值
-    int err;
-    // 分叉的进行ID
-    pid_t pid;
-    // 建立一个流式套接字
-    ss = socket(AF_INET, SOCK_STREAM, 0);
-    // 出错
-    if (ss < 0) {
-        printf("socket error\n");
-        return;
-    }
-
-    // 设置服务器端地址
-    // 清零
-    bzero(reinterpret_cast<char *>(&server_addr), sizeof(server_addr));
-    // 协议族
-    server_addr.sin_family = AF_INET;
-    // 本地地址
-    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    // 服务器端口
-    server_addr.sin_port = htons(PORT);
-
-    // 绑定地址结构到套接字描述符
-    err = bind(ss, (struct sockaddr *) &server_addr, sizeof(server_addr));
-    // 出错
-    if (err < 0) {
-        printf("bind error\n");
-        return;
-    }
-
-    // 设置侦听
-    err = listen(ss, BACKLOG);
-    // 出错
-    if (err < 0) {
-        printf("listen error\n");
-        return;
-    }
-
-    // 主循环过程
-    for (;;) {
-        socklen_t addrlen = sizeof(struct sockaddr);
-        // 接收客户端连接
-        sc = accept(ss, (struct sockaddr *) &client_addr, &addrlen);
-        // 出错
-        if (sc < 0) {
-            continue;
-        } else {
-            printf("server sc: %p\n", sc);
-        }
-        // 建立一个新的进程处理到来的连接
-        pid = fork();
-        if (pid == 0) {
-            // 子进程
-            close(ss);
-            process_conn_server(sc);
-        } else {
-            // 父进程
-            close(sc);
-        }
-    }
-}
 
 // 服务器端对客户端的处理
+// sc为客户端的socket描述符
 void process_conn_server(int sc) {
     ssize_t size = 0;
     // 数据的缓冲区
@@ -1553,25 +1520,79 @@ void process_conn_server(int sc) {
     }
 }
 
-char *getStr() {
-//    char *str = "Hello World";
-    char str[] = "Hello World";
-    return str;
+int test_create_server_socket(void) {
+    // ss为服务器端的socket描述符,sc为客户端的socket描述符
+    int ss, sc;
+    // 服务器端地址结构
+    struct sockaddr_in server_addr;
+    // 客户端地址结构
+    struct sockaddr_in client_addr;
+    // 返回值
+    int err;
+    // 分叉的进行ID
+    pid_t pid;
+    // 建立一个流式套接字
+    ss = socket(AF_INET, SOCK_STREAM, 0);
+    // 出错
+    if (ss == -1) {
+        printf("socket error\n");
+        return EXIT_FAILURE;
+    }
+
+    // 设置服务器端地址
+    // 清零
+    bzero(reinterpret_cast<char *>(&server_addr), sizeof(server_addr));
+    // 协议族
+    server_addr.sin_family = AF_INET;
+    // 本地地址
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    // 服务器端口
+    server_addr.sin_port = htons(PORT);
+
+    // 绑定地址结构到套接字描述符
+    err = bind(ss, (struct sockaddr *) &server_addr, sizeof(server_addr));
+    // 出错
+    if (err == -1) {
+        printf("bind error\n");
+        return EXIT_FAILURE;
+    }
+
+    // 设置侦听
+    err = listen(ss, BACKLOG);
+    // 出错
+    if (err < 0) {
+        printf("listen error\n");
+        return EXIT_FAILURE;
+    }
+
+    // 主循环过程
+    for (;;) {
+        socklen_t addrlen = sizeof(struct sockaddr);
+        // 接收客户端连接
+        sc = accept(ss, (struct sockaddr *) &client_addr, &addrlen);
+        // 出错
+        if (sc < 0) {
+            continue;
+        } else {
+            printf("server ss: %d\n", ss);
+            printf("server sc: %d\n", sc);
+        }
+        // 建立一个新的进程处理到来的连接
+        pid = fork();
+        if (pid == 0) {
+            // 子进程
+            close(ss);
+            process_conn_server(sc);
+        } else {
+            // 父进程
+            close(sc);
+        }
+    }
 }
 
-void test_sqlite3(void) {
-//    SQLiteOpenHelper mySQLiteOpenHelper("/root/temp/tv.db");
-//    mySQLiteOpenHelper.onCreate();
-//
-//    char *str = NULL;
-//    str = getStr();
-//    fprintf(stdout, "%s\n", str);
-//
-//    int num;
-//    int *p = &num;
-//    printf("%d\n", sizeof(p));
-//    printf("%p\n", p);
-}
+
+
+/////////////////////////线程/////////////////////////
 
 // 下面是线程的内容
 void *say_hello_thread(void *args) {
@@ -1591,7 +1612,6 @@ void test_pthread(void) {
     param.sched_priority = 20;
     pthread_attr_setschedparam(&attr, &param);
     for (int i = 0; i < PTHREADS_NUM; ++i) {
-        // printf("p_tids\[%d\] = %d\n", i, p_tids[i]);
         printf("&p_tids\[%d\] = %p\n", i, &p_tids[i]);
         int ret = pthread_create(&p_tids[i], &attr, say_hello_thread, NULL);
         if (ret != 0) {
@@ -1612,78 +1632,135 @@ void test_pthread(void) {
 
     printf("Game Over\n");
 }
+
 /***
 线程的知识点：
 
- linux多线程
- 并发: 指在同一时刻,只能有一条指令执行,但多个进程被快速轮换执行,使得在宏观上具有
- 多个进程同时执行的效果(单核).
- 并行: 指在同一时刻,有多条指令在多个处理器上同时执行(真正的同时发生,多核).
- 同步: 彼此有依赖关系的调用不应该"同时发生",而同步就是要阻止那些"同时发生"的事情.
- 异步: 任何两个彼此独立的操作是异步的,它表明事情独立的发生.
+cat /usr/include/asm-generic/errno.h
+man pthread_create
+
+gcc -o test_thread test_thread.c -lpthread
+
+linux多线程
+#include <pthread.h>
+Linux系统下的多线程遵循POSIX标准,叫做pthread.
+编写Linux下的线程需要包含头文件pthread.h,在生成
+可执行文件的时候需要链接库
+libpthread.a或者libpthread.so.
+
                 线程                  进程
- 标识符类型      pthread_t            pid_t
- 获取id         pthread_self()       getpid()
- 创建           pthread_create()     fork()
+标识符类型      pthread_t            pid_t
+获取id         pthread_self()       getpid()
+创建           pthread_create()     fork()
 
- cat /usr/include/asm-generic/errno.h
- man pthread_create
 
- typedef unsigned long int pthread_t;线程标识符
+typedef unsigned long int pthread_t;线程标识符
 
-extern int pthread_create __P ((
-     // 参数一: pthread_t指针,因此传递的参数是一个地址
-     pthread_t *__thread,
-     // 参数二: 线程属性
-     __const pthread_attr_t *__attr,
-     // 参数三: 函数指针
-     void *(*__start_routine) (void *)),
-     // 参数四: 函数参数
-     void *__arg);
-第一个参数为指向线程标识符的指针,
-第二个参数用来设置线程属性,第二个参数为NULL时将生成默认属性的线程
+extern int pthread_create __P (
+    // 参数一: pthread_t指针,因此传递的参数是一个地址
+    pthread_t *__thread,
+    // 参数二: 线程属性
+    __const pthread_attr_t *__attr,
+    // 参数三: 函数指针
+    void *(*__start_routine)(void *),
+    // 参数四: 函数参数
+    void *__arg);
+参数说明:
+第一个参数为指向线程标识符的指针.
+第二个参数用来设置线程属性,
+    为NULL时将生成默认属性的线程
 第三个参数是线程运行函数的起始地址(意思就是执行线程代码的函数),
-最后一个参数是运行函数的参数,不需要传递参数时赋为NULL.
-
+第四个参数是运行函数的参数,不需要传递参数时赋为NULL.
+返回值说明:
 当创建线程成功时,函数返回0,
 若不为0则说明创建线程失败,常见的错误返回代码为EAGAIN和EINVAL.
-前者表示系统限制创建新的线程,例如线程数目过多了；
+前者表示系统限制创建新的线程,例如线程数目过多了;
 后者表示第二个参数代表的线程属性值非法.
 
-创建线程成功后,新创建的线程则运行参数三和参数四确定的函数,原来的线程则继续运行下一行代码.
+extern int pthread_join __P ((
+     // 参数一: 线程id
+     pthread_t __th,
+     // 参数二:
+     void **__thread_return));
+第一个参数为被等待的线程标识符,即pthread_create()创建成功的值.
+第二个参数为一个用户定义的指针,
+    它可以用来存储被等待线程的返回值.
+这个函数是一个线程阻塞的函数,
+调用它的函数将一直等待到被等待的线程结束为止.
+当函数返回时,被等待线程的资源被收回.
 
-属性结构为pthread_attr_t,它同样在头文件/usr/include/pthread.h中定义.
+extern void pthread_exit __P ((void *__retval))
+        __attribute__ ((__noreturn__));
+唯一的参数是函数的返回代码,
+只要pthread_join中的第二个参数thread_return不是NULL,
+这个值将被传递给thread_return.
+最后要说明的是,一个线程不能被多个线程等待,
+否则第一个接收到信号的线程成功返回,
+其余调用pthread_join的线程则返回错误代码ESRCH.
+
+总结:
+pthread_exit等各个线程退出后,进程才结束;
+否则main进程强制结束了,线程可能还没反应过来,因此线程不会执行.
+pthread_join后面的代码只有待线程里的代码全部执行完了才会执行.
+pthread_exit后面的代码不会被执行.
+pthread_join与pthread_exit只需要用一个,
+一起使用也没有关系,只是pthread_exit后面不会被执行.
+
+
+其他说明:
+创建线程成功后,新创建的线程则运行参数三和参数四确定的函数,
+原来的线程则继续运行下一行代码.
+
+线程的属性
+属性结构(/usr/include/pthread.h)
+pthread_attr_t
 属性值不能直接设置,须使用相关函数进行操作,
-初始化的函数为pthread_attr_init,这个函数必须在pthread_create函数之前调用.
+初始化的函数为
+pthread_attr_init
+这个函数必须在pthread_create函数之前调用.
 属性对象主要包括是否绑定、是否分离、堆栈地址、堆栈大小、优先级.
-默认的属性为非绑定、非分离、缺省1M的堆栈、与父进程同样级别的优先级.
+默认的属性为非绑定、非分离、缺省1M的堆栈、
+与父进程同样级别的优先级.
 
-　　关于线程的绑定,牵涉到另外一个概念：轻进程（LWP：Light Weight Process）.
+关于线程的绑定,牵涉到另外一个概念：
+轻进程(LWP：Light Weight Process).
 轻进程可以理解为内核线程,它位于用户层和系统层之间.
-系统对线程资源的分配、对线程的控制是通过轻进程来实现的,一个轻进程可以控制一个或多个线程.
-默认状况下,启动多少轻进程、哪些轻进程来控制哪些线程是由系统来控制的,这种状况即称为非绑定的.
+系统对线程资源的分配、对线程的控制是通过轻进程来实现的,
+一个轻进程可以控制一个或多个线程.
+默认状况下,启动多少轻进程、哪些轻进程来控制哪些线程是由
+系统来控制的,这种状况即称为非绑定的.
 绑定状况下,则顾名思义,即某个线程固定的"绑"在一个轻进程之上.
-被绑定的线程具有较高的响应速度,这是因为CPU时间片的调度是面向轻进程的,
+被绑定的线程具有较高的响应速度,这是因为CPU时间片的调度是
+面向轻进程的,
 绑定的线程可以保证在需要的时候它总有一个轻进程可用.
-通过设置被绑定的轻进程的优先级和调度级可以使得绑定的线程满足诸如实时反应之类的要求.
-　　设置线程绑定状态的函数为pthread_attr_setscope,
+通过设置被绑定的轻进程的优先级和调度级可以使得
+绑定的线程满足诸如实时反应之类的要求.
+设置线程绑定状态的函数为
+pthread_attr_setscope,
 它有两个参数,
- 第一个是指向属性结构的指针,
+第一个是指向属性结构的指针,
 第二个是绑定类型,它有两个取值：
-PTHREAD_SCOPE_SYSTEM（绑定的）和PTHREAD_SCOPE_PROCESS（非绑定的）.
+PTHREAD_SCOPE_SYSTEM(绑定的)
+PTHREAD_SCOPE_PROCESS(非绑定的)
 
-    设置线程是否分离
-    线程的分离状态决定一个线程以什么样的方式来终止自己.
-线程的默认属性即为非分离状态,这种情况下,原有的线程等待创建的线程结束.
-只有当pthread_join（）函数返回时,创建的线程才算终止,才能释放自己占用的系统资源.
-而分离线程不是这样子的,它没有被其他的线程所等待,自己运行结束了,线程也就终止了,马上释放系统资源.
+设置线程是否分离
+线程的分离状态决定一个线程以什么样的方式来终止自己.
+线程的默认属性即为非分离状态,这种情况下,
+原有的线程等待创建的线程结束.
+只有当pthread_join()函数返回时,
+创建的线程才算终止,才能释放自己占用的系统资源.
+而分离线程不是这样子的,它没有被其他的线程所等待,
+自己运行结束了,线程也就终止了,马上释放系统资源.
 程序员应该根据自己的需要,选择适当的分离状态.
 设置线程分离状态的函数为
-pthread_attr_setdetachstate（
+pthread_attr_setdetachstate(
      pthread_attr_t *attr,
-     int detachstate）;
-第二个参数可选为PTHREAD_CREATE_DETACHED（分离线程）和 PTHREAD _CREATE_JOINABLE（非分离线程）.
-这里要注意的一点是,如果设置一个线程为分离线程,而这个线程运行又非常快,
+     int detachstate);
+第二个参数可选为
+PTHREAD_CREATE_DETACHED(分离线程)
+PTHREAD_CREATE_JOINABLE(非分离线程)
+这里要注意的一点是,如果设置一个线程为分离线程,
+而这个线程运行又非常快,
 它很可能在pthread_create函数返回之前就终止了,
 它终止以后就可能将线程号和系统资源移交给其他的线程使用,
 这样调用pthread_create的线程就得到了错误的线程号.
@@ -1691,48 +1768,38 @@ pthread_attr_setdetachstate（
 可以在被创建的线程里调用pthread_cond_timewait函数,
 让这个线程等待一会儿,留出足够的时间让函数pthread_create返回.
 设置一段等待时间,是在多线程编程里常用的方法.
-但是注意不要使用诸如wait（）之类的函数,
+但是注意不要使用诸如wait()之类的函数,
 它们是使整个进程睡眠,并不能解决线程同步的问题.
-　　 另外一个可能常用的属性是线程的优先级,它存放在结构sched_param中.
-用函数pthread_attr_getschedparam和函数pthread_attr_setschedparam进行存放,
+另外一个可能常用的属性是线程的优先级,
+它存放在结构sched_param中.
+用函数pthread_attr_getschedparam
+和函数pthread_attr_setschedparam进行存放,
 一般说来,我们总是先取优先级,对取得的值修改后再存放回去.
 
-函数pthread_join用来等待一个线程的结束.函数原型为：
-extern int pthread_join __P ((
-     // 参数一: 线程id
-     pthread_t __th,
-     // 参数二:
-     void **__thread_return));
-第一个参数为被等待的线程标识符,
-第二个参数为一个用户定义的指针,它可以用来存储被等待线程的返回值.
-这个函数是一个线程阻塞的函数,调用它的函数将一直等待到被等待的线程结束为止,当函数返回时,被等待线程的资源被收回.
+互斥锁
+创建pthread_mutex_init;
+销毁pthread_mutex_destroy;
+加锁pthread_mutex_lock;
+解锁pthread_mutex_unlock.
 
-extern void pthread_exit __P ((void *__retval)) __attribute__ ((__noreturn__));
-唯一的参数是函数的返回代码,只要pthread_join中的第二个参数thread_return不是NULL,
-这个值将被传递给thread_return.
-最后要说明的是,一个线程不能被多个线程等待,
-否则第一个接收到信号的线程成功返回,其余调用pthread_join的线程则返回错误代码ESRCH.
-
-　　·互斥锁
-     创建pthread_mutex_init；
-     销毁pthread_mutex_destroy；
-     加锁pthread_mutex_lock；
-     解锁pthread_mutex_unlock.
-
-　　·条件锁
-     创建pthread_cond_init；
-     销毁pthread_cond_destroy；
-     触发pthread_cond_signal；
-     广播pthread_cond_broadcast S；
-     等待pthread_cond_wait
-
-pthread_exit等各个线程退出后,进程才结束;
-否则main进程强制结束了,线程可能还没反应过来,因此线程不会执行
-pthread_join后面的代码只有待线程里的代码全部执行完了才会执行
-pthread_exit后面的代码不会被执行
-pthread_join与pthread_exit只需要用一个
-一起使用也没有关系,只是pthread_exit后面不会被执行
+条件锁
+创建pthread_cond_init;
+销毁pthread_cond_destroy;
+触发pthread_cond_signal;
+广播pthread_cond_broadcast S;
+等待pthread_cond_wait
  */
+
+
+
+
+
+
+
+
+
+
+
 
 // 下面是继承方面的一点语法内容
 /*class Base {
@@ -1892,16 +1959,137 @@ void test_class(void) {
 }
 
 
+void test_open(void) {
+    int fd = -1;
+    char filename[] = "test.txt";
+    // char filename[] = "/dev/sda1";
+    fd = open(filename, O_RDWR);
+    if (fd == -1) {
+        printf("Open file failure\n");
+    } else {
+        printf("Open file success 1\n");
+    }
 
+    close(fd);
 
+    // 打开文件,如果文件存在则返回-1
+    fd = open(filename, O_RDWR | O_CREAT | O_EXCL, S_IRWXU);
+    if (fd == -1) {
+        printf("File exist, reopen it\n");
+        // 重新打开
+        fd = open(filename, O_RDWR);
+        // MyLog::i(TAG, to_string(fd), NEEDLOG);
+    } else {
+        // 文件不存在,成功创建并打开
+        printf("Open file success 2\n");
+    }
 
+    close(fd);
 
+    int j = 0;
+    for (j = 0; fd >= 0; ++j) {
+        fd = open(filename, O_RDONLY);
+        sleep(1);
+        if (fd > 0) {
+            printf("%d\n", fd);
+        } else {
+            printf("error, can't open file\n");
+            // exit(0);
+        }
+        // 如果打开的文件即时被关闭了,那么这个文件描述符可以重复使用
+        close(fd);
+    }
+}
 
+void test_read(void) {
+    int fd = -1, i;
+    ssize_t size = -1;
+    char buf[10];
+    char filename[] = "test.txt";
 
+    fd = open(filename, O_RDONLY);
+    if (fd == -1) {
+        printf("Open file %s failure, fd:%d\n", filename, fd);
+    } else {
+        printf("Open file %s success, fd:%d\n", filename, fd);
+    }
+    while (size) {
+        size = read(fd, buf, 10);
+        // 读取数据时出错
+        if (size == -1) {
+            printf("read file error occurs\n");
+            break;
+        } else {
+            if (size > 0) {
+                printf("read %d bytes: ", size);
+                // printf("\"");
+                for (i = 0; i < size; ++i) {
+                    printf("%c", *(buf + i));
+                }
+                printf("\n");
+            } else {
+                printf("read %d bytes\n", size);
+                printf("reach the end of file\n");
+            }
+        }
+    }
+    close(fd);
+}
 
+void test_write(void) {
+    int fd = -1, i;
+    ssize_t size = -1;
+    int input = 0;
+    char buf[] = "quick brown fox jumps over the lazy dog 我是谁 ";
+    char filename[] = "test.txt";
+    fd = open(filename, O_RDWR | O_TRUNC);
+    if (fd == -1) {
+        printf("Open file %s failure, fd: %d\n", filename, fd);
+    } else {
+        printf("Open file %s success, fd: %d\n", filename, fd);
+    }
+    size = write(fd, buf, strlen(buf));
+    printf("write %d bytes to file %s\n", size, filename);
+    close(fd);
+}
 
+void test_lseek(void) {
+    off_t offset = -1;
+    // 第一个参数0代表标准输入
+    offset = lseek(0, 0, SEEK_CUR);
+    if (offset == -1) {
+        printf("STDIN can't seek\n");
+    } else {
+        printf("STDIN can seek\n");
+    }
 
-
+    int fd = -1, i;
+    ssize_t size = -1;
+    char buf1[] = "01234567";
+    char buf2[] = "ABCDEFGH";
+    char filename[] = "test.txt";
+    int len = 8;
+    fd = open(filename, O_RDWR | O_TRUNC, S_IRWXU);
+    if (fd == -1) {
+        printf("Open file %s failure, fd: %d\n", filename, fd);
+        return;
+    }
+    size = write(fd, buf1, len);
+    if (size != len) {
+        printf("write %d bytes to file %s\n", size, filename);
+        return;
+    }
+    offset = lseek(fd, 32, SEEK_SET);
+    if (offset == -1) {
+        return;
+    }
+    size = write(fd, buf2, len);
+    if (size != len) {
+        printf("write %d bytes to file %s\n", size, filename);
+        return;
+    }
+    close(fd);
+}
 
 
 
