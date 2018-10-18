@@ -16,6 +16,8 @@
 #include <unistd.h>
 #include <string>
 #include <string.h>
+#include <strings.h>
+#include <signal.h>
 // 多线程相关操作头文件，可移植众多平台
 #include <pthread.h>
 #include <iostream>

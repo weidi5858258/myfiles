@@ -1155,7 +1155,7 @@ ENOTDIR                不是目录 UNIX协议族,AF_UNIX
 EROFS                  socket节点应该在只读文件
                        系统上 UNIX协议族,AF_UNIX
 
-例子:
+bind()函数例子:
 初始化一个AF_UNIX族中的SOCK_STREAM类型的套接字,
 先使用结构struct sockaddr_un初始化my_addr,
 然后进行绑定,结构struct sockaddr_un的定义为:
@@ -1195,7 +1195,33 @@ Linux的GCC编译器有一个特点,一个结构的最后一个成员为数组�
 调用此变量的时候动态生成结构的大小,例如上面的代码,并不会因为
 struct sockaddr_un比struct sockaddr大而溢出.
 
-
+下面例子是使用结构struct sockaddr_in绑定一个AF_INET族的
+流协议,先将结构struct sockaddr_in的sin_famliy设置为AF_INET,
+然后设置端口,接着设置一个IP地址,最后进行绑定.
+#define MYPORT 3490
+int sfd;
+struct sockaddr_in my_addr;
+sfd = socket(AF_INET, SOCK_STREAM, 0);
+if (sfd == -1) {
+    perror("socket");
+    exit(EXIT_FAILURE);
+}
+// 地址结构的协议族
+my_addr.sin_family = AF_INET;
+// 地址结构的端口地址,MYPORT为主机字节序,需要转化为网络字节序
+my_addr.sin_port = htons(MYPORT);
+// IP,将字符串的IP地址转化为二进制网络字节序
+my_addr.sin_addr.s_addr = inet_addr("192.168.1.150");
+// 将my_addr.sin_zero置为0
+bzero(&(my_addr.sin_zero), 8);
+if (bind(sfd,
+         (struct sockaddr *) &my_addr,
+         sizeof(struct sockaddr)) == -1) {
+    perror("bind");
+    exit(EXIT_FAILURE);
+}
+// ...
+close(sfd);
 
 监听本地端口listen()函数
 函数listen()用来初始化服务器可连接队列,
@@ -1228,6 +1254,39 @@ listen(),将会出现错误errno的值为EOPNOTSUPP,
 表示此socket不支持listen()操作.
 大多数系统的设置为20,可以将其设置修改为5或者10,
 根据系统可承受负载或者应用程序的需求来确定.
+如果设置过大,那么会被设置为系统默认最大值.
+
+2.listen()函数的例子
+在成功进行socket()初始化和bind()端口之后,
+设置listen()队列的长度为5.
+#define MYPORT 3490
+int sfd;
+struct sockaddr_in my_addr;
+sfd = socket(AF_INET, SOCK_STREAM, 0);
+if (sfd == -1) {
+    perror("socket");
+    exit(EXIT_FAILURE);
+}
+// 地址结构的协议族
+my_addr.sin_family = AF_INET;
+// 地址结构的端口地址,网络字节序
+my_addr.sin_port = htons(MYPORT);
+// IP,将字符串的IP地址转化为网络字节序
+my_addr.sin_addr.s_addr = inet_addr("192.168.1.150");
+// 将my_addr.sin_zero置为0
+bzero(&(my_addr.sin_zero), 8);
+if (bind(sfd,
+         (struct sockaddr *) &my_addr,
+         sizeof(struct sockaddr)) == -1) {
+    perror("bind");
+    exit(EXIT_FAILURE);
+}
+if(listen(sfd, 5)==-1){
+    perror("listen");
+    exit(EXIT_FAILURE);
+}
+// ...
+close(sfd);
 
 接受一个网络请求accept()函数
 当一个客户端的连接请求到达服务器主机侦听的端口时,
@@ -1280,6 +1339,45 @@ ENOBUFS/ENOMEM          内存不足
 EPROTO                  协议错误
 EPERM                   防火墙不允许连接
 
+2.accept()函数的例子
+#define MYPORT 3490
+int sfd, client_fd;
+// 用于保存网络地址长度
+int addr_length;
+struct sockaddr_in my_addr, client_addr;
+sfd = socket(AF_INET, SOCK_STREAM, 0);
+if (sfd == -1) {
+    perror("socket");
+    exit(EXIT_FAILURE);
+}
+// 地址结构的协议族
+my_addr.sin_family = AF_INET;
+// 地址结构的端口地址,网络字节序
+my_addr.sin_port = htons(MYPORT);
+// 表示任意的本地IP地址
+my_addr.sin_addr.s_addr = INADDR_ANY;
+// 将my_addr.sin_zero置为0
+bzero(&(my_addr.sin_zero), 8);
+if (bind(sfd,
+         (struct sockaddr *) &my_addr,
+         sizeof(struct sockaddr)) == -1) {
+    perror("bind");
+    exit(EXIT_FAILURE);
+}
+if (listen(sfd, 10) == -1) {
+    perror("listen");
+    exit(EXIT_FAILURE);
+}
+addr_length = sizeof(struct sockaddr_in);
+client_fd = accept(sfd, &client_addr, &addr_length);
+if (client_fd == -1) {
+    perror("accept");
+    exit(EXIT_FAILURE);
+}
+// ...
+close(client_fd);
+close(sfd);
+
 连接目标网络服务器connect()函数
 客户端在建立套接字之后,不需要进行地址绑定,
 就可以直接连接服务器.连接服务器的函数为connect(),
@@ -1324,6 +1422,33 @@ EISCONN                 socket已经连接
 ENETUNREACH             网络不可达
 ENOTSOCK                文件描述符不是一个socket
 ETIMEDOUT               连接超时
+
+2.connect()函数的例子
+#define DEST_IP "132.241.5.10"
+#define DEST_PORT 23
+int ret = 0;
+int sfd;
+struct sockaddr_in server;
+sfd = socket(AF_INET, SOCK_STREAM, 0);
+if (sfd == -1) {
+    perror("socket");
+    exit(EXIT_FAILURE);
+}
+// 地址结构的协议族
+server.sin_family = AF_INET;
+// 地址结构的端口地址,网络字节序
+server.sin_port = htons(DEST_PORT);
+// 服务器的IP地址
+server.sin_addr.s_addr = htonl(DEST_IP);
+// 将my_addr.sin_zero置为0
+bzero(&(server.sin_zero), 8);
+ret = connect(sfd, (struct sockaddr *) &server, sizeof(struct sockaddr));
+if (ret == -1) {
+    perror("connect");
+    exit(EXIT_FAILURE);
+}
+// ...
+close(sfd);
 
 写入数据函数write()函数
 当服务器端在接收到一个客户端的连接后,
@@ -1382,25 +1507,111 @@ ENOTSOCK                s是一个文件,不是socket
 包括终止进程,因此在系统结束进程前,
 注册信号处理函数进行一些处理是一个完善程序
 的必须条件.
+1.信号处理
+#include <signal.h>
+typedef void (*sighandler_t)(int);
+sighandler_t signal(int signum, sighandler_t handler);
+这个函数向信号signum注册一个void (*sighandler_t)(int)类型
+的函数,函数的句柄为handler.当进程中捕捉到注册的信号时,会调用
+响应函数的句柄handler.信号处理函数在处理系统默认的函数之前
+会被调用.
+2.信号SIGPIPE
+如果正在写入套接字的时候,当读取端已经关闭时,可以得到一个
+SIGPIPE信号.信号SIGPIPE会终止当前进程,因为信号系统在调用
+系统默认处理方式之前会先调用用户注册的函数,所以可以通过注册
+SIGPIPE信号的处理函数来获取这个信号,并进行相应的处理.
+void sig_pipe(int sign){
+    printf("Catch a SIGPIPE signal\n");
+    // 释放资源
+}
+// 注册信号(放在启动客户端时的地方好了)
+signal(SIGPIPE,sig_pipe);
+测试过程:
+在客户端连接后,退出服务器程序.当标准输入有数据的时候,客户端会
+通过套接字描述符发送数据到服务器端,而服务器已经关闭,因此客户端
+会收到一个SIGPIPE信号.
 
+3.信号SIGINT
+信号SIGINT通常是由Ctrl+c终止进程造成的,kill命令默认发送SIGINT
+信号,用于终止进程运行向当前活动的进程发送这个信号.
+void sig_int(int sign){
+    printf("Catch a SIGINT signal\n");
+    // 释放资源
+}
+// 注册信号
+signal(SIGINT, sig_int);
+
+第9章内容
 数据的IO和复用
 Linux系统中的IO函数主要有
-read(),write(),recv(),send(),
-recvmsg(),sendmsg(),readv(),writev().
+read(),write(),
+readv(),writev(),
+send(),recv(),
+sendmsg(),recvmsg().
 
 使用recv()函数接收数据
 #include <sys/types.h>
 #include <sys/socket.h>
 ssize_t recv(int s, void *buf, size_t len, int flags);
+参数说明:
+s:     套接字文件描述符,调用socket()返回的.
+buf:   一个指针,指向接收网络数据的缓冲区.
+len:   接收缓冲区的大小,以字节为单位.
+flags: 用于设置接收数据的方式.
+值                   含义
+MSG_DONTWAIT        非阻塞操作,立刻返回,不等待
+MSG_ERRQUEUE        错误消息从套接字错误队列接收
+MSG_OOB
+MSG_PEEK            查看数据,不进行数据缓冲区的清空
+MSG_TRUNC           返回所有的数据,即使指定的缓冲区过小
+MSG_WAITALL         等待所有消息
+经常使用的MSG_DONTWAIT进行接收数据的时候,不进行等待,
+即使没有数据也立刻返回,即此时的套接字是非阻塞操作.
+具体含义:
+MSG_DONTWAIT: 这个标志将单个IO操作设为非阻塞方式,而不需要在
+套接字上打开非阻塞标志,执行IO操作,然后关闭非阻塞标志.
+MSG_ERRQUEUE: 该错误的传输依赖于所使用的协议.
+MSG_OOB: 这个标志可以接收带外数据,而不是接收一般数据.
+MSG_PEEK: 这个标志用于查看可读的数据,在recv()函数执行后,
+内核不会将这些数据丢弃.
+MSG_TRUNC: 在接收数据后,如果用户的缓冲区大小不足以完全
+复制缓冲区中的数据,则将数据截断,仅靠复制用户缓冲区大小的
+数据.其他的数据会被丢弃.
+MSG_WAITALL: 这个标志告诉内核在没有读到请求的字节数之前
+不使读操作返回.如果系统支持这个标志,可以去掉readn()函数
+而用下面的代替:
+#define readn(fd, ptr, n) recv(fd, ptr, n, MSG_WAITALL).
+即使设置了MSG_WAITALL,如果发生以下情况:
+a)捕获一个信号
+b)连接终止
+c)在套接字上发生错误
+这个函数返回的字节数仍然会比请求的少.
+当指定MSG_WAITALL标志时,函数会复制与用户指定的长度相等的数据.
+如果内核中的当前数据不能满足要求,会一直等待直到数据足够的时候
+才返回.
+
 recv()函数从套接字s中接收数据放到缓冲区buf中,
 buf的长度为len,以字节为单位,操作的方式由flags指定.
 函数recv()的返回值是成功接收到的字节数,当返回值为-1时发生错误,
-可以查看errno获取错误码.
+可以查看errno获取错误码.当另一方使用正常方式关闭
+连接的时候返回值为0,如调用close()函数关闭连接.
+recv()函数errno的值及含义
+值                   含义
+EAGAIN              套接字定义为非阻塞,而操作采用了阻塞方式,
+                    或者定义的超时时间已经达到却没有接收到数据
+EBADF               参数s不是合法描述符
+ECONNREFUSED        远程主机不允许此操作
+EFAULT              接收缓冲区指针在此进程之外
+EINTR               接收到中断信号
+EINVAL              传递了不合法参数
+ENOTCONN            套接字s表示流式套接字,此套接字没有连接
+ENOTSOCK            参数不是套接字描述符
 
 recv()函数通常用于TCP类型的套接字,
 UDP使用recvfrom()函数接收数据,
-当然在数据报套接字绑定地址和端口后,也可以使用recv()函数
-接收数据.recv()函数从内核的接收缓冲区中复制到用户指定的缓冲区,
+当然在数据报套接字绑定地址和端口后,
+也可以使用recv()函数接收数据.
+recv()函数从内核的接收缓冲区中复制到用户指定的缓冲区,
 当内核中的数据比指定的缓冲区小时,一般情况下(没有采用
 MSG_WAITALL标志)会复制缓冲区中的所有数据到用户缓冲区,并返回
 数据的长度.当内核接收缓冲区中的数据比用户指定的多时,会将用户
@@ -1422,6 +1633,25 @@ flags指定的方式发送出去.其中的参数含义与recv中的含义一致,
 是对原来buf中的数据位置进行偏移,偏移的大小为已发送成功的字节数.
 函数send()发生错误时返回-1,这时可以查看errno获取错误码,
 当另一方使用正常方式关闭连接时返回值为0.如调用close()函数关闭连接.
+send()函数errno的值及含义
+值                       含义
+EAGAIN/EWOULDBLOCK      套接字定义为非阻塞,而操作采用了阻塞方式,
+                        或者定义的超时时间已经达到却没有接收到数据
+EBADF                   参数s不是合法描述符
+ECONNREFUSED            远程主机不允许此操作
+EFAULT                  接收缓冲区指针在此进程之外
+EINTR                   在发送数据之前接收到中断信号
+EINVAL                  传递了不合法参数
+ENOTCONN                套接字s表示流式套接字,此套接字没有连接
+ENOTSOCK                参数不是套接字描述符
+ECONNRESET              连接断开
+EDESTADDRREQ            套接字没有处于连接状态
+ENOBUFS                 发送缓冲区已满
+ENOMEM                  没有足够内存
+EOPNOTSUPP              设定的发送方式flag没有实现
+EPIPE                   套接字已经关闭
+EACCES                  套接字不可写
+
 函数send()只能用于套接字处于连接状态的描述符,之前必须用connect()
 函数或者其他函数进行连接.对于send()函数和write()函数之间的差别
 是表示发送方式的flag,当flag为0时,send()函数和write()函数完全一致.
@@ -1434,6 +1664,19 @@ readv()函数可用于接收多个缓冲区数据.readv()函数从套接字
 描述符s中读取count块数据放到缓冲区向量vector中.
 readv()函数的返回值为成功接收到的字节数,当为-1时错误发生,
 可以查看errno获取错误码.
+readv()函数errno的值及含义
+值                   含义
+EAGAIN              套接字定义为非阻塞,而操作采用了阻塞方式,
+                    或者定义的超时时间已经达到却没有接收到数据
+EBADF               参数s不是合法描述符
+ECONNREFUSED        远程主机不允许此操作
+EFAULT              接收缓冲区指针在进程之外
+EINTR               接收到中断信号
+EINVAL              参数iov_len超出了ssize_t类型的范围,或者count参数
+                    小于0或者大于可允许最大值
+ENOTCONN            套接字s表示流式套接字,此套接字没有连接
+ENOTSOCK            参数不是套接字描述符
+
 参数vector为一个指向向量的指针,结构struct iovecd在文件
 <sys/uio.h>中定义:
 struct iovec {
@@ -1453,6 +1696,19 @@ ssize_t writev(int fd, const struct iovec *vector, int count);
 writev()函数可用于接收多个缓冲区数据.writev()函数向套接字
 描述符s中写入到向量vector中保存的count块数据.writev()函数的返回值为
 成功发送的字节数,当为-1时错误发生,可以查看errno获取错误码.
+writev()函数errno的值及含义
+值
+EAGAIN              套接字定义为非阻塞,而操作采用了阻塞方式,
+                    或者定义的超时时间已经达到却没有接收到数据
+EBADF               参数s不是合法描述符
+ECONNREFUSED        远程主机不允许此操作
+EFAULT              接收缓冲区不允许此操作
+EINTR               接收到中断信号
+EINVAL              参数iov_len超出了ssize_t类型的范围,或者count
+                    参数小于0或者大于可允许最大值
+ENOTCONN            套接字s表示流式套接字,此套接字没有连接
+ENOTSOCK            参数不是套接字描述符
+
 参数vector为一个指向向量的指针,结构struct iovec在文件<sys/uio.h>
 中定义:
 struct iovec {
@@ -1464,6 +1720,136 @@ struct iovec {
 在调用writev()函数的时候必须指定iovec的iov_base的长度,将值放到成员
 iov_len中.参数vector指向一块结构vector的内存,大小为count指定.结构
 vector的成员变量iov_base指向内存空间,iov_len表示内存的长度.
+
+使用recvmsg()函数接收数据
+#include <sys/types.h>
+#include <sys/socket.h>
+ssize_t recvmsg(int s, struct msghdr *msg, int flags);
+函数的返回值为成功接收到的字节数,为-1时错误发生,可以查看errno
+获取错误码.当另一方使用正常方式关闭连接的时候返回值为0,如调用
+close()函数关闭连接.
+recvmsg()函数errno的值及含义
+值                  含义
+EAGAIN             套接字定义为非阻塞,而操作采用了阻塞方式,
+                   或者定义的超时时间已经达到却没有接收到数据
+EBADF              参数s不是合法描述符
+ECONNREFUSED       远程主机不是合法描述符
+EFAULT             接收缓冲区指针在此进程之外
+EINTR              接收到中断信号
+EINVAL             传递了不合法参数
+ENOTCONN           套接字s表示流式套接字,此套接字没有连接
+ENOTSOCK           参数不是套接字描述符
+ENOMEM             没有足够内存
+
+recvmsg()函数flags的值及含义(值可以采用按位或的复合值)
+值
+MSG_DONTWAIT       非阻塞操作,立刻返回,不等待
+MSG_ERRQUEUE       错误消息从套接字错误队列接收
+MSG_OOB
+MSG_PEEK           查看数据,不进行数据缓冲区的清空
+MSG_TRUNC          返回所有的数据,即使指定的缓冲区过小
+MSG_WAITALL        函数会复制与用户指定的长度相等的数据.
+                   如果内核中的当前数据不能满足要求,会一直
+                   等待直到数据足够的时候才返回
+
+地址结构msghdr
+struct msghdr {
+    // 可选地址
+    void *msg_name;
+    // 地址长度
+    socklen_t msg_namelen;
+    // 接收数据的数组
+    struct iovec *msg_iov;
+    // msg_iov中的元素数量
+    size_t msg_iovlen;
+    // ancillary data, see below
+    void *msg_control;
+    // ancillary data, see below
+    socklen_t msg_controllen;
+    // 接收消息的标志
+    int msg_flags;
+};
+成员msg_name表示源地址,即为一个指向struct sockaddr的指针,
+当套接字还没有连接的时候有效.
+成员msg_namelen表示msg_name指向结构的长度.
+成员msg_iov与函数readv()中的含义一致.
+成员msg_iovlen表示msg_iov缓冲区的字节数.
+成员msg_control指向缓冲区,根据msg_flags的值,会放入不同的值.
+成员msg_controllen为msg_control指向缓冲区的大小.
+成员msg_flags为操作的方式.
+recv()函数通常用于TCP类型的套接字,UDP使用recvfrom()函数
+接收数据,当然在数据报套接字绑定地址和端口后,也可以使用
+recv()函数接收数据.
+
+使用sendmsg()函数发送数据
+#include <sys/uio.h>
+ssize_t sendmsg(int s, const struct msghdr *msg, int flags);
+函数sendmsg()可用于接收多个缓冲区数据.
+函数sendmsg()向套接字描述符s中按照结构msg的设定写入数据,
+其中操作方式由flags指定.
+函数sendmsg()与recvmsg()相区别的地方在于sendmsg的操作方式
+由flags参数设定,而recvmsg的操作方式由参数msg结构里的成员变量
+msg_flags指定.
+
+IO函数的比较
+1.函数read()/write()和read()/writev()可以对所有的文件描述符使用;
+  函数recv()/send(),recvfrom()/writeto()和recvmsg()/sendmsg()
+  只能操作套接字描述符.
+2.函数readv()/writeto()和recvmsg()/sendmsg()可以操作多个缓冲区,
+  函数read()/write(),recv()/send()和recvfrom()/sendto()只能
+  操作单个缓冲区.
+3.函数recv()/send(),recvfrom()/sendto()和recvmsg()/sendmsg()
+  具有可选标志.
+4.函数recvfrom()/sendto()和recvmsg()/sendmsg()可以选择对方的IP地址.
+5.函数recvmsg()/sendmsg()有可选择的控制信心,能进行高级操作.
+Y标记的为具有此种属性.
+名称                  任何描述符   只对套接字描述符    单个缓冲区   多个缓冲区   可选标志    可选对方地址  可选控制信息
+read()/write()           Y                            Y
+readv()/writev()         Y                                       Y
+recv()/send()                          Y              Y                     Y
+recvfrom()/writeto()                   Y              Y                     Y           Y
+recvmsg()/sendmsg()                    Y                         Y          Y           Y           Y
+
+使用IO函数的例子
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1494,7 +1880,11 @@ void LinuxSocket::studyHard() {
 
 /////////////////////////////实现/////////////////////////////
 
+void sig_process(int signo) {
+    printf("Catch a exit signal.signo: %d\n", signo);
 
+    exit(EXIT_SUCCESS);
+}
 
 // 服务器端对客户端的处理
 // sc为客户端的socket描述符
@@ -1504,6 +1894,7 @@ void process_conn_server(int sc) {
     char buffer[1024];
     for (;;) {
         // 从套接字中读取数据放到缓冲区buffer中
+        memset(buffer, 0, sizeof(buffer));
         size = read(sc, buffer, 1024);
         // 没有数据
         if (size == 0) {
@@ -1520,6 +1911,34 @@ void process_conn_server(int sc) {
     }
 }
 
+void process_conn_server2(int sc) {
+    ssize_t size = 0;
+    // 数据的缓冲区
+    char buffer[1024];
+    for (;;) {
+        // 从套接字中读取数据放到缓冲区buffer中
+        memset(buffer, 0, sizeof(buffer));
+        size = recv(sc, buffer, 1024, 0);
+        if (size == -1) {
+            printf("server recv error. fd = %d\n", sc);
+            close(sc);
+            return;
+        }
+        if (size == 0) {
+            printf("server没有接收到数据\n");
+            continue;
+        }
+
+        // write(1, buffer, size);
+
+        // 构建响应字符,为接收到客户端字节的数量
+        sprintf(buffer, "%d bytes altogether\n", size);
+
+        // 发给客户端
+        send(sc, buffer, strlen(buffer) + 1, 0);
+    }
+}
+
 int test_create_server_socket(void) {
     // ss为服务器端的socket描述符,sc为客户端的socket描述符
     int ss, sc;
@@ -1531,6 +1950,10 @@ int test_create_server_socket(void) {
     int err;
     // 分叉的进行ID
     pid_t pid;
+
+    signal(SIGINT, sig_process);
+    signal(SIGPIPE, sig_process);
+
     // 建立一个流式套接字
     ss = socket(AF_INET, SOCK_STREAM, 0);
     // 出错
@@ -1550,7 +1973,9 @@ int test_create_server_socket(void) {
     server_addr.sin_port = htons(PORT);
 
     // 绑定地址结构到套接字描述符
-    err = bind(ss, (struct sockaddr *) &server_addr, sizeof(server_addr));
+    err = bind(ss,
+               (struct sockaddr *) &server_addr,
+               sizeof(server_addr));
     // 出错
     if (err == -1) {
         printf("bind error\n");
@@ -1560,7 +1985,7 @@ int test_create_server_socket(void) {
     // 设置侦听
     err = listen(ss, BACKLOG);
     // 出错
-    if (err < 0) {
+    if (err == -1) {
         printf("listen error\n");
         return EXIT_FAILURE;
     }
@@ -1569,28 +1994,31 @@ int test_create_server_socket(void) {
     for (;;) {
         socklen_t addrlen = sizeof(struct sockaddr);
         // 接收客户端连接
-        sc = accept(ss, (struct sockaddr *) &client_addr, &addrlen);
+        sc = accept(ss,
+                    (struct sockaddr *) &client_addr,
+                    &addrlen);
         // 出错
-        if (sc < 0) {
+        if (sc == -1) {
             continue;
-        } else {
-            printf("server ss: %d\n", ss);
-            printf("server sc: %d\n", sc);
         }
+
+        printf("server ss: %d\n", ss);
+        printf("server sc: %d\n", sc);
+
         // 建立一个新的进程处理到来的连接
         pid = fork();
         if (pid == 0) {
             // 子进程
+            // 在子进程中关闭服务器的侦听
             close(ss);
             process_conn_server(sc);
         } else {
             // 父进程
+            // 在父进程中关闭客户端的连接
             close(sc);
         }
     }
 }
-
-
 
 /////////////////////////线程/////////////////////////
 

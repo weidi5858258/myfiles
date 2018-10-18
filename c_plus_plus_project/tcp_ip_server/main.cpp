@@ -31,10 +31,10 @@ int main(int argc, char *argv[]) {
 
 //    howToCreateChildProcess();
 
-//    LinuxSocket linuxSocket;
-//    linuxSocket.studyHard();
+    LinuxSocket linuxSocket;
+    linuxSocket.studyHard();
 
-    test();
+//    test();
 
     printf("---------------------------------------------------\n");
     printf("\n");
@@ -66,27 +66,28 @@ int howToCreateChildProcess() {
 
 
 int test() {
-#define MY_SOCK_PATH "/somepath"
+#define DEST_IP "132.241.5.10"
+#define DEST_PORT 23
 
+    int ret = 0;
     int sfd;
-    // AF_UNIX对应的结构
-    struct sockaddr_un my_addr;
-    sfd = socket(AF_UNIX, SOCK_STREAM, 0);
+    struct sockaddr_in server;
+    sfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sfd == -1) {
         perror("socket");
         exit(EXIT_FAILURE);
     }
-    // 对结构体进行初始化(清零)
-    memset(&my_addr, 0, sizeof(struct sockaddr_un));
-    my_addr.sun_family = AF_UNIX;
-    // 复制路径到地址结构
-    strncpy(my_addr.sun_path,
-            MY_SOCK_PATH,
-            sizeof(my_addr.sun_path) - 1);
-    if (bind(sfd,
-             (struct sockaddr *) &my_addr,
-             sizeof(struct sockaddr_un)) == -1) {
-        perror("bind");
+    // 地址结构的协议族
+    server.sin_family = AF_INET;
+    // 地址结构的端口地址,网络字节序
+    server.sin_port = htons(DEST_PORT);
+    // 服务器的IP地址
+    server.sin_addr.s_addr = htonl(DEST_IP);
+    // 将my_addr.sin_zero置为0
+    bzero(&(server.sin_zero), 8);
+    ret = connect(sfd, (struct sockaddr *) &server, sizeof(struct sockaddr));
+    if (ret == -1) {
+        perror("connect");
         exit(EXIT_FAILURE);
     }
     // ...

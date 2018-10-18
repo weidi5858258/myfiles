@@ -572,6 +572,37 @@ int main() {
     都自然成为虚函数.
 3.在C++中虚构造函数是不存在的,因此也无法声明.
 
+// 观察者模式
+class Observer;
+class Subject {
+public:
+    virtual ~Subject = 0;
+    virtual void registerObserver(Observer*) = 0;
+    virtual void removeObserver(Observer*) = 0;
+    virtual void notifyObserver() const = 0;
+};
+// 这个析构函数不能少,语法这样规定的.
+Subject::~Subject() {
+
+}
+
+class WeatherData : public Subject {
+
+public:
+    ~WeatherData(){}
+
+    // 注意:是const_iterator,而不是iterator
+    void notifyObserver const {
+        for(list<Observer*>::const_iterator it = m_observers.begin();
+            it != m_observers.end();
+            ++it){
+            Observer *obj = *it;
+            obj->update(...);
+        }
+    }
+};
+
+
 
 ///////////////////////////模板///////////////////////////
 
