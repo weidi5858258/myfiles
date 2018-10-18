@@ -30,32 +30,71 @@ void process_conn_client(int ss) {
 }
 
 void process_conn_client2(int ss) {
-    ssize_t size = 0;
+    ssize_t read_size = -1;
+    ssize_t write_size = -1;
+    ssize_t send_size = -1;
+    ssize_t recv_size = -1;
     // 数据的缓冲区
     char buffer[1024];
     for (;;) {
         // 从套接字中读取数据放到缓冲区buffer中
         // 从屏幕中读取用户输入的内容
         memset(&buffer, 0, sizeof(buffer));
-        size = read(0, buffer, 1024);
-        if (size == -1) {
+        // 用户从屏幕输入消息
+        read_size = read(0, buffer, 1024);
+        if (read_size == -1) {
             printf("client read error. fd = %d\n", ss);
             close(ss);
             return;
         }
-        if (size == 0) {
-            printf("client没有接收到数据\n");
+        if (read_size == 0) {
+            printf("用户没有输入消息\n");
             continue;
         }
+        printf("client read size: %ld\n", read_size);
 
-        printf("client read size: %ld\n", size);
+        // 发送消息给服务器
+        // 下面两种发送消息方法任选一
+        send_size = send(ss, buffer, read_size, 0);
+        if (send_size == -1) {
+            printf("client send error. fd = %d\n", ss);
+            close(ss);
+            return;
+        }
+        if (send_size == 0) {
+            printf("client没有发送数据\n");
+            return;
+        }
+        printf("client send size: %ld\n", send_size);
 
-        // 发送给服务器
-        send(ss, buffer, size, 0);
+        /*write_size = write(ss, buffer, read_size);
+        if (write_size == -1) {
+            printf("client write error. fd = %d\n", ss);
+            close(ss);
+            return;
+        }
+        if (write_size == 0) {
+            printf("client没有发送数据\n");
+            return;
+        }
+        printf("client write size: %ld\n", write_size);*/
+
+        memset(&buffer, 0, sizeof(buffer));
         // 从服务器读取数据
-        size = recv(ss, buffer, 1024, 0);
+        recv_size = recv(ss, buffer, 1024, 0);
+        if (recv_size == -1) {
+            printf("client recv error. fd = %d\n", ss);
+            close(ss);
+            return;
+        }
+        if (recv_size == 0) {
+            // 跟客户端断开连接时
+            printf("client没有接收到数据\n");
+            /*close(ss);
+            return;*/
+        }
         // 写到标准输出
-        write(1, buffer, size);
+        write(1, buffer, recv_size);
     }
 }
 
@@ -88,18 +127,19 @@ int test_create_client_socket(char *server_ip) {
     // 服务器端口
     server_addr.sin_port = htons(PORT);
 
-    // inet_aton("127.0.0.1", &server_addr.sin_addr);
+    inet_aton(server_ip, &server_addr.sin_addr);
     // 将用户输入的字符串类型的IP地址转为整形
-    inet_pton(AF_INET,
+    // 下面这种方式好像连接不上服务端
+    /*inet_pton(AF_INET,
               server_ip,
-              &server_addr);
+              &server_addr);*/
 
     // 绑定地址结构到套接字描述符
     connect(ss,
             (struct sockaddr *) &server_addr,
             sizeof(struct sockaddr));
 
-    process_conn_client(ss);
+    process_conn_client2(ss);
 
     close(ss);
 }

@@ -1912,30 +1912,48 @@ void process_conn_server(int sc) {
 }
 
 void process_conn_server2(int sc) {
-    ssize_t size = 0;
+    ssize_t recv_size = -1;
+    ssize_t send_size = -1;
+
     // 数据的缓冲区
     char buffer[1024];
     for (;;) {
         // 从套接字中读取数据放到缓冲区buffer中
         memset(buffer, 0, sizeof(buffer));
-        size = recv(sc, buffer, 1024, 0);
-        if (size == -1) {
+        // 两选一
+        recv_size = recv(sc, buffer, 1024, 0);
+        // size = read(sc, buffer, 1024);
+        if (recv_size == -1) {
             printf("server recv error. fd = %d\n", sc);
             close(sc);
             return;
         }
-        if (size == 0) {
+        if (recv_size == 0) {
+            // 跟客户端断开连接时
             printf("server没有接收到数据\n");
-            continue;
+            close(sc);
+            // 不能少
+            return;
         }
+        // 显示到屏幕
+        write(1, buffer, recv_size);
 
-        // write(1, buffer, size);
-
+        memset(buffer, 0, sizeof(buffer));
         // 构建响应字符,为接收到客户端字节的数量
-        sprintf(buffer, "%d bytes altogether\n", size);
+        sprintf(buffer, "%d bytes altogether\n", recv_size);
 
         // 发给客户端
-        send(sc, buffer, strlen(buffer) + 1, 0);
+        send_size = send(sc, buffer, strlen(buffer) + 1, 0);
+        if (send_size == -1) {
+            printf("server send error. fd = %d\n", sc);
+            close(sc);
+            return;
+        }
+        if (send_size == 0) {
+            printf("server没有发送数据\n");
+            /*return;*/
+        }
+        printf("server send size: %ld\n", send_size);
     }
 }
 
@@ -2007,12 +2025,18 @@ int test_create_server_socket(void) {
 
         // 建立一个新的进程处理到来的连接
         pid = fork();
+        if (pid == -1) {
+            printf("fork error\n");
+            return EXIT_FAILURE;
+        }
         if (pid == 0) {
+            printf("子进程\n");
             // 子进程
             // 在子进程中关闭服务器的侦听
             close(ss);
-            process_conn_server(sc);
+            process_conn_server2(sc);
         } else {
+            printf("父进程\n");
             // 父进程
             // 在父进程中关闭客户端的连接
             close(sc);

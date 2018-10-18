@@ -33,6 +33,10 @@ string
 -
 string.h
 -
+strings.h
+-
+signal.h
+-
 pthread.h
 -
 iostream

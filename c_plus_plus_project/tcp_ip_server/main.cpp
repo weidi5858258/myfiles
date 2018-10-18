@@ -66,32 +66,7 @@ int howToCreateChildProcess() {
 
 
 int test() {
-#define DEST_IP "132.241.5.10"
-#define DEST_PORT 23
 
-    int ret = 0;
-    int sfd;
-    struct sockaddr_in server;
-    sfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sfd == -1) {
-        perror("socket");
-        exit(EXIT_FAILURE);
-    }
-    // 地址结构的协议族
-    server.sin_family = AF_INET;
-    // 地址结构的端口地址,网络字节序
-    server.sin_port = htons(DEST_PORT);
-    // 服务器的IP地址
-    server.sin_addr.s_addr = htonl(DEST_IP);
-    // 将my_addr.sin_zero置为0
-    bzero(&(server.sin_zero), 8);
-    ret = connect(sfd, (struct sockaddr *) &server, sizeof(struct sockaddr));
-    if (ret == -1) {
-        perror("connect");
-        exit(EXIT_FAILURE);
-    }
-    // ...
-    close(sfd);
 }
 /***
 子线程

@@ -1,4 +1,4 @@
-/root/mydev/tools/clion-2018.2.3/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client
+/root/mydev/tools/clion_2018/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client
 -- The C compiler identification is GNU 4.8.5
 -- The CXX compiler identification is GNU 4.8.5
 -- Check for working C compiler: /usr/bin/cc
