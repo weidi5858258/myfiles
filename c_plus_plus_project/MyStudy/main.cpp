@@ -25,7 +25,7 @@ Project Encoding : UTF-8
 Default encoding for properties files: UTF-8
 然后还有关键一步骤：在程程序左下角修改utf-8为GBK
  */
-int main(int argc, char *argv[]) {
+int main2(int argc, char *argv[]) {
     printf("\n");
     printf("argc = %d\n", argc);
     for (int j = 0; j < argc; j++) {
