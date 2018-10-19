@@ -31,10 +31,10 @@ int main(int argc, char *argv[]) {
 
 //    howToCreateChildProcess();
 
-    LinuxSocket linuxSocket;
-    linuxSocket.studyHard();
+//    LinuxSocket linuxSocket;
+//    linuxSocket.studyHard();
 
-//    test();
+    test();
 
     printf("---------------------------------------------------\n");
     printf("\n");
@@ -64,9 +64,62 @@ int howToCreateChildProcess() {
     }
 }
 
+#define BITS16 16
+#define BITS32 32
+
+void showvalue(unsigned char *begin, int flag) {
+    int num = 0, i = 0;
+    if (flag == BITS16) {
+        num = 2;
+    } else if (flag == BITS32) {
+        num = 4;
+    }
+    for (i = 0; i < num; i++) {
+        printf("%x ", *(begin + 1));
+    }
+    printf("\n");
+}
 
 int test() {
+    typedef union {
+        // 短整形变量
+        unsigned short int value;
+        // 字符类型
+        unsigned char byte[2];
+    } to16;
+    typedef union {
+        // 短整形变量
+        unsigned short int value;
+        // 字符类型
+        unsigned char byte[4];
+    } to32;
+    to16 v16_orig, v16_turn1, v16_turn2;
+    v16_orig.value = 0xabcd;
+    // 第一次转换
+    v16_turn1.value = htons(v16_orig.value);
+    // 第二次转换
+    v16_turn2.value = htons(v16_turn1.value);
+    printf("16 host to network byte order change:\n");
+    printf("\torig:\t");
+    showvalue(v16_orig.byte, BITS16);
+    printf("\t1 times:");
+    showvalue(v16_turn1.byte, BITS16);
+    printf("\t2 times:");
+    showvalue(v16_turn2.byte, BITS16);
 
+    to32 v32_orig, v32_turn1, v32_turn2;
+    v32_orig.value = 0x12345678;
+    // 第一次转换
+    v32_turn1.value = htonl(v32_orig.value);
+    // 第二次转换
+    v32_turn2.value = htonl(v32_turn1.value);
+    printf("32 host to network byte order change:\n");
+    printf("\torig:\t");
+    showvalue(v32_orig.byte, BITS32);
+    printf("\t1 times:");
+    showvalue(v32_turn1.byte, BITS32);
+    printf("\t2 times:");
+    showvalue(v32_turn2.byte, BITS32);
 }
 /***
 子线程

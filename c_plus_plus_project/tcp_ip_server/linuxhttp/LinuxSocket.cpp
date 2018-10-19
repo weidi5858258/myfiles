@@ -1541,6 +1541,301 @@ void sig_int(int sign){
 // 注册信号
 signal(SIGINT, sig_int);
 
+第8章内容
+服务器和客户端信息的获取
+字节序
+字节序是由于不同的主处理器和操作系统,对大于一个字节的变量
+在内存中的存放顺序不同而产生的.
+字节序通常有大端字节序和小端字节序两种分类方法.
+1.字节序介绍
+如一个16位的整数,它由两个字节构成,在有的系统上会将高字节
+放在内存的低地址上,而有的系统上则将高字节放在内存的高地址上,
+所以存在字节序的问题.
+大于一个字节的变量类型的表示方法有两种:
+小端字节序(Little Endian, LE):在表示变量的内存地址的
+                起始地址存放低字节,高字节顺序存放.
+大端字节序(Big Endian, BE):在表示变量的内存地址的
+                起始地址存放高字节,低字节顺序存放.
+如变量的值为0xabcd,存放的示意图见233页.
+2.字节序的例子
+1)字节序结构.
+程序先建立一个联合类型to,用于测试字节序,成员value是short
+类型变量,可以通过成员byte来访问value变量的高字节和低字节.
+#include <stdio.h>
+typedef union{
+    // 短整形变量
+    unsigned short int value;
+    // 字符类型
+    unsigned char byte[2];
+}to;
+2)变量声明:
+声明一个to类型的变量typeordr,将值0xabcd赋给成员变量value.
+由于在类型to中,value和byte成员共享同一块内存,所以可以通过
+byte的不同来访问value的高字节和低字节.
+// 一个to类型变量
+to typeorder;
+// typeorder变量赋值为0xabcd
+typeorder.value = 0xabcd;
+3)小端字节序判断.
+小端字节序的检查通过判断typeorder变量的byte成员高字节和
+底字节的值来进行:低字节的值为0xcd,高字节的值为0xab.
+if(typeorder.byte[0] == 0xcd && typeorder.byte[1] == 0xab){
+    // 低字节在前
+    printf("Low endian byte order byte[0]:0x%x, byte[1]:0x%x\n",
+            typeorder.byte[0], typeorder.byte[1]);
+}
+4)大端字节序判断.
+大端字节序的检查同样通过判断typeorder变量的byte成员
+高字节和低字节的值来进行:低字节的值为0xab,高字节的值为0xcd.
+if(typeorder.byte[0] == 0xab && typeorder.byte[1] == 0xcd){
+    // 高字节在前
+    printf("High endian byte order byte[0]:0x%x, byte[1]:0x%x\n",
+            typeorder.byte[0], typeorder.byte[1]);
+}
+5)编译运行程序.
+完整代码:
+typedef union {
+    // 短整形变量
+    unsigned short int value;
+    // 字符类型
+    unsigned char byte[2];
+} to;
+to typeorder;
+typeorder.value = 0xabcd;
+if (typeorder.byte[0] == 0xcd && typeorder.byte[1] == 0xab) {
+    printf("低端字节序\n");
+    // 低字节在前
+    printf("Low endian byte order byte[0]:0x%x, byte[1]:0x%x\n",
+           typeorder.byte[0], typeorder.byte[1]);
+} else if (typeorder.byte[0] == 0xab && typeorder.byte[1] == 0xcd) {
+    printf("高端字节序\n");
+    // 高字节在前
+    printf("High endian byte order byte[0]:0x%x, byte[1]:0x%x\n",
+           typeorder.byte[0], typeorder.byte[1]);
+}
+
+字节序转换函数
+网络字节序是指多字节变量在网络传输时的表示方法,
+网络字节序采用高端字节序的表示方法.
+这样小端字节序的系统通过网络传输变量的时候
+需要进行字节序的转换,大端字节序的变量则不需要进行转换.
+1.字节序转换转换函数介绍
+#include <arpa/inet.h>
+// 主机字节序到网络字节序的长整形转换
+uint32_t htonl(uint32_t hostlong);
+// 主机字节序到网络字节序的短整形转换
+uint16_t htons(uint16_t hostlong);
+// 网络字节序到主机字节序的长整形转换
+uint32_t ntohl(uint32_t hostlong);
+// 网络字节序到主机字节序的短整形转换
+uint16_t ntohs(uint16_t hostlong);
+函数的命名规则为"字节序""to""字节序""变量类型".
+h: host主机字节序
+n: network网络字节序
+l: long型变量
+s: short型变量
+说明:
+程序员在程序设计的时候,需要调用字节序转换函数将主机的
+字节序转换为网络字节序,至于是否交换字节的顺序,则由字节序
+转换函数的实现来保证.也就是说对于用户来说这种转换是透明的.
+只要将需要在网络上传输的变量调用一遍此类的转换函数进行
+一次转换即可,不用考虑目标系统的主机字节序方式.
+
+一个字节序转换的例子
+1.16位字节序转换结构
+先定义用于16位字节序转换的结构to16,这个结构是一个
+联合类型,通过value来赋值,通过byte数组来进行
+字节序转换.
+typedef union {
+    // 短整形变量
+    unsigned short int value;
+    // 字符类型
+    unsigned char byte[2];
+} to16;
+2.32位字节序转换结构
+typedef union {
+    // 短整形变量
+    unsigned short int value;
+    // 字符类型
+    unsigned char byte[4];
+} to32;
+3.变量值打印函数showvalue()
+showvalue()函数用于打印变量值,打印的方式是从变量存储空间的
+第一个字节开始,按照字节进行打印.showvalue()函数有两个
+输入参数,一个是变量的地址指针begin,一个是表示字长的标志flag.
+参数flag的值为BITS16的时候打印16位变量的值,参数flag为
+BITS32的时候打印32位变量的值.
+#define BITS16 16
+#define BITS32 32
+void showvalue(unsigned char *begin, int flag) {
+    int num = 0, i = 0;
+    if (flag == BITS16) {
+        num = 2;
+    } else if (flag == BITS32) {
+        num = 4;
+    }
+    for (i = 0; i < num; i++) {
+        printf("%x ", *(begin + 1));
+    }
+    printf("\n");
+}
+4.主函数main()
+to16 v16_orig, v16_turn1, v16_turn2;
+to32 v32_orig, v32_turn1, v32_turn2;
+5.16位值0xabcd的二次转换
+v16_orig.value = 0xabcd;
+// 第一次转换
+v16_turn1.value = htons(v16_orig.value);
+// 第二次转换
+v16_turn2.value = htons(v16_turn1.value);
+6.32位值0x12345678的二次转换
+v32_orig.value = 0x12345678;
+// 第一次转换
+v32_turn1.value = htonl(v32_orig.value);
+// 第二次转换
+v32_turn2.value = htonl(v32_turn1.value);
+7.结果打印
+完整代码:
+typedef union {
+    // 短整形变量
+    unsigned short int value;
+    // 字符类型
+    unsigned char byte[2];
+} to16;
+typedef union {
+    // 短整形变量
+    unsigned short int value;
+    // 字符类型
+    unsigned char byte[4];
+} to32;
+to16 v16_orig, v16_turn1, v16_turn2;
+v16_orig.value = 0xabcd;
+// 第一次转换
+v16_turn1.value = htons(v16_orig.value);
+// 第二次转换
+v16_turn2.value = htons(v16_turn1.value);
+printf("16 host to network byte order change:\n");
+printf("\torig:\t");
+showvalue(v16_orig.byte, BITS16);
+printf("\t1 times:");
+showvalue(v16_turn1.byte, BITS16);
+printf("\t2 times:");
+showvalue(v16_turn2.byte, BITS16);
+
+to32 v32_orig, v32_turn1, v32_turn2;
+v32_orig.value = 0x12345678;
+// 第一次转换
+v32_turn1.value = htonl(v32_orig.value);
+// 第二次转换
+v32_turn2.value = htonl(v32_turn1.value);
+printf("32 host to network byte order change:\n");
+printf("\torig:\t");
+showvalue(v32_orig.byte, BITS32);
+printf("\t1 times:");
+showvalue(v32_turn1.byte, BITS32);
+printf("\t2 times:");
+showvalue(v32_turn2.byte, BITS32);
+
+字符串IP地址和二进制IP地址的转换
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+// 将点分四段式的IP地址转为地址结构in_addr值
+int inet_aton(const char *cp, struct in_addr *inp);
+// 将字符串转换为in_addr值
+in_addr_t inet_addr(const char *cp);
+// 字符串地址的网络部分转为in_addr值
+in_addr_t inet_network(const char *cp);
+// 将in_addr结构地址转为字符串
+char *inet_ntoa(struct in_addr in);
+// 将网络地址和主机地址合成为IP地址
+struct in_addr inet_makeaddr(int net, int host);
+// 获得地址的主机部分
+in_addr_t inet_lnaof(struct in_addr in);
+// 获得地址的网络部分
+in_addr_t inet_netof(struct in_addr in);
+1.inet_aton()函数
+inet_aton()函数将在cp中存储的点分十进制字符串类型的
+IP地址,转换为二进制的IP地址,转换后的值保存在指针inp
+指向的结构struct in_addr中.当转换成功时返回值为
+非0,当传入的地址非法时,返回值为0.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+获取主机信息的函数
+gethostbyname()函数和gethostbyaddr()函数都可以获得主机的信息.
+gethostbyname()函数通过主机的名称获得主机的信息.
+gethostbyaddr()函数通过IP地址获得主机的信息.
+
+1.gethostbyname()函数介绍
+#include <netdb.h>
+extern int h_errno;
+struct hostent *gethostbyname(const char *name);
+这个函数的参数name是要查询的主机名,通常是DNS的域名.
+如gethostbyname("www.sina.com.cn")获得主机的信息.
+gethostbyname()函数的返回值是一个指向结构struct hostent
+类型变量的指针,当为NULL时,表示发生错误,错误类型可以通过
+errno获得,错误的类型及含义如下:
+HOST_NOT_FOUND:查询的主机不可知,即查不到相关主机的信息.
+NO_ADDRESS和NO_DATA:请求的名称合法但是没有合适的IP地址.
+NO_RECOVERY:域名服务器不响应.
+TRY_AGAIN:域名服务器当前出现临时错误,稍后再试.
+struct hostent{
+    // 主机的正式名称(如新浪的www.sina.com.cn)
+    char *h_name;
+    // 别名列表(可能有多个,所以用链表表示,链表尾部是一个NULL指针)
+    char **h_aliases;
+    // 主机地址类型
+    // 为AF_INET时表示为IPv4的IP地址
+    // 为AF_INET6时表示为IPv6的IP地址
+    int h_addrtype;
+    // 地址长度(以字节为单位)
+    // 对于IPv4来说为4个字节
+    int h_length;
+    // 地址列表
+    char **h_addr_list;
+};
+// 为了向前兼容定义的宏
+#define h_addr h_addr_list[0]
+
+2.gethostbyaddr()函数介绍
+#include <netdb.h>
+extern int h_errno;
+struct hostent *gethostbyaddr(const void *addr, int len, int type);
+gethostbyaddr()函数通过查询IP地址来获得主机的信息.
+参数说明:
+addr: 在IPv4的情况下指向一个struct in_addr的地址结构,用户需要查询
+      主机的IP地址填入到这个参数中.
+len: 表示第一个参数所指区域的大小,在IPv4情况下为
+     sizeof(struct in_addr),即32位.
+type: 指定需要查询主机IP地址的类型,在IPv4的情况下为AF_INET.
+
+注意:
+函数gethostbyname和gethostbyaddr是不可重入的函数,由于传出的值
+为一块静态的内存地址,当另一次查询到来的时候,这块区域会被占用,所以
+在使用的时候要小心.
+
+
+
+
+
+
+
 第9章内容
 数据的IO和复用
 Linux系统中的IO函数主要有
@@ -1866,7 +2161,7 @@ void test_write(void);
 
 void test_lseek(void);
 
-int test_create_server_socket(void);
+int test_start_server(void);
 
 void test_pthread(void);
 
@@ -1874,7 +2169,7 @@ void test_class(void);
 
 void LinuxSocket::studyHard() {
 
-    test_create_server_socket();
+    test_start_server();
 
 }
 
@@ -1884,6 +2179,20 @@ void sig_process(int signo) {
     printf("Catch a exit signal.signo: %d\n", signo);
 
     exit(EXIT_SUCCESS);
+}
+
+void close_local_server_sock_fd(int &local_server_sock_fd) {
+    if (local_server_sock_fd != -1) {
+        close(local_server_sock_fd);
+        local_server_sock_fd = -1;
+    }
+}
+
+void close_remote_client_sock_fd(int &remote_client_sock_fd) {
+    if (remote_client_sock_fd != -1) {
+        close(remote_client_sock_fd);
+        remote_client_sock_fd = -1;
+    }
 }
 
 // 服务器端对客户端的处理
@@ -1911,27 +2220,27 @@ void process_conn_server(int sc) {
     }
 }
 
-void process_conn_server2(int sc) {
+#define DATA_BUFFER 1024
+
+void process_conn_server2(int remote_client_sock_fd) {
     ssize_t recv_size = -1;
     ssize_t send_size = -1;
 
     // 数据的缓冲区
-    char buffer[1024];
+    char buffer[DATA_BUFFER];
     for (;;) {
         // 从套接字中读取数据放到缓冲区buffer中
         memset(buffer, 0, sizeof(buffer));
-        // 两选一
-        recv_size = recv(sc, buffer, 1024, 0);
-        // size = read(sc, buffer, 1024);
+        recv_size = recv(remote_client_sock_fd, buffer, DATA_BUFFER, 0);
         if (recv_size == -1) {
-            printf("server recv error. fd = %d\n", sc);
-            close(sc);
+            fprintf(stderr, "server recv error. fd = %d\n", remote_client_sock_fd, strerror(errno));
+            close_remote_client_sock_fd(remote_client_sock_fd);
             return;
         }
         if (recv_size == 0) {
             // 跟客户端断开连接时
             printf("server没有接收到数据\n");
-            close(sc);
+            close_remote_client_sock_fd(remote_client_sock_fd);
             // 不能少
             return;
         }
@@ -1940,13 +2249,13 @@ void process_conn_server2(int sc) {
 
         memset(buffer, 0, sizeof(buffer));
         // 构建响应字符,为接收到客户端字节的数量
-        sprintf(buffer, "%d bytes altogether\n", recv_size);
-
+        //sprintf(buffer, "服务端已经收到客户端发送过去的 %d 个字节.\n", recv_size);
+        sprintf(buffer, "服务端已经收到客户端发送过去的 %d 个字节\n", recv_size);
         // 发给客户端
-        send_size = send(sc, buffer, strlen(buffer) + 1, 0);
+        send_size = send(remote_client_sock_fd, buffer, strlen(buffer) + 1, 0);
         if (send_size == -1) {
-            printf("server send error. fd = %d\n", sc);
-            close(sc);
+            fprintf(stderr, "server send error. fd = %d\n", remote_client_sock_fd, strerror(errno));
+            close_remote_client_sock_fd(remote_client_sock_fd);
             return;
         }
         if (send_size == 0) {
@@ -1957,32 +2266,56 @@ void process_conn_server2(int sc) {
     }
 }
 
-int test_create_server_socket(void) {
-    // ss为服务器端的socket描述符,sc为客户端的socket描述符
-    int ss, sc;
-    // 服务器端地址结构
-    struct sockaddr_in server_addr;
-    // 客户端地址结构
-    struct sockaddr_in client_addr;
-    // 返回值
-    int err;
-    // 分叉的进行ID
-    pid_t pid;
 
+/***
+1.bind error: Address already in use
+服务器设置的端口已被占用
+2.accept error: Bad file descriptor
+ */
+int test_start_server(void) {
+    // local_server_sock_fd为服务端的socket描述符
+    // remote_client_sock为客户端的socket描述符
+    int local_server_sock_fd = -1, remote_client_sock_fd = -1;
+    // 服务端地址结构
+    // 客户端地址结构
+    struct sockaddr_in server_addr, client_addr;
+    // 返回值
+    int err = -1;
+
+    // 注册信号
     signal(SIGINT, sig_process);
     signal(SIGPIPE, sig_process);
 
+    memset(&server_addr, 0, sizeof(struct sockaddr_in));
+    memset(&client_addr, 0, sizeof(struct sockaddr_in));
+
     // 建立一个流式套接字
-    ss = socket(AF_INET, SOCK_STREAM, 0);
-    // 出错
-    if (ss == -1) {
-        printf("socket error\n");
-        return EXIT_FAILURE;
+    local_server_sock_fd = socket(AF_INET,
+                                  SOCK_STREAM,
+                                  0);
+    if (local_server_sock_fd == -1) {
+        fprintf(stderr, "socket error: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
     }
 
-    // 设置服务器端地址
+    // 解决在close之后会有一个WAIT_TIME，导致bind失败的问题
+    int val = -1;
+    err = setsockopt(local_server_sock_fd,
+                     SOL_SOCKET,
+                     SO_REUSEADDR,
+                     (void *) &val,
+                     sizeof(int));
+    if (err == -1) {
+        fprintf(stderr, "setsockopt error: %s\n", strerror(errno));
+        close_local_server_sock_fd(local_server_sock_fd);
+        exit(EXIT_FAILURE);
+    }
+
+    // 设置服务端地址
     // 清零
-    bzero(reinterpret_cast<char *>(&server_addr), sizeof(server_addr));
+    /*bzero(reinterpret_cast<char *>(&server_addr),
+          sizeof(server_addr));*/
+    bzero(&server_addr, sizeof(server_addr));
     // 协议族
     server_addr.sin_family = AF_INET;
     // 本地地址
@@ -1991,55 +2324,63 @@ int test_create_server_socket(void) {
     server_addr.sin_port = htons(PORT);
 
     // 绑定地址结构到套接字描述符
-    err = bind(ss,
+    err = bind(local_server_sock_fd,
                (struct sockaddr *) &server_addr,
                sizeof(server_addr));
-    // 出错
     if (err == -1) {
-        printf("bind error\n");
-        return EXIT_FAILURE;
+        fprintf(stderr, "bind error: %s\n", strerror(errno));
+        close_local_server_sock_fd(local_server_sock_fd);
+        exit(EXIT_FAILURE);
     }
 
     // 设置侦听
-    err = listen(ss, BACKLOG);
-    // 出错
+    err = listen(local_server_sock_fd, BACKLOG);
     if (err == -1) {
-        printf("listen error\n");
-        return EXIT_FAILURE;
+        fprintf(stderr, "listen error: %s\n", strerror(errno));
+        close_local_server_sock_fd(local_server_sock_fd);
+        exit(EXIT_FAILURE);
     }
 
     // 主循环过程
     for (;;) {
         socklen_t addrlen = sizeof(struct sockaddr);
         // 接收客户端连接
-        sc = accept(ss,
-                    (struct sockaddr *) &client_addr,
-                    &addrlen);
-        // 出错
-        if (sc == -1) {
+        remote_client_sock_fd = accept(local_server_sock_fd,
+                                       (struct sockaddr *) &client_addr,
+                                       &addrlen);
+        if (remote_client_sock_fd == -1) {
+            fprintf(stderr, "accept error: %s ss: %d\n", strerror(errno), local_server_sock_fd);
+            // 当客户端退出时,这里会报错,但是服务端并没有停止
+            exit(EXIT_FAILURE);
+        }
+
+        printf("server local_server_sock_fd: %d\n", local_server_sock_fd);
+        printf("server local_server_sock_fd: %d\n", remote_client_sock_fd);
+
+        // 建立一个新的进程处理到来的连接
+        pid_t pid = fork();
+        if (pid == -1) {
+            fprintf(stderr, "fork error: %s\n", strerror(errno));
+            close_remote_client_sock_fd(remote_client_sock_fd);
             continue;
         }
 
-        printf("server ss: %d\n", ss);
-        printf("server sc: %d\n", sc);
-
-        // 建立一个新的进程处理到来的连接
-        pid = fork();
-        if (pid == -1) {
-            printf("fork error\n");
-            return EXIT_FAILURE;
-        }
         if (pid == 0) {
             printf("子进程\n");
-            // 子进程
-            // 在子进程中关闭服务器的侦听
-            close(ss);
-            process_conn_server2(sc);
+            /***
+             子进程关闭local_server_sock处理任务,
+             使其回到TIME_WAIT状态值.
+             */
+            close(local_server_sock_fd);
+            process_conn_server2(remote_client_sock_fd);
         } else {
-            printf("父进程\n");
-            // 父进程
-            // 在父进程中关闭客户端的连接
-            close(sc);
+            printf("父进程.新创建的进程id: %d\n", pid);
+            /***
+             在父进程中关闭连接的套接字描述符,
+             只是把remote_client_sock的引用数减少1,
+             在子进程中还在使用remote_client_sock.
+             */
+            close(remote_client_sock_fd);
         }
     }
 }
