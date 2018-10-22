@@ -81,45 +81,48 @@ void showvalue(unsigned char *begin, int flag) {
 }
 
 int test() {
-    typedef union {
-        // 短整形变量
-        unsigned short int value;
-        // 字符类型
-        unsigned char byte[2];
-    } to16;
-    typedef union {
-        // 短整形变量
-        unsigned short int value;
-        // 字符类型
-        unsigned char byte[4];
-    } to32;
-    to16 v16_orig, v16_turn1, v16_turn2;
-    v16_orig.value = 0xabcd;
-    // 第一次转换
-    v16_turn1.value = htons(v16_orig.value);
-    // 第二次转换
-    v16_turn2.value = htons(v16_turn1.value);
-    printf("16 host to network byte order change:\n");
-    printf("\torig:\t");
-    showvalue(v16_orig.byte, BITS16);
-    printf("\t1 times:");
-    showvalue(v16_turn1.byte, BITS16);
-    printf("\t2 times:");
-    showvalue(v16_turn2.byte, BITS16);
-
-    to32 v32_orig, v32_turn1, v32_turn2;
-    v32_orig.value = 0x12345678;
-    // 第一次转换
-    v32_turn1.value = htonl(v32_orig.value);
-    // 第二次转换
-    v32_turn2.value = htonl(v32_turn1.value);
-    printf("32 host to network byte order change:\n");
-    printf("\torig:\t");
-    showvalue(v32_orig.byte, BITS32);
-    printf("\t1 times:");
-    showvalue(v32_turn1.byte, BITS32);
-    printf("\t2 times:");
-    showvalue(v32_turn2.byte, BITS32);
+    char host1[] = "www.sina.com.cn";
+    char host2[] = "www.sohu.com";
+    struct hostent *ht = NULL, *ht1 = NULL, *ht2 = NULL;
+    ht1 = gethostbyname(host1);
+    ht2 = gethostbyname(host2);
+    int j = 0;
+    for (j = 0; j < 2; j++) {
+        if (j == 0) {
+            ht = ht1;
+        } else {
+            ht = ht2;
+        }
+        if (ht) {
+            int i = 0;
+            printf("host: %s\n", host1);
+            printf("name: %s\n", ht->h_name);
+            printf("type: %s\n",
+                   ht->h_addrtype == AF_INET
+                   ?
+                   "AF_INET"
+                   :
+                   "AF_INET6");
+            printf("length: %d\n", ht->h_length);
+            for (i = 0;; i++) {
+                if (ht->h_addr_list[i] != NULL) {
+                    // 编译不过
+                    // printf("IP: %s\n",
+                    // inet_ntoa((unsigned int *) ht->h_addr_list[i]));
+                    printf("IP: %s\n", ht->h_addr_list[i]);
+                } else {
+                    break;
+                }
+            }
+            for (i = 0;; i++) {
+                if (ht->h_aliases[i] != NULL) {
+                    printf("alias %d : %s\n", i, ht->h_aliases[i]);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
 }
 /***
 子线程

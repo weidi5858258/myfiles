@@ -1830,6 +1830,133 @@ type: 指定需要查询主机IP地址的类型,在IPv4的情况下为AF_INET.
 为一块静态的内存地址,当另一次查询到来的时候,这块区域会被占用,所以
 在使用的时候要小心.
 
+使用主机名获取主机信息的例子
+char host[] = "www.sina.com.cn";
+struct hostent *ht = NULL;
+ht = gethostbyname(host);
+if (ht) {
+    int i = 0;
+    printf("host: %s\n", host);
+    printf("name: %s\n", ht->h_name);
+    printf("type: %s\n",
+           ht->h_addrtype == AF_INET
+           ?
+           "AF_INET"
+           :
+           "AF_INET6");
+    printf("length: %d\n", ht->h_length);
+    for (i = 0;; i++) {
+        if (ht->h_addr_list[i] != NULL) {
+            // 编译不过
+            // printf("IP: %s\n",
+                   // inet_ntoa((unsigned int *) ht->h_addr_list[i]));
+            printf("IP: %s\n", ht->h_addr_list[i]);
+        } else {
+            break;
+        }
+    }
+    for (i = 0;; i++) {
+        if (ht->h_aliases[i] != NULL) {
+            printf("alias %d : %s\n", i, ht->h_aliases[i]);
+        } else {
+            break;
+        }
+    }
+}
+
+函数gethostbyname()不可重入的例子
+char host1[] = "www.sina.com.cn";
+char host2[] = "www.sohu.com";
+struct hostent *ht = NULL, *ht1 = NULL, *ht2 = NULL;
+ht1 = gethostbyname(host1);
+ht2 = gethostbyname(host2);
+int j = 0;
+for (j = 0; j < 2; j++) {
+    if (j == 0) {
+        ht = ht1;
+    } else {
+        ht = ht2;
+    }
+    if (ht) {
+        int i = 0;
+        printf("host: %s\n", host1);
+        printf("name: %s\n", ht->h_name);
+        printf("type: %s\n",
+               ht->h_addrtype == AF_INET
+               ?
+               "AF_INET"
+               :
+               "AF_INET6");
+        printf("length: %d\n", ht->h_length);
+        for (i = 0;; i++) {
+            if (ht->h_addr_list[i] != NULL) {
+                // 编译不过
+                // printf("IP: %s\n",
+                // inet_ntoa((unsigned int *) ht->h_addr_list[i]));
+                printf("IP: %s\n", ht->h_addr_list[i]);
+            } else {
+                break;
+            }
+        }
+        for (i = 0;; i++) {
+            if (ht->h_aliases[i] != NULL) {
+                printf("alias %d : %s\n", i, ht->h_aliases[i]);
+            } else {
+                break;
+            }
+        }
+    }
+}
+这里的不可重入的意思是:
+输出的结果都是关于www.sohu.com的信息,关于www.sina.com.cn
+主机信息都已经被www.sohu.com的信息给覆盖了.因此,使用函数
+gethostbyname()进行主机信息查询的时候,函数返回后,要马上
+将结果取出,否则会被后面的函数调用过程覆盖.
+
+协议名称处理函数
+协议族处理函数有如下几个,可以通过协议的名称,
+编号等获取协议类型.
+#include <netdb.h>
+// 从协议文件中读取一行
+struct protoent *getprotoent(void);
+// 从协议文件中找到匹配项
+struct protoent *getprotobyname(const char *name);
+// 按照协议类型的值获取匹配项
+struct protoent *getprotobynumber(int proto);
+// 设置协议文件打开状态
+void setprotoent(int stayopen);
+// 关闭协议文件
+void endprotoent(void);
+上面的函数对文件/etc/protocols中的记录进行操作,文件中记录了
+协议的名称,值和别名等值.与结构struct protoent的定义一致.
+结构protoent的定义如下:
+struct protoent{
+    // 协议的官方名称
+    char *p_name;
+    // 别名列表(可能有多个值)
+    char **p_aliases;
+    // 协议的值
+    int p_proto;
+};
+1.函数getprotoent()从文件/etc/protocols中读取一行并且
+返回一个指向struct protoent的指针,包含读取一行的协议.
+需要事先打开文件/etc/protocols.
+2.函数getprotobyname()按照输入的协议名称name,匹配文件
+/etc/protocols中的选项,返回一个匹配项.
+3.函数getprotobynumber()按照输入的协议值proto,匹配文件
+/etc/protocols中的选项,返回一个匹配项.
+4.函数setprotoent()打开文件/etc/protocols,当stayopen
+为1的时候,在调用函数getprotobyname()或者getprotobynumber()
+查询协议时,并不关闭文件.
+5.函数endprotoent()关闭文件/etc/protocols.
+函数getprotoent(),getprotobyname()和getprotobynumber()
+在调用成功时返回一个指向结构struct protoent的指针,失败时,
+返回NULL.
+
+使用协议族函数的例子
+
+
+
 
 
 

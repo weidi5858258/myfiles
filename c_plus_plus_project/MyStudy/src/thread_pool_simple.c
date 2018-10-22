@@ -13,17 +13,18 @@
 #include <pthread.h>
 
 
-#define LL_ADD(item, list) do {    \
-    item->prev = NULL;                \
-    item->next = list;                \
+#define LL_ADD(item, list) do {     \
+    item->prev = NULL;              \
+    item->next = list;              \
     list = item;                    \
+    printf("LL_ADD: %p, %p\n", &item, &list);          \
 } while(0)
 
-#define LL_REMOVE(item, list) do {                        \
+#define LL_REMOVE(item, list) do {                            \
     if (item->prev != NULL) item->prev->next = item->next;    \
     if (item->next != NULL) item->next->prev = item->prev;    \
-    if (list == item) list = item->next;                    \
-    item->prev = item->next = NULL;                            \
+    if (list == item) list = item->next;                      \
+    item->prev = item->next = NULL;                           \
 } while(0)
 
 typedef struct NJOB {
@@ -43,6 +44,7 @@ typedef struct NWORKER {
     int terminate;
     // 每个线程都包含同一个工作队列
     // 这样工作队列中的同步锁可以使用于当前线程
+    // 所有的线程都指向同一个工作队列
     struct NWORKQUEUE *workqueue;
     struct NWORKER *prev;
     struct NWORKER *next;
@@ -52,6 +54,7 @@ typedef struct NWORKER {
 typedef struct NWORKQUEUE {
     struct NWORKER *workers;
     struct NJOB *waiting_jobs;
+    // 用于同步
     pthread_mutex_t jobs_mtx;
     pthread_cond_t jobs_cond;
 } nWorkQueue;
@@ -60,6 +63,7 @@ typedef nWorkQueue nThreadPool;
 
 static void *ntyWorkerThread(void *ptr) {
     nWorker *worker = (nWorker *) ptr;
+    printf("ntyWorkerThread: %p\n", &ptr);
 
     while (1) {
         pthread_mutex_lock(&worker->workqueue->jobs_mtx);
@@ -86,7 +90,7 @@ static void *ntyWorkerThread(void *ptr) {
         if (job == NULL) {
             continue;
         }
-
+        printf("ntyWorkerThread: job->job_function %p\n", &job);
         job->job_function(job);
     }
 
@@ -108,6 +112,7 @@ int ntyThreadPoolCreate(nThreadPool *workqueue, int numWorkers) {
     memcpy(&(workqueue->jobs_cond), &blank_cond, sizeof(workqueue->jobs_cond));
 
     int i = 0;
+    // 一开始就创建numWorkers个线程
     for (i = 0; i < numWorkers; i++) {
         nWorker *worker = (nWorker *) malloc(sizeof(nWorker));
         if (worker == NULL) {
@@ -120,12 +125,13 @@ int ntyThreadPoolCreate(nThreadPool *workqueue, int numWorkers) {
         worker->workqueue = workqueue;
 
         int ret = pthread_create(&worker->thread, NULL, ntyWorkerThread, (void *) worker);
+        // 线程创建成功为0
         if (ret) {
             perror("pthread_create");
             free(worker);
             return 1;
         }
-
+        printf("LL_ADD: %p, \t%p\n", &worker, &worker->workqueue->workers);
         LL_ADD(worker, worker->workqueue->workers);
     }
 
@@ -164,8 +170,8 @@ void ntyThreadPoolQueue(nThreadPool *workqueue, nJob *job) {
 
 /************************** debug thread pool **************************/
 
-#define KING_MAX_THREAD            3
-#define KING_COUNTER_SIZE        1000
+#define KING_MAX_THREAD            2
+#define KING_COUNTER_SIZE          4
 
 void king_counter(nJob *job) {
     int index = *(int *) job->user_data;

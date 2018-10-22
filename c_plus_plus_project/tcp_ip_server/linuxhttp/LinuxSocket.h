@@ -10,6 +10,8 @@
 #include <sys/socket.h>
 #include <sys/mman.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netdb.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
