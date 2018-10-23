@@ -1759,23 +1759,250 @@ inet_aton()函数将在cp中存储的点分十进制字符串类型的
 IP地址,转换为二进制的IP地址,转换后的值保存在指针inp
 指向的结构struct in_addr中.当转换成功时返回值为
 非0,当传入的地址非法时,返回值为0.
+2.inet_addr()函数
+inet_addr()函数将cp中存储的点分十进制字符串类型的IP
+地址转换为二进制的IP地址,IP地址是以网络字节序表达的.
+如果输入的参数非法,返回值为INADDR_NONE(通常为-1),
+否则返回值为转换后的IP地址.
+这个函数是函数inet_aton()的缩减版,由于值-1同时可以
+理解为是合法IP地址255.255.255.255的转换结果,所以
+不能使用这个函数转换IP地址255.255.255.255.
+3.inet_network()函数
+inet_network()函数将cp中存储的点分十进制字符类型的IP
+地址,转换为二进制的IP地址,IP地址是以网络字节序表达的.
+当成功时返回32位表示IP地址,失败时返回值为-1.参数cp中
+的值有可能采用如下形式:
+a.b.c.d:这种形式指定了IP地址的全部4个段,是一个完全的IP
+地址转换,这种情况下函数inet_network()与函数inet_addr()
+完全一致.
+a.b.c:这种形式指定了IP地址的前3个段,a.b解释为IP地址的前
+16位,c解释为后面的16位.例如172.16.888会将888解释为IP
+地址的后16位.
+a.b:这种形式指定了IP地址的前两个段,a为IP地址的前8位,
+b解释为后面的24位.例如,172.888888会将888888解释为IP地址
+的后3段.
+a:当仅为一部分时,a的值直接作为IP地址,不做字节序转换.
+4.inet_ntoa()函数
+inet_ntoa()函数将一个参数in所表示的Internet地址结构
+转换为点分十进制的4段式字符串IP地址,其形式为"a.b.c.d".
+返回值为转换后的字符串指针,此内存区域为静态的,有可能会
+被覆盖,因此函数并不是线程安全的.
+例如,将二进制的IP地址0x1000000000000001使用函数
+inet_ntoa()转换为字符串类型的结果为"127.0.0.1".
+5.inet_makeaddr()函数
+一个主机的IP地址分为网络地址和主机地址,inet_makeaddr()
+函数将主机字节序的网络地址net和主机地址host合并成一个
+网络字节序的IP地址.
+下面的代码将网络地址127和主机地址1合并成一个IP地址"127.0.0.1":
+unsigned long net, host;
+net = 0x0000007F;
+host = 0x00000001;
+struct in_addr ip = inet_makeaddr(net, host);
+6.inet_lnaof()
+inet_lnaof()函数返回IP地址的主机部分.例如,下面的例子返回
+IP地址127.0.0.1的主机部分:
+const char *addr = "127.0.0.1";
+unsigned long ip = inet_network(addr);
+unsigned long host_id = inet_lnaof(ip);
+7.inet_netof()函数
+inet_netof()函数返回IP地址的网络部分.例如,下面的例子返回
+IP地址127.0.0.1的网络部分.
+const char *addr = "127.0.0.1";
+unsigned long ip = inet_network(addr);
+unsigned long network_id = inet_netof(ip);
+8.结构struct in_addr
+结构struct in_addr在文件<netinet/in.h>中定义.通常据说的
+IP地址的二进制形式就保存在成员变量s_addr中.结构struct in_addr
+的原型如下:
+struct in_addr {
+    // IP地址
+    unsigned long int s_addr;
+};
+注意:
+函数inet_addr(),inet_network()的返回值为-1时表示错误,
+这占用了255.255.255.255的值,因此可能存在缺陷.
+函数inet_ntoa()的返回值为一个指向字符串的指针,这块内存函数
+inet_ntoa()每次调用都会重新覆盖,因此函数并不安全,可能存在
+某种隐患.
+将字符串IP地址转换为in_addr时,注意字符串中对IP地址的描述,
+上述函数假设字符串中以0开始表示8进制,以0x开始表示16进制,
+将按照各进制对字符串进行解析.例如IP地址192/168.000.037
+最后一段的037表示的是8进制的数值,即相当于"192.168.0.31".
 
+inet_pton()函数和inet_ntop()函数
+inet_pton()函数和inet_ntop()函数是一套安全的地址转换函数.
+所谓的"安全"是相对于inet_aton()函数的不可重入性来说.这两个
+函数都是可以重入的,并且这些函数支持多种地址类型,
+包括IPv4和IPv6.
+1.inet_pton()函数
+inet_pton()函数将字符串类型的IP地址转换为二进制类型.
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+int inet_pton(int af, const char *src, void *dst);
+参数说明:
+af表示网络类型的示协议族,在IPv4下的值为AF_INET.
+src表示需要转换的字符串.
+dst指向转换后的结果,在IPv4下,dst指向结构struct in_addr的指针.
+当函数inet_pton()的返回值为-1时,通常是用于af所指定
+的协议族不支持造成的,此时errno的返回值为EAFNOSUPPORT;
+当函数inet_pton()的返回值为0时,表示src指向的值不是合法的
+IP地址;
+当函数inet_pton()的返回值为正数时,表示转换成功.
 
+2.inet_ntop()函数
+inet_ntop()函数将二进制的网络IP地址转换为字符串.
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+const char *inet_ntop(int af, const char *src,
+                    char *dst, socklen_t cnt);
+参数说明:
+af表示网络类型的协议族,在IPv4下的值为AF_INET.
+src为需要转换的二进制IP地址,在IPv4下,
+src指向一个struct in_addr结构类型的指针.
+dst指向保存结果缓冲区的指针.
+cnt的值是dst缓冲区的大小.
+inet_ntop()函数返回一个指向dst的指针.
+当发生错误时,返回NULL.当af设定的协议族不支持时,
+errno设置为EAFNOSUPPORT.
+当dst缓冲区大小过小的时候errno的值为ENOSPC.
 
+地址转换函数的例子
+1.初始化设置
+先对程序进行初始化的必要设置.例如测试的字符串IP地址,
+用户保存结果的网络地址结构和IP地址结构等参数.
+2.测试函数inet_aton()
+测试函数inet_aton(),将字符串IP地址192.168.1.1转换成
+二进制IP地址,并将结果打印出来.
+3.测试函数inet_addr()
+测试函数inet_addr(),将字符串IP地址转换为二进制IP地址.
+先测试192.168.1.1,再测试255.255.255.255.
+4.测试函数inet_ntoa()
+测试函数inet_ntoa(),先测试IP地址192.168.1.1对应的
+字符串str,然后测试IP地址255.255.255.255对应的字符串
+IP地址str2.两个IP地址都转换完毕后,一起打印转换后的值,
+会发现str和str2的值是相同的.
+5.测试函数inet_addr()
+测试函数inet_addr(),将字符串IP地址转换为二进制IP地址,
+使用的字符串为192.16.1.
+6.测试函数inet_lnaof()
+测试函数inet_lnaof(),获得本机地址.这个函数只取
+四段式IP地址的前一段.
+7.测试函数inet_netof()
+测试函数inet_netof(),获得本机地址.这个函数只取
+四段式IP地址的前三段.
 
+完整代码:
+// 第1步
+struct in_addr ip, local, network;
+// a.b.c.d类型的网络地址字符串
+char addr1[] = "192.168.1.1";
+// 二进制值为全1的IP地址对应的字符串
+char addr2[] = "255.255.255.255";
+// a.b.c类型的网络地址字符串
+char addr3[] = "192.16.1";
+char addr[16];
+char *str = NULL, *str2 = NULL;
+int err = 0;
+// 2
+err = inet_aton(addr1, &ip);
+if (err != -1) {
+    printf("inet_aton:string %s value is: 0x%x\n", addr1, ip.s_addr);
+} else {
+    printf("inet_aton:string %s error\n", addr1);
+}
+// 3
+ip.s_addr = inet_addr(addr1);
+if (err != -1) {
+    printf("inet_addr:string %s value is: 0x%x\n", addr1, ip.s_addr);
+} else {
+    printf("inet_addr:string %s error\n", addr1);
+}
+ip.s_addr = inet_addr(addr2);
+if (err != -1) {
+    printf("inet_addr:string %s value is: 0x%x\n", addr2, ip.s_addr);
+} else {
+    printf("inet_addr:string %s error\n", addr2);
+}
+// 4
+ip.s_addr = 192 << 24 | 168 << 16 | 1 << 8 | 1;
+str = inet_ntoa(ip);
+ip.s_addr = 255 << 24 | 255 << 16 | 255 << 8 | 255;
+str2 = inet_ntoa(ip);
+printf("inet_ntoa:ip: 0x%x string1 %s, pre is: %s\n", ip.s_addr, str2, str);
+// 5
+ip.s_addr = inet_addr(addr3);
+if (err != -1) {
+    printf("inet_addr:string %s value is: 0x%x\n", addr3, ip.s_addr);
+} else {
+    printf("inet_addr:string %s error\n", addr3);
+}
+str = inet_ntoa(ip);
+printf("inet_ntoa:string %s ip: 0x%x\n", str, ip.s_addr);
+// 6
+inet_aton(addr1, &ip);
+local.s_addr = htonl(ip.s_addr);
+local.s_addr = inet_lnaof(ip);
+str = inet_ntoa(local);
+printf("inet_lnaof:string %s ip: 0x%x\n", str, local.s_addr);
+// 7
+network.s_addr = inet_netof(ip);
+printf("inet_netof:value: 0x%x\n", network.s_addr);
+输出信息"inet_ntoa:ip: 0xffffffff string1 255.255.255.255, pre is: 255.255.255.255",
+表明函数inet_ntoa()在进行二进制IP地址到字符串IP地址的
+转换过程中是不可重入的,这个函数转换两个不同的IP地址得到
+了同一个结果.这是由于函数的实现没有考虑重入的特性,用
+同一个缓冲区保存了临时结果.函数inet_addr()同样存在
+不可重入的问题.此类函数在调用之后,需要立即将结果取出,
+没有取出结果之前不能进行同样函数的调用.
 
+使用函数inet_pton()和函数inet_ntop()的例子
+#define ADDRLEN 16
+struct in_addr ip;
+char ipstr[] = "192.168.1.1";
+char addr[ADDRLEN];
+const char *str = NULL;
+int err = 0;
+err = inet_pton(AF_INET, ipstr, &ip);
+if (err > 0) {
+    printf("inet_pton:ip %s value is: 0x%x\n", ipstr, ip.s_addr);
+}
+ip.s_addr = htonl(192 << 24 | 168 << 16 | 12 << 8 | 255);
+str = (const char *) inet_ntop(AF_INET,
+                               (void *) &ip,
+                               (char *) &addr[0],
+                               ADDRLEN);
+if (str) {
+    printf("inet_ntop:ip 0x%x is %s\n", ip.s_addr, str);
+}
 
+套接字描述符判定函数issockettype()
+套接字文件描述符从形式上与通用文件描述符没有区别,判断一个
+文件描述符是否是一个套接字描述符可以通过如下的方法实现:
+先调用函数fstat()获得文件描述符的模式,然后将模式的
+S_IFMT部分与标识符S_IFSOCK比较,可以知道一个文件描述符
+是否为套接字描述符.
+int issockettype(int fd) {
+    struct stat st;
+    int err = fstat(fd, &st);
+    if (err < 0) {
+        return -1;
+    }
+    if ((st.st_mode & S_IFMT) == S_IFSOCK) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
-
-
-
-
-
-
-
-
-
-
+int test() {
+    int ret = issockettype(0);
+    printf("value %d\n", ret);
+    int s = socket(AF_INET, SOCK_STREAM, 0);
+    ret = issockettype(s);
+    printf("value %d\n", ret);
+}
 
 获取主机信息的函数
 gethostbyname()函数和gethostbyaddr()函数都可以获得主机的信息.
@@ -1954,14 +2181,94 @@ struct protoent{
 返回NULL.
 
 使用协议族函数的例子
+如下的例子按照名称查询一组协议的项目,首先用setprotoent(1)
+打开文件/etc/protocols,然后使用函数getprotobyname()
+查询函数并显示出来,最后使用函数endprotoent()关闭文件
+/etc/protocols.
+1.显示协议项目函数display_protocol()
+display_protocol()函数将一个给定结构protoent中的协议
+名称打印出来,并判断是否有别名,将本协议所有相关的别名都打印
+出来,最后打印协议的值.
+void display_protocol(struct protoent *pt) {
+    if (pt) {
+        // 协议的官方名称
+        printf("protocol name: %s\n", pt->p_name);
+        if (pt->p_aliases) {
+            printf("alias name:\n");
+            int i = 0;
+            while (pt->p_aliases[i]) {
+                printf("    %s\n", pt->p_aliases[i]);
+                i++;
+            }
+        }
+        // 协议值
+        printf("value: %d\n", pt->p_proto);
+    }
+}
 
-
-
-
-
-
-
-
+int test() {
+    const char *const protocol_name[] = {
+            "ip",
+            "icmp",
+            "ggp",
+            "ipencap",
+            "st",
+            "tcp",
+            "egp",
+            "igp",
+            "pup",
+            "udp",
+            "hmp",
+            "xns-idp",
+            "rdp",
+            "iso-tp4",
+            "xtp",
+            "ddp",
+            "idpr-cmtp",
+            "ipv6",
+            "ipv6-route",
+            "ipv6-frag",
+            "idrp",
+            "rsvp",
+            "gre",
+            "esp",
+            "ah",
+            "skip",
+            "ipv6-icmp",
+            "ipv6-nonxt",
+            "ipv6-opts",
+            "rspf",
+            "vmtp",
+            "eigrp",
+            "ospf",
+            "ax.25",
+            "ipip",
+            "etherip",
+            "encap",
+            "pim",
+            "ipcomp",
+            "vrrp",
+            "12tp",
+            "isis",
+            "sctp",
+            "fc",
+            NULL
+    };
+    // 在使用函数getprotobyname()时不关闭文件/etc/protocols
+    setprotoent(1);
+    int i = 0;
+    while (protocol_name[i] != NULL) {
+        struct protoent *pt = getprotobyname(
+                (const char *) &protocol_name[i][0]);
+        if (pt) {
+            // 显示协议项目
+            display_protocol(pt);
+        }
+        i++;
+    }
+    // 关闭文件/etc/protocols
+    endprotoent();
+}
 
 第9章内容
 数据的IO和复用
@@ -2232,7 +2539,6 @@ recv()/send()                          Y              Y                     Y
 recvfrom()/writeto()                   Y              Y                     Y           Y
 recvmsg()/sendmsg()                    Y                         Y          Y           Y           Y
 
-使用IO函数的例子
 
 
 
@@ -2308,6 +2614,7 @@ void sig_process(int signo) {
     exit(EXIT_SUCCESS);
 }
 
+// 关闭套接字文件描述符
 void close_local_server_sock_fd(int &local_server_sock_fd) {
     if (local_server_sock_fd != -1) {
         close(local_server_sock_fd);
@@ -2322,16 +2629,18 @@ void close_remote_client_sock_fd(int &remote_client_sock_fd) {
     }
 }
 
+#define DATA_BUFFER 1024
+
 // 服务器端对客户端的处理
 // sc为客户端的socket描述符
-void process_conn_server(int sc) {
+void process_client_with_read_write(int remote_client_sock_fd) {
     ssize_t size = 0;
     // 数据的缓冲区
-    char buffer[1024];
+    char buffer[DATA_BUFFER];
     for (;;) {
         // 从套接字中读取数据放到缓冲区buffer中
         memset(buffer, 0, sizeof(buffer));
-        size = read(sc, buffer, 1024);
+        size = read(remote_client_sock_fd, buffer, DATA_BUFFER);
         // 没有数据
         if (size == 0) {
             return;
@@ -2343,13 +2652,11 @@ void process_conn_server(int sc) {
         // 构建响应字符,为接收到客户端字节的数量
         sprintf(buffer, "%d bytes altogether\n", size);
         // 发给客户端
-        write(sc, buffer, strlen(buffer) + 1);
+        write(remote_client_sock_fd, buffer, strlen(buffer) + 1);
     }
 }
 
-#define DATA_BUFFER 1024
-
-void process_conn_server2(int remote_client_sock_fd) {
+void process_client_with_recv_send(int remote_client_sock_fd) {
     ssize_t recv_size = -1;
     ssize_t send_size = -1;
 
@@ -2391,6 +2698,70 @@ void process_conn_server2(int remote_client_sock_fd) {
         }
         printf("server send size: %ld\n", send_size);
     }
+}
+
+/***
+ 处理过程利用3个向量来完成数据的接收和响应工作.
+ 先申请3个向量,每个向量的大小为10个字符.
+ 利用一个公共的30个字节大小的缓冲区buffer
+ 来初始化3个向量的地址缓冲区,将每个向量的向量长度
+ 设置为10.调用readv()来读取客户端的数据后,
+ 利用3个缓冲区构建响应信息,最后将响应信息发送给服务器端.
+ 不要使用下面的方法接收数据和发送数据
+ */
+static struct iovec *vs = NULL, *vc = NULL;
+
+void process_client_with_readv_writev(int remote_client_sock_fd) {
+    char buffer[30];
+    char read_buffer[DATA_BUFFER];
+    ssize_t readv_size = 0;
+    struct iovec *v = (struct iovec *) malloc(3 * sizeof(struct iovec));
+    if (!v) {
+        perror("Not enough memory\n");
+        return;
+    }
+    vs = v;
+    v[0].iov_base = buffer;
+    v[1].iov_base = buffer + 10;
+    v[2].iov_base = buffer + 20;
+    v[0].iov_len = v[1].iov_len = v[2].iov_len = 10;
+    int i = 0;
+    for (;;) {
+        readv_size = readv(remote_client_sock_fd, v, 3);
+        if (readv_size == -1) {
+            fprintf(stderr, "server recv error. fd = %d\n", remote_client_sock_fd, strerror(errno));
+            close_remote_client_sock_fd(remote_client_sock_fd);
+            break;
+        }
+        if (readv_size == 0) {
+            // 跟客户端断开连接时
+            printf("server没有接收到数据\n");
+            close_remote_client_sock_fd(remote_client_sock_fd);
+            // 不能少
+            break;
+        }
+        // 读取到的内容还不知道怎么输出,因此暂时不要用这种方法
+        // 来读取数据和发送数据
+        // 下面的输出方法不好
+        for (i = 0; i < 3; i++) {
+            if (v[i].iov_len > 0) {
+                write(1, v[i].iov_base, v[i].iov_len);
+            }
+        }
+
+        sprintf((char *) v[0].iov_base, "%d ", readv_size);
+        sprintf((char *) v[1].iov_base, "bytes alt");
+        sprintf((char *) v[2].iov_base, "ogether\n");
+        v[0].iov_len = strlen((const char *) v[0].iov_base);
+        v[1].iov_len = strlen((const char *) v[1].iov_base);
+        v[2].iov_len = strlen((const char *) v[2].iov_base);
+        writev(remote_client_sock_fd, v, 3);
+    }
+    free(v);
+}
+
+void process_client_with_recvmsg_sendmsg(int remote_client_sock_fd) {
+    
 }
 
 
@@ -2499,7 +2870,8 @@ int test_start_server(void) {
              使其回到TIME_WAIT状态值.
              */
             close(local_server_sock_fd);
-            process_conn_server2(remote_client_sock_fd);
+            // process_client_with_recv_send(remote_client_sock_fd);
+            process_client_with_readv_writev(remote_client_sock_fd);
         } else {
             printf("父进程.新创建的进程id: %d\n", pid);
             /***

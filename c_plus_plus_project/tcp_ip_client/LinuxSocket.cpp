@@ -105,6 +105,59 @@ void process_conn_client2(int remote_server_sock_fd) {
     }
 }
 
+void process_server_with_readv_writev(int remote_server_sock_fd) {
+    char buffer[30];
+    ssize_t read_size = 0;
+    ssize_t readv_size = 0;
+    struct iovec *v = (struct iovec *) malloc(3 * sizeof(struct iovec));
+    if (!v) {
+        perror("Not enough memory\n");
+        return;
+    }
+    v[0].iov_base = buffer;
+    v[1].iov_base = buffer + 10;
+    v[2].iov_base = buffer + 20;
+    v[0].iov_len = v[1].iov_len = v[2].iov_len = 10;
+    int i = 0;
+    for (;;) {
+        printf("\n请输入要发送的内容:\n");
+        // 用户从屏幕输入消息
+        read_size = read(0, v[0].iov_base, 10);
+        if (read_size == -1) {
+            fprintf(stderr, "read error: %s\n", strerror(errno));
+            close_remote_server_sock_fd(remote_server_sock_fd);
+            return;
+        }
+        if (read_size == 0) {
+            printf("用户没有输入消息\n");
+            continue;
+        }
+        printf("client read size: %ld\n", read_size);
+        writev(remote_server_sock_fd, v, 1);
+
+//        memset(&v, 0, sizeof(v));
+//        v[0].iov_len = v[1].iov_len = v[2].iov_len = 10;
+        readv_size = readv(remote_server_sock_fd, v, 3);
+        if (readv_size == -1) {
+            fprintf(stderr, "readv error: %s\n", strerror(errno));
+            close_remote_server_sock_fd(remote_server_sock_fd);
+            break;
+        }
+        if (readv_size == 0) {
+            printf("client没有接收到数据\n");
+            /*close(remote_server_sock_fd);
+            return;*/
+        }
+        // 输出不好,有乱码,还不知道原因
+        for (i = 0; i < 3; i++) {
+            if (v[i].iov_base != NULL) {
+                write(1, v[i].iov_base, v[i].iov_len);
+            }
+        }
+    }
+    free(v);
+}
+
 //pthread_mutex_t mutex_lock = PTHREAD_MUTEX_INITIALIZER;
 //pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
@@ -223,8 +276,9 @@ int test_start_client(char *server_ip) {
     }
 
     //process_conn_client2(remote_server_sock_fd);
+    process_server_with_readv_writev(remote_server_sock_fd);
 
-    pthread_t read_thread;
+    /*pthread_t read_thread;
     pthread_t write_thread;
     err = pthread_create(&read_thread, NULL, read_thread_work, NULL);
     if (err != 0) {
@@ -238,7 +292,7 @@ int test_start_client(char *server_ip) {
     }
 
     err = pthread_join(read_thread, NULL);
-    err = pthread_join(write_thread, NULL);
+    err = pthread_join(write_thread, NULL);*/
 
     close_remote_server_sock_fd(remote_server_sock_fd);
 }

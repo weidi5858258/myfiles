@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/mman.h>
+#include <sys/uio.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netdb.h>

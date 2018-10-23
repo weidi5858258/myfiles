@@ -31,10 +31,10 @@ int main(int argc, char *argv[]) {
 
 //    howToCreateChildProcess();
 
-//    LinuxSocket linuxSocket;
-//    linuxSocket.studyHard();
+    LinuxSocket linuxSocket;
+    linuxSocket.studyHard();
 
-    test();
+//    test();
 
     printf("---------------------------------------------------\n");
     printf("\n");
@@ -81,48 +81,6 @@ void showvalue(unsigned char *begin, int flag) {
 }
 
 int test() {
-    char host1[] = "www.sina.com.cn";
-    char host2[] = "www.sohu.com";
-    struct hostent *ht = NULL, *ht1 = NULL, *ht2 = NULL;
-    ht1 = gethostbyname(host1);
-    ht2 = gethostbyname(host2);
-    int j = 0;
-    for (j = 0; j < 2; j++) {
-        if (j == 0) {
-            ht = ht1;
-        } else {
-            ht = ht2;
-        }
-        if (ht) {
-            int i = 0;
-            printf("host: %s\n", host1);
-            printf("name: %s\n", ht->h_name);
-            printf("type: %s\n",
-                   ht->h_addrtype == AF_INET
-                   ?
-                   "AF_INET"
-                   :
-                   "AF_INET6");
-            printf("length: %d\n", ht->h_length);
-            for (i = 0;; i++) {
-                if (ht->h_addr_list[i] != NULL) {
-                    // 编译不过
-                    // printf("IP: %s\n",
-                    // inet_ntoa((unsigned int *) ht->h_addr_list[i]));
-                    printf("IP: %s\n", ht->h_addr_list[i]);
-                } else {
-                    break;
-                }
-            }
-            for (i = 0;; i++) {
-                if (ht->h_aliases[i] != NULL) {
-                    printf("alias %d : %s\n", i, ht->h_aliases[i]);
-                } else {
-                    break;
-                }
-            }
-        }
-    }
 }
 /***
 子线程
