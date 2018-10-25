@@ -1,13 +1,388 @@
 布局,绘制,触摸反馈
 自定义绘制
+
+
+逐帧动画(Frame Animation)
+补间动画(Tweened Animation)
+上面两种动画是一开始就有的,但是因为有一定的缺点,
+因此在Android 3.0(API 11)时提供了属性动画.
+
+Android的animation由四种类型组成:
+在xml中:
+alpha       透明度
+scale       缩放
+translate   平移
+rotate      旋转
+在Java中:
+AlphaAnimation
+ScaleAnimation
+TranslateAnimation
+RotateAnimation
+
+Animation主要有两种动画模式:
+1.
+补间动画(Tweened Animation)渐变动画
+AlphaAnimation
+ScaleAnimation
+2.
+逐帧动画(Frame Animation)画面转换动画
+TranslateAnimation
+RotateAnimation
+
+使用步骤:
+1.新建Android项目
+2.res ---> anim
+3.新建my_anim.xml
+4.内容为:
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android" >
+    <alpha />
+    <scale />
+    <translate />
+    <rotate />
+
+    <!-- alpha 渐变透明度动画效果 -->
+    <alpha
+        android:duration="1000"
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0" />
+    <!--
+     透明度控制动画效果 alpha
+        浮点型值：
+            fromAlpha 属性为动画起始时透明度
+            toAlpha   属性为动画结束时透明度
+            说明:
+                0.0表示完全透明
+                1.0表示完全不透明
+            以上值取0.0-1.0之间的float数据类型的数字
+
+        长整型值：
+            duration  属性为动画持续时间
+            说明:
+                时间以毫秒为单位
+
+    -->
+
+    <!-- scale 渐变尺寸伸缩动画效果 -->
+    <scale
+        android:duration="1000"
+        android:fillAfter="false"
+        android:fromXScale="0.0"
+        android:fromYScale="0.0"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toXScale="1.4"
+        android:toYScale="1.4" />
+    <!--
+         尺寸伸缩动画效果 scale
+                属性：interpolator 指定一个动画的插入器
+                 在我试验过程中，使用android.res.anim中的资源时候发现
+                 有三种动画插入器:
+                     accelerate_decelerate_interpolator  加速-减速 动画插入器
+                     accelerate_interpolator        加速-动画插入器
+                     decelerate_interpolator        减速- 动画插入器
+                 其他的属于特定的动画效果
+               浮点型值：
+
+                     fromXScale 属性为动画起始时 X坐标上的伸缩尺寸
+                     toXScale   属性为动画结束时 X坐标上的伸缩尺寸
+
+                     fromYScale 属性为动画起始时Y坐标上的伸缩尺寸
+                     toYScale   属性为动画结束时Y坐标上的伸缩尺寸
+
+                     说明:
+                          以上四种属性值
+
+                             0.0表示收缩到没有
+                             1.0表示正常无伸缩
+                             值小于1.0表示收缩
+                             值大于1.0表示放大
+
+                     pivotX     属性为动画相对于物件的X坐标的开始位置
+                     pivotY     属性为动画相对于物件的Y坐标的开始位置
+
+                     说明:
+                             以上两个属性值 从0%-100%中取值
+                             50%为物件的X或Y方向坐标上的中点位置
+
+                 长整型值：
+                     duration  属性为动画持续时间
+                     说明:   时间以毫秒为单位
+
+                 布尔型值:
+                     fillAfter 属性 当设置为true ，该动画转化在动画结束后被应用
+    -->
+
+    <!-- translate 画面转换位置移动动画效果 -->
+    <translate
+        android:duration="2000"
+        android:fromXDelta="30"
+        android:fromYDelta="30"
+        android:toXDelta="-80"
+        android:toYDelta="300" />
+    <!--
+         translate 位置转移动画效果
+                 整型值:
+                     fromXDelta 属性为动画起始时 X坐标上的位置
+                     toXDelta   属性为动画结束时 X坐标上的位置
+                     fromYDelta 属性为动画起始时 Y坐标上的位置
+                     toYDelta   属性为动画结束时 Y坐标上的位置
+                     注意:
+                              没有指定fromXType toXType fromYType toYType 时候，
+                              默认是以自己为相对参照物
+                 长整型值：
+                     duration  属性为动画持续时间
+                     说明:   时间以毫秒为单位
+    -->
+
+    <!-- rotate 画面转移旋转动画效果 -->
+    <rotate
+        android:duration="3000"
+        android:fromDegrees="0"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toDegrees="+350" />
+    <!--
+         rotate 旋转动画效果
+                属性：interpolator 指定一个动画的插入器
+                      在我试验过程中，使用android.res.anim中的资源时候发现
+                      有三种动画插入器:
+                         accelerate_decelerate_interpolator   加速-减速 动画插入器
+                         accelerate_interpolator               加速-动画插入器
+                         decelerate_interpolator               减速- 动画插入器
+                      其他的属于特定的动画效果
+
+                浮点数型值:
+                     fromDegrees 属性为动画起始时物件的角度
+                     toDegrees   属性为动画结束时物件旋转的角度 可以大于360度
+
+
+                     说明:
+                              当角度为负数——表示逆时针旋转
+                              当角度为正数——表示顺时针旋转
+                              (负数from——to正数:顺时针旋转)
+                              (负数from——to负数:逆时针旋转)
+                              (正数from——to正数:顺时针旋转)
+                              (正数from——to负数:逆时针旋转)
+
+                     pivotX     属性为动画相对于物件的X坐标的开始位置
+                     pivotY     属性为动画相对于物件的Y坐标的开始位置
+
+                     说明:        以上两个属性值 从0%-100%中取值
+                                  50%为物件的X或Y方向坐标上的中点位置
+
+                 长整型值：
+                     duration  属性为动画持续时间
+                     说明:       时间以毫秒为单位
+    -->
+</set>
+5.使用
+//第一个参数fromAlpha为 动画开始时候透明度
+//第二个参数toAlpha为 动画结束时候透明度
+//说明:0.0表示完全透明,1.0表示完全不透明
+myAnimation_Alpha=new AlphaAnimation(0.1f, 1.0f);
+//第一个参数fromX为动画起始时 X坐标上的伸缩尺寸
+//第二个参数toX为动画结束时 X坐标上的伸缩尺寸
+//第三个参数fromY为动画起始时Y坐标上的伸缩尺寸
+//第四个参数toY为动画结束时Y坐标上的伸缩尺寸
+/*说明:
+                    以上四种属性值
+                    0.0表示收缩到没有
+                    1.0表示正常无伸缩
+                    值小于1.0表示收缩
+                    值大于1.0表示放大
+*/
+//第五个参数pivotXType为动画在X轴相对于物件位置类型
+//第六个参数pivotXValue为动画相对于物件的X坐标的开始位置
+//第七个参数pivotXType为动画在Y轴相对于物件位置类型
+//第八个参数pivotYValue为动画相对于物件的Y坐标的开始位置
+myAnimation_Scale =new ScaleAnimation(0.0f, 1.4f, 0.0f, 1.4f,
+             Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//第一个参数fromXDelta为动画起始时 X坐标上的移动位置
+//第二个参数toXDelta为动画结束时 X坐标上的移动位置
+//第三个参数fromYDelta为动画起始时Y坐标上的移动位置
+//第四个参数toYDelta为动画结束时Y坐标上的移动位置
+myAnimation_Translate=new TranslateAnimation(30.0f, -80.0f, 30.0f, 300.0f);
+//第一个参数fromDegrees为动画起始时的旋转角度
+//第二个参数toDegrees为动画旋转到的角度
+//第三个参数pivotXType为动画在X轴相对于物件位置类型
+//第四个参数pivotXValue为动画相对于物件的X坐标的开始位置
+//第五个参数pivotXType为动画在Y轴相对于物件位置类型
+//第六个参数pivotYValue为动画相对于物件的Y坐标的开始位置
+myAnimation_Rotate=new RotateAnimation(0.0f, +350.0f,
+               Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF, 0.5f);
+//设置时间持续时间为 5000毫秒
+myAnimation_Alpha.setDuration(5000);
+//使用从View父类继承过来的方法startAnimation()来为View或是子类View等等添加一个动画效果
+public void startAnimation(Animation animation)
+即:
+view.startAnimation(myAnimation_Alpha);
+
+
+另外一次说明Animation动画
+在Android 中，系统提供了动画类 Animation ，其中又分为四种动画效果：
+● AlphaAnimation：透明度渐变动画
+● ScaleAnimation：渐变尺寸缩放动画；
+● TranslateAnimation：移动动画
+● RotateAnimation：旋转动画
+
+这4种动画效果的创建方法如下：
+(1)  AlphaAnimation 透明度渐变动画
+Animation alphaA = new AlphaAnimation(float fromAlpha,float toAlpha)
+第一个参数：动画开始时的透明度
+第二个参数：动画结束时的透明度
+两个参数的取值范围为[0,1]，从完全透明到完全不透明。
+
+(2)ScaleAnimation 渐变尺寸缩放动画
+Animation scaleA = new ScaleAnimation(float fromX,float toX,float fromY,float toY,int pivotXType,float pivotXValue,int pivoteYType,float pivoteYValue)
+第一个参数：动画起始时X坐标上的伸缩比例
+第二个参数：动画结束时X坐标上的伸缩比例
+第三个参数：动画起始时Y坐标上的伸缩比例
+第四个参数：动画结束时Y坐标上的伸缩比例
+第五个参数：动画在X轴相对于物体的位置类型
+第六个参数：动画相对于物体X坐标的位置
+第七个参数：动画在Y轴相对于物体的位置类型
+第八个参数：动画相对于物体Y坐标的位置
+其中位置类型分为以下三种：
+Animation.ABSOLUTE：相对位置是屏幕左上角，绝对位置；
+Animation.RELATIVE_TO_SELF：相对位置是自身 View， 取值为 0 时，表示相对于是自身左上角，取值为1是相对于自身的右下角；
+Animation.RELATIVE_TO_PAREND：相对父类 View 的位置。
+
+(3)TranslateAnimation 移动动画
+Animation translateA = new TranslateAnimation(float fromXDelta,float toXDelta,float fromYDelta,float YDelta)
+第一个参数：动画起始时X轴上的位置
+第二个参数：动画结束时X轴上的位置
+第三个参数：动画起始时Y轴上的位置
+第四个参数：动画结束时Y轴上的位置
+
+(4)RotateAnimation 旋转动画
+Animation rotateA = new RotateAnimation(float fromDegrees,float toDegrees,int pivotXType,float pivotXValue,int pivotYType,float pivotYValue)
+第一个参数：动画起始时旋转角度
+第二个参数：动画旋转到的角度
+第三个参数：动画在X轴相对于物件位置类型
+第四个参数：动画相对于物件的X坐标的开始位置
+第五个参数：动画在Y轴相对于物体的位置类型
+第六个参数：动画相对于物体的Y坐标的位置
+不管哪一种动画，都有一些通用方法，比如：
+restart()：重新播放动画；
+setDuration(int time)：设置动画播放时间，单位是毫秒。
+
+Android 游戏开发中常用的三种视图是 View 、 SurfaceView 和 GLSurfaceView 。下面简单介绍下这三种视图的含义：
+View ：显示视图，内置画布，提供图形绘制函数、触屏事件、按键事件函数等；
+SurfaceView ：基于 View 视图进行拓展的视图类，更适用于 2D 游戏开发；
+GLSurfaceView ： 基于 SurfaceView 视图再次进行拓展的视图类，专用于 3D 游戏开发的视图。
+
+用Animation-list实现逐帧动画
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    根标签为animation-list，其中oneshot代表着是否只展示一遍，设置为false会不停的循环播放动画
+    根标签下，通过item标签对动画中的每一个图片进行声明
+    android:duration 表示展示所用的该图片的时间长度
+-->
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false" >
+    <item
+        android:drawable="@drawable/cmmusic_progress_1"
+        android:duration="150">
+    </item>
+    <item
+        android:drawable="@drawable/cmmusic_progress_2"
+        android:duration="150">
+    </item>
+    <item
+        android:drawable="@drawable/cmmusic_progress_3"
+        android:duration="150">
+    </item>
+    <item
+        android:drawable="@drawable/cmmusic_progress_4"
+        android:duration="150">
+    </item>
+    <item
+        android:drawable="@drawable/cmmusic_progress_5"
+        android:duration="150">
+    </item>
+    <item
+        android:drawable="@drawable/cmmusic_progress_6"
+        android:duration="150">
+    </item>
+    <item
+        android:drawable="@drawable/cmmusic_progress_7"
+        android:duration="150">
+    </item>
+    <item
+        android:drawable="@drawable/cmmusic_progress_8"
+        android:duration="150">
+    </item>
+</animation-list>
+把xml文件需要放到drawable目标下.
+然后在Java中:
+imgPic = (ImageView) findViewById(R.id.imgPic);
+//Sets a drawable as the content of this ImageView.
+imgPic.setImageResource(R.drawable.loading_anim);
+//给动画资源赋值
+animationDrawable = (AnimationDrawable) imgPic.getDrawable();
+animationDrawable.start();//开始
+animationDrawable.stop(); //停止
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 动画:
 1.
-属性动画ViewPropertyAnimator
+属性动画PropertyAnimator(Property Animation)
+作用对象:任意Java对象,不再局限于"视图View对象".
+实现的动画效果:可自定义各种动画效果.
+不再局限于4种基本变换:平移,旋转,缩放,透明度
+两个重要的类:
+ValueAnimator
+ObjectAnimator
 功能:设置时长,设置插值器,设置监听器
 //向右移动500像素,默认动画300毫秒
 imageView.animate().translationX(500)
-				   .setDuration(2000)
-				   .setIntarpolator(new LinearInterpolator());
+                   .setDuration(2000)
+                   .setIntarpolator(new LinearInterpolator());
 imageView.animate().translationY(500);
 imageView.animate().rotation(90);
 imageView.animate().scaleX(1).scaleY(1).alpha(1);
@@ -17,22 +392,22 @@ imageView.animate().scaleX(1).scaleY(1).alpha(1);
 LinearInterpolator(线性插值器,匀速)
 
 
-View中的方法		功能 				对应的ViewPropertyAnimator中的方法
-setTranslationX()	设置x轴偏移			translationX() translationXBy()
-setTranslationY()	设置y轴偏移			translationY() translationYBy()	
-setTranslationZ()	设置z轴偏移			translationZ() translationZBy()
-setX()				设置x轴绝对位置		x()				xBy()
-setY()				设置y轴绝对位置		y()				yBy()
-setZ()				设置z轴绝对位置		z()				zBy()
-setRotation()		设置平面旋转		rotation()		rotationBy()
-setRotationX()		设置沿x轴旋转		rotationX()		rotationXBy()
-setRotationY()		设置沿y轴旋转		rotationY()		rotationYBy()
-setScaleX()			设置横向放缩		scaleX()		scaleXBy()
-setScaleY()			设置纵向放缩		scaleY()		scaleYBy()
-setAlpha()			设置透明度			alpha()			alphaBy()
+View中的方法            功能                 对应的ViewPropertyAnimator中的方法
+setTranslationX()     设置x轴偏移            translationX() translationXBy()
+setTranslationY()     设置y轴偏移            translationY() translationYBy()
+setTranslationZ()     设置z轴偏移            translationZ() translationZBy()
+setX()                设置x轴绝对位置         x()                xBy()
+setY()                设置y轴绝对位置         y()                yBy()
+setZ()                设置z轴绝对位置         z()                zBy()
+setRotation()         设置平面旋转            rotation()        rotationBy()
+setRotationX()        设置沿x轴旋转           rotationX()        rotationXBy()
+setRotationY()        设置沿y轴旋转           rotationY()        rotationYBy()
+setScaleX()           设置横向放缩            scaleX()        scaleXBy()
+setScaleY()           设置纵向放缩            scaleY()        scaleYBy()
+setAlpha()            设置透明度              alpha()            alphaBy()
 
 2.
-对象动画ObjectAnimator
+对象动画ObjectAnimator(Object Animation)
 //会根据属性名(translationX)去找View中相应的setXXX方法进行动画
 ObjectAnimator animator = ObjectAnimator.ofFloat(imageView, "translationX", 500);
 animator.start();
@@ -49,12 +424,12 @@ ObjectAnimator.ofPropertyValuesHolder()
 需要如下操作:
 在自定义View中写相关的setXXX和getXXX方法.如:
 public float getProgress() {
-	return progress;
+    return progress;
 }
 public void setProgress(float progress) {
-	this.progress = progress;
-	//通知界面重绘,如果不调用的话是没有效果的.
-	invalidate();
+    this.progress = progress;
+    //通知界面重绘,如果不调用的话是没有效果的.
+    invalidate();
 }
 使用:
 //0是起始位置,65是结束位置
@@ -63,15 +438,15 @@ animator.start();
 
 float newTranslation = 0;
 Runnable runnable = new Runnable() {
-	public void run() {
-		//每次向右挪动5像素,100次就是500像素
-		newTranslation += 5;
-		imageView.setTranslationX(newTranslation);
-	}
+    public void run() {
+        //每次向右挪动5像素,100次就是500像素
+        newTranslation += 5;
+        imageView.setTranslationX(newTranslation);
+    }
 };
 for(int i=0;i<100;i++){
-	//每10毫秒改变一次位置,反复100次
-	imageView.postDelayed(runnable, i*10);
+    //每10毫秒改变一次位置,反复100次
+    imageView.postDelayed(runnable, i*10);
 }
 
 
