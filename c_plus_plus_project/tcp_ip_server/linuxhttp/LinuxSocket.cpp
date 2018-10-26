@@ -2629,6 +2629,8 @@ void close_remote_client_sock_fd(int &remote_client_sock_fd) {
     }
 }
 
+// 下面是处理客户端消息的几种不同方式
+
 #define DATA_BUFFER 1024
 
 // 服务器端对客户端的处理
@@ -2656,6 +2658,9 @@ void process_client_with_read_write(int remote_client_sock_fd) {
     }
 }
 
+/***
+ 这种方式比较好用,且便于理解
+ */
 void process_client_with_recv_send(int remote_client_sock_fd) {
     ssize_t recv_size = -1;
     ssize_t send_size = -1;
@@ -2707,6 +2712,7 @@ void process_client_with_recv_send(int remote_client_sock_fd) {
  来初始化3个向量的地址缓冲区,将每个向量的向量长度
  设置为10.调用readv()来读取客户端的数据后,
  利用3个缓冲区构建响应信息,最后将响应信息发送给服务器端.
+
  不要使用下面的方法接收数据和发送数据
  */
 static struct iovec *vs = NULL, *vc = NULL;
@@ -2761,14 +2767,82 @@ void process_client_with_readv_writev(int remote_client_sock_fd) {
 }
 
 void process_client_with_recvmsg_sendmsg(int remote_client_sock_fd) {
-    
+    // 向量的缓冲区
+    char buffer[30];
+    ssize_t recvmsg_size = 0;
+    // 消息结构
+    struct msghdr msg;
+    // 申请3个向量
+    struct iovec *v =
+            (struct iovec *) malloc(3 * sizeof(struct iovec));
+    if (!v) {
+        perror("Not enough memory\n");
+        return;
+    }
+    // 挂接全局变量,便于释放管理
+    vs = v;
+
+    // 没有名字域
+    msg.msg_name = NULL;
+    // 名字域长度
+    msg.msg_namelen = 0;
+    // 没有控制域
+    msg.msg_control = NULL;
+    // 控制域长度
+    msg.msg_controllen = 0;
+    // 挂接向量指针
+    msg.msg_iov = v;
+    // 接收缓冲区长度为30
+    msg.msg_iovlen = 30;
+    // 无特殊操作
+    msg.msg_flags = 0;
+    // 每个向量分配10个字节的空间
+    // 0~9
+    v[0].iov_base = buffer;
+    // 10~19
+    v[1].iov_base = buffer + 10;
+    // 20~29
+    v[2].iov_base = buffer + 20;
+    // 初始化长度
+    v[0].iov_len = v[1].iov_len = v[2].iov_len = 10;
+
+    for (;;) {
+        recvmsg_size = recvmsg(remote_client_sock_fd, &msg, 0);
+        if (recvmsg_size == -1) {
+            fprintf(stderr, "server recv error. fd = %d\n", remote_client_sock_fd, strerror(errno));
+            close_remote_client_sock_fd(remote_client_sock_fd);
+            break;
+        }
+        if (recvmsg_size == 0) {
+            // 跟客户端断开连接时
+            printf("server没有接收到数据\n");
+            close_remote_client_sock_fd(remote_client_sock_fd);
+            // 不能少
+            break;
+        }
+
+        // 给客户端发送数据
+        // 构建响应字符,为接收到客户端字节的数量,分别放到3个缓冲区中
+        sprintf((char *) v[0].iov_base, "%d ", recvmsg_size);
+        sprintf((char *) v[1].iov_base, "bytes alt");
+        sprintf((char *) v[2].iov_base, "ogether\n");
+        v[0].iov_len = strlen((const char *) v[0].iov_base);
+        v[1].iov_len = strlen((const char *) v[1].iov_base);
+        v[2].iov_len = strlen((const char *) v[2].iov_base);
+        sendmsg(remote_client_sock_fd, &msg, 0);
+    }
 }
 
+// 下面是主程序
 
 /***
 1.bind error: Address already in use
 服务器设置的端口已被占用
 2.accept error: Bad file descriptor
+ */
+/***
+ 想法:
+ 关键函数的参数用全局静态变量代替
  */
 int test_start_server(void) {
     // local_server_sock_fd为服务端的socket描述符

@@ -4,17 +4,24 @@
 static int remote_server_sock_fd = -1;
 
 void close_remote_server_sock_fd(int &remote_server_sock_fd) {
+    printf("close_remote_server_sock_fd() start remote_server_sock_fd: %d\n",
+           remote_server_sock_fd);
     if (remote_server_sock_fd != -1) {
         close(remote_server_sock_fd);
         remote_server_sock_fd = -1;
     }
+    printf("close_remote_server_sock_fd() end remote_server_sock_fd: %d\n",
+           remote_server_sock_fd);
 }
 
 void sig_process(int signo) {
-    printf("Catch a exit signal.signo: %d\n", signo);
+    printf("sig_process() Catch a exit signal.signo: %d\n",
+           signo);
     close_remote_server_sock_fd(remote_server_sock_fd);
     exit(EXIT_SUCCESS);
 }
+
+// 下面是客户端对服务端发送并接收消息的不同处理方式
 
 // 服务器端对客户端的处理
 void process_conn_client(int ss) {
@@ -158,8 +165,11 @@ void process_server_with_readv_writev(int remote_server_sock_fd) {
     free(v);
 }
 
-//pthread_mutex_t mutex_lock = PTHREAD_MUTEX_INITIALIZER;
-//pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+void process_server_with_recvmsg_sendmsg(int remote_server_sock_fd) {
+
+}
+
+// 下面是使用线程处理读取和发送消息的操作
 
 void *read_thread_work(void *args) {
     printf("read_thread_work tid:  %u\n", pthread_self());
@@ -227,6 +237,8 @@ void *write_thread_work(void *args) {
     }
 }
 
+// 下面是主程序
+
 int test_start_client(char *server_ip) {
     // 服务器端地址结构
     struct sockaddr_in server_addr;
@@ -238,13 +250,16 @@ int test_start_client(char *server_ip) {
     signal(SIGPIPE, sig_process);
 
     // 建立一个流式套接字
-    remote_server_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+    remote_server_sock_fd = socket(AF_INET,
+                                   SOCK_STREAM,
+                                   0);
     if (remote_server_sock_fd == -1) {
         fprintf(stderr, "socket error: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
-    printf("client remote_server_sock_fd: %d\n", remote_server_sock_fd);
+    printf("client remote_server_sock_fd: %d\n",
+           remote_server_sock_fd);
 
     // 设置服务器端地址
     // 清零
@@ -260,7 +275,7 @@ int test_start_client(char *server_ip) {
 
     inet_aton(server_ip, &server_addr.sin_addr);
     // 将用户输入的字符串类型的IP地址转为整形
-    // 下面这种方式好像连接不上服务端
+    // 下面这种方式连接不上服务端
     /*inet_pton(AF_INET,
               server_ip,
               &server_addr);*/
@@ -278,6 +293,8 @@ int test_start_client(char *server_ip) {
     //process_conn_client2(remote_server_sock_fd);
     process_server_with_readv_writev(remote_server_sock_fd);
 
+    // 使用两个不同的线程处理读和写的操作
+    // 以后也是要用这种方式处理的
     /*pthread_t read_thread;
     pthread_t write_thread;
     err = pthread_create(&read_thread, NULL, read_thread_work, NULL);
@@ -290,7 +307,6 @@ int test_start_client(char *server_ip) {
         fprintf(stderr, "pthread_create write_thread error: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-
     err = pthread_join(read_thread, NULL);
     err = pthread_join(write_thread, NULL);*/
 
