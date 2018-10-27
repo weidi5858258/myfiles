@@ -3,6 +3,8 @@
 // ss为服务器端的socket描述符
 static int remote_server_sock_fd = -1;
 
+#define DATA_BUFFER 1024
+
 void close_remote_server_sock_fd(int &remote_server_sock_fd) {
     printf("close_remote_server_sock_fd() start remote_server_sock_fd: %d\n",
            remote_server_sock_fd);
@@ -23,20 +25,20 @@ void sig_process(int signo) {
 
 // 下面是客户端对服务端发送并接收消息的不同处理方式
 
-// 服务器端对客户端的处理
-void process_conn_client(int ss) {
+// 客户端对服务器端的处理
+void process_server_with_read_write(int &remote_server_sock_fd) {
     ssize_t size = 0;
     // 数据的缓冲区
-    char buffer[1024];
+    char buffer[DATA_BUFFER];
     for (;;) {
         // 从套接字中读取数据放到缓冲区buffer中
         // 从屏幕中读取用户输入的内容
         memset(&buffer, '\0', sizeof(buffer));
-        size = read(0, buffer, 1024);
+        size = read(0, buffer, DATA_BUFFER);
         printf("client size: %ld\n", size);
         if (size > 0) {
             // 发给服务器端
-            write(ss, buffer, size);
+            write(remote_server_sock_fd, buffer, size);
         }
 
         /*write_size = write(remote_server_sock_fd, buffer, read_size);
@@ -53,9 +55,7 @@ void process_conn_client(int ss) {
     }
 }
 
-#define DATA_BUFFER 1024
-
-void process_conn_client2(int remote_server_sock_fd) {
+void process_server_with_recv_send(int &remote_server_sock_fd) {
     ssize_t read_size = -1;
     ssize_t write_size = -1;
     ssize_t send_size = -1;
@@ -112,7 +112,7 @@ void process_conn_client2(int remote_server_sock_fd) {
     }
 }
 
-void process_server_with_readv_writev(int remote_server_sock_fd) {
+void process_server_with_readv_writev(int &remote_server_sock_fd) {
     char buffer[30];
     ssize_t read_size = 0;
     ssize_t readv_size = 0;
@@ -165,8 +165,83 @@ void process_server_with_readv_writev(int remote_server_sock_fd) {
     free(v);
 }
 
-void process_server_with_recvmsg_sendmsg(int remote_server_sock_fd) {
+void process_server_with_recvmsg_sendmsg(int &remote_server_sock_fd) {
+    // 向量的缓冲区
+    char buffer[30];
+    ssize_t read_size = -1;
+    ssize_t recvmsg_size = -1;
+    // 消息结构
+    struct msghdr msg;
+    // 申请3个向量
+    struct iovec *v =
+            (struct iovec *) malloc(3 * sizeof(struct iovec));
+    if (!v) {
+        perror("Not enough memory\n");
+        return;
+    }
 
+    // 没有名字域
+    msg.msg_name = NULL;
+    // 名字域长度
+    msg.msg_namelen = 0;
+    // 没有控制域
+    msg.msg_control = NULL;
+    // 控制域长度
+    msg.msg_controllen = 0;
+    // 挂接向量指针
+    msg.msg_iov = v;
+    // 接收缓冲区长度为30
+    msg.msg_iovlen = 30;
+    // 无特殊操作
+    msg.msg_flags = 0;
+    // 每个向量分配10个字节的空间
+    // 0~9
+    v[0].iov_base = buffer;
+    // 10~19
+    v[1].iov_base = buffer + 10;
+    // 20~29
+    v[2].iov_base = buffer + 20;
+    // 初始化长度
+    v[0].iov_len = v[1].iov_len = v[2].iov_len = 10;
+
+    int i = 0;
+    for (;;) {
+        printf("\n请输入要发送的内容:\n");
+        // 用户从屏幕输入消息
+        read_size = read(0, v[0].iov_base, 10);
+        if (read_size == -1) {
+            fprintf(stderr, "read error: %s\n", strerror(errno));
+            close_remote_server_sock_fd(remote_server_sock_fd);
+            return;
+        }
+        if (read_size == 0) {
+            printf("用户没有输入消息\n");
+            continue;
+        }
+        printf("client read size: %ld\n", read_size);
+
+        v[0].iov_len = read_size;
+        // 发送消息给服务端
+        sendmsg(remote_server_sock_fd, &msg, 0);
+        printf("client sendd size: %ld\n", read_size);
+
+        /*v[0].iov_len = v[1].iov_len = v[2].iov_len = 10;
+        recvmsg_size = recvmsg(remote_server_sock_fd, &msg, 0);
+        if (recvmsg_size == -1) {
+            fprintf(stderr, "client recvmsg error. fd = %d\n", remote_server_sock_fd, strerror(errno));
+            close_remote_server_sock_fd(remote_server_sock_fd);
+            break;
+        }
+        if (recvmsg_size == 0) {
+            // 跟客户端断开连接时
+            printf("client没有接收到数据\n");
+        }
+        for (i = 0; i < 3; i++) {
+            if (v[i].iov_len > 0) {
+                write(1, v[i].iov_base, v[i].iov_len);
+            }
+        }*/
+    }
 }
 
 // 下面是使用线程处理读取和发送消息的操作
@@ -290,8 +365,10 @@ int test_start_client(char *server_ip) {
         exit(EXIT_FAILURE);
     }
 
-    //process_conn_client2(remote_server_sock_fd);
-    process_server_with_readv_writev(remote_server_sock_fd);
+    // process_server_with_read_write(remote_server_sock_fd);
+    // process_server_with_recv_send(remote_server_sock_fd);
+     process_server_with_readv_writev(remote_server_sock_fd);
+//    process_server_with_recvmsg_sendmsg(remote_server_sock_fd);
 
     // 使用两个不同的线程处理读和写的操作
     // 以后也是要用这种方式处理的

@@ -2539,7 +2539,7 @@ recv()/send()                          Y              Y                     Y
 recvfrom()/writeto()                   Y              Y                     Y           Y
 recvmsg()/sendmsg()                    Y                         Y          Y           Y           Y
 
-
+IO模型
 
 
 
@@ -2767,6 +2767,9 @@ void process_client_with_readv_writev(int remote_client_sock_fd) {
 }
 
 void process_client_with_recvmsg_sendmsg(int remote_client_sock_fd) {
+    printf("process_client_with_recvmsg_sendmsg remote_client_sock_fd: %d\n",
+           remote_client_sock_fd);
+
     // 向量的缓冲区
     char buffer[30];
     ssize_t recvmsg_size = 0;
@@ -2806,7 +2809,9 @@ void process_client_with_recvmsg_sendmsg(int remote_client_sock_fd) {
     // 初始化长度
     v[0].iov_len = v[1].iov_len = v[2].iov_len = 10;
 
+    int i = 0;
     for (;;) {
+        memset(msg.msg_iov[0].iov_base, 0, msg.msg_iov[0].iov_len);
         recvmsg_size = recvmsg(remote_client_sock_fd, &msg, 0);
         if (recvmsg_size == -1) {
             fprintf(stderr, "server recv error. fd = %d\n", remote_client_sock_fd, strerror(errno));
@@ -2820,16 +2825,26 @@ void process_client_with_recvmsg_sendmsg(int remote_client_sock_fd) {
             // 不能少
             break;
         }
+        printf("server接收到 %d 个字节\n", recvmsg_size);
+        printf("server接收到的内容为:\n");
+        /*for (i = 0; i < 3; i++) {
+            if (v[i].iov_len > 0) {
+                write(1, v[i].iov_base, v[i].iov_len);
+            }
+        }*/
+        //write(1, v[0].iov_base, v[0].iov_len);
+        write(1, msg.msg_iov[0].iov_base, strlen((const char *) msg.msg_iov[0].iov_base));
+        printf("\n");
 
         // 给客户端发送数据
         // 构建响应字符,为接收到客户端字节的数量,分别放到3个缓冲区中
-        sprintf((char *) v[0].iov_base, "%d ", recvmsg_size);
+        /*sprintf((char *) v[0].iov_base, "%d ", recvmsg_size);
         sprintf((char *) v[1].iov_base, "bytes alt");
         sprintf((char *) v[2].iov_base, "ogether\n");
         v[0].iov_len = strlen((const char *) v[0].iov_base);
         v[1].iov_len = strlen((const char *) v[1].iov_base);
         v[2].iov_len = strlen((const char *) v[2].iov_base);
-        sendmsg(remote_client_sock_fd, &msg, 0);
+        sendmsg(remote_client_sock_fd, &msg, 0);*/
     }
 }
 
@@ -2944,8 +2959,10 @@ int test_start_server(void) {
              使其回到TIME_WAIT状态值.
              */
             close(local_server_sock_fd);
+            // process_client_with_read_write(remote_client_sock_fd);
             // process_client_with_recv_send(remote_client_sock_fd);
-            process_client_with_readv_writev(remote_client_sock_fd);
+            // process_client_with_readv_writev(remote_client_sock_fd);
+            process_client_with_recvmsg_sendmsg(remote_client_sock_fd);
         } else {
             printf("父进程.新创建的进程id: %d\n", pid);
             /***
