@@ -2540,6 +2540,7 @@ recvfrom()/writeto()                   Y              Y                     Y   
 recvmsg()/sendmsg()                    Y                         Y          Y           Y           Y
 
 IO模型
+ 
 
 
 
