@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/tcp_ip_client.dir/main.cpp.o CMakeFiles/tcp_ip_client.dir/LinuxSocket.cpp.o  -o tcp_ip_client -lsndio -lXext -lX11 -lxcb -lsqlite3 -lz -lrt -lm -lpthread -ldl -lglut -lGL -lGLU -lasound -lfdk-aac -lcrypto -lssl 
+/usr/bin/c++  -g   CMakeFiles/tcp_ip_client.dir/main.cpp.o CMakeFiles/tcp_ip_client.dir/LinuxSocket.cpp.o CMakeFiles/tcp_ip_client.dir/TransferFile.cpp.o  -o tcp_ip_client -lsndio -lXext -lX11 -lxcb -lsqlite3 -lz -lrt -lm -lpthread -ldl -lglut -lGL -lGLU -lasound -lfdk-aac -lcrypto -lssl 

@@ -98,6 +98,12 @@
 		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/LinuxSocket.h">
 			<Option target="tcp_ip_client"/>
 		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/TransferFile.cpp">
+			<Option target="tcp_ip_client"/>
+		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/TransferFile.h">
+			<Option target="tcp_ip_client"/>
+		</Unit>
 		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/main.cpp">
 			<Option target="tcp_ip_client"/>
 		</Unit>

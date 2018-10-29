@@ -7,7 +7,7 @@ add_definitions(-std=c++11)
 add_executable(tcp_ip_client
         main.cpp
         LinuxSocket.cpp
-        LinuxSocket.h)
+        LinuxSocket.h TransferFile.cpp TransferFile.h)
 
 target_link_libraries(tcp_ip_client
         -lsndio

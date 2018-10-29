@@ -5,6 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/LinuxSocket.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/LinuxSocket.cpp.o"
+  "/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/TransferFile.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/TransferFile.cpp.o"
   "/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/main.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

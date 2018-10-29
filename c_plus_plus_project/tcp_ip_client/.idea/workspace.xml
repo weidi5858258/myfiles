@@ -11,7 +11,32 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58b7534b-ff1f-4466-82c5-3ef8f3c8eade" name="Default" comment="" />
+    <list default="true" id="58b7534b-ff1f-4466-82c5-3ef8f3c8eade" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/TransferFile.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TransferFile.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tcp_ip_server/linuxhttp/TransferFile.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tcp_ip_server/linuxhttp/TransferFile.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LinuxSocket.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/LinuxSocket.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LinuxSocket.h" beforeDir="false" afterPath="$PROJECT_DIR$/LinuxSocket.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/DependInfo.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/DependInfo.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/build.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/build.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/cmake_clean.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/cmake_clean.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/link.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/link.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/progress.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/progress.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/tcp_ip_client.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/tcp_ip_client.cbp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tcp_ip_server/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../tcp_ip_server/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tcp_ip_server/linuxhttp/LinuxSocket.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../tcp_ip_server/linuxhttp/LinuxSocket.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tcp_ip_server/linuxhttp/LinuxSocket.h" beforeDir="false" afterPath="$PROJECT_DIR$/../tcp_ip_server/linuxhttp/LinuxSocket.h" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -75,34 +100,35 @@
     <session id="-937113753">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="2" />
-          <entry key="project.open.time.0" value="3" />
-          <entry key="project.opened" value="3" />
+          <entry key="project.closed" value="4" />
+          <entry key="project.open.time.0" value="5" />
+          <entry key="project.open.time.1" value="1" />
+          <entry key="project.opened" value="6" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="cpp" value="864" />
-          <entry key="h" value="31" />
+          <entry key="cpp" value="1511" />
+          <entry key="h" value="41" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="ObjectiveC" value="895" />
+          <entry key="Doxygen file" value="2" />
+          <entry key="ObjectiveC" value="1550" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="Makefile" value="1" />
-          <entry key="h" value="4" />
+          <entry key="cpp" value="1" />
+          <entry key="h" value="6" />
           <entry key="tcp_ip_client (disassembly)" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="Disassembly" value="1" />
-          <entry key="ObjectiveC" value="4" />
-          <entry key="PLAIN_TEXT" value="1" />
+          <entry key="ObjectiveC" value="7" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages" />
@@ -114,17 +140,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+            <state relative-caret-position="144">
+              <caret line="4" column="3" selection-start-line="4" selection-start-column="3" selection-end-line="4" selection-end-column="3" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LinuxSocket.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="128">
-              <caret line="230" column="37" selection-start-line="230" selection-start-column="37" selection-end-line="230" selection-end-column="37" />
+            <state relative-caret-position="88">
+              <caret line="388" selection-start-line="388" selection-end-line="388" />
             </state>
           </provider>
         </entry>
@@ -132,26 +158,29 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LinuxSocket.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="133">
-              <caret line="27" column="8" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="8" />
+            <state relative-caret-position="196">
+              <caret line="24" column="17" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
+              <folding>
+                <element signature="e#529#549#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/TransferFile.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="324">
+              <caret line="9" selection-start-line="9" selection-end-line="9" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file:///usr/include/unistd.h">
+        <entry file="file://$PROJECT_DIR$/TransferFile.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="239">
-              <caret line="368" column="15" selection-start-line="368" selection-start-column="15" selection-end-line="368" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file:///usr/include/x86_64-linux-gnu/sys/socket.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="148" column="15" selection-start-line="148" selection-start-column="15" selection-end-line="148" selection-end-column="15" />
+            <state relative-caret-position="252">
+              <caret line="7" column="23" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -162,7 +191,11 @@
     <findStrings>
       <find>thread</find>
       <find>IP地址</find>
+      <find>return EXIT_FAILURE</find>
     </findStrings>
+    <replaceStrings>
+      <replace>exit(EXIT_FAILURE)</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
@@ -171,9 +204,11 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/LinuxSocket.h" />
         <option value="$PROJECT_DIR$/main.cpp" />
         <option value="$PROJECT_DIR$/LinuxSocket.cpp" />
+        <option value="$PROJECT_DIR$/LinuxSocket.h" />
+        <option value="$PROJECT_DIR$/TransferFile.h" />
+        <option value="$PROJECT_DIR$/TransferFile.cpp" />
       </list>
     </option>
   </component>
@@ -184,9 +219,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
-  <component name="ProjectFrameBounds" extendedState="4">
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="2326" />
     <option name="y" value="27" />
-    <option name="width" value="960" />
+    <option name="width" value="950" />
     <option name="height" value="1053" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -195,7 +231,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -207,6 +242,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -278,12 +314,15 @@
       <workItem from="1536465439053" duration="100000" />
       <workItem from="1539763812901" duration="1691000" />
       <workItem from="1539852349124" duration="2867000" />
-      <workItem from="1539865239029" duration="9255000" />
+      <workItem from="1539865239029" duration="3839000" />
+      <workItem from="1540277958404" duration="4447000" />
+      <workItem from="1540515879183" duration="2117000" />
+      <workItem from="1540775248342" duration="970000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="27328000" />
+    <option name="totallyTimeSpent" value="36871000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -295,15 +334,15 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="27" width="960" height="1053" extended-state="4" />
+    <frame x="1366" y="27" width="1920" height="1053" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27233115" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14270501" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.51655626" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3690078" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39889416" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -312,7 +351,7 @@
       <window_info anchor="bottom" id="CMake" order="8" weight="0.32887402" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.32998884" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="11" weight="0.3270142" />
+      <window_info anchor="bottom" id="Messages" order="11" weight="0.32664436" />
       <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -331,18 +370,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/LinuxSocket.cpp</url>
-          <line>97</line>
+          <line>252</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/LinuxSocket.cpp</url>
-          <line>65</line>
+          <line>70</line>
           <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/LinuxSocket.cpp</url>
-          <line>211</line>
-          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -375,6 +409,7 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Makefile" />
     <entry file="file://$APPLICATION_HOME_DIR$/bin/cmake/linux/share/cmake-3.12/Modules/CMakeTestCCompiler.cmake">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="191">
@@ -389,45 +424,62 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LinuxSocket.h">
+    <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="27" column="8" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="8" />
+        <state relative-caret-position="144">
+          <caret line="4" column="3" selection-start-line="4" selection-start-column="3" selection-end-line="4" selection-end-column="3" />
         </state>
       </provider>
     </entry>
     <entry file="file:///usr/include/unistd.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="368" column="15" selection-start-line="368" selection-start-column="15" selection-end-line="368" selection-end-column="15" />
+        <state relative-caret-position="13032">
+          <caret line="362" column="15" selection-start-line="362" selection-start-column="15" selection-end-line="362" selection-end-column="15" />
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/include/x86_64-linux-gnu/sys/socket.h">
+    <entry file="file:///usr/include/pthread.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="148" column="15" selection-start-line="148" selection-start-column="15" selection-end-line="148" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Makefile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2664">
-          <caret line="74" selection-start-line="74" selection-end-line="74" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+        <state relative-caret-position="8964">
+          <caret line="249" column="11" selection-start-line="249" selection-start-column="11" selection-end-line="249" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/LinuxSocket.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="128">
-          <caret line="230" column="37" selection-start-line="230" selection-start-column="37" selection-end-line="230" selection-end-column="37" />
+        <state relative-caret-position="88">
+          <caret line="388" selection-start-line="388" selection-end-line="388" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/x86_64-linux-gnu/sys/socket.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="556">
+          <caret line="112" column="11" selection-start-line="112" selection-start-column="11" selection-end-line="112" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LinuxSocket.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="24" column="17" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
+          <folding>
+            <element signature="e#529#549#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TransferFile.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="7" column="23" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TransferFile.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
         </state>
       </provider>
     </entry>

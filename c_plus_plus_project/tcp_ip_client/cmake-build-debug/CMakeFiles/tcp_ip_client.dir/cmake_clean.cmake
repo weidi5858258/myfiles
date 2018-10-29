@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/tcp_ip_client.dir/main.cpp.o"
   "CMakeFiles/tcp_ip_client.dir/LinuxSocket.cpp.o"
+  "CMakeFiles/tcp_ip_client.dir/TransferFile.cpp.o"
   "tcp_ip_client.pdb"
   "tcp_ip_client"
 )

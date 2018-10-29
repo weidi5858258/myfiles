@@ -1,56 +1,56 @@
 #include "LinuxSocket.h"
 
 /***
-基础知识：
+基础知识:
 
-    源文件：C、C++
-    目标文件：经过编译器的编译生成的CPU可识别的二进制代码.
-    可执行文件：目标文件与相关的库链接后生成的文件.
+    源文件:C、C++
+    目标文件:经过编译器的编译生成的CPU可识别的二进制代码.
+    可执行文件:目标文件与相关的库链接后生成的文件.
     预编译过程将程序中引用的头文件包含进源代码中,
 并对一些宏进行替换.
     编译过程将用户可识别的语言翻译成一组处理器可识别的操作友,
 生成目标文件,通常翻译成汇编语言,而汇编语言通常和机器操作码
 之间是一种一对一的关系.
-    链接：
-    编译链接：gcc hello.c 默认生成a.out文件,不生成目标文件
-（目标文件作为中间文件,在生成可执行文件后,会被删除）
-    运行： ./a.out
-    生成指定的可执行文件名：gcc -o test hello.c
-    运行： ./test
-    生成目标文件：gcc -c hello.c 生成目标文件hello.o
-    生成指定的目标文件：gcc -c -o test.o hello.c
-    生成多目标文件：gcc -c file1.c file2.c file3.c
-    多文件编译：gcc -o test string.c main.c
-    运行： ./test
-    分步进行：
+    链接:
+    编译链接:gcc hello.c 默认生成a.out文件,不生成目标文件
+(目标文件作为中间文件,在生成可执行文件后,会被删除)
+    运行: ./a.out
+    生成指定的可执行文件名:gcc -o test hello.c
+    运行: ./test
+    生成目标文件:gcc -c hello.c 生成目标文件hello.o
+    生成指定的目标文件:gcc -c -o test.o hello.c
+    生成多目标文件:gcc -c file1.c file2.c file3.c
+    多文件编译:gcc -o test string.c main.c
+    运行: ./test
+    分步进行:
     1、gcc -c string.c main.c
     2、gcc -o test string.o main.o
-    选项-E告诉编译器进行预编译操作,并将结果显示在计算机屏幕上：
+    选项-E告诉编译器进行预编译操作,并将结果显示在计算机屏幕上:
     gcc -E string.c
-    预编译生成中间文件：
+    预编译生成中间文件:
     gcc -o string.i -E string.c
-    编译生成汇编语言：gcc -S string.c 生成string.s
-    静态库（***.a,由程序ar生成）
-    静态库优点：可以在不用重新编译程序库代码的情况下,
+    编译生成汇编语言:gcc -S string.c 生成string.s
+    静态库(***.a,由程序ar生成)
+    静态库优点:可以在不用重新编译程序库代码的情况下,
 进行程序的重新链接,这种方法节省了编译过程的时间.
 静态库的另一个优势是开发者可以提供库文件给使用的人员,
 不用开放源代码,这是库函数提供者经常采用的手段.
 创建静态库的最基本步骤是先生成目标文件,然后使用
 工具ar对目标文件进行归档.
-    生成库文件：ar -rcs libstr.a string.o
-    GCC链接时使用库函数和一般的obj文件的形式是一致的,如：
+    生成库文件:ar -rcs libstr.a string.o
+    GCC链接时使用库函数和一般的obj文件的形式是一致的,如:
 gcc -o test main.c libstr.a
     使用“-l库名”,库名是不包含函数库和扩展名的字符串
-gcc -o test main.c -lstr（可能提示找不到库文件str）
+gcc -o test main.c -lstr(可能提示找不到库文件str)
 gcc -o test main.c -L./ -lstr
     在使用-l选项时,-o选项的目的名称要在-l链接的库名称之前,
 否则gcc会认为-l是生成的目标而出错.
 
-    生成动态链接库（使用-fPIC选项或者-fpic选项）
+    生成动态链接库(使用-fPIC选项或者-fpic选项)
     使用-fPIC选项或者-fpic选项的作用是使得gcc生成的代码是位置无关的.
     gcc -shared -Wl,-soname,libstr.so -o libstr.so.1 string.c
-    其中选项“-soname,libstr.so”表示生成动态库时的别名是libstr.so；
-    “-o libstr.so.1”选项表示是生成名字为libstr.so.1的实际动态链接库文件；
+    其中选项“-soname,libstr.so”表示生成动态库时的别名是libstr.so;
+    “-o libstr.so.1”选项表示是生成名字为libstr.so.1的实际动态链接库文件;
     -shared告诉编译器生成一个动态链接库.
     生成动态链接库之后一个很重要的问题就是安装,
 一般情况下将生成的动态链接库复制到系统默认的动态
@@ -59,34 +59,34 @@ gcc -o test main.c -L./ -lstr
     动态链接库的配置
     系统中的配置文件/etc/ld.so.conf是动态链接库的
 搜索路径配置文件.在这个文件内,存放着可被Linux共享
-的动态链接库所在的目录的名字（系统目录/lib、/usr/lib除外）,
-多个目录名间以空白字符（空格、换行等）或冒号或逗号分隔.
+的动态链接库所在的目录的名字(系统目录/lib、/usr/lib除外),
+多个目录名间以空白字符(空格、换行等)或冒号或逗号分隔.
     动态链接库管理命令
     看Linux网络编程第27页
     使用动态链接库
     在编译程序时,使用动态链接库和静态链接库是一致的,
 使用“-l 库名”的方式,在生成可执行文件的时候会链接库
 文件.如下面的命令将源文件main.c编译成可执行文件test,
-并链接库文件libstr.a或者libstr.so：
+并链接库文件libstr.a或者libstr.so:
     gcc -o test main.c -L./ -lstr
     -L指定链接动态链接库的路径,-lstr链接库函数str.
 程序编译时链接动态链接库和运行时使用动态链接库的概念
 是不同的,在运行时,程序链接的动态链接库需要在系统目录下
-才行.有几种办法可以解决此种问题：
-    1）将动态链接库的目录放到程序搜索路径中,可以将库的
+才行.有几种办法可以解决此种问题:
+    1)将动态链接库的目录放到程序搜索路径中,可以将库的
 路径回到环境变量LD_LIBRARY_PATH中实现.
     export LD_LIBRARY_PATH=/example/ex02: $LD_LIBRARY_PATH
-    2）使用ld-Linux.so.2来加载程序,命令格式为：
+    2)使用ld-Linux.so.2来加载程序,命令格式为:
     /lib/ld-Linux.so.2 --library-path 路径 程序名
-    加载test程序的命令为：
+    加载test程序的命令为:
     /lib/ld-Linux.so.2 --library-path /example/ex02 test
     如果系统的搜索路径下同时存在静态链接库和动态链接库,
 默认情况下会链接动态链接库.如果需要强制链接静态链接库,
-需要加上“-static”选项,即编译方法为：
+需要加上“-static”选项,即编译方法为:
     gcc -o testdl main.c -static -ldl
     动态加载库
     动态加载库和一般的动态链接库所不同的是,一般动态链接库
-在程序启动的时候就要寻找动态库,找到库函数；而动态加载库可以
+在程序启动的时候就要寻找动态库,找到库函数;而动态加载库可以
 用程序的方法来控制会时候加载.动态加载库主要有函数dlopen()、
 dlerror()、dlsym()和dlclose()来控制动态库的使用.
     1.打开动态库dlopen()
@@ -141,7 +141,7 @@ UNIX下的文件主要分为如下几种:
 标准输出 1 stdout
 标准错误 2 stderr
 它们的值分别为0、1和2.可以查看/dev下的
-stdin（标准输入）、stdout（标准输出）和stderr（标准错误）,
+stdin(标准输入)、stdout(标准输出)和stderr(标准错误),
 会发现分别指向了/proc/self/fd目录下的0、1、2文件.
 
 打开创建文件open()、create()函数
@@ -154,34 +154,34 @@ open()函数打开pathname指定的文件,当函数成功时,
 返回一个整型的文件描述符.这个函数正常情况下会返回一个
 文件描述符的值,在出错的时候会返回-1.
 参数说明:
-pathname：
+pathname:
 在通常情况下为1024个字节.
 flags:
-O_RDONLY：  只读,定义为0.单独使用时文件必须存在,否则打开失败.
-O_WRONLY：  只写,定义为1.单独使用时文件必须存在,否则打开失败.
-O_RDWR：    读写,定义为2.单独使用时文件必须存在,否则打开失败.
-O_APPEND：  使每次对文件进行写操作时都追加到文件的尾端.
+O_RDONLY:  只读,定义为0.单独使用时文件必须存在,否则打开失败.
+O_WRONLY:  只写,定义为1.单独使用时文件必须存在,否则打开失败.
+O_RDWR:    读写,定义为2.单独使用时文件必须存在,否则打开失败.
+O_APPEND:  使每次对文件进行写操作时都追加到文件的尾端.
             单独使用时是写不进去的,需要与O_WRONLY或者O_RDWR搭配.
-O_CREAT：   如果文件不存在则创建它,当使用此选项时,第三个
+O_CREAT:   如果文件不存在则创建它,当使用此选项时,第三个
             参数mode需要同时设定,用来说明新文件的权限.
-O_EXCL：    查看文件是否存在.如果同时指定了O_CREAT,而文件已经
+O_EXCL:    查看文件是否存在.如果同时指定了O_CREAT,而文件已经
             存在则会返回-1.用这种方法可以安全地打开一个文件.
-O_TRUNC：    将文件长度截断为0.如果此文件存在,并且文件成功打开,
+O_TRUNC:    将文件长度截断为0.如果此文件存在,并且文件成功打开,
              则会将其长度截断为0.通常用作清空操作.
-O_NONBLOCK： 打开文件为非阻塞方式,如果不指定此项,默认的打开
+O_NONBLOCK: 打开文件为非阻塞方式,如果不指定此项,默认的打开
              方式为阻塞方式,即对文件的读写操作需要等待操作的返回状态.
-mode：
+mode:
 用于表示打开文件的权限,mode的使用需要结合flags的O_CREAT一起
 使用,否则是无效的.
-S_IRWXU 00700 用户（文件所有者）有读写和执行的权限
+S_IRWXU 00700 用户(文件所有者)有读写和执行的权限
 S_IRUSR 00400 用户对文件有读权限
 S_IWUSR 00200 写
 S_IXUSR 00100 执行
-S_IRWXG 00070 组用户（文件所有者）有读写和执行的权限
+S_IRWXG 00070 组用户(文件所有者)有读写和执行的权限
 S_IRGRP 00040 读
 S_IWGRP 00020 写
 S_IXGRP 00010 执行
-S_IRWXO 00007 其他用户（文件所有者）有读写和执行的权限
+S_IRWXO 00007 其他用户(文件所有者)有读写和执行的权限
 S_IROTH 00004 读着
 S_IWOTH 00002 写
 S_IXOTH 00001 执行
@@ -207,12 +207,12 @@ open()函数不仅可以打开一般的文件,而且可以打开设备文件.
 如打开设备文件“/dev/sda1”,即磁盘的第一个分区.
 
 创建文件的函数除了可以在打开时创建外,还可以使用create()
-函数创建一个新文件,其函数原型为：
+函数创建一个新文件,其函数原型为:
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 int create(const char *pathname, mode_t mode);
-create()等于一个open的缩写版本,等效于：
+create()等于一个open的缩写版本,等效于:
 open(pathname, O_WRONLY|O_CREAT|O_TRUNC, mode);
 create的返回值与open一样,在成功时为创建文件的描述符.
 
@@ -234,17 +234,17 @@ int close(int fd);
 ssize_t read(int fd, void *buf, size_t count);
 read()函数从文件描述符fd对应的文件中读取count字节,
 放到buf开始的缓冲区.如果count的值为0,read()函数返回0,
-不进行其他操作；如果count的值大于SSIZE_MAX,结果不可预料.
+不进行其他操作;如果count的值大于SSIZE_MAX,结果不可预料.
 在读取成功的时候,文件对应的读取位置指针,向后移动位置,
 大小为成功读取的字节数.
-如果read()函数执行成功,返回读取的字节数；
+如果read()函数执行成功,返回读取的字节数;
 当返回值为-1时,读取函数有错误发生.
 如果已经到达文件的末尾,返回0.
 返回值的数据类型为ssize_t,这是一个可能不同于int、long
 类型的数据类型,它是一个符号数,具体实现时可能定义为
 int或者long.
 参数buf是一个指针,它指向缓冲区地址的开始
-位置,读入的数据将保存在这个缓冲区中；
+位置,读入的数据将保存在这个缓冲区中;
 参数count表示要读取的字节数,通常用这个变量来表示缓冲区的大小,
 因此count的值不要超过缓冲区的大小,否则很容易造成缓冲区的溢出.
 int fd = -1, i;
@@ -323,10 +323,10 @@ close(fd);
 off_t lseek(int fd, off_t offset, int whence);
 这个函数对文件描述符fd所代表的文件,按照操作模式whence和
 偏移的大小offset,重新设定文件的偏移量.如果lseek()函数操作
-成功,则返回新的文件偏移量的值；如果失败返回-1.由于文件的
+成功,则返回新的文件偏移量的值;如果失败返回-1.由于文件的
 偏移量可以为负值,判断lseek()是否操作成功时,不要使用小于0
 的判断,要使用是否等于-1来判断函数失败.
-offset值的含义如下：
+offset值的含义如下:
 如果whence为SEEK_SET,则offset为相对文件开始处的值,
 即将该文件偏移量设为距文件开始处offset个字节.
 如果whence为SEEK_CUR,则offset为相对当前位置的值,
@@ -334,7 +334,7 @@ offset值的含义如下：
 如果whence为SEEK_END,则offset为相对文件结尾的值,
 即将该文件的偏移量设置为文件长度加offset.
 lseek()函数执行成功时返回文件的偏移量,可以用SEEK_CUR
-模式下偏移0的方式获得当前的偏移量,如：
+模式下偏移0的方式获得当前的偏移量,如:
 off_t cur_pos = lseek(fd, 0, SEEK_CUR);
 例子:
 off_t offset = -1;
@@ -359,7 +359,7 @@ stat()函数,fstat()函数和lstat()函数可以获得文件的状态,
 int stat(const char *path, struct stat *buf);
 int fstat(int filedes, struct stat *buf);
 int lstat(const char *path, struct stat *buf);
-函数的第一个参数是文件描述的参数,可以为文件的路径或者文件描述符；
+函数的第一个参数是文件描述的参数,可以为文件的路径或者文件描述符;
 buf为指向struct stat的指针,获得的状态从这个参数中传回.
 当函数执行成功时返回0,返回值为-1表示有错误发生.
 结构struct stat为一个描述文件状态的结构,定义如下:
@@ -432,7 +432,7 @@ mmap()函数进行地址映射的时候,用户可以指定要映射到的地址,
 遇到到内存中的数据大小.使用mmap()函数有一个限制,只能对
 映射到内存的数据进行操作,即限制于开始为offset,大小为length
 的区域.参数fd,代表文件的文件描述符,表示要映射到内存中的文件,
-通常是open()的返回值；如果需要对文件中需要映射地址进行偏移,
+通常是open()的返回值;如果需要对文件中需要映射地址进行偏移,
 则在参数offset中进行指定.
 参数prot
 表示映射区保护方式.保护方式prot的值是一个组合值,
@@ -472,14 +472,14 @@ MAP_PRIVATE则是多个进程使用的文件内存映射,在写入操作后,
 的映射关系.其函数原型如下:
 #include <sys/mman.h>
 int munmap(void *start, size_t length);
-参数start为mmap()函数成功后的返回值,即映射的内存地址；
+参数start为mmap()函数成功后的返回值,即映射的内存地址;
 参数length为映射的长度.
 使用mmap()函数需要遵循一定的编程模式,其模式如下:
-首先使用open()函数打开一个文件,当操作成功的时候会返回一个文件描述符；
+首先使用open()函数打开一个文件,当操作成功的时候会返回一个文件描述符;
 使用mmap()函数将此文件描述符所代表的文件映射到一个地址空间,如果映射
-成功,会返回一个映射的地址指针；对文件的操作可以通过mmap()映射的地址
+成功,会返回一个映射的地址指针;对文件的操作可以通过mmap()映射的地址
 来进行,包括读数据,写数据,偏移等,与一般的指针操作相同,不过要注意不要
-进行越界操作；当对文件的操作完毕后,需要使用munmap()函数将mmap()
+进行越界操作;当对文件的操作完毕后,需要使用munmap()函数将mmap()
 映射的地址取消并关闭打开的文件.
 fd = open(filename, flags, mode);
 if(-1 == fd){
@@ -611,7 +611,7 @@ ret = system("ping www.hisense.com -c 2");
 printf("返回值为: %d\n");
 12.进程执行exec()函数
 在使用fork()函数和system()函数的时候,系统中都会建立一个新的进程,
-执行调用者的操作,而原来的进程还会存在,直到用户显式地退出；
+执行调用者的操作,而原来的进程还会存在,直到用户显式地退出;
 而exec()族的函数与之前的fork()函数和system()函数不同,
 exec()族函数会用新进程代替原有的进程,系统会从新的进程运行,
 新的进程的PID值会与原来进程的PID值相同.
@@ -850,13 +850,13 @@ FIFO操作
 #include <sys/un.h>
 
 TCP网络编程基础
-基于TCP的Socket编程的服务器流程：
-1.创建套接字（socket).
-2.将套接字绑定到一个本地地址和端口上（bind）.
-3.将套接字设为监听模式,准备接收客户请求（listen）.
-4.等待客户请求到来；当请求到来后,接受连接请求,
-  返回一个新的对应于此次连接的套接字（accept）.
-5.用返回的套接字和客户端进行通信（send/recv）.
+基于TCP的Socket编程的服务器流程:
+1.创建套接字(socket).
+2.将套接字绑定到一个本地地址和端口上(bind).
+3.将套接字设为监听模式,准备接收客户请求(listen).
+4.等待客户请求到来;当请求到来后,接受连接请求,
+  返回一个新的对应于此次连接的套接字(accept).
+5.用返回的套接字和客户端进行通信(send/recv).
 6.返回,等待另一客户的请求.
 7.关闭套接字.
 
@@ -875,7 +875,7 @@ struct sockaddr                 // 套接字地址结构
 
 2.实际使用的套接字数据结构
 在网络程序设计中所使用的函数中几乎所有的套接字函数
-都用这个结构作为参数.这个结构的定义如下：
+都用这个结构作为参数.这个结构的定义如下:
 // 以太网套接字地址结构
 struct sockaddr_in
 {
@@ -894,7 +894,7 @@ struct sockaddr_in
     char sin_zero[8];
 }
 结构struct sockaddr_in的成员变量in_addr用于表示IP地址,
-这个结构的定义如下：
+这个结构的定义如下:
 struct in_addr      // IP地址结构
 {
     u32 s_addr;     // 32位IP地址,网络字节序
@@ -921,7 +921,7 @@ struct in_addr      // IP地址结构
 从内核得到数据的函数有accept(),recv()等.
 bind()函数向内核中传入的参数
 有套接字地址结构和结构的长度这样两个参数.
-bind()函数的原型为：
+bind()函数的原型为:
 int bind(
     // 套接字文件描述符
     int sockfd,
@@ -957,9 +957,9 @@ TCP网络编程有两种模式,
 服务器地址,端口等参数与特定的服务器程序进行通信.
 
 服务器模式创建一个服务程序,等待客户端用户的连接,
-接收到用户的连接请求后,根据用户的请求进行处理；
+接收到用户的连接请求后,根据用户的请求进行处理;
 1.服务器端的程序设计模式
-TCP连接的服务器模式的程序设计流程分为：
+TCP连接的服务器模式的程序设计流程分为:
 套接字初始化---                 socket()
 套接字与端口的绑定---            bind()
 设置服务器的侦听连接---          listen()
@@ -970,7 +970,7 @@ TCP连接的服务器模式的程序设计流程分为：
 客户端模式则根据目的服务器的地址和端口进行连接,
 向服务器发送请求并对服务器的响应进行数据处理.
 2.客户端的程序设计模式
-主要分为：
+主要分为:
 套接字初始化---               socket()
 连接服务器---                 connect()
 读写网络数据并进行数据处理---    read(),write()
@@ -1032,7 +1032,7 @@ SOCK_STREAM             流式套接字.TCP连接,
                         支持带外数据传输.
 SOCK_DGRAM              数据包套接字.
                         支持UDP连接
-                        （无连接状态的消息）.
+                        (无连接状态的消息).
 SOCK_SEQPACKET          序列化包,提供一个序列化的,
                         可靠的,双向的基于连接的数据
                         传输通道,数据长度定常.
@@ -1051,7 +1051,7 @@ SOCK_PACKET             专用类型,不能在通用程序中
 protocol
 用于指定某个协议的特定类型,即type类型中的某个类型.
 通常某个协议中只有一种特定类型,这样protocol
-参数仅能设置为0；但是有些协议有多种特定的类型,
+参数仅能设置为0;但是有些协议有多种特定的类型,
 就需要设置这个参数来选择特定的类型.
 
 注意:
@@ -1102,7 +1102,7 @@ bind()函数将长度为addlen的struct sockadd类型的
 参数my_addr与sockfd绑定在一起,将sockfd绑定到
 某个端口上,如果
 使用connect()函数则没有绑定的必要.
-绑定的函数原型如下：
+绑定的函数原型如下:
 #include <sys/types.h>
 #include <sys/socket.h>
 int bind(
@@ -1110,14 +1110,14 @@ int bind(
     const struct sockaddr *my_addr,
     socklen_t addrlen);
 参数说明:
-参数一：用socket()函数创建的文件描述符.
-参数二：指向一个结构为sockaddr参数的指针,
+参数一:用socket()函数创建的文件描述符.
+参数二:指向一个结构为sockaddr参数的指针,
     sockaddr中包含了地址,端口和IP地址的信息.
     在进行地址绑定的时候,需要先
     将地址结构中的IP地址,端口,类型等
     结构struct sockaddr中的域进行设置后才能进行绑定,
     这样绑定后才能将套接字文件描述符与地址等结合在一起.
-参数三：是参数二这个结构的长度,可以设置成
+参数三:是参数二这个结构的长度,可以设置成
     sizeof(struct sockaddr).
     使用sizeof(struct sockaddr)来设置addlen
     是一个良好的习惯,虽然一般情况下使用AF_INET
@@ -1235,7 +1235,7 @@ close(sfd);
 listen()函数的原型如下,其中的backlog表示等待队列的长度.
 #include <sys/socket.h>
 int listen(int sockfd, int backlog);
-当listen()函数成功运行时,返回值为0；
+当listen()函数成功运行时,返回值为0;
 当运行失败时,返回值为-1,并且设置errno值.
 值                      含义
 EADDRINUSE              另一个socket已经在同一端口侦听
@@ -1298,7 +1298,7 @@ close(sfd);
 新产生的文件描述符表示客户端的连接,函数send()和rece()
 通过新的文件描述符进行数据收发.
 1.accept()函数介绍
-accept()函数的原型如下：
+accept()函数的原型如下:
 #include <sys/types.h>
 #include <sys/socket.h>
 int accept(
@@ -1422,6 +1422,30 @@ EISCONN                 socket已经连接
 ENETUNREACH             网络不可达
 ENOTSOCK                文件描述符不是一个socket
 ETIMEDOUT               连接超时
+ 
+有关connect函数返回错误的情况,常见的有下面三种:
+1.
+返回TIMEOUT,即SYN_RECV队列都满了,
+对于客户端发来的三次握手第一次的SYN都没有办法响应,
+这时候TCP会隔6s,24s重发,直到75s,如果还是没有被接受,
+最后返回TIMEOUT错误。
+2.
+返回ECONNREFUSED错误,表示服务器主机没有在相应的端口开启监听。
+3.
+返回EHOSTUNREACH或ENETUNREACH,
+表示在某个中间路由节点返回了ICMP错误,
+这个错误被内核先保存,之后继续按照6s,24s重发,直到75s,
+如果还是没有响应,就返回EHOSTUNREACH或ENETUNREACH错误。
+
+connect什么时候正常返回?
+其实是客户端收到服务器三次握手第二次返回的SYN+ACK之后，
+自己进入了ESTABLISHED状态（TCP状态转换图），
+这时候connect就会正常返回了。
+
+情况	   ESTABLISHED 队列没有满	  SYN_RECV队列没有满	SYN_RECV 队列满了
+connect返回情况	connect正常返回	                  connect正常返回	connect返回timeout错误
+send写数据	完全正常写，并且数据会被服务器回复ack确认。     不能正常发送，会不断触发重传，         	这时候的socket是完全disconnect的，send给disconnect的socket写数据，触发SIGPIPE信号，默认杀死本进程。
+            之后如果accept,可以read出数据。	                    但是数据不会被确认。
 
 2.connect()函数的例子
 #define DEST_IP "132.241.5.10"
@@ -1450,6 +1474,150 @@ if (ret == -1) {
 // ...
 close(sfd);
 
+客户端向服务器发送一个SYN J.
+服务器向客户端响应一个SYN K,并对SYN J进行确认ACK J+1.
+客户端再想服务器发一个确认ACK K+1.
+当客户端调用connect时,触发了连接请求,
+说明:
+向服务器发送了SYN J包,这时connect进入阻塞状态;
+服务器监听到连接请求,即收到SYN J包,
+调用accept函 数接收请求向客户端发送SYN K ,
+ACK J+1,这时accept进入阻塞状态;
+客户端收到服务器的SYN K ,ACK J+1之后,
+这时connect返回,并对SYN K进行确认;
+服务器收到ACK K+1时,accept返回,
+至此三次握手完毕,连接建立.
+总结:
+客户端的connect在三次握手的第二次返回,
+而服务器端的accept在三次握手的第三次返回.
+
+SOCK_DGRAM:
+UDP中的connect操作知识在内核中
+注册对方机器的IP和PORT信息,并没有建立链接的过程,
+即没有发包,close也不发包.
+SOCK_STREAM:
+connect会完成TCP的三次握手,客户端调用connect后,
+由内核中的TCP协议完成TCP的三次握手;
+close操作会完成四次挥手.
+
+对于TCP/IP protocol stack来说,TCP层的tcp_in&tcp_out也参与这个过程.我们这里只讨论这3个应用层的API干了什么事情.
+
+(1) connect
+
+发送了一个SYN,收到Server的SYN+ACK后,代表连接完成.发送最后一个ACK是protocol stack,tcp_out完成的.
+
+(2)listen
+
+在server这端,准备了一个未完成的连接队列,保存只收到SYN_C的socket结构;
+
+还准备了已完成的连接队列,即保存了收到了最后一个ACK的socket结构.
+
+(3)accept
+
+应用进程调用accept的时候,就是去检查上面说的已完成的连接队列,如果队列里有连接,就返回这个连接;
+
+如果没有,即空的,blocking方试调用,就睡眠等待;
+
+nonblocking方式调用,就直接返回,一般一"EWOULDBLOCK“ errno告诉调用者,连接队列是空的.
+
+注意:
+
+在上面的socket API和TCP STATE的对应关系中,TCP协议中,客户端收到Server响应时,可能会有会延迟确认.
+
+即客户端收到数据后,会阻塞给Server端确认.
+
+可以在每次收到数据后:
+
+调用setsockopt(fd, IPPROTO_TCP, TCP_QUICKACK, (int[]){1}, sizeof(int));  快速给Server端确认.
+
+我们如何判断有一个建立链接请求或一个关闭链接请求:
+
+建立链接请求:
+
+1、connect将完成三次握手,accept所监听的fd上,产生读事件,表示有新的链接请求;
+
+关闭链接请求:
+
+1、close将完成四次挥手,如果有一方关闭sockfd,对方将感知到有读事件,
+
+如果read读取数据时,返回0,即读取到0个数据,表示有断开链接请求.(在操作系统中已经这么定义)
+关闭链接过程中的TCP状态和SOCKET处理,及可能出现的问题:
+
+1. TIME_WAIT
+
+TIME_WAIT 是主动关闭 TCP 连接的那一方出现的状态,系统会在 TIME_WAIT 状态下等待 2MSL(maximum segment lifetime  )后才能释放连接(端口).通常约合 4 分钟以内.
+
+TIME_WAIT 状态等待 2MSL 的意义:
+
+1、确保连接可靠地关闭; 即防止最后一个ACK丢失.
+
+2、避免产生套接字混淆(同一个端口对应多个套接字).
+
+在这里要解释一个概念:化身.当关闭一个连接后,过一段时间在相同的IP地址和端口之间建立另一个连接,后一个连接就叫做前一个连接的化身.TCP不给处于TIME_WAIT状态的连接发起新的化身.
+
+为什么说可以用来避免套接字混淆呢?
+
+一方close发送了关闭链接请求,对方的应答迟迟到不了(例如网络原因),导致TIME_WAIT超时,此时这个端口又可用了,我们在这个端口上又建立了另外一个socket链接.如果此时对方的应答到了,怎么处理呢?其实这个在TCP层已经处理了,由于有TCP序列号,所以内核TCP层,就会将包丢掉,并给对方发包,让对方将sockfd关闭.所以应用层是没有关系的.即我们用socket API编写程序,就不用处理.
+
+注意::
+
+TIME_WAIT是指操作系统的定时器会等2MSL,而主动关闭sockfd的一方,并不会阻塞.(即应用程序在close时,并不会阻塞).
+
+当主动方关闭sockfd后,对方可能不知道这个事件.那么当对方(被动方)写数据,即send时,将会产生错误,即errno为: ECONNRESET.
+
+服务器产生大量 TIME_WAIT 的原因:(一般我们不这样开发Server,但是web服务器等这种多客户端的Server,是需要在完成一次请求后,主动关闭连接的,否则可能因为句柄不够用,而造成无法提供服务.)
+
+服务器存在大量的主动关闭操作,需关注程序何时会执行主动关闭(如批量清理长期空闲的套接字等操作).
+
+一般我们自己写的服务器进行主动断开连接的不多,除非做了空闲超时之类的管理.(TCP短链接是指,客户端发送请求给服务器,客户端收到服务器端的响应后,关闭链接).
+
+
+
+2. CLOSE_WAIT
+
+CLOSE_WAIT 是被动关闭 TCP 连接时产生的,
+
+如果收到另一端关闭连接的请求后,本地(Server端)不关闭相应套接字就会导致本地套接字进入这一状态.
+
+(如果对方关闭了,没有收到关闭链接请求,就是下面的不正常情况)
+
+按TCP状态机,我方收到FIN,则由TCP实现发送ACK,因此进入CLOSE_WAIT状态.但如果我方不执行close(),就不能由CLOSE_WAIT迁移到LAST_ACK,则系统中会存在很多CLOSE_WAIT状态的连接.
+
+如果存在大量的 CLOSE_WAIT,则说明客户端并发量大,且服务器未能正常感知客户端的退出,也并未及时 close 这些套接字.(如果不及时处理,将会出现没有可用的socket描述符的问题,原因是sockfd耗尽).
+
+正常情况下::  
+
+一方关闭sockfd,另外一方将会有读事件产生, 当recv数据时,如果返回值为0,表示对端已经关闭.此时我们应该调用close,将对应的sockfd也关闭掉.
+
+不正常情况下:: 
+
+一方关闭sockfd,另外一方并不知道,(比如在close时,自己断网了,对方就收不到发送的数据包).此时,如果另外一方在对应的sockfd上写send或读recv数据.
+
+recv时,将会返回0,表示链接已经断开.
+
+send时, 将会产生错误,errno为ECONNRESET.
+
+
+
+长连接API小心“串包”问题:
+
+有时候,我们以API的方式为客户提供服务,如果此时你提供的API采用TCP长连接,而且还使用了TCP接收超时机制(API一般都会提供设置超时的接口,例如通过setsockopt设置SO_RCVTIMEO或这select),那你可能需要小心下面这种情况(这里姑且称之为“窜包”,应用程序没有将应答包与请求包正确对应起来):
+如果某一笔以TCP接收的请求超时(例如设置为3秒)返回客户,此时客户继续使用该链接发送第二个请求,此时后者就有可能收到前一笔请求的应答(前一笔的应答在3秒后才到达),倘若错误的将此应答当做后者的应答处理,那就可能会导致严重的问题.如果网络不稳定,或者后台处理较慢,超时严重,其中一笔请求应答窜包了,很可能导致后续多个请求应答窜包.例如网上常见的抽奖活动,第一个用户中了一个iPad,而第二个用户在后台中仅为一个虚拟物品,若此时出现窜包,那第二个用户也会被提示中了iPad.
+
+SOCKET API和TCP STATE的对应关系__三次握手(listen,accept,connect)__四次挥手close及TCP延迟确认(调用一次setsockopt函数,设置TCP_QUICKACK)__长连接API小心“窜包”问题 - 无影 - 专注、坚持、思索
+
+
+这个问题,初看起来最简单的解决办法就是:一旦发现有请求超时,就断开并重新建立连接,但这种方案理论上是不严谨的,考虑下面这种情况:
+1、应答超时的原因是因为应答包在网络中游荡(例如某个路由器崩溃等原因,这类在网络中游荡的包,俗称迷途的分组);
+2、API在检测到超时后,断开并重新建立的连接的IP和Port与原有连接相同(新连接为被断开连接的化身);
+3、在新连接建立后,立即发送了一个新的请求,但随后那个迷途的应答包又找到了回家的路,重新到达,此时新连接很有可能将这个不属于自己的包,当做第二个请求的应答(该包的TCP Sequence恰好是新连接期望的TCP Sequence,这种情况是可能的,但是基本不可能发生).
+注:正常情况下,TCP通过维持TIME_WAIT状态2MSL时间,以避免因化身可能带来的问题.但是在实际应用中,我们可以通过调整系统参数,或者利用SO_LINGER选项使得close一个连接时,直接到CLOSE状态,跳过TIME_WAIT状态,又或者利用了端口重用,这样就可能会出现化身.在实际应用中,上面这种情况基本不会发生,但是从理论上来说,是可能的.
+
+再仔细分析,就会发现这个问题表面上看是因为“窜包”导致,但本质原因是程序在应用层没有对协议包效验.例如另外一种情况:A、B两个客户端与Server端同时建立了两个连接,如果此时Server端有BUG,错将A的应答,发到B连接上,此时如果没有效验,那同样会出现A请求收到B应答的情况.所以这个问题解决之道就是:在应用层使用类似序列号这类验证机制,确保请求与应答的一一对应.
+ 
+ 
+ 
+ 
 写入数据函数write()函数
 当服务器端在接收到一个客户端的连接后,
 可以通过套接字描述符进行数据的写入操作.
@@ -1484,7 +1652,7 @@ size = read(s, data, 1024);
 #include <sys/socket.h>
 int shutdown(int s, int how);
 函数shutdown()用于关闭双向连接的一部分,具体的
-关闭行为方式通过参数的how设置来实现.可以为如下值：
+关闭行为方式通过参数的how设置来实现.可以为如下值:
 SHUT_RD:   值为0,表示切断读,
            之后不能使用此文件描述符进行读操作.
 SHUT_WR:   值为1,表示切断写,
@@ -2278,6 +2446,12 @@ readv(),writev(),
 send(),recv(),
 sendmsg(),recvmsg().
 
+read()/write()
+readv()/writev()
+recv()/send()
+recvfrom()/sendto()
+recvmsg()/sendmsg() (有人推荐用这种)
+
 使用recv()函数接收数据
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -2519,6 +2693,23 @@ ssize_t sendmsg(int s, const struct msghdr *msg, int flags);
 函数sendmsg()与recvmsg()相区别的地方在于sendmsg的操作方式
 由flags参数设定,而recvmsg的操作方式由参数msg结构里的成员变量
 msg_flags指定.
+
+#include <unistd.h>
+ssize_t read(int fd, void *buf, size_t count);
+ssize_t write(int fd, const void *buf, size_t count);
+
+#include <sys/types.h>
+#include <sys/socket.h>
+ssize_t recv(int sockfd, void *buf, size_t len, int flags);
+ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+
+ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,
+                struct sockaddr *src_addr, socklen_t *addrlen);
+ssize_t sendto(int sockfd, const void *buf, size_t len, int flags,
+              const struct sockaddr *dest_addr, socklen_t addrlen);
+
+ssize_t recvmsg(int sockfd, struct msghdr *msg, int flags);
+ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags);
 
 IO函数的比较
 1.函数read()/write()和read()/writev()可以对所有的文件描述符使用;
@@ -2940,7 +3131,7 @@ int test_start_server(void) {
         exit(EXIT_FAILURE);
     }
 
-    // 解决在close之后会有一个WAIT_TIME，导致bind失败的问题
+    // 解决在close之后会有一个WAIT_TIME,导致bind失败的问题
     int val = -1;
     err = setsockopt(local_server_sock_fd,
                      SOL_SOCKET,
@@ -3030,6 +3221,175 @@ int test_start_server(void) {
     }
 }
 
+/////////////////////////传输大文件/////////////////////////
+
+#define BUFFER_SIZE 4096
+
+//32系统 可能会截断 一定要自己写 或则atoll有的系统不支持 故
+long long ato_ll(const char *p_str) //string --> long long
+{
+
+    long long result = 0;
+    long long mult = 1;
+    unsigned int len = strlen(p_str); // strlen(p_str) unsigned int
+    unsigned int i;
+
+    for (i = 0; i < len; ++i) {
+        char the_char = p_str[len - (i + 1)];
+        long long val;
+        if (the_char < '0' || the_char > '9') {
+            return 0;
+        }
+        val = the_char - '0';
+        val *= mult;
+        result += val;
+        mult *= 10;
+    }
+    return result;
+}
+
+
+struct sockaddr_in server_address;
+int filefd;
+
+
+void *receive(void *s) {
+    int thread_order = *(int *) s;
+
+    printf("thread_order = %d\n", thread_order);
+    char buf[BUFFER_SIZE];
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+        perror("socket error");
+        exit(EXIT_SUCCESS);
+    }
+
+    if (connect(sockfd, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
+        fprintf(stderr, "thread %d connect error number %d: %s\n", thread_order, errno, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    printf("conncet success,thread id = %d\n", thread_order);
+    char head_buf[29] = {0};
+    int ret = recv(sockfd, head_buf, sizeof(head_buf) - 1, MSG_WAITALL); //接受每个包的头部
+    if (ret < 0) {
+        fprintf(stderr, "thread %d recv error number %d: %s\n",
+                thread_order, errno, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    char *cur_ptr = head_buf;
+    char *bk = strchr(head_buf, ':');
+    if (bk != NULL) {
+        *bk = '\0';
+    }
+    char *size_ptr = bk + 1;
+
+    long long cur = ato_ll(cur_ptr);
+    int size = atoi(size_ptr);
+    printf("thread %d cur = %lld size = %d\n", thread_order, cur, size);
+    while (size) {
+        ret = read(sockfd, buf, BUFFER_SIZE);
+        if (ret < 0 && errno == EINTR) {
+            puts("break by signal");
+            continue;
+        } else if (ret == 0) {
+            break;
+        } else if (ret < 0) {
+            perror("read");
+            exit(1);
+        }
+        if (pwrite(filefd, buf, ret, cur) < 0) {
+            perror("pwrite");
+            exit(1);
+        }
+        cur += ret;
+        size -= ret;
+    }
+
+    close(sockfd);
+    fprintf(stderr, "thread %d finished receiving\n", thread_order);
+    free(s);
+    pthread_exit((void *) thread_order);
+}
+
+int test_start_server(int argc, char **argv) {
+    if (argc != 3) {
+        fprintf(stderr, "usage: %s server_ip port\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    const char *ip = argv[1];
+    const int port = atoi(argv[2]);
+    printf("sizeof(off_t) = %d\n", sizeof(off_t));
+    memset(&server_address, 0, sizeof(server_address));
+    server_address.sin_family = AF_INET;
+    server_address.sin_port = htons(port);
+    inet_pton(AF_INET, ip, &server_address.sin_addr);
+
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+        perror("socket error");
+        exit(EXIT_FAILURE);
+    }
+
+    struct timeval start, end;
+    gettimeofday(&start, NULL);
+    if (connect(sockfd, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
+        perror("connect error");
+        exit(EXIT_FAILURE);
+    }
+
+    int thread_number = 0;
+    int ret = recv(sockfd, &thread_number, sizeof(thread_number), MSG_WAITALL);
+    if (ret < 0) {
+        perror("recv MSG_WAITALL error");
+        exit(EXIT_FAILURE);
+    }
+
+    thread_number = ntohl(thread_number); //网络字节序转换成本机字节序
+    printf("thread_number = %d\n", thread_number);
+    if (thread_number > 500) {
+        puts(">>>>500");
+        exit(1);
+    } //开的线程太多了
+    //O_TRUNC 若文件存在 则把文件截断为零
+    if ((filefd = open("receive_file.rmvb", O_WRONLY | O_CREAT | O_TRUNC, 0777)) < 0) {
+        perror("open error");
+        exit(EXIT_FAILURE);
+    } else {
+        printf("open success\n");
+    }
+    pthread_t *tid = (pthread_t *) malloc(thread_number * sizeof(pthread_t));
+    if (tid == NULL) {
+        perror("malloc::");
+        exit(1);
+    }
+    printf("thread_number = %d\n", thread_number);
+
+    for (int i = 0; i < thread_number; ++i) {
+
+        int *thread_id = (int *) malloc(sizeof(int)); //记得在线程中释放
+        *thread_id = i;
+        pthread_create(&tid[i], NULL, receive, (void *) thread_id);
+
+    }
+
+    for (int i = 0; i < thread_number; ++i) {
+        char *ret;
+        pthread_join(tid[i], (void **) &ret);
+        printf("thread %d finished receiving\n", i);
+    }
+
+    close(sockfd);
+    close(filefd);
+    free(tid);
+
+    gettimeofday(&end, NULL);
+    double timeuse = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+    timeuse /= 1000000;
+    printf("run time = %f\n", timeuse);
+
+    exit(EXIT_SUCCESS);
+}
+
 /////////////////////////线程/////////////////////////
 
 // 下面是线程的内容
@@ -3072,7 +3432,7 @@ void test_pthread(void) {
 }
 
 /***
-线程的知识点：
+线程的知识点:
 
 cat /usr/include/asm-generic/errno.h
 man pthread_create
@@ -3160,8 +3520,8 @@ pthread_attr_init
 默认的属性为非绑定、非分离、缺省1M的堆栈、
 与父进程同样级别的优先级.
 
-关于线程的绑定,牵涉到另外一个概念：
-轻进程(LWP：Light Weight Process).
+关于线程的绑定,牵涉到另外一个概念:
+轻进程(LWP:Light Weight Process).
 轻进程可以理解为内核线程,它位于用户层和系统层之间.
 系统对线程资源的分配、对线程的控制是通过轻进程来实现的,
 一个轻进程可以控制一个或多个线程.
@@ -3177,7 +3537,7 @@ pthread_attr_init
 pthread_attr_setscope,
 它有两个参数,
 第一个是指向属性结构的指针,
-第二个是绑定类型,它有两个取值：
+第二个是绑定类型,它有两个取值:
 PTHREAD_SCOPE_SYSTEM(绑定的)
 PTHREAD_SCOPE_PROCESS(非绑定的)
 
@@ -3382,7 +3742,7 @@ void test_class(void) {
     free(p_);
 
     /***
-     new如果开辟内存不成功的话,会抛出异常；
+     new如果开辟内存不成功的话,会抛出异常;
      没有抛出的话,就表示一定会开辟成功.
      创建对象数组时,首先必须要求有默认的构造函数.
      */
