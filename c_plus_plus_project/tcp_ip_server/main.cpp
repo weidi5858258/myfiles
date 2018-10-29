@@ -31,10 +31,10 @@ int main(int argc, char *argv[]) {
 
 //    howToCreateChildProcess();
 
-    LinuxSocket linuxSocket;
-    linuxSocket.studyHard();
+//    LinuxSocket linuxSocket;
+//    linuxSocket.studyHard();
 
-//    test();
+    test();
 
     printf("---------------------------------------------------\n");
     printf("\n");
@@ -81,6 +81,7 @@ void showvalue(unsigned char *begin, int flag) {
 }
 
 int test() {
+
 }
 /***
 子线程
