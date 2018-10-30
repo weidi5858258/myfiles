@@ -2853,26 +2853,265 @@ if (err == -1) {
     printf("No data within five seconds.\n");
 }
 
- 
+pselect()函数简介
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+int pselect(int nfds, fd_set *readfds, fd_set *writefds,
+            fd_set *exceptfds, const struct timespec *timeout,
+            const sigset_t *sigmask);
+pselect()函数的含义基本与select()函数一致,除了以下几点:
+超时的时间结构是一个纳秒级的结构,原型如下.不过在Linux平台下内核调试
+的精度为10毫秒级,所以即使设置纳秒级的分辨率,也达不到设置的精度.
+struct timespec {
+    // 超时的秒数
+    long tv_sec;
+    // 超时的纳秒数
+    long tv_nsec;
+};
+增加了进入pselect()函数时的替换掉的信号处理方式,当sigmask为NULL
+的时候,与select的方式一致.
+select()函数在执行之后可能会改变timeout的值,修改为还有多少时间
+剩余,而pselect函数不会修改该值.
+与select()函数相比,pselect()函数的代码如下:
+ready = pselect(nfds, &readfds, &writefds, &exceptfds,
+                timeout, &sigmask);
+相当于如下的select()函数,在进入select()函数之前先手动将信号的掩码
+改变,并保存之前的掩码值;select()函数执行后,再恢复为之前的信号掩码值.
+sigset_t origmask;
+sigprocmask(SIG_SETMASK, &sigmask, &origmask);
+ready = select(nfds, &readfds, &writefds, &exceptfds, timeout);
+sigprocmask(SIG_SETMASK, &origmask, NULL);
 
+pselect()函数的例子
+下面是一个使用pselect()的简单例子.在例子中先清空信号,然后将SIGCHLD信号
+加入到要处理的信号集合中.设置pselect()监视的信号时,在挂载用户信号的同时
+将系统原来的信号保存下来,方便程序退出的时候恢复原来的设置.
+int child_events = 0;
+// 信号处理函数
+void child_sig_handler(int x) {
+    // 调用次数+1
+    child_events++;
+    // 重新设定信号回调函数
+    signal(SIGCHLD, child_sig_handler);
+}
+int test() {
+    // 设定的信号掩码sigmask和原始的信号掩码orig_sigmask
+    sigset_t sigmask, orig_sigmask;
+    // 清空信号
+    sigemptyset(&sigmask);
+    // 将SIGCHLD信号加入sigmask
+    sigaddset(&sigmask, SIGCHLD);
+    // 设定信号SIG_BLOCK的掩码sigmask, 并将原始的掩码保存到orig_sigmask中
+    sigprocmask(SIG_BLOCK, &sigmask, &orig_sigmask);
+    // 挂接对信号SIGCHLD的处理函数child_sig_handler
+    signal(SIGCHLD, child_sig_handler);
+    for (;;) {
+        // 判断是否退出
+        for (; child_events > 0; child_events--) {
+            // 处理动作
+        }
+        // select IO复用
+        r = pselect(nfds, &rd, &wr, &er, 0, &orig_sigmask);
+        // ......
+    }
+}
 
+poll()函数和ppoll()函数
+poll()函数等待某个文件描述符上的某个事件的发生.
+#include <poll.h>
+int poll(struct pollfd *fds, nfds_t nfds, int timeout);
+poll()函数监视在fds数组指明的一组文件描述符上发生的动作,当满足
+条件或者超时的时候会退出.
+参数说明:
+fds: 是一个指向结构pollfd数组的指针,监视的文件描述符和条件放在里面.
+nfds: 是比监视的最大描述符的值大1的值.
+timeout: 是超时时间,单位为毫秒,当为负值时,表示永远等待.
+poll()函数返回值的含义如下:
+大于0: 表示成功,等待的某个条件满足,返回值为满足条件的监视文件描述符的数量.
+等于0: 表示超时.
+-1  : 表示发生错误,errno的错误代码如下.
+值       含义
+EBADF   参数s不是合法描述符
+EINTR   接收到中断信号
+EINVAL  传递了不合法参数
+ENOMEM  没有足够内存
+struct pollfd {
+    // 文件描述符
+    int fd;
+    // 请求的事件
+    short events;
+    // 返回的事件
+    short revents:
+};
+events的值及含义
+值               含义
+POLLIN          有数据到来,文件描述符可读
+POLLPRI         有紧急数据可读,例如带外数据
+POLLOUT         文件可写
+POLLRDHUP       流式套接字半关闭
+POLLERR         错误发生
+POLLHUP         关闭
+POLLNVAL        非法请求
+POLLRDNORM      与POLLIN相同
+POLLLRDBAND     优先数据可读
+POLLWRNORM      与POLLOUT相同
+POLLWRBAND      优先数据可写
 
+ppoll()函数
+#include <poll.h>
+int ppoll(struct pollfd *fds, nfds_t nfds,
+        const struct timespec *timeout, const sigset_t *sigmask);
+超时时间timeout,采用了纳秒级的变量.
+可以在ppoll()函数的处理过程中挂接临时的信号掩码.
+ready = ppoll(&fds, nfds, timeout, &sigmask);
+与poll()函数的如下代码一致:
+sigset_t origmask;
+sigprocmask(SIG_SETMASK, &sigmask, &origmask);
+ready = ppoll(&fds, nfds, timeout, &sigmask);
+sigprocmask(SIG_SETMASK, &origmask, NULL);
 
+非阻塞编程
+阻塞方式的读写,在文件没有数据的时候,函数不会返回,
+而是一直等待直到有数据到来.
 
+非阻塞方式程序设计方式
+非阻塞方式的操作与阻塞方式的操作最大的不同点是函数的调用立刻返回,
+不管数据是否成功读取或者成功写入.使用fcntl()将套接字文件描述符
+按照如下的代码进行设置后,可以进行非阻塞的编程:
+fcntl(s, F_SETFL, O_NONBLOCK);
+其中的s是套接字文件描述符,使用F_SETFL命令将套接字s设置为
+非阻塞方式后,再进行读写操作就可以马上返回了.
 
+非阻塞程序设计的例子
+函数accept()可以使用非阻塞的方式轮询等待客户端的到来,在之前要
+设置NON_BLOCK方式.下面的代码使用使用了轮询的方式使用accept()
+和recv()函数,当客户端发送HELLO字符串时,发送OK响应给客户端并
+关闭客户端;当客户端发送SHUTDOWN字符串给服务器时,服务器发送
+BYE给客户端并关闭客户端,然后退出程序.
+注意:
+使用轮询的方式进行查询十分浪费CPU等资源,不是十分必要,
+最好不采用此种方法进行程序设计.
+例子见287页.
 
+第10章 基于UDP协议的接收和发送
 
+第11章 高级套接字
+UNIX域函数
+UNIX域的地址结构在文件<linux/un.h>中定义,结构的原型如下:
+#define UNIX_PATH_MAX 108
+struct sockaddr_un {
+    // AF_UNIX协议族名称
+    sa_family_t sun_family;
+    // 路径名
+    char sun_path[UNIX_PATH_MAX];
+};
+UNIX域地址结构成员变量sun_family的值是AF_UNIX或者AF_LOCAL.
+sun_path是一个路径名,此路径名的属性为0777,可以进行读写等操作.
+结构sockaddr_un的长度使用宏SUN_LEN定义,默认大小为108,
+SUN_LEN宏的定义如下:
+#define SUN_LEN(ptr)
+(((struct sockaddr_un *)0)->sun_path) + strlen((ptr)->sun_path)
+套接字函数
+UNIX域的套接字函数和以太网套接字(AF_INET)的函数相同,但是当用于
+UNIX域套接字时,套接字函数有一些差别和限制,主要有如下几条.
+1.
+使用函数bind()进行套接字和地址的绑定的时候,地址结构中的路径名和路径名
+所表示的文件的默认访问权限为0777,即用户,用户所属的组和其他组的用户
+都能读,写和执行.
+2.
+结构sun_path中的路径名必须是一个绝对路径,不能是相对路径.
+3.
+函数connect()使用的路径名必须是一个绑定在某个已打开的UNIX域套接字
+上的路径名,而且套接字的类型也必须一致.下列情况将出错:
+a)该路径名存在但不是一个套接字.
+b)路径名存在且是一个套接口,但没有与该路径名相关联的打开的描述字.
+c)路径名存在且是一个打开的套接字,但类型不符.
+4.
+用函数connect()连接UNIX域套接字时的权限检查和用函数open()以只写方式
+访问路径名完全相同.
+5.
+UNIX域字节流套接字和TCP套接字类似:它们都为进程提供一个没有记录边界
+的字节流接口.
+6.
+如果UNIX域字节流套接字的connect()函数发现监听套接字的队列已满,
+会立刻返回一个ECONNREFUSED错误.这和TCP有所不同:如果监听套接字的
+队列已满,它将忽略到来的SYN,TCP连接的发起方会接着发送几次SYN重试.
+7.
+UNIX域数据报套接字和UDP套接字类似:它们都提供一个保留记录边界的
+不可靠的数据服务.
+8.
+与UDP套接字不同的是,在未绑定的UNIX域套接字上发送数据报不会给它
+捆绑一个路径名.这意味着,数据报发送者除非绑定一个路径名,否则
+接收者无法发回应答数据报.同样,与TCP和UDP不同的是,给UNIX域
+数据报套接字调用connect()不会捆绑一个路径名.
 
+使用UNIX域函数进行套接字编程
+static void display_err(const char *on_what) {
+    perror(on_what);
+    exit(EXIT_FAILURE);
+}
+int test() {
+    int error;
+    int sock_UNIX;
+    struct sockaddr_un addr_UNIX;
+    int len_UNIX;
+    const char path[] = "/demon/path";
+    sock_UNIX = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (sock_UNIX == -1) {
+        display_err("socket()");
+    }
 
+    unlink(path);
+    memset(&addr_UNIX, 0, sizeof(addr_UNIX));
+    addr_UNIX.sun_family = AF_LOCAL;
+    strcpy(addr_UNIX.sun_path, path);
+    len_UNIX = sizeof(struct sockaddr_un);
 
+    error = bind(sock_UNIX, (struct sockaddr *) &addr_UNIX, len_UNIX);
+    if (error == -1) {
+        display_err("bind()");
+    }
+    close(sock_UNIX);
+    unlink(path);
+}
 
-
-
-
-
-
-
-
+传递文件描述符
+在进程之间经常遇到需要在各进程之间传递文件描述符的情况.
+例如有一种设备它在加电期间只能打开一次,如果关闭后再次打开
+就会发生错误.这时就需要有一个调度程序,它调度多个相同设备,
+当有客户端需要此类型的设备时会向它发送一个请求,服务器会把某个
+设备的描述符给客户端.但是,由于不同进程之间的文件描述符所表示
+的对象是不同的,这需要一种特殊的机制来实现上述的要求.
+Linux系统中提供了一种特殊的方法,可以从一个进程中将一个已经打开
+的文件描述符传递给其他的任何进程.其基本过程如下:
+1.
+创建一个字节流或者数据报的UNIX域套接字.
+如果目标是一个fork()一个子进程,让子进程打开描述符并将它返回
+给父进程,那么父进程可以用socketpair()创建一个流管道,用它来
+传递描述字.
+如果进程之间没有亲缘关系,那么服务器必须创建一个UNIX域字节流套接字,
+绑定一个路径名,让客户端连接到这个套接字.然后客户端可以向服务器发送
+一个请求以打开某个描述字,服务器将描述符通过UNIX域套接字传回.
+在客户端和服务器之间也可以使用UNIX数据服套接字,但这样做没有什么好处,
+而且数据报存在丢失的可能性.
+2.
+进程可以用任何描述符的UNIX函数打开一个描述符:
+例如open(),pipe(),mkfifo(),socket()或者accept().
+可以在进程间传递任何类型的描述符.
+3.
+发送进程建立一个msghdr结构,其中包含要传递的描述符.在POSIX中说明该
+描述符作为辅助数据发送,但老的实现使用msg_accright成员.发送进程
+调用sendmsg()通过第一步得到的UNIX域套接字发出套接字.这时这个
+描述符是在飞行中的.即使在发送进程调用sendmsg()之后,但在接受
+进程调用recvmsg()之前将描述符关闭,它仍会为接收进程保持打开状态.
+描述符的发送导致它的访问统计数加1.
+4.
+接收进程调用recvmsg在UNIX域套接字上接收套接字.通常接收进程
+收到的描述符的编号和发送进程中的描述符的编号不同,但这没有问题.
+传递描述符不是传递描述符的编号,而是在接收进程中建立一个新的描述符,
+指向内核的文件表中与发送进程发送的描述符相同的项.
 
 
 

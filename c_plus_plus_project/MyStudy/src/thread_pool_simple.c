@@ -183,7 +183,7 @@ void king_counter(nJob *job) {
 }
 
 
-int main(int argc, char *argv[]) {
+int main3(int argc, char *argv[]) {
     nThreadPool pool;
 
     ntyThreadPoolCreate(&pool, KING_MAX_THREAD);
