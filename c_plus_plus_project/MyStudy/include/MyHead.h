@@ -5,6 +5,8 @@
 #ifndef MYSTUDY_MYHEAD_H
 #define MYSTUDY_MYHEAD_H
 
+////////////////////////////////start////////////////////////////////
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -31,7 +33,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-////////////////////////////////STL////////////////////////////////
+////////////////////////////////STL start////////////////////////////////
 //迭代器
 #include <iterator>
 //函数对象
@@ -47,12 +49,27 @@
 //容器适配器
 #include <stack>
 #include <queue>
+////////////////////////////////STL end////////////////////////////////
 
+////////////////////////////////boost start////////////////////////////////
+#include <boost/bind.hpp>
+#include <boost/thread.hpp>
+#include <boost/timer.hpp>
+#include <boost/random.hpp>
+#include <boost/range.hpp>
+#include <boost/limits.hpp>
+#include <boost/iterator.hpp>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
+////////////////////////////////boost end////////////////////////////////
+
+//windows头文件
 #ifdef WIN32
 
 #include <glut.h>
 #include <io.h>
 
+//ubuntu头文件
 #else
 
 #include <sys/mman.h>
@@ -74,6 +91,8 @@
 using namespace std;
 
 #endif //MYSTUDY_MYHEAD_H
+
+////////////////////////////////end////////////////////////////////
 
 #ifdef WIN32
 #endif

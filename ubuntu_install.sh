@@ -234,6 +234,10 @@ echo "Y" | sudo apt-get install nmap
 echo "Y" | sudo apt-get install sqlmap
 echo "Y" | sudo apt-get install metasploit
 echo "Y" | sudo apt-get install libhugetlbfs-dev
+echo "Y" | sudo apt-get install libbz2-dev
+echo "Y" | sudo apt-get install mpi-default-dev
+echo "Y" | sudo apt-get install libboost-dev
+echo "Y" | sudo apt-get install libboost-all-dev
 echo "Y" | sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  
 echo "Y" | sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20  
 echo "Y" | sudo update-alternatives --config gcc 

@@ -14,10 +14,13 @@
 
 #endif
 
+
+int fun(int x, int y) { return x + y; }
+
 /***
- * @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
- * @param argv
- * @return
+@param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
+@param argv
+@return
 Clion 输出乱码问题
 File -> Settings -> Default Settings -> Editor -> File Encodings:
 Global Encoding: UTF-8
@@ -53,6 +56,9 @@ int main(int argc, char **argv) {
 //    HandleAndroidString handleAndroidString;
 //    handleAndroidString.doSomething("/root/temp_dir/merge_string");
 //    handleAndroidString.doSomething("/root/temp_dir/merge_string/temp_cache");
+
+
+
 
 
     printf("------------------------------------------\n");

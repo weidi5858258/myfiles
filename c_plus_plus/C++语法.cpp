@@ -2285,6 +2285,32 @@ void test_pthread(void) {
 }
 
 
+///////////////////////////Boost start///////////////////////////
+
+Boost库中的lexical_cast为数值之间的转换提供了一个更好的方案.
+如果转换发生了异常,lexical_cast会抛出一个bad_lexical_cast异常,
+因此程序中需要对其进行try-catch.
+boost/lexical_cast.hpp中定义了此函数,lexical_cast使用统一接口
+形式实现任意类型之间的转换,增强了易用性.
+try {
+    // 声明,省略boost名字空间前缀
+    using boost::lexical_cast;
+    // int a = boost::lexical_cast<int>("123");
+    // 转换前2位
+    int a = boost::lexical_cast<int>("123abc", 2);
+    printf("%d\n", a);
+    float b = boost::lexical_cast<float>("1.23456");
+    printf("%f\n", b);
+    string c = boost::lexical_cast<string>("1.23456");
+    printf("%s\n", c.c_str());
+} catch (const boost::bad_lexical_cast &e) {
+    cout << e.what() << endl;
+} catch (const std::exception &e) {
+    cout << e.what() << endl;
+}
+
+///////////////////////////Boost end///////////////////////////
+
 ///////////////////////////
 
 // a是数组名,代表内存的首地址

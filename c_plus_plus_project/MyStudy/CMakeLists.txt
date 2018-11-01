@@ -121,6 +121,9 @@ else ()
             -lfdk-aac
             -lcrypto
             -lssl
+            -lboost_system
+            -lboost_filesystem
+            -lboost_thread
             #            -lvpx
     )
 

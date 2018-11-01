@@ -2236,7 +2236,7 @@ do
     echo -e "${a_char}\c" >> test.txt
 done
 
-
+tar -jxvf xx.tar.bz2
 
 
 
