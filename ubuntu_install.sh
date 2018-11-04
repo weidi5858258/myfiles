@@ -265,6 +265,7 @@ echo "y" | sudo apt-get install libx11-dev:i386
 echo "y" | sudo apt-get install libncurses5-dev:i386
 echo "y" | sudo apt-get install libreadline6-dev:i386
 
+# ntfsfix /dev/sda4
 # display gnome-terminal
 # unity-control-center
 

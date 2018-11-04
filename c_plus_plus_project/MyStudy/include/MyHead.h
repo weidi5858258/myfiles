@@ -29,6 +29,7 @@
 #include <pthread.h>
 #include <time.h>
 
+
 //下面三个头文件使用open函数时用到
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -68,6 +69,8 @@
 
 #include <glut.h>
 #include <io.h>
+// 按键监控
+#include <conio.h>
 
 //ubuntu头文件
 #else
