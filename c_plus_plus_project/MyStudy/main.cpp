@@ -14,8 +14,7 @@
 
 #endif
 
-
-int fun(int x, int y) { return x + y; }
+int test(int argc, char **argv);
 
 /***
 @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
@@ -57,14 +56,13 @@ int main(int argc, char **argv) {
 //    handleAndroidString.doSomething("/root/temp_dir/merge_string");
 //    handleAndroidString.doSomething("/root/temp_dir/merge_string/temp_cache");
 
-
-
-
+    test(argc, argv);
 
     printf("------------------------------------------\n");
     printf("\n");
     return 0;
 }
+
 /***
 类型	输出	例子
 d或i	带符号十进制整形	392
@@ -90,3 +88,15 @@ n	不打印。相应的参数必须是指向带符号整形的指针，到目前
 
 
 */
+
+int test(int argc, char **argv) {
+
+    char *a = "hello";
+    char **b = &a;
+    printf("%s\n", b[0]);
+
+    printf("%p\n", a);
+    printf("%p\n", *b);
+
+    return 0;
+}

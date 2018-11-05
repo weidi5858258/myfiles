@@ -2317,8 +2317,17 @@ try {
 int a[5];
 printf("%p\n", a);
 
+char *p[5]
+5个字符串,每一个p[i]是一个字符串.
+char **p
+每一个p[i]也是一个字符串
 
-
+邮件协议SMTP简介
+打开回显(windows)
+set localecho
+open smtp.qq.com 25
+告诉服务器,我要登陆
+auth login
 
 
 

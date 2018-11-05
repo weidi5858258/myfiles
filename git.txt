@@ -21,6 +21,10 @@ git clean -nf
 git clean -nfd
 
 
+git stash
+git pull
+git stash pop stash@{0}
+
 
 
 
