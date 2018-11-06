@@ -255,7 +255,20 @@ apple-apples
 pencil-pencils
 tomato-tomatoes
 
+名词变复数规则:
+1.一般末尾加上后缀-s.如friend--->friends
+2.以s、z、x、ch、sh结尾的词，在该词末尾加上后缀-es.
+  如bus--->buses
+3.辅音字母+y结尾的名词,将y改为i,再加-es.
+  如candy--->candies
+4.以-o结尾的名词,如果不是外来词或缩写,就加-es.
+  如tomato--->tomatoes, hippo--->hippos
 
+元音字母a, e, i, o, u
+以元音开头的可数名词加an,表示一个.如 an apple
+以辅音开头的可数名词加a, 表示一个.如 a tomato
+a box of量词
+a bag of
 
 
 
