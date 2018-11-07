@@ -1,6 +1,7 @@
 #! /bin/bash
 
 # cd /etc/apt
+# /etc/hosts
 
 # sudo mv /var/lib/dpkg/info/ /var/lib/dpkg/info_old/
 # sudo mkdir /var/lib/dpkg/info/
