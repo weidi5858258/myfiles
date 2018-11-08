@@ -2314,8 +2314,14 @@ try {
 ///////////////////////////
 
 // a是数组名,代表内存的首地址
-int a[5];
+char *a = "hello";
+char **b = &a;
+printf("%s\n", b[0]);
 printf("%p\n", a);
+printf("%p\n", *b);
+hello
+0x41b623
+0x41b623
 
 char *p[5]
 5个字符串,每一个p[i]是一个字符串.

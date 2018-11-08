@@ -89,14 +89,16 @@ n	不打印。相应的参数必须是指向带符号整形的指针，到目前
 
 */
 
+/***
+ 1.
+ 创建文件夹(picture,audio,video)
+ 2.
+ 开始抓取
+ */
+
 int test(int argc, char **argv) {
 
-    char *a = "hello";
-    char **b = &a;
-    printf("%s\n", b[0]);
 
-    printf("%p\n", a);
-    printf("%p\n", *b);
 
     return 0;
 }
