@@ -23,7 +23,7 @@ add_executable(MyStudy
         src/HandleAndroidString.cpp
 #        src/thread_pool_active.c
         src/thread_pool_simple.c
-        )
+        include/DownloadFile.hpp)
 
 if (WIN32)
 

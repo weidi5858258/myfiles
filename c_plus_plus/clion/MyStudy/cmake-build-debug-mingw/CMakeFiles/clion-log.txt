@@ -1,1 +1,2 @@
-CMakeLists.txt not found in D:\workspace_github\myfiles\c_plus_plus\clion\MyStudy
+CMakeLists.txt not found in /root/mydev/workspace_github/myfiles/c_plus_plus/clion/MyStudy
+Toolchain 'mingw' is not found Configure

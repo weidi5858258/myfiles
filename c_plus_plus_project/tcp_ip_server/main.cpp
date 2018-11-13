@@ -1,11 +1,3 @@
-#include <signal.h>
-#include <thread>
-
-#include <stddef.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-
 #include "linuxhttp/LinuxSocket.h"
 #include "signal/HandleSignal.h"
 
@@ -41,6 +33,96 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+typedef union optval {
+    int val;
+    struct linger linger;
+    struct timeval tv;
+    unsigned char str[16];
+};
+static optval optval_;
+typedef enum valtype {
+    // int类型
+            VALINT,
+    // struct linger类型
+            VALLINGER,
+    // struct timeval类型
+            VALTIMEVAL,
+    // 字符串
+            VALUCHAR,
+    // 错误类型
+            VALMAX
+} valtype_;
+typedef struct sopts {
+    // 套接字选项级别
+    int level;
+    // 套接字选项名称
+    int optname;
+    // 套接字名称
+    char *name;
+    // 套接字返回参数类型
+    valtype_ valtype;
+} sopts_;
+sopts_ sockopts[] = {
+        {SOL_SOCKET, SO_BROADCAST, "SO_BROADCAST", VALINT},
+        // 结尾,主程序中判断VALMAX
+        {0, 0, NULL,                               VALMAX}
+};
+
+static void show_result(sopts_ *sockopt, socklen_t len, int err) {
+    if (err == -1) {
+        printf("optname %s NOT Support\n", sockopt->name);
+        return;
+    }
+
+    switch (sockopt->valtype) {
+        case VALINT:
+            printf("optname %s: default is %d\n",
+                   sockopt->name, optval_.val);
+            break;
+        case VALLINGER:
+            printf("optname %s: default is %d(ON/OFF), %d to linger\n",
+                   sockopt->name, optval_.linger.l_onoff, optval_.linger.l_linger);
+            break;
+        case VALTIMEVAL:
+            printf("optname %s: default is %.06f\n",
+                   sockopt->name,
+                   (((double) optval_.tv.tv_sec * 10000 + (double) optval_.tv.tv_usec) / (double) 1000000));
+            break;
+        case VALUCHAR: {
+            int i = 0;
+            printf("optname %s: default is ",
+                   sockopt->name);
+            for (i = 0; i < len; i++) {
+                printf("%02x ", optval_.str[i]);
+            }
+            printf("\n");
+        }
+            break;
+        default:
+            break;
+    }
+}
+
+int test() {
+    int err = -1;
+    socklen_t len = 0;
+    int i = 0;
+    int s = socket(AF_INET, SOCK_STREAM, 0);
+    while (sockopts[i].valtype != VALMAX) {
+        len = sizeof(sopts_);
+        err = getsockopt(s,
+                         sockopts->level,
+                         sockopts->optname,
+                         &optval_,
+                         &len);
+        show_result(&sockopts[i], len, err);
+        i++;
+    }
+    close(s);
+}
+// http://pic104.nipic.com/file/20160715/6171480_185807154956_2.jpg
+
+// 不要删
 int howToCreateChildProcess() {
     int x = 10;
     pid_t pid;
@@ -64,51 +146,6 @@ int howToCreateChildProcess() {
     }
 }
 
-#define BITS16 16
-#define BITS32 32
-
-void showvalue(unsigned char *begin, int flag) {
-    int num = 0, i = 0;
-    if (flag == BITS16) {
-        num = 2;
-    } else if (flag == BITS32) {
-        num = 4;
-    }
-    for (i = 0; i < num; i++) {
-        printf("%x ", *(begin + 1));
-    }
-    printf("\n");
-}
-
-static void display_err(const char *on_what) {
-    perror(on_what);
-    exit(EXIT_FAILURE);
-}
-
-int test() {
-    int error;
-    int sock_UNIX;
-    struct sockaddr_un addr_UNIX;
-    int len_UNIX;
-    const char path[] = "/demon/path";
-    sock_UNIX = socket(AF_UNIX, SOCK_STREAM, 0);
-    if (sock_UNIX == -1) {
-        display_err("socket()");
-    }
-
-    unlink(path);
-    memset(&addr_UNIX, 0, sizeof(addr_UNIX));
-    addr_UNIX.sun_family = AF_LOCAL;
-    strcpy(addr_UNIX.sun_path, path);
-    len_UNIX = sizeof(struct sockaddr_un);
-
-    error = bind(sock_UNIX, (struct sockaddr *) &addr_UNIX, len_UNIX);
-    if (error == -1) {
-        display_err("bind()");
-    }
-    close(sock_UNIX);
-    unlink(path);
-}
 /***
 子线程
 #include <thread>

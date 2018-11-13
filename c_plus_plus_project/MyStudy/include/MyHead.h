@@ -28,6 +28,8 @@
 #include <unordered_set>
 #include <pthread.h>
 #include <time.h>
+#include <netdb.h>
+
 
 
 //下面三个头文件使用open函数时用到
