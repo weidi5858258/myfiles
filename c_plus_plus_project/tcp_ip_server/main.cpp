@@ -63,9 +63,29 @@ typedef struct sopts {
     valtype_ valtype;
 } sopts_;
 sopts_ sockopts[] = {
-        {SOL_SOCKET, SO_BROADCAST, "SO_BROADCAST", VALINT},
+        {SOL_SOCKET,  SO_BROADCAST,      "SO_BROADCAST",      VALINT},
+        {SOL_SOCKET,  SO_DEBUG,          "SO_DEBUG",          VALINT},
+        {SOL_SOCKET,  SO_DONTROUTE,      "SO_DONTROUTE",      VALINT},
+        {SOL_SOCKET,  SO_ERROR,          "SO_ERROR",          VALINT},
+        {SOL_SOCKET,  SO_KEEPALIVE,      "SO_KEEPALIVE",      VALINT},
+        {SOL_SOCKET,  SO_LINGER,         "SO_LINGER",         VALINT},
+        {SOL_SOCKET,  SO_OOBINLINE,      "SO_OOBINLINE",      VALINT},
+        {SOL_SOCKET,  SO_RCVBUF,         "SO_RCVBUF",         VALINT},
+        {SOL_SOCKET,  SO_RCVLOWAT,       "SO_RCVLOWAT",       VALINT},
+        {SOL_SOCKET,  SO_RCVTIMEO,       "SO_RCVTIMEO",       VALTIMEVAL},
+        {SOL_SOCKET,  SO_SNDTIMEO,       "SO_SNDTIMEO",       VALTIMEVAL},
+        {SOL_SOCKET,  SO_TYPE,           "SO_TYPE",           VALINT},
+        {IPPROTO_IP,  IP_HDRINCL,        "IP_HDRINCL",        VALINT},
+        {IPPROTO_IP,  IP_OPTIONS,        "IP_OPTIONS",        VALINT},
+        {IPPROTO_IP,  IP_TOS,            "IP_TOS",            VALINT},
+        {IPPROTO_IP,  IP_TTL,            "IP_TTL",            VALINT},
+        {IPPROTO_IP,  IP_MULTICAST_TTL,  "IP_MULTICAST_TTL",  VALUCHAR},
+        {IPPROTO_IP,  IP_MULTICAST_LOOP, "IP_MULTICAST_LOOP", VALUCHAR},
+        {IPPROTO_TCP, TCP_KEEPCNT,       "TCP_KEEPCNT",       VALINT},
+        {IPPROTO_TCP, TCP_MAXSEG,        "TCP_MAXSEG",        VALINT},
+        {IPPROTO_TCP, TCP_NODELAY,       "TCP_NODELAY",       VALINT},
         // 结尾,主程序中判断VALMAX
-        {0, 0, NULL,                               VALMAX}
+        {0, 0, NULL,                                          VALMAX}
 };
 
 static void show_result(sopts_ *sockopt, socklen_t len, int err) {
