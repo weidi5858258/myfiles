@@ -18,7 +18,7 @@
 #include <sys/time.h>
 #include <sys/ioctl.h>          //ioctl结构
 
-#include <arpa/inet.h>
+#include <arpa/inet.h>          // 字节序转换函数
 #include <net/if.h>             //ifreq结构
 #include <netinet/in.h>         //in_addr结构
 //#include <netinet/tcp.h> // 与#include <linux/tcp.h>中的struct tcphdr有重复定义

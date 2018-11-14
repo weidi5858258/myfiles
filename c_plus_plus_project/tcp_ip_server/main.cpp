@@ -33,112 +33,19 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-typedef union optval {
-    int val;
-    struct linger linger;
-    struct timeval tv;
-    unsigned char str[16];
-};
-static optval optval_;
-typedef enum valtype {
-    // int类型
-            VALINT,
-    // struct linger类型
-            VALLINGER,
-    // struct timeval类型
-            VALTIMEVAL,
-    // 字符串
-            VALUCHAR,
-    // 错误类型
-            VALMAX
-} valtype_;
-typedef struct sopts {
-    // 套接字选项级别
-    int level;
-    // 套接字选项名称
-    int optname;
-    // 套接字名称
-    char *name;
-    // 套接字返回参数类型
-    valtype_ valtype;
-} sopts_;
-sopts_ sockopts[] = {
-        {SOL_SOCKET,  SO_BROADCAST,      "SO_BROADCAST",      VALINT},
-        {SOL_SOCKET,  SO_DEBUG,          "SO_DEBUG",          VALINT},
-        {SOL_SOCKET,  SO_DONTROUTE,      "SO_DONTROUTE",      VALINT},
-        {SOL_SOCKET,  SO_ERROR,          "SO_ERROR",          VALINT},
-        {SOL_SOCKET,  SO_KEEPALIVE,      "SO_KEEPALIVE",      VALINT},
-        {SOL_SOCKET,  SO_LINGER,         "SO_LINGER",         VALINT},
-        {SOL_SOCKET,  SO_OOBINLINE,      "SO_OOBINLINE",      VALINT},
-        {SOL_SOCKET,  SO_RCVBUF,         "SO_RCVBUF",         VALINT},
-        {SOL_SOCKET,  SO_RCVLOWAT,       "SO_RCVLOWAT",       VALINT},
-        {SOL_SOCKET,  SO_RCVTIMEO,       "SO_RCVTIMEO",       VALTIMEVAL},
-        {SOL_SOCKET,  SO_SNDTIMEO,       "SO_SNDTIMEO",       VALTIMEVAL},
-        {SOL_SOCKET,  SO_TYPE,           "SO_TYPE",           VALINT},
-        {IPPROTO_IP,  IP_HDRINCL,        "IP_HDRINCL",        VALINT},
-        {IPPROTO_IP,  IP_OPTIONS,        "IP_OPTIONS",        VALINT},
-        {IPPROTO_IP,  IP_TOS,            "IP_TOS",            VALINT},
-        {IPPROTO_IP,  IP_TTL,            "IP_TTL",            VALINT},
-        {IPPROTO_IP,  IP_MULTICAST_TTL,  "IP_MULTICAST_TTL",  VALUCHAR},
-        {IPPROTO_IP,  IP_MULTICAST_LOOP, "IP_MULTICAST_LOOP", VALUCHAR},
-        {IPPROTO_TCP, TCP_KEEPCNT,       "TCP_KEEPCNT",       VALINT},
-        {IPPROTO_TCP, TCP_MAXSEG,        "TCP_MAXSEG",        VALINT},
-        {IPPROTO_TCP, TCP_NODELAY,       "TCP_NODELAY",       VALINT},
-        // 结尾,主程序中判断VALMAX
-        {0, 0, NULL,                                          VALMAX}
-};
-
-static void show_result(sopts_ *sockopt, socklen_t len, int err) {
-    if (err == -1) {
-        printf("optname %s NOT Support\n", sockopt->name);
-        return;
-    }
-
-    switch (sockopt->valtype) {
-        case VALINT:
-            printf("optname %s: default is %d\n",
-                   sockopt->name, optval_.val);
-            break;
-        case VALLINGER:
-            printf("optname %s: default is %d(ON/OFF), %d to linger\n",
-                   sockopt->name, optval_.linger.l_onoff, optval_.linger.l_linger);
-            break;
-        case VALTIMEVAL:
-            printf("optname %s: default is %.06f\n",
-                   sockopt->name,
-                   (((double) optval_.tv.tv_sec * 10000 + (double) optval_.tv.tv_usec) / (double) 1000000));
-            break;
-        case VALUCHAR: {
-            int i = 0;
-            printf("optname %s: default is ",
-                   sockopt->name);
-            for (i = 0; i < len; i++) {
-                printf("%02x ", optval_.str[i]);
-            }
-            printf("\n");
-        }
-            break;
-        default:
-            break;
-    }
-}
-
 int test() {
-    int err = -1;
-    socklen_t len = 0;
-    int i = 0;
-    int s = socket(AF_INET, SOCK_STREAM, 0);
-    while (sockopts[i].valtype != VALMAX) {
-        len = sizeof(sopts_);
-        err = getsockopt(s,
-                         sockopts->level,
-                         sockopts->optname,
-                         &optval_,
-                         &len);
-        show_result(&sockopts[i], len, err);
-        i++;
+    char filename[] = "test2.txt";
+    int fd = open(filename, O_WRONLY | O_APPEND);
+    if (-1 == fd) {
+        printf("Open file %s failure, fd: %d\n", filename, fd);
+        return EXIT_FAILURE;
     }
-    close(s);
+    if (fd != -1) {
+        close(fd);
+    }
+    printf("fd = %d\n", fd);
+
+
 }
 // http://pic104.nipic.com/file/20160715/6171480_185807154956_2.jpg
 

@@ -239,6 +239,8 @@ echo "Y" | sudo apt-get install libbz2-dev
 echo "Y" | sudo apt-get install mpi-default-dev
 echo "Y" | sudo apt-get install libboost-dev
 echo "Y" | sudo apt-get install libboost-all-dev
+# No package 'gnutls' found
+echo "Y" | sudo apt-get install libghc-gnutls-dev
 echo "Y" | sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20  
 echo "Y" | sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20  
 echo "Y" | sudo update-alternatives --config gcc 
