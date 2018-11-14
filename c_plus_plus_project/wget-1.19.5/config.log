@@ -615,11 +615,11 @@ configure:9974: checking lex output file root
 configure:9988: result: lex.yy
 configure:9993: checking lex library
 configure:10007: gcc -o conftest -DNDEBUG    conftest.c   >&5
-/tmp/ccVA1QC7.o: In function `yylex':
+/tmp/cczsPS0p.o: In function `yylex':
 conftest.c:(.text+0x708): undefined reference to `yywrap'
-/tmp/ccVA1QC7.o: In function `input':
+/tmp/cczsPS0p.o: In function `input':
 conftest.c:(.text+0x11cf): undefined reference to `yywrap'
-/tmp/ccVA1QC7.o: In function `main':
+/tmp/cczsPS0p.o: In function `main':
 conftest.c:(.text+0x1e82): undefined reference to `yywrap'
 collect2: error: ld returned 1 exit status
 configure:10007: $? = 1
@@ -4412,7 +4412,7 @@ configure:12055: $? = 0
 configure:12055: result: yes
 configure:12055: checking for _set_invalid_parameter_handler
 configure:12055: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccMJz2cv.o: In function `main':
+/tmp/ccYs0GC5.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `_set_invalid_parameter_handler'
 collect2: error: ld returned 1 exit status
 configure:12055: $? = 1
@@ -4661,7 +4661,7 @@ configure:12055: $? = 0
 configure:12055: result: yes
 configure:12055: checking for getprogname
 configure:12055: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccgA4ySj.o: In function `main':
+/tmp/ccyqaa9k.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `getprogname'
 collect2: error: ld returned 1 exit status
 configure:12055: $? = 1
@@ -4856,7 +4856,7 @@ configure: failed program was:
 configure:12055: result: no
 configure:12055: checking for getexecname
 configure:12055: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/cc68MGzp.o: In function `main':
+/tmp/ccubIekp.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `getexecname'
 collect2: error: ld returned 1 exit status
 configure:12055: $? = 1
@@ -5055,7 +5055,7 @@ configure:12055: $? = 0
 configure:12055: result: yes
 configure:12055: checking for nanotime
 configure:12055: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccDvFHnj.o: In function `main':
+/tmp/ccG3FbIA.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `nanotime'
 collect2: error: ld returned 1 exit status
 configure:12055: $? = 1
@@ -5406,7 +5406,7 @@ configure:12055: $? = 0
 configure:12055: result: yes
 configure:12055: checking for vasnprintf
 configure:12055: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccCetPgT.o: In function `main':
+/tmp/cc4B6VJK.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `vasnprintf'
 collect2: error: ld returned 1 exit status
 configure:12055: $? = 1
@@ -8456,7 +8456,7 @@ configure:20130: result: yes
 configure:20130: checking for pthread.h
 configure:20130: result: yes
 configure:20168: gcc -o conftest -DNDEBUG    conftest.c   >&5
-/tmp/ccM5pFop.o: In function `main':
+/tmp/ccGoWMIF.o: In function `main':
 conftest.c:(.text+0x14): undefined reference to `pthread_mutexattr_init'
 collect2: error: ld returned 1 exit status
 configure:20168: $? = 1
@@ -15686,7 +15686,7 @@ configure:33333: $? = 0
 configure:33345: result: yes
 configure:33439: checking for __mktime_internal
 configure:33439: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccmrzMc1.o: In function `main':
+/tmp/ccdxnOZi.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `__mktime_internal'
 collect2: error: ld returned 1 exit status
 configure:33439: $? = 1
@@ -25212,7 +25212,7 @@ configure:42331: $? = 0
 configure:42331: result: yes
 configure:42331: checking for sigsetjmp
 configure:42331: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccOJlRH7.o: In function `main':
+/tmp/ccTlOyCR.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `sigsetjmp'
 collect2: error: ld returned 1 exit status
 configure:42331: $? = 1
@@ -25965,7 +25965,7 @@ configure:42343: checking for utime
 configure:42343: result: yes
 configure:42343: checking for strlcpy
 configure:42343: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/cclkur67.o: In function `main':
+/tmp/ccR5Wyy4.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `strlcpy'
 collect2: error: ld returned 1 exit status
 configure:42343: $? = 1
@@ -26736,7 +26736,7 @@ configure:42555: result: no
 No package 'libpsl' found
 configure:42572: checking for library containing psl_builtin
 configure:42603: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccbWuryj.o: In function `main':
+/tmp/ccPLQIsh.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `psl_builtin'
 collect2: error: ld returned 1 exit status
 configure:42603: $? = 1
@@ -28977,7 +28977,7 @@ configure:45054: $? = 0
 configure:45054: result: yes
 configure:45098: Enabling support for IPv6.
 configure:45109: checking for makeinfo
-configure:45136: result: ${SHELL} /root/mydev/workspace_github/wget-1.19.5/build-aux/missing makeinfo
+configure:45136: result: ${SHELL} /root/mydev/workspace_github/myfiles/c_plus_plus_project/wget-1.19.5/build-aux/missing makeinfo
 configure:45154: checking for perl5
 configure:45187: result: no
 configure:45154: checking for perl
@@ -28988,7 +28988,7 @@ configure:45216: found /usr/bin/pod2man
 configure:45229: result: /usr/bin/pod2man
 configure:45302: checking for library containing idn2_lookup_u8
 configure:45333: gcc -o conftest -I/usr/include/p11-kit-1 -DHAVE_LIBGNUTLS  -DNDEBUG    conftest.c -lnettle -lgnutls -lz  >&5
-/tmp/ccV888VT.o: In function `main':
+/tmp/cc4NemPs.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `idn2_lookup_u8'
 collect2: error: ld returned 1 exit status
 configure:45333: $? = 1
@@ -33463,6 +33463,7 @@ config.status:2617: creating testenv/Makefile
 config.status:2617: creating tests/certs/interca.conf
 config.status:2617: creating tests/certs/rootca.conf
 config.status:2617: creating src/config.h
+config.status:2798: src/config.h is unchanged
 config.status:2877: executing depfiles commands
 config.status:2877: executing po-directories commands
 configure:47992: Summary of build options:
@@ -34015,7 +34016,7 @@ ac_cv_path_mkdir=/bin/mkdir
 ac_cv_prog_AWK=gawk
 ac_cv_prog_CPP='gcc -E'
 ac_cv_prog_LEX=flex
-ac_cv_prog_MAKEINFO='${SHELL} /root/mydev/workspace_github/wget-1.19.5/build-aux/missing makeinfo'
+ac_cv_prog_MAKEINFO='${SHELL} /root/mydev/workspace_github/myfiles/c_plus_plus_project/wget-1.19.5/build-aux/missing makeinfo'
 ac_cv_prog_ac_ct_AR=ar
 ac_cv_prog_ac_ct_CC=gcc
 ac_cv_prog_ac_ct_RANLIB=ranlib
@@ -34534,7 +34535,7 @@ wget_cv_proto_inet6=yes
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} /root/mydev/workspace_github/wget-1.19.5/build-aux/missing aclocal-1.15'
+ACLOCAL='${SHELL} /root/mydev/workspace_github/myfiles/c_plus_plus_project/wget-1.19.5/build-aux/missing aclocal-1.15'
 ALLOCA=''
 ALLOCA_H='alloca.h'
 AMDEPBACKSLASH='\'
@@ -34549,9 +34550,9 @@ APPLE_UNIVERSAL_BUILD='0'
 AR='ar'
 ARFLAGS='cr'
 ASM_SYMBOL_PREFIX='""'
-AUTOCONF='${SHELL} /root/mydev/workspace_github/wget-1.19.5/build-aux/missing autoconf'
-AUTOHEADER='${SHELL} /root/mydev/workspace_github/wget-1.19.5/build-aux/missing autoheader'
-AUTOMAKE='${SHELL} /root/mydev/workspace_github/wget-1.19.5/build-aux/missing automake-1.15'
+AUTOCONF='${SHELL} /root/mydev/workspace_github/myfiles/c_plus_plus_project/wget-1.19.5/build-aux/missing autoconf'
+AUTOHEADER='${SHELL} /root/mydev/workspace_github/myfiles/c_plus_plus_project/wget-1.19.5/build-aux/missing autoheader'
+AUTOMAKE='${SHELL} /root/mydev/workspace_github/myfiles/c_plus_plus_project/wget-1.19.5/build-aux/missing automake-1.15'
 AWK='gawk'
 BITSIZEOF_PTRDIFF_T=''
 BITSIZEOF_SIG_ATOMIC_T=''
@@ -35296,7 +35297,7 @@ LTLIBPTH=''
 LTLIBSSL=''
 LTLIBTHREAD=''
 LTLIBUNISTRING=''
-MAKEINFO='${SHELL} /root/mydev/workspace_github/wget-1.19.5/build-aux/missing makeinfo'
+MAKEINFO='${SHELL} /root/mydev/workspace_github/myfiles/c_plus_plus_project/wget-1.19.5/build-aux/missing makeinfo'
 METALINK_CFLAGS=''
 METALINK_IS_ENABLED_FALSE=''
 METALINK_IS_ENABLED_TRUE='#'
@@ -35647,7 +35648,7 @@ host_vendor='pc'
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='${SHELL} /root/mydev/workspace_github/wget-1.19.5/build-aux/install-sh'
+install_sh='${SHELL} /root/mydev/workspace_github/myfiles/c_plus_plus_project/wget-1.19.5/build-aux/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 lispdir='${datarootdir}/emacs/site-lisp'
