@@ -110,76 +110,71 @@ static double posix_clock_resolution;
 /* Decide which clock_id to use.  */
 
 static void
-posix_init (void)
-{
-  /* List of clocks we want to support: some systems support monotonic
-     clocks, Solaris has "high resolution" clock (sometimes
-     unavailable except to superuser), and all should support the
-     real-time clock.  */
+posix_init(void) {
+    /* List of clocks we want to support: some systems support monotonic
+       clocks, Solaris has "high resolution" clock (sometimes
+       unavailable except to superuser), and all should support the
+       real-time clock.  */
 #define NO_SYSCONF_CHECK -1
-  static const struct {
-    int id;
-    int sysconf_name;
-  } clocks[] = {
+    static const struct {
+        int id;
+        int sysconf_name;
+    } clocks[] = {
 #if defined(_POSIX_MONOTONIC_CLOCK) && _POSIX_MONOTONIC_CLOCK - 0 >= 0
-    { CLOCK_MONOTONIC, _SC_MONOTONIC_CLOCK },
+            {CLOCK_MONOTONIC, _SC_MONOTONIC_CLOCK},
 #endif
 #ifdef CLOCK_HIGHRES
-    { CLOCK_HIGHRES, NO_SYSCONF_CHECK },
+            { CLOCK_HIGHRES, NO_SYSCONF_CHECK },
 #endif
-    { CLOCK_REALTIME, NO_SYSCONF_CHECK },
-  };
-  size_t i;
+            {CLOCK_REALTIME, NO_SYSCONF_CHECK},
+    };
+    size_t i;
 
-  /* Determine the clock we can use.  For a clock to be usable, it
-     must be confirmed with sysconf (where applicable) and with
-     clock_getres.  If no clock is found, CLOCK_REALTIME is used.  */
+    /* Determine the clock we can use.  For a clock to be usable, it
+       must be confirmed with sysconf (where applicable) and with
+       clock_getres.  If no clock is found, CLOCK_REALTIME is used.  */
 
-  for (i = 0; i < countof (clocks); i++)
-    {
-      struct timespec r;
-      if (clocks[i].sysconf_name != NO_SYSCONF_CHECK)
-        if (sysconf (clocks[i].sysconf_name) < 0)
-          continue;             /* sysconf claims this clock is unavailable */
-      if (clock_getres (clocks[i].id, &r) < 0)
-        continue;               /* clock_getres doesn't work for this clock */
-      posix_clock_id = clocks[i].id;
-      posix_clock_resolution = (double) r.tv_sec + r.tv_nsec / 1e9;
-      /* Guard against nonsense returned by a broken clock_getres.  */
-      if (posix_clock_resolution == 0)
-        posix_clock_resolution = 1e-3;
-      break;
+    for (i = 0; i < countof (clocks); i++) {
+        struct timespec r;
+        if (clocks[i].sysconf_name != NO_SYSCONF_CHECK)
+            if (sysconf(clocks[i].sysconf_name) < 0)
+                continue;             /* sysconf claims this clock is unavailable */
+        if (clock_getres(clocks[i].id, &r) < 0)
+            continue;               /* clock_getres doesn't work for this clock */
+        posix_clock_id = clocks[i].id;
+        posix_clock_resolution = (double) r.tv_sec + r.tv_nsec / 1e9;
+        /* Guard against nonsense returned by a broken clock_getres.  */
+        if (posix_clock_resolution == 0)
+            posix_clock_resolution = 1e-3;
+        break;
     }
-  if (i == countof (clocks))
-    {
-      /* If no clock was found, it means that clock_getres failed for
-         the realtime clock.  */
-      logprintf (LOG_NOTQUIET, _("Cannot get REALTIME clock frequency: %s\n"),
-                 strerror (errno));
-      /* Use CLOCK_REALTIME, but invent a plausible resolution. */
-      posix_clock_id = CLOCK_REALTIME;
-      posix_clock_resolution = 1e-3;
+    if (i == countof (clocks)) {
+        /* If no clock was found, it means that clock_getres failed for
+           the realtime clock.  */
+        logprintf(LOG_NOTQUIET, _("Cannot get REALTIME clock frequency: %s\n"),
+                  strerror(errno));
+        /* Use CLOCK_REALTIME, but invent a plausible resolution. */
+        posix_clock_id = CLOCK_REALTIME;
+        posix_clock_resolution = 1e-3;
     }
 }
 
 static inline void
-posix_measure (ptimer_system_time *pst)
-{
-  clock_gettime (posix_clock_id, pst);
+posix_measure(ptimer_system_time *pst) {
+    clock_gettime(posix_clock_id, pst);
 }
 
 static inline double
-posix_diff (ptimer_system_time *pst1, ptimer_system_time *pst2)
-{
-  return ((pst1->tv_sec - pst2->tv_sec)
-          + (pst1->tv_nsec - pst2->tv_nsec) / 1e9);
+posix_diff(ptimer_system_time *pst1, ptimer_system_time *pst2) {
+    return ((pst1->tv_sec - pst2->tv_sec)
+            + (pst1->tv_nsec - pst2->tv_nsec) / 1e9);
 }
 
 static inline double
-posix_resolution (void)
-{
-  return posix_clock_resolution;
+posix_resolution(void) {
+    return posix_clock_resolution;
 }
+
 #endif  /* PTIMER_POSIX */
 
 #ifdef PTIMER_GETTIMEOFDAY
@@ -294,44 +289,41 @@ windows_resolution (void)
 /* The code below this point is independent of timer implementation. */
 
 struct ptimer {
-  /* The starting point in time which, subtracted from the current
-     time, yields elapsed time. */
-  ptimer_system_time start;
+    /* The starting point in time which, subtracted from the current
+       time, yields elapsed time. */
+    ptimer_system_time start;
 
-  /* The most recent elapsed time, calculated by ptimer_measure().  */
-  double elapsed_last;
+    /* The most recent elapsed time, calculated by ptimer_measure().  */
+    double elapsed_last;
 
-  /* Approximately, the time elapsed between the true start of the
-     measurement and the time represented by START.  This is used for
-     adjustment when clock skew is detected.  */
-  double elapsed_pre_start;
+    /* Approximately, the time elapsed between the true start of the
+       measurement and the time represented by START.  This is used for
+       adjustment when clock skew is detected.  */
+    double elapsed_pre_start;
 };
 
 /* Allocate a new timer and reset it.  Return the new timer. */
 
 struct ptimer *
-ptimer_new (void)
-{
-  struct ptimer *pt = xnew0 (struct ptimer);
+ptimer_new(void) {
+    struct ptimer *pt = xnew0 (struct ptimer);
 #ifdef IMPL_init
-  static bool init_done;
-  if (!init_done)
-    {
-      init_done = true;
-      IMPL_init ();
+    static bool init_done;
+    if (!init_done) {
+        init_done = true;
+        IMPL_init();
     }
 #endif
-  ptimer_reset (pt);
-  return pt;
+    ptimer_reset(pt);
+    return pt;
 }
 
 /* Free the resources associated with the timer.  Its further use is
    prohibited.  */
 
 void
-ptimer_destroy (struct ptimer *pt)
-{
-  xfree (pt);
+ptimer_destroy(struct ptimer *pt) {
+    xfree (pt);
 }
 
 /* Reset timer PT.  This establishes the starting point from which
@@ -339,12 +331,11 @@ ptimer_destroy (struct ptimer *pt)
    allowed to reset a previously used timer.  */
 
 void
-ptimer_reset (struct ptimer *pt)
-{
-  /* Set the start time to the current time. */
-  IMPL_measure (&pt->start);
-  pt->elapsed_last = 0;
-  pt->elapsed_pre_start = 0;
+ptimer_reset(struct ptimer *pt) {
+    /* Set the start time to the current time. */
+    IMPL_measure(&pt->start);
+    pt->elapsed_last = 0;
+    pt->elapsed_pre_start = 0;
 }
 
 /* Measure the elapsed time since timer creation/reset.  This causes
@@ -356,39 +347,37 @@ ptimer_reset (struct ptimer *pt)
    ignored.  */
 
 double
-ptimer_measure (struct ptimer *pt)
-{
-  ptimer_system_time now;
-  double elapsed;
+ptimer_measure(struct ptimer *pt) {
+    ptimer_system_time now;
+    double elapsed;
 
-  IMPL_measure (&now);
-  elapsed = pt->elapsed_pre_start + IMPL_diff (&now, &pt->start);
+    IMPL_measure(&now);
+    elapsed = pt->elapsed_pre_start + IMPL_diff(&now, &pt->start);
 
-  /* Ideally we'd just return the difference between NOW and
-     pt->start.  However, the system timer can be set back, and we
-     could return a value smaller than when we were last called, even
-     a negative value.  Both of these would confuse the callers, which
-     expect us to return monotonically nondecreasing values.
+    /* Ideally we'd just return the difference between NOW and
+       pt->start.  However, the system timer can be set back, and we
+       could return a value smaller than when we were last called, even
+       a negative value.  Both of these would confuse the callers, which
+       expect us to return monotonically nondecreasing values.
 
-     Therefore: if ELAPSED is smaller than its previous known value,
-     we reset pt->start to the current time and effectively start
-     measuring from this point.  But since we don't want the elapsed
-     value to start from zero, we set elapsed_pre_start to the last
-     elapsed time and increment all future calculations by that
-     amount.
+       Therefore: if ELAPSED is smaller than its previous known value,
+       we reset pt->start to the current time and effectively start
+       measuring from this point.  But since we don't want the elapsed
+       value to start from zero, we set elapsed_pre_start to the last
+       elapsed time and increment all future calculations by that
+       amount.
 
-     This cannot happen with Windows and POSIX monotonic/highres
-     timers, but the check is not expensive.  */
+       This cannot happen with Windows and POSIX monotonic/highres
+       timers, but the check is not expensive.  */
 
-  if (elapsed < pt->elapsed_last)
-    {
-      pt->start = now;
-      pt->elapsed_pre_start = pt->elapsed_last;
-      elapsed = pt->elapsed_last;
+    if (elapsed < pt->elapsed_last) {
+        pt->start = now;
+        pt->elapsed_pre_start = pt->elapsed_last;
+        elapsed = pt->elapsed_last;
     }
 
-  pt->elapsed_last = elapsed;
-  return elapsed;
+    pt->elapsed_last = elapsed;
+    return elapsed;
 }
 
 /* Return the most recent elapsed time measured with ptimer_measure.
@@ -396,9 +385,8 @@ ptimer_measure (struct ptimer *pt)
    created or reset, this returns 0.  */
 
 double
-ptimer_read (const struct ptimer *pt)
-{
-  return pt->elapsed_last;
+ptimer_read(const struct ptimer *pt) {
+    return pt->elapsed_last;
 }
 
 /* Return the assessed resolution of the timer implementation, in
@@ -406,7 +394,6 @@ ptimer_read (const struct ptimer *pt)
    value for timers that have returned zero.  */
 
 double
-ptimer_resolution (void)
-{
-  return IMPL_resolution ();
+ptimer_resolution(void) {
+    return IMPL_resolution();
 }

@@ -5,9 +5,7 @@ set(CMAKE_C_STANDARD 11)
 
 include_directories(fuzz)
 include_directories(lib)
-include_directories(lib/arpa)
 include_directories(lib/glthread)
-include_directories(lib/sys)
 include_directories(lib/unicase)
 include_directories(lib/unictype)
 include_directories(lib/uninorm)
@@ -28,19 +26,9 @@ add_executable(wget_1_19_5
         fuzz/wget_options_fuzzer.c
         fuzz/wget_robots_fuzzer.c
         fuzz/wget_url_fuzzer.c
-        lib/arpa/inet.h
         lib/glthread/lock.c
         lib/glthread/lock.h
         lib/glthread/threadlib.c
-        lib/sys/file.h
-        lib/sys/ioctl.h
-        lib/sys/select.h
-        lib/sys/socket.h
-        lib/sys/stat.h
-        lib/sys/time.h
-        lib/sys/types.h
-        lib/sys/uio.h
-        lib/sys/wait.h
         lib/unicase/cased.c
         lib/unicase/cased.h
         lib/unicase/caseprop.h
@@ -52,7 +40,6 @@ add_executable(wget_1_19_5
         lib/unicase/simple-mapping.h
         lib/unicase/special-casing-table.h
         lib/unicase/special-casing.c
-        lib/unicase/special-casing.h
         lib/unicase/special-casing.in.h
         lib/unicase/tolower.c
         lib/unicase/tolower.h
@@ -82,7 +69,6 @@ add_executable(wget_1_19_5
         lib/_Noreturn.h
         lib/accept.c
         lib/alloca.c
-        lib/alloca.h
         lib/alloca.in.h
         lib/arg-nonnull.h
         lib/arpa_inet.in.h
@@ -109,7 +95,6 @@ add_executable(wget_1_19_5
         lib/cloexec.c
         lib/cloexec.h
         lib/close.c
-        lib/configmake.h
         lib/connect.c
         lib/dirname-lgpl.c
         lib/dirname.c
@@ -126,7 +111,6 @@ add_executable(wget_1_19_5
         lib/fatal-signal.c
         lib/fatal-signal.h
         lib/fcntl.c
-        lib/fcntl.h
         lib/fcntl.in.h
         lib/fd-hook.c
         lib/fd-hook.h
@@ -179,20 +163,16 @@ add_executable(wget_1_19_5
         lib/iconv.in.h
         lib/inet_ntop.c
         lib/intprops.h
-        lib/inttypes.h
         lib/inttypes.in.h
         lib/ioctl.c
         lib/iswblank.c
         lib/itold.c
-        lib/langinfo.h
         lib/langinfo.in.h
-        lib/limits.h
         lib/limits.in.h
         lib/link.c
         lib/listen.c
         lib/localcharset.c
         lib/localcharset.h
-        lib/locale.h
         lib/locale.in.h
         lib/localeconv.c
         lib/localtime-buffer.c
@@ -232,7 +212,6 @@ add_executable(wget_1_19_5
         lib/msvc-nothrow.c
         lib/msvc-nothrow.h
         lib/nanosleep.c
-        lib/netdb.h
         lib/netdb.in.h
         lib/netinet_in.in.h
         lib/nl_langinfo.c
@@ -272,7 +251,6 @@ add_executable(wget_1_19_5
         lib/sig-handler.c
         lib/sig-handler.h
         lib/sigaction.c
-        lib/signal.h
         lib/signal.in.h
         lib/sigprocmask.c
         lib/size_max.h
@@ -283,7 +261,6 @@ add_executable(wget_1_19_5
         lib/spawn-pipe.c
         lib/spawn-pipe.h
         lib/spawn.c
-        lib/spawn.h
         lib/spawn.in.h
         lib/spawn_faction_addclose.c
         lib/spawn_faction_adddup2.c
@@ -304,15 +281,11 @@ add_executable(wget_1_19_5
         lib/stat.c
         lib/stdalign.in.h
         lib/stdbool.in.h
-        lib/stddef.h
         lib/stddef.in.h
-        lib/stdint.h
         lib/stdint.in.h
         lib/stdio-impl.h
         lib/stdio-write.c
-        lib/stdio.h
         lib/stdio.in.h
-        lib/stdlib.h
         lib/stdlib.in.h
         lib/str-two-way.h
         lib/strcasecmp.c
@@ -323,9 +296,7 @@ add_executable(wget_1_19_5
         lib/strerror-override.h
         lib/strerror.c
         lib/strerror_r.c
-        lib/string.h
         lib/string.in.h
-        lib/strings.h
         lib/strings.in.h
         lib/stripslash.c
         lib/strncasecmp.c
@@ -351,7 +322,6 @@ add_executable(wget_1_19_5
         lib/sys_wait.in.h
         lib/tempname.c
         lib/tempname.h
-        lib/time.h
         lib/time.in.h
         lib/time_r.c
         lib/timegm.c
@@ -361,22 +331,15 @@ add_executable(wget_1_19_5
         lib/tmpdir.h
         lib/u64.c
         lib/u64.h
-        lib/unicase.h
         lib/unicase.in.h
-        lib/unictype.h
         lib/unictype.in.h
-        lib/uninorm.h
         lib/uninorm.in.h
         lib/unistd--.h
         lib/unistd-safer.h
         lib/unistd.c
-        lib/unistd.h
         lib/unistd.in.h
-        lib/unistr.h
         lib/unistr.in.h
-        lib/unitypes.h
         lib/unitypes.in.h
-        lib/uniwidth.h
         lib/uniwidth.in.h
         lib/unlink.c
         lib/unlocked-io.h
@@ -396,11 +359,9 @@ add_executable(wget_1_19_5
         lib/wait-process.h
         lib/waitpid.c
         lib/warn-on-use.h
-        lib/wchar.h
         lib/wchar.in.h
         lib/wcrtomb.c
         lib/wctype-h.c
-        lib/wctype.h
         lib/wctype.in.h
         lib/wcwidth.c
         lib/write.c
@@ -416,7 +377,6 @@ add_executable(wget_1_19_5
         lib/xstrndup.h
         msdos/config.h
         src/build_info.c
-        src/config.h
         src/connect.c
         src/connect.h
         src/convert.c
@@ -483,7 +443,6 @@ add_executable(wget_1_19_5
         src/url.h
         src/utils.c
         src/utils.h
-        src/version.c
         src/version.h
         src/warc.c
         src/warc.h

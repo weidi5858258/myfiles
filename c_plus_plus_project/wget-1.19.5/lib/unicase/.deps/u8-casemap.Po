@@ -36,8 +36,8 @@ unicase/u8-casemap.o: unicase/u8-casemap.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h unistr.h \
- unused-parameter.h unictype.h unicase/caseprop.h unicase/context.h \
- unicase/special-casing.h unicase/u-casemap.h
+ unused-parameter.h unictype.h unicase/caseprop.h unitypes.in.h \
+ unicase/context.h unicase/special-casing.h unicase/u-casemap.h
 
 /usr/include/stdc-predef.h:
 
@@ -166,6 +166,8 @@ unused-parameter.h:
 unictype.h:
 
 unicase/caseprop.h:
+
+unitypes.in.h:
 
 unicase/context.h:
 

@@ -16,7 +16,7 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #include <stdbool.h>
-#include "unitypes.h"
+#include "unitypes.in.h"
 
 /* Determine whether a character is "cased" according to the Unicode Standard,
    <http://www.unicode.org/versions/Unicode5.0.0/ch03.pdf>, section 3.13,
