@@ -1736,6 +1736,7 @@ initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct ur
                    bool inhibit_keep_alive, bool *basic_auth_finished,
                    wgint *body_data_size, char **user, char **passwd, uerr_t *ret) {
     bool head_only = !!(*dt & HEAD_ONLY);
+    logprintf(LOG_VERBOSE, "initialize_request head_only: %d\n", head_only);
     struct request *req;
 
     /* Prepare the request to send. */
@@ -2084,7 +2085,7 @@ establish_connection(const struct url *u, const struct url **conn_ref,
 static uerr_t
 set_file_timestamp(struct http_stat *hs) {
     size_t filename_len = strlen(hs->local_file);
-    char *filename_plus_orig_suffix = alloca (filename_len + sizeof(ORIG_SFX));
+    char *filename_plus_orig_suffix = alloca(filename_len + sizeof(ORIG_SFX));
     bool local_dot_orig_file_exists = false;
     char *local_filename = NULL;
     struct stat st;
@@ -3101,7 +3102,7 @@ static uerr_t gethttp(const struct url *u, struct url *original_url, struct http
         }
 
         if (!proxy) {
-            warc_ip = (ip_address *) alloca (sizeof(ip_address));
+            warc_ip = (ip_address *) alloca(sizeof(ip_address));
             socket_ip_address(sock, warc_ip, ENDPOINT_PEER);
         }
     }
@@ -4598,10 +4599,10 @@ basic_authentication_encode(const char *user, const char *passwd) {
     char *t1, *t2;
     int len1 = strlen(user) + 1 + strlen(passwd);
 
-    t1 = (char *) alloca (len1 + 1);
+    t1 = (char *) alloca(len1 + 1);
     sprintf(t1, "%s:%s", user, passwd);
 
-    t2 = (char *) alloca (BASE64_LENGTH(len1) + 1);
+    t2 = (char *) alloca(BASE64_LENGTH(len1) + 1);
     wget_base64_encode(t1, len1, t2);
 
     return concat_strings("Basic ", t2, (char *) 0);

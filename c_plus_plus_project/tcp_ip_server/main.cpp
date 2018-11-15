@@ -34,16 +34,7 @@ int main(int argc, char *argv[]) {
 }
 
 int test() {
-    char filename[] = "test2.txt";
-    int fd = open(filename, O_WRONLY | O_APPEND);
-    if (-1 == fd) {
-        printf("Open file %s failure, fd: %d\n", filename, fd);
-        return EXIT_FAILURE;
-    }
-    if (fd != -1) {
-        close(fd);
-    }
-    printf("fd = %d\n", fd);
+
 
 
 }
