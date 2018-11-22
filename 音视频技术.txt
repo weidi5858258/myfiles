@@ -21,7 +21,9 @@ cd x264
 CC=cl ./configure --enable-static --enable-shared --enable-pic
 
 
- ./configure --toolchain=msvc --enable-yasm --enable-asm --enable-gpl --enable-libx264 --extra-cflags=-I/usr/local/include --extra-ldflags=-LIBPATH:/usr/local/lib
+ ./configure --toolchain=msvc --enable-yasm --enable-asm --enable-gpl --enable-libx264 
+ --extra-cflags=-I/usr/local/include 
+ --extra-ldflags=-LIBPATH:/usr/local/lib
 
 
 

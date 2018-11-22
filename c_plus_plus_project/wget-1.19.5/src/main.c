@@ -2052,11 +2052,11 @@ only if outputting to a regular file.\n"));
 
                 opt.follow_ftp = old_follow_ftp;
             } else {
-                fprintf(stdout, _("retrieve_url() start"));
+                fprintf(stdout, _("retrieve_url() start\n"));
                 // dosomething
                 retrieve_url(url_parsed, *t, &filename, &redirected_URL, NULL,
                              &dt, opt.recursive, iri, true);
-                fprintf(stdout, _("retrieve_url() end"));
+                fprintf(stdout, _("retrieve_url() end\n"));
             }
 
             if (opt.delete_after && filename != NULL && file_exists_p(filename, NULL)) {

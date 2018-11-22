@@ -2335,7 +2335,23 @@ open smtp.qq.com 25
 告诉服务器,我要登陆
 auth login
 
+bjam stage --toolset=msvc-9.0 --without-python --stagedir=""
 
+智能指针scoped_ptr
+auto_ptr<Test> p1(new Test(30));
+cout<<p1->age<<endl;
+// 1.调用拷贝构造函数,此时p1失去所有权
+auto_ptr<Test> p2(p1);
+// 2.调用赋值函数,此时p1失去所有权
+auto_ptr<Test> p2;
+p2 = p1;
+
+// p1失去所有权后,再用p1调用成员函数就会报错
+// 可以使用p1.get()是否为NULL判断p1这个指针是否还有效
+cout<<p1.get()<<endl;
+cout<<p2->age<<endl;
+
+#include <boost/scoped_ptr.hpp>
 
 
 

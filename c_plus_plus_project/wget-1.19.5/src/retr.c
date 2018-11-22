@@ -858,6 +858,12 @@ retrieve_url (struct url * orig_parsed, const char *origurl, char **file,
               char **newloc, const char *refurl, int *dt, bool recursive,
               struct iri *iri, bool register_status)
 {
+  fprintf(stdout, _("retrieve_url() origurl: %s\n"), origurl);
+  fprintf(stdout, _("retrieve_url() refurl: %s\n"), refurl);
+  fprintf(stdout, _("retrieve_url() recursive: %d\n"), recursive);
+  fprintf(stdout, _("retrieve_url() register_status: %d\n"), register_status);
+  fprintf(stdout, _("retrieve_url() *dt: %d\n"), *dt);
+
   uerr_t result;
   char *url;
   bool location_changed;
@@ -881,6 +887,7 @@ retrieve_url (struct url * orig_parsed, const char *origurl, char **file,
       dummy = 0;
     }
   url = xstrdup (origurl);
+  fprintf(stdout, _("retrieve_url() url: %s\n"), url);
   if (newloc)
     *newloc = NULL;
   if (file)
@@ -954,8 +961,11 @@ retrieve_url (struct url * orig_parsed, const char *origurl, char **file,
 	    logprintf (LOG_VERBOSE, "URL transformed to HTTPS due to an HSTS policy\n");
 	}
 #endif
-      result = http_loop (u, orig_parsed, &mynewloc, &local_file, refurl, dt,
-                          proxy_url, iri);
+      fprintf(stdout, _("retrieve_url() mynewloc: %s\n"), mynewloc);
+      fprintf(stdout, _("retrieve_url() local_file: %s\n"), local_file);
+      fprintf(stdout, _("retrieve_url() proxy_url: %s\n"), proxy_url);
+      result = http_loop (u, orig_parsed, &mynewloc, &local_file, refurl, dt, proxy_url, iri);
+      fprintf(stdout, _("retrieve_url() result: %d\n"), result);
     }
   else if (u->scheme == SCHEME_FTP
 #ifdef HAVE_SSL
@@ -1084,7 +1094,7 @@ retrieve_url (struct url * orig_parsed, const char *origurl, char **file,
      */
       if (result != NEWLOCATION_KEEP_POST && !method_suspended)
         SUSPEND_METHOD;
-
+      fprintf(stdout, _("retrieve_url() goto redirected 1\n"));
       goto redirected;
     }
   else
@@ -1109,6 +1119,7 @@ retrieve_url (struct url * orig_parsed, const char *origurl, char **file,
               xfree (url);
               url = xstrdup (u->url);
               iri_fallbacked = 1;
+              fprintf(stdout, _("retrieve_url() goto redirected 2\n"));
               goto redirected;
             }
           else

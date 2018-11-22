@@ -12,10 +12,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e31a637b-4815-461a-912d-8bdc71827a30" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../tcp_ip_server/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../tcp_ip_server/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../c_plus_plus/C++语法.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../c_plus_plus/C++语法.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.log" beforeDir="false" afterPath="$PROJECT_DIR$/config.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.status" beforeDir="false" afterPath="$PROJECT_DIR$/config.status" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/doc/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/wget.1" beforeDir="false" afterPath="$PROJECT_DIR$/doc/wget.1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fuzz/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/fuzz/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/po/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/po/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/po/Makefile.in" beforeDir="false" afterPath="$PROJECT_DIR$/po/Makefile.in" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/src/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/http.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/http.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/http.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/http.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/retr.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/retr.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/retr.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/retr.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/wget" beforeDir="false" afterPath="$PROJECT_DIR$/src/wget" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testenv/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/testenv/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/certs/interca.conf" beforeDir="false" afterPath="$PROJECT_DIR$/tests/certs/interca.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/certs/rootca.conf" beforeDir="false" afterPath="$PROJECT_DIR$/tests/certs/rootca.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/util/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../音视频技术.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../音视频技术.txt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -39,30 +60,35 @@
       <usages-collector id="statistics.lifecycle.project">
         <counts>
           <entry key="project.closed" value="2" />
-          <entry key="project.open.time.0" value="1" />
+          <entry key="project.open.time.0" value="2" />
           <entry key="project.open.time.3" value="1" />
-          <entry key="project.opened" value="2" />
+          <entry key="project.opened" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="c" value="3" />
-          <entry key="h" value="6" />
+          <entry key="Makefile" value="1" />
+          <entry key="README" value="2" />
+          <entry key="c" value="5" />
+          <entry key="h" value="9" />
+          <entry key="po" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="ObjectiveC" value="9" />
+          <entry key="Locale" value="1" />
+          <entry key="ObjectiveC" value="14" />
+          <entry key="PLAIN_TEXT" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="c" value="5" />
+          <entry key="c" value="76" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="ObjectiveC" value="5" />
+          <entry key="ObjectiveC" value="76" />
         </counts>
       </usages-collector>
     </session>
@@ -72,7 +98,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="1692">
               <caret line="47" column="32" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
             </state>
           </provider>
@@ -81,26 +107,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="337">
-              <caret line="1549" column="66" selection-start-line="1549" selection-start-column="66" selection-end-line="1549" selection-end-column="66" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/basename.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-151">
-              <caret line="27" column="9" selection-start-line="27" selection-end-line="27" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file:///usr/include/libintl.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="281">
-              <caret line="81" column="13" selection-start-line="81" selection-start-column="13" selection-end-line="81" selection-end-column="13" />
+            <state relative-caret-position="301">
+              <caret line="2053" column="20" lean-forward="true" selection-start-line="2053" selection-start-column="20" selection-end-line="2053" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -108,17 +116,79 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/wget.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="921">
-              <caret line="55" column="9" selection-start-line="55" selection-start-column="9" selection-end-line="55" selection-end-column="9" />
+            <state relative-caret-position="-2139">
+              <caret line="40" selection-start-line="40" selection-end-line="40" />
+              <folding>
+                <element signature="e#1628#1644#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/http.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="265">
+              <caret line="4183" selection-start-line="4183" selection-end-line="4183" />
+              <folding>
+                <element signature="e#1727#1747#0" expanded="true" />
+                <element signature="e#1889#1934#0" expanded="true" />
+                <element signature="e#2004#2036#0" expanded="true" />
+                <element signature="e#2058#2075#0" expanded="true" />
+                <element signature="e#50228#50249#0" expanded="true" />
+                <element signature="e#50735#50789#0" expanded="true" />
+                <element signature="e#56262#56873#0" expanded="true" />
+                <element signature="e#68351#68353#0" expanded="true" />
+                <element signature="e#75889#76047#0" expanded="true" />
+                <element signature="e#83606#83690#0" expanded="true" />
+                <element signature="e#84001#84100#0" expanded="true" />
+                <element signature="e#84644#84743#0" expanded="true" />
+                <element signature="e#86700#104265#0" expanded="true" />
+                <element signature="e#105225#105312#0" expanded="true" />
+                <element signature="e#106254#106357#0" expanded="true" />
+                <element signature="e#109260#109261#0" expanded="true" />
+                <element signature="e#116827#117358#0" expanded="true" />
+                <element signature="e#121191#121274#0" expanded="true" />
+                <element signature="e#121416#121681#0" expanded="true" />
+                <element signature="e#142746#142847#0" expanded="true" />
+                <element signature="e#144569#144591#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/http.c">
+        <entry file="file://$PROJECT_DIR$/src/retr.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-411">
-              <caret line="250" column="36" selection-start-line="250" selection-start-column="36" selection-end-line="250" selection-end-column="36" />
+            <state relative-caret-position="507">
+              <caret line="1139" column="35" lean-forward="true" selection-start-line="1139" selection-start-column="35" selection-end-line="1139" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/log.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="281">
+              <caret line="40" column="4" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/url.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="237">
+              <caret line="65" column="17" lean-forward="true" selection-start-line="65" selection-start-column="17" selection-end-line="65" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/po/zh_CN.po">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="281">
+              <caret line="445" column="9" selection-start-line="445" selection-start-column="9" selection-end-line="445" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -135,6 +205,12 @@
       <find>statcode</find>
       <find>head</find>
       <find>req</find>
+      <find>剩余</find>
+      <find>retrieve_url()</find>
+      <find>original_url</find>
+      <find>file</find>
+      <find>gethttp</find>
+      <find>http_loop</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -146,6 +222,7 @@
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/src/main.c" />
         <option value="$PROJECT_DIR$/src/http.c" />
+        <option value="$PROJECT_DIR$/src/retr.c" />
       </list>
     </option>
   </component>
@@ -156,7 +233,7 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="1366" />
     <option name="y" value="26" />
     <option name="width" value="1920" />
@@ -174,6 +251,11 @@
             <path>
               <item name="wget_1_19_5" type="b2602c69:ProjectViewProjectNode" />
               <item name="wget-1.19.5" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="wget_1_19_5" type="b2602c69:ProjectViewProjectNode" />
+              <item name="wget-1.19.5" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="wget_1_19_5" type="b2602c69:ProjectViewProjectNode" />
@@ -238,21 +320,22 @@
       <workItem from="1542201995778" duration="57000" />
       <workItem from="1542240127532" duration="1579000" />
       <workItem from="1542241736939" duration="3271000" />
+      <workItem from="1542763031334" duration="8011000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4907000" />
+    <option name="totallyTimeSpent" value="12918000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1366" y="26" width="1920" height="1021" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49885583" visible="true" weight="0.15654951" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49885583" visible="true" weight="0.15814696" />
       <window_info id="Favorites" order="1" side_tool="true" />
       <window_info id="Structure" order="2" sideWeight="0.5011442" weight="0.15654951" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32951945" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -284,43 +367,126 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="1692">
           <caret line="47" column="32" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
         </state>
       </provider>
     </entry>
     <entry file="file:///usr/include/libintl.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
+        <state relative-caret-position="2916">
           <caret line="81" column="13" selection-start-line="81" selection-start-column="13" selection-end-line="81" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-991" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-54465" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/trunc.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4327" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/README">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/po/zh_CN.po">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="445" column="9" selection-start-line="445" selection-start-column="9" selection-end-line="445" selection-end-column="9" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/basename.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-151">
+        <state relative-caret-position="36">
           <caret line="27" column="9" selection-start-line="27" selection-end-line="27" selection-end-column="9" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="1549" column="66" selection-start-line="1549" selection-start-column="66" selection-end-line="1549" selection-end-column="66" />
+        <state relative-caret-position="301">
+          <caret line="2053" column="20" lean-forward="true" selection-start-line="2053" selection-start-column="20" selection-end-line="2053" selection-end-column="20" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/wget.h">
+    <entry file="file://$PROJECT_DIR$/src/log.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="921">
-          <caret line="55" column="9" selection-start-line="55" selection-start-column="9" selection-end-line="55" selection-end-column="9" />
+        <state relative-caret-position="281">
+          <caret line="40" column="4" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/http.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="36" column="7" selection-start-line="36" selection-start-column="7" selection-end-line="36" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/url.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="65" column="17" lean-forward="true" selection-start-line="65" selection-start-column="17" selection-end-line="65" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/http.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-411">
-          <caret line="250" column="36" selection-start-line="250" selection-start-column="36" selection-end-line="250" selection-end-column="36" />
+        <state relative-caret-position="265">
+          <caret line="4183" selection-start-line="4183" selection-end-line="4183" />
+          <folding>
+            <element signature="e#1727#1747#0" expanded="true" />
+            <element signature="e#1889#1934#0" expanded="true" />
+            <element signature="e#2004#2036#0" expanded="true" />
+            <element signature="e#2058#2075#0" expanded="true" />
+            <element signature="e#50228#50249#0" expanded="true" />
+            <element signature="e#50735#50789#0" expanded="true" />
+            <element signature="e#56262#56873#0" expanded="true" />
+            <element signature="e#68351#68353#0" expanded="true" />
+            <element signature="e#75889#76047#0" expanded="true" />
+            <element signature="e#83606#83690#0" expanded="true" />
+            <element signature="e#84001#84100#0" expanded="true" />
+            <element signature="e#84644#84743#0" expanded="true" />
+            <element signature="e#86700#104265#0" expanded="true" />
+            <element signature="e#105225#105312#0" expanded="true" />
+            <element signature="e#106254#106357#0" expanded="true" />
+            <element signature="e#109260#109261#0" expanded="true" />
+            <element signature="e#116827#117358#0" expanded="true" />
+            <element signature="e#121191#121274#0" expanded="true" />
+            <element signature="e#121416#121681#0" expanded="true" />
+            <element signature="e#142746#142847#0" expanded="true" />
+            <element signature="e#144569#144591#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wget.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2139">
+          <caret line="40" selection-start-line="40" selection-end-line="40" />
+          <folding>
+            <element signature="e#1628#1644#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/retr.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="507">
+          <caret line="1139" column="35" lean-forward="true" selection-start-line="1139" selection-start-column="35" selection-end-line="1139" selection-end-column="35" />
         </state>
       </provider>
     </entry>
