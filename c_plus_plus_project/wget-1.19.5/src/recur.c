@@ -327,10 +327,10 @@ retrieve_tree (struct url *start_url_parsed, struct iri *pi)
             }
           else
             {
-
+              fprintf(stdout, _("retrieve_tree() retrieve_url() start\n"));
               status = retrieve_url (url_parsed, url, &file, &redirected, referer,
                                      &dt, false, i, true);
-
+              fprintf(stdout, _("retrieve_tree() retrieve_url() end\n"));
               if (html_allowed && file && status == RETROK
                   && (dt & RETROKF) && (dt & TEXTHTML))
                 {

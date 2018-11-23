@@ -36,12 +36,15 @@ as that of the covered work.  */
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+
 #ifdef VMS
 # include <unixio.h>            /* For delete(). */
 #endif
 
 #ifdef HAVE_LIBZ
+
 # include <zlib.h>
+
 #endif
 
 #include "exits.h"
@@ -76,31 +79,30 @@ FILE *output_stream;
 bool output_stream_regular;
 
 static struct {
-  wgint chunk_bytes;
-  double chunk_start;
-  double sleep_adjust;
+    wgint chunk_bytes;
+    double chunk_start;
+    double sleep_adjust;
 } limit_data;
 
 static void
-limit_bandwidth_reset (void)
-{
-  xzero (limit_data);
+limit_bandwidth_reset(void) {
+    xzero (limit_data);
 }
 
 #ifdef HAVE_LIBZ
+
 static voidpf
-zalloc (voidpf opaque, unsigned int items, unsigned int size)
-{
-  (void) opaque;
-  return (voidpf) xcalloc (items, size);
+zalloc(voidpf opaque, unsigned int items, unsigned int size) {
+    (void) opaque;
+    return (voidpf) xcalloc(items, size);
 }
 
 static void
-zfree (voidpf opaque, voidpf address)
-{
-  (void) opaque;
-  xfree (address);
+zfree(voidpf opaque, voidpf address) {
+    (void) opaque;
+    xfree (address);
 }
+
 #endif
 
 /* Limit the bandwidth by pausing the download for an amount of time.
@@ -108,52 +110,49 @@ zfree (voidpf opaque, voidpf address)
    is the timer that started at the beginning of download.  */
 
 static void
-limit_bandwidth (wgint bytes, struct ptimer *timer)
-{
-  double delta_t = ptimer_read (timer) - limit_data.chunk_start;
-  double expected;
+limit_bandwidth(wgint bytes, struct ptimer *timer) {
+    double delta_t = ptimer_read(timer) - limit_data.chunk_start;
+    double expected;
 
-  limit_data.chunk_bytes += bytes;
+    limit_data.chunk_bytes += bytes;
 
-  /* Calculate the amount of time we expect downloading the chunk
-     should take.  If in reality it took less time, sleep to
-     compensate for the difference.  */
-  expected = (double) limit_data.chunk_bytes / opt.limit_rate;
+    /* Calculate the amount of time we expect downloading the chunk
+       should take.  If in reality it took less time, sleep to
+       compensate for the difference.  */
+    expected = (double) limit_data.chunk_bytes / opt.limit_rate;
 
-  if (expected > delta_t)
-    {
-      double slp = expected - delta_t + limit_data.sleep_adjust;
-      double t0, t1;
-      if (slp < 0.2)
-        {
-          DEBUGP (("deferring a %.2f ms sleep (%s/%.2f).\n",
-                   slp * 1000, number_to_static_string (limit_data.chunk_bytes),
-                   delta_t));
-          return;
+    if (expected > delta_t) {
+        double slp = expected - delta_t + limit_data.sleep_adjust;
+        double t0, t1;
+        if (slp < 0.2) {
+            DEBUGP (("deferring a %.2f ms sleep (%s/%.2f).\n",
+                    slp * 1000, number_to_static_string(limit_data.chunk_bytes),
+                    delta_t));
+            return;
         }
-      DEBUGP (("\nsleeping %.2f ms for %s bytes, adjust %.2f ms\n",
-               slp * 1000, number_to_static_string (limit_data.chunk_bytes),
-               limit_data.sleep_adjust));
+        DEBUGP (("\nsleeping %.2f ms for %s bytes, adjust %.2f ms\n",
+                slp * 1000, number_to_static_string(limit_data.chunk_bytes),
+                limit_data.sleep_adjust));
 
-      t0 = ptimer_read (timer);
-      xsleep (slp);
-      t1 = ptimer_measure (timer);
+        t0 = ptimer_read(timer);
+        xsleep(slp);
+        t1 = ptimer_measure(timer);
 
-      /* Due to scheduling, we probably slept slightly longer (or
-         shorter) than desired.  Calculate the difference between the
-         desired and the actual sleep, and adjust the next sleep by
-         that amount.  */
-      limit_data.sleep_adjust = slp - (t1 - t0);
-      /* If sleep_adjust is very large, it's likely due to suspension
-         and not clock inaccuracy.  Don't enforce those.  */
-      if (limit_data.sleep_adjust > 0.5)
-        limit_data.sleep_adjust = 0.5;
-      else if (limit_data.sleep_adjust < -0.5)
-        limit_data.sleep_adjust = -0.5;
+        /* Due to scheduling, we probably slept slightly longer (or
+           shorter) than desired.  Calculate the difference between the
+           desired and the actual sleep, and adjust the next sleep by
+           that amount.  */
+        limit_data.sleep_adjust = slp - (t1 - t0);
+        /* If sleep_adjust is very large, it's likely due to suspension
+           and not clock inaccuracy.  Don't enforce those.  */
+        if (limit_data.sleep_adjust > 0.5)
+            limit_data.sleep_adjust = 0.5;
+        else if (limit_data.sleep_adjust < -0.5)
+            limit_data.sleep_adjust = -0.5;
     }
 
-  limit_data.chunk_bytes = 0;
-  limit_data.chunk_start = ptimer_read (timer);
+    limit_data.chunk_bytes = 0;
+    limit_data.chunk_start = ptimer_read(timer);
 }
 
 /* Write data in BUF to OUT.  However, if *SKIP is non-zero, skip that
@@ -164,56 +163,53 @@ limit_bandwidth (wgint bytes, struct ptimer *timer)
    skipped.  */
 
 static int
-write_data (FILE *out, FILE *out2, const char *buf, int bufsize,
-            wgint *skip, wgint *written)
-{
-  if (out == NULL && out2 == NULL)
-    return 1;
-  if (*skip > bufsize)
-    {
-      *skip -= bufsize;
-      return 1;
-    }
-  if (*skip)
-    {
-      buf += *skip;
-      bufsize -= *skip;
-      *skip = 0;
-      if (bufsize == 0)
+write_data(FILE *out, FILE *out2, const char *buf, int bufsize,
+           wgint *skip, wgint *written) {
+    if (out == NULL && out2 == NULL)
+        return 1;
+    if (*skip > bufsize) {
+        *skip -= bufsize;
         return 1;
     }
+    if (*skip) {
+        buf += *skip;
+        bufsize -= *skip;
+        *skip = 0;
+        if (bufsize == 0)
+            return 1;
+    }
 
-  if (out != NULL)
-    fwrite (buf, 1, bufsize, out);
-  if (out2 != NULL)
-    fwrite (buf, 1, bufsize, out2);
-  *written += bufsize;
+    if (out != NULL)
+        fwrite(buf, 1, bufsize, out);
+    if (out2 != NULL)
+        fwrite(buf, 1, bufsize, out2);
+    *written += bufsize;
 
-  /* Immediately flush the downloaded data.  This should not hinder
-     performance: fast downloads will arrive in large 16K chunks
-     (which stdio would write out immediately anyway), and slow
-     downloads wouldn't be limited by disk speed.  */
+    /* Immediately flush the downloaded data.  This should not hinder
+       performance: fast downloads will arrive in large 16K chunks
+       (which stdio would write out immediately anyway), and slow
+       downloads wouldn't be limited by disk speed.  */
 
-  /* 2005-04-20 SMS.
-     Perhaps it shouldn't hinder performance, but it sure does, at least
-     on VMS (more than 2X).  Rather than speculate on what it should or
-     shouldn't do, it might make more sense to test it.  Even better, it
-     might be nice to explain what possible benefit it could offer, as
-     it appears to be a clear invitation to poor performance with no
-     actual justification.  (Also, why 16K?  Anyone test other values?)
-  */
+    /* 2005-04-20 SMS.
+       Perhaps it shouldn't hinder performance, but it sure does, at least
+       on VMS (more than 2X).  Rather than speculate on what it should or
+       shouldn't do, it might make more sense to test it.  Even better, it
+       might be nice to explain what possible benefit it could offer, as
+       it appears to be a clear invitation to poor performance with no
+       actual justification.  (Also, why 16K?  Anyone test other values?)
+    */
 #ifndef __VMS
-  if (out != NULL)
-    fflush (out);
-  if (out2 != NULL)
-    fflush (out2);
+    if (out != NULL)
+        fflush(out);
+    if (out2 != NULL)
+        fflush(out2);
 #endif /* ndef __VMS */
-  if (out != NULL && ferror (out))
-    return -1;
-  else if (out2 != NULL && ferror (out2))
-    return -2;
-  else
-    return 0;
+    if (out != NULL && ferror(out))
+        return -1;
+    else if (out2 != NULL && ferror(out2))
+        return -2;
+    else
+        return 0;
 }
 
 /* Read the contents of file descriptor FD until it the connection
@@ -242,345 +238,305 @@ write_data (FILE *out, FILE *out2, const char *buf, int bufsize,
    data to OUT2, -3 is returned.  */
 
 int
-fd_read_body (const char *downloaded_filename, int fd, FILE *out, wgint toread, wgint startpos,
+fd_read_body(const char *downloaded_filename, int fd, FILE *out, wgint toread, wgint startpos,
 
-              wgint *qtyread, wgint *qtywritten, double *elapsed, int flags,
-              FILE *out2)
-{
-  int ret = 0;
+             wgint *qtyread, wgint *qtywritten, double *elapsed, int flags,
+             FILE *out2) {
+    int ret = 0;
 #undef max
-#define max(a,b) ((a) > (b) ? (a) : (b))
-  int dlbufsize = max (BUFSIZ, 8 * 1024);
-  char *dlbuf = xmalloc (dlbufsize);
+#define max(a, b) ((a) > (b) ? (a) : (b))
+    int dlbufsize = max (BUFSIZ, 8 * 1024);
+    char *dlbuf = xmalloc(dlbufsize);
 
-  struct ptimer *timer = NULL;
-  double last_successful_read_tm = 0;
+    struct ptimer *timer = NULL;
+    double last_successful_read_tm = 0;
 
-  /* The progress gauge, set according to the user preferences. */
-  void *progress = NULL;
+    /* The progress gauge, set according to the user preferences. */
+    void *progress = NULL;
 
-  /* Non-zero if the progress gauge is interactive, i.e. if it can
-     continually update the display.  When true, smaller timeout
-     values are used so that the gauge can update the display when
-     data arrives slowly. */
-  bool progress_interactive = false;
+    /* Non-zero if the progress gauge is interactive, i.e. if it can
+       continually update the display.  When true, smaller timeout
+       values are used so that the gauge can update the display when
+       data arrives slowly. */
+    bool progress_interactive = false;
 
-  bool exact = !!(flags & rb_read_exactly);
+    bool exact = !!(flags & rb_read_exactly);
 
-  /* Used only by HTTP/HTTPS chunked transfer encoding.  */
-  bool chunked = flags & rb_chunked_transfer_encoding;
-  wgint skip = 0;
+    /* Used only by HTTP/HTTPS chunked transfer encoding.  */
+    bool chunked = flags & rb_chunked_transfer_encoding;
+    wgint skip = 0;
 
-  /* How much data we've read/written.  */
-  wgint sum_read = 0;
-  wgint sum_written = 0;
-  wgint remaining_chunk_size = 0;
+    /* How much data we've read/written.  */
+    wgint sum_read = 0;
+    wgint sum_written = 0;
+    wgint remaining_chunk_size = 0;
 
 #ifdef HAVE_LIBZ
-  /* try to minimize the number of calls to inflate() and write_data() per
-     call to fd_read() */
-  unsigned int gzbufsize = dlbufsize * 4;
-  char *gzbuf = NULL;
-  z_stream gzstream;
+    /* try to minimize the number of calls to inflate() and write_data() per
+       call to fd_read() */
+    unsigned int gzbufsize = dlbufsize * 4;
+    char *gzbuf = NULL;
+    z_stream gzstream;
 
-  if (flags & rb_compressed_gzip)
-    {
-      gzbuf = xmalloc (gzbufsize);
-      if (gzbuf != NULL)
-        {
-          gzstream.zalloc = zalloc;
-          gzstream.zfree = zfree;
-          gzstream.opaque = Z_NULL;
-          gzstream.next_in = Z_NULL;
-          gzstream.avail_in = 0;
+    if (flags & rb_compressed_gzip) {
+        gzbuf = xmalloc(gzbufsize);
+        if (gzbuf != NULL) {
+            gzstream.zalloc = zalloc;
+            gzstream.zfree = zfree;
+            gzstream.opaque = Z_NULL;
+            gzstream.next_in = Z_NULL;
+            gzstream.avail_in = 0;
 
-          #define GZIP_DETECT 32 /* gzip format detection */
-          #define GZIP_WINDOW 15 /* logarithmic window size (default: 15) */
-          ret = inflateInit2 (&gzstream, GZIP_DETECT | GZIP_WINDOW);
-          if (ret != Z_OK)
-            {
-              xfree (gzbuf);
-              errno = (ret == Z_MEM_ERROR) ? ENOMEM : EINVAL;
-              ret = -1;
-              goto out;
+#define GZIP_DETECT 32 /* gzip format detection */
+#define GZIP_WINDOW 15 /* logarithmic window size (default: 15) */
+            ret = inflateInit2 (&gzstream, GZIP_DETECT | GZIP_WINDOW);
+            if (ret != Z_OK) {
+                xfree (gzbuf);
+                errno = (ret == Z_MEM_ERROR) ? ENOMEM : EINVAL;
+                ret = -1;
+                goto out;
             }
-        }
-      else
-        {
-          errno = ENOMEM;
-          ret = -1;
-          goto out;
+        } else {
+            errno = ENOMEM;
+            ret = -1;
+            goto out;
         }
     }
 #endif
 
-  if (flags & rb_skip_startpos)
-    skip = startpos;
+    if (flags & rb_skip_startpos)
+        skip = startpos;
 
-  if (opt.show_progress)
-    {
-      const char *filename_progress;
-      /* If we're skipping STARTPOS bytes, pass 0 as the INITIAL
-         argument to progress_create because the indicator doesn't
-         (yet) know about "skipping" data.  */
-      wgint start = skip ? 0 : startpos;
-      if (opt.dir_prefix)
-        filename_progress = downloaded_filename + strlen (opt.dir_prefix) + 1;
-      else
-        filename_progress = downloaded_filename;
-      progress = progress_create (filename_progress, start, start + toread);
-      progress_interactive = progress_interactive_p (progress);
+    if (opt.show_progress) {
+        const char *filename_progress;
+        /* If we're skipping STARTPOS bytes, pass 0 as the INITIAL
+           argument to progress_create because the indicator doesn't
+           (yet) know about "skipping" data.  */
+        wgint start = skip ? 0 : startpos;
+        if (opt.dir_prefix)
+            filename_progress = downloaded_filename + strlen(opt.dir_prefix) + 1;
+        else
+            filename_progress = downloaded_filename;
+        progress = progress_create(filename_progress, start, start + toread);
+        progress_interactive = progress_interactive_p(progress);
     }
 
-  if (opt.limit_rate)
-    limit_bandwidth_reset ();
+    if (opt.limit_rate)
+        limit_bandwidth_reset();
 
-  /* A timer is needed for tracking progress, for throttling, and for
-     tracking elapsed time.  If either of these are requested, start
-     the timer.  */
-  if (progress || opt.limit_rate || elapsed)
-    {
-      timer = ptimer_new ();
-      last_successful_read_tm = 0;
+    /* A timer is needed for tracking progress, for throttling, and for
+       tracking elapsed time.  If either of these are requested, start
+       the timer.  */
+    if (progress || opt.limit_rate || elapsed) {
+        timer = ptimer_new();
+        last_successful_read_tm = 0;
     }
 
-  /* Use a smaller buffer for low requested bandwidths.  For example,
-     with --limit-rate=2k, it doesn't make sense to slurp in 16K of
-     data and then sleep for 8s.  With buffer size equal to the limit,
-     we never have to sleep for more than one second.  */
-  if (opt.limit_rate && opt.limit_rate < dlbufsize)
-    dlbufsize = opt.limit_rate;
+    /* Use a smaller buffer for low requested bandwidths.  For example,
+       with --limit-rate=2k, it doesn't make sense to slurp in 16K of
+       data and then sleep for 8s.  With buffer size equal to the limit,
+       we never have to sleep for more than one second.  */
+    if (opt.limit_rate && opt.limit_rate < dlbufsize)
+        dlbufsize = opt.limit_rate;
 
-  /* Read from FD while there is data to read.  Normally toread==0
-     means that it is unknown how much data is to arrive.  However, if
-     EXACT is set, then toread==0 means what it says: that no data
-     should be read.  */
-  while (!exact || (sum_read < toread))
-    {
-      int rdsize;
-      double tmout = opt.read_timeout;
+    /* Read from FD while there is data to read.  Normally toread==0
+       means that it is unknown how much data is to arrive.  However, if
+       EXACT is set, then toread==0 means what it says: that no data
+       should be read.  */
+    while (!exact || (sum_read < toread)) {
+        int rdsize;
+        double tmout = opt.read_timeout;
 
-      if (chunked)
-        {
-          if (remaining_chunk_size == 0)
-            {
-              char *line = fd_read_line (fd);
-              char *endl;
-              if (line == NULL)
-                {
-                  ret = -1;
-                  break;
-                }
-              else if (out2 != NULL)
-                fwrite (line, 1, strlen (line), out2);
-
-              remaining_chunk_size = strtol (line, &endl, 16);
-              xfree (line);
-
-              if (remaining_chunk_size < 0)
-                {
-                  ret = -1;
-                  break;
-                }
-
-              if (remaining_chunk_size == 0)
-                {
-                  ret = 0;
-                  line = fd_read_line (fd);
-                  if (line == NULL)
+        if (chunked) {
+            if (remaining_chunk_size == 0) {
+                char *line = fd_read_line(fd);
+                char *endl;
+                if (line == NULL) {
                     ret = -1;
-                  else
-                    {
-                      if (out2 != NULL)
-                        fwrite (line, 1, strlen (line), out2);
-                      xfree (line);
+                    break;
+                } else if (out2 != NULL)
+                    fwrite(line, 1, strlen(line), out2);
+
+                remaining_chunk_size = strtol(line, &endl, 16);
+                xfree (line);
+
+                if (remaining_chunk_size < 0) {
+                    ret = -1;
+                    break;
+                }
+
+                if (remaining_chunk_size == 0) {
+                    ret = 0;
+                    line = fd_read_line(fd);
+                    if (line == NULL)
+                        ret = -1;
+                    else {
+                        if (out2 != NULL)
+                            fwrite(line, 1, strlen(line), out2);
+                        xfree (line);
                     }
-                  break;
+                    break;
                 }
             }
 
-          rdsize = MIN (remaining_chunk_size, dlbufsize);
-        }
-      else
-        rdsize = exact ? MIN (toread - sum_read, dlbufsize) : dlbufsize;
+            rdsize = MIN (remaining_chunk_size, dlbufsize);
+        } else
+            rdsize = exact ? MIN (toread - sum_read, dlbufsize) : dlbufsize;
 
-      if (progress_interactive)
-        {
-          /* For interactive progress gauges, always specify a ~1s
-             timeout, so that the gauge can be updated regularly even
-             when the data arrives very slowly or stalls.  */
-          tmout = 0.95;
-          if (opt.read_timeout)
-            {
-              double waittm;
-              waittm = ptimer_read (timer) - last_successful_read_tm;
-              if (waittm + tmout > opt.read_timeout)
-                {
-                  /* Don't let total idle time exceed read timeout. */
-                  tmout = opt.read_timeout - waittm;
-                  if (tmout < 0)
-                    {
-                      /* We've already exceeded the timeout. */
-                      ret = -1, errno = ETIMEDOUT;
-                      break;
+        if (progress_interactive) {
+            /* For interactive progress gauges, always specify a ~1s
+               timeout, so that the gauge can be updated regularly even
+               when the data arrives very slowly or stalls.  */
+            tmout = 0.95;
+            if (opt.read_timeout) {
+                double waittm;
+                waittm = ptimer_read(timer) - last_successful_read_tm;
+                if (waittm + tmout > opt.read_timeout) {
+                    /* Don't let total idle time exceed read timeout. */
+                    tmout = opt.read_timeout - waittm;
+                    if (tmout < 0) {
+                        /* We've already exceeded the timeout. */
+                        ret = -1, errno = ETIMEDOUT;
+                        break;
                     }
                 }
             }
         }
-      ret = fd_read (fd, dlbuf, rdsize, tmout);
+        ret = fd_read(fd, dlbuf, rdsize, tmout);
 
-      if (progress_interactive && ret < 0 && errno == ETIMEDOUT)
-        ret = 0;                /* interactive timeout, handled above */
-      else if (ret <= 0)
-        break;                  /* EOF or read error */
+        if (progress_interactive && ret < 0 && errno == ETIMEDOUT)
+            ret = 0;                /* interactive timeout, handled above */
+        else if (ret <= 0)
+            break;                  /* EOF or read error */
 
-      if (progress || opt.limit_rate || elapsed)
-        {
-          ptimer_measure (timer);
-          if (ret > 0)
-            last_successful_read_tm = ptimer_read (timer);
+        if (progress || opt.limit_rate || elapsed) {
+            ptimer_measure(timer);
+            if (ret > 0)
+                last_successful_read_tm = ptimer_read(timer);
         }
 
-      if (ret > 0)
-        {
-          int write_res;
+        if (ret > 0) {
+            int write_res;
 
-          sum_read += ret;
+            sum_read += ret;
 
 #ifdef HAVE_LIBZ
-          if (gzbuf != NULL)
-            {
-              int err;
-              int towrite;
-              gzstream.avail_in = ret;
-              gzstream.next_in = (unsigned char *) dlbuf;
+            if (gzbuf != NULL) {
+                int err;
+                int towrite;
+                gzstream.avail_in = ret;
+                gzstream.next_in = (unsigned char *) dlbuf;
 
-              do
-                {
-                  gzstream.avail_out = gzbufsize;
-                  gzstream.next_out = (unsigned char *) gzbuf;
+                do {
+                    gzstream.avail_out = gzbufsize;
+                    gzstream.next_out = (unsigned char *) gzbuf;
 
-                  err = inflate (&gzstream, Z_NO_FLUSH);
+                    err = inflate(&gzstream, Z_NO_FLUSH);
 
-                  switch (err)
-                    {
-                    case Z_MEM_ERROR:
-                      errno = ENOMEM;
-                      ret = -1;
-                      goto out;
-                    case Z_NEED_DICT:
-                    case Z_DATA_ERROR:
-                      errno = EINVAL;
-                      ret = -1;
-                      goto out;
-                    case Z_STREAM_END:
-                      if (exact && sum_read != toread)
-                        {
-                          DEBUGP(("zlib stream ended unexpectedly after "
-                                  "%ld/%ld bytes\n", sum_read, toread));
-                        }
+                    switch (err) {
+                        case Z_MEM_ERROR:
+                            errno = ENOMEM;
+                            ret = -1;
+                            goto out;
+                        case Z_NEED_DICT:
+                        case Z_DATA_ERROR:
+                            errno = EINVAL;
+                            ret = -1;
+                            goto out;
+                        case Z_STREAM_END:
+                            if (exact && sum_read != toread) {
+                                DEBUGP(("zlib stream ended unexpectedly after "
+                                        "%ld/%ld bytes\n", sum_read, toread));
+                            }
                     }
 
-                  towrite = gzbufsize - gzstream.avail_out;
-                  write_res = write_data (out, out2, gzbuf, towrite, &skip,
-                                          &sum_written);
-                  if (write_res < 0)
-                    {
-                      ret = (write_res == -3) ? -3 : -2;
-                      goto out;
+                    towrite = gzbufsize - gzstream.avail_out;
+                    write_res = write_data(out, out2, gzbuf, towrite, &skip,
+                                           &sum_written);
+                    if (write_res < 0) {
+                        ret = (write_res == -3) ? -3 : -2;
+                        goto out;
                     }
-                }
-              while (gzstream.avail_out == 0);
-            }
-          else
+                } while (gzstream.avail_out == 0);
+            } else
 #endif
             {
-              write_res = write_data (out, out2, dlbuf, ret, &skip,
-                                      &sum_written);
-              if (write_res < 0)
-                {
-                  ret = (write_res == -3) ? -3 : -2;
-                  goto out;
+                write_res = write_data(out, out2, dlbuf, ret, &skip,
+                                       &sum_written);
+                if (write_res < 0) {
+                    ret = (write_res == -3) ? -3 : -2;
+                    goto out;
                 }
             }
 
-          if (chunked)
-            {
-              remaining_chunk_size -= ret;
-              if (remaining_chunk_size == 0)
-                {
-                  char *line = fd_read_line (fd);
-                  if (line == NULL)
-                    {
-                      ret = -1;
-                      break;
-                    }
-                  else
-                    {
-                      if (out2 != NULL)
-                        fwrite (line, 1, strlen (line), out2);
-                      xfree (line);
+            if (chunked) {
+                remaining_chunk_size -= ret;
+                if (remaining_chunk_size == 0) {
+                    char *line = fd_read_line(fd);
+                    if (line == NULL) {
+                        ret = -1;
+                        break;
+                    } else {
+                        if (out2 != NULL)
+                            fwrite(line, 1, strlen(line), out2);
+                        xfree (line);
                     }
                 }
             }
         }
 
-      if (opt.limit_rate)
-        limit_bandwidth (ret, timer);
+        if (opt.limit_rate)
+            limit_bandwidth(ret, timer);
 
-      if (progress)
-        progress_update (progress, ret, ptimer_read (timer));
+        if (progress)
+            progress_update(progress, ret, ptimer_read(timer));
 #ifdef WINDOWS
-      if (toread > 0 && opt.show_progress)
-        ws_percenttitle (100.0 *
-                         (startpos + sum_read) / (startpos + toread));
+        if (toread > 0 && opt.show_progress)
+          ws_percenttitle (100.0 *
+                           (startpos + sum_read) / (startpos + toread));
 #endif
     }
-  if (ret < -1)
-    ret = -1;
+    if (ret < -1)
+        ret = -1;
 
- out:
-  if (progress)
-    progress_finish (progress, ptimer_read (timer));
+    out:
+    if (progress)
+        progress_finish(progress, ptimer_read(timer));
 
-  if (elapsed)
-    *elapsed = ptimer_read (timer);
-  if (timer)
-    ptimer_destroy (timer);
+    if (elapsed)
+        *elapsed = ptimer_read(timer);
+    if (timer)
+        ptimer_destroy(timer);
 
 #ifdef HAVE_LIBZ
-  if (gzbuf != NULL)
-    {
-      int err = inflateEnd (&gzstream);
-      if (ret >= 0)
-        {
-          /* with compression enabled, ret must be 0 if successful */
-          if (err == Z_OK)
-            ret = 0;
-          else
-            {
-              errno = EINVAL;
-              ret = -1;
+    if (gzbuf != NULL) {
+        int err = inflateEnd(&gzstream);
+        if (ret >= 0) {
+            /* with compression enabled, ret must be 0 if successful */
+            if (err == Z_OK)
+                ret = 0;
+            else {
+                errno = EINVAL;
+                ret = -1;
             }
         }
-      xfree (gzbuf);
+        xfree (gzbuf);
 
-      if (gzstream.total_in != sum_read)
-        {
-          DEBUGP(("zlib read size differs from raw read size (%lu/%lu)\n",
-                  gzstream.total_in, sum_read));
+        if (gzstream.total_in != sum_read) {
+            DEBUGP(("zlib read size differs from raw read size (%lu/%lu)\n",
+                    gzstream.total_in, sum_read));
         }
     }
 #endif
 
-  if (qtyread)
-    *qtyread += sum_read;
-  if (qtywritten)
-    *qtywritten += sum_written;
+    if (qtyread)
+        *qtyread += sum_read;
+    if (qtywritten)
+        *qtywritten += sum_written;
 
-  xfree (dlbuf);
+    xfree (dlbuf);
 
-  return ret;
+    return ret;
 }
 
 /* Read a hunk of data from FD, up until a terminator.  The hunk is
@@ -635,110 +591,96 @@ fd_read_body (const char *downloaded_filename, int fd, FILE *out, wgint toread, 
    functions -- see fd_read_line as a simple example.  */
 
 char *
-fd_read_hunk (int fd, hunk_terminator_t terminator, long sizehint, long maxsize)
-{
-  long bufsize = sizehint;
-  char *hunk = xmalloc (bufsize);
-  int tail = 0;                 /* tail position in HUNK */
+fd_read_hunk(int fd, hunk_terminator_t terminator, long sizehint, long maxsize) {
+    long bufsize = sizehint;
+    char *hunk = xmalloc(bufsize);
+    int tail = 0;                 /* tail position in HUNK */
 
-  assert (!maxsize || maxsize >= bufsize);
+    assert (!maxsize || maxsize >= bufsize);
 
-  while (1)
-    {
-      const char *end;
-      int pklen, rdlen, remain;
+    while (1) {
+        const char *end;
+        int pklen, rdlen, remain;
 
-      /* First, peek at the available data. */
+        /* First, peek at the available data. */
 
-      pklen = fd_peek (fd, hunk + tail, bufsize - 1 - tail, -1);
-      if (pklen < 0)
-        {
-          xfree (hunk);
-          return NULL;
+        pklen = fd_peek(fd, hunk + tail, bufsize - 1 - tail, -1);
+        if (pklen < 0) {
+            xfree (hunk);
+            return NULL;
         }
-      end = terminator (hunk, hunk + tail, pklen);
-      if (end)
-        {
-          /* The data contains the terminator: we'll drain the data up
-             to the end of the terminator.  */
-          remain = end - (hunk + tail);
-          assert (remain >= 0);
-          if (remain == 0)
-            {
-              /* No more data needs to be read. */
-              hunk[tail] = '\0';
-              return hunk;
+        end = terminator(hunk, hunk + tail, pklen);
+        if (end) {
+            /* The data contains the terminator: we'll drain the data up
+               to the end of the terminator.  */
+            remain = end - (hunk + tail);
+            assert (remain >= 0);
+            if (remain == 0) {
+                /* No more data needs to be read. */
+                hunk[tail] = '\0';
+                return hunk;
             }
-          if (bufsize - 1 < tail + remain)
-            {
-              bufsize = tail + remain + 1;
-              hunk = xrealloc (hunk, bufsize);
+            if (bufsize - 1 < tail + remain) {
+                bufsize = tail + remain + 1;
+                hunk = xrealloc(hunk, bufsize);
             }
+        } else
+            /* No terminator: simply read the data we know is (or should
+               be) available.  */
+            remain = pklen;
+
+        /* Now, read the data.  Note that we make no assumptions about
+           how much data we'll get.  (Some TCP stacks are notorious for
+           read returning less data than the previous MSG_PEEK.)  */
+
+        rdlen = fd_read(fd, hunk + tail, remain, 0);
+        if (rdlen < 0) {
+            xfree (hunk);
+            return NULL;
         }
-      else
-        /* No terminator: simply read the data we know is (or should
-           be) available.  */
-        remain = pklen;
+        tail += rdlen;
+        hunk[tail] = '\0';
 
-      /* Now, read the data.  Note that we make no assumptions about
-         how much data we'll get.  (Some TCP stacks are notorious for
-         read returning less data than the previous MSG_PEEK.)  */
-
-      rdlen = fd_read (fd, hunk + tail, remain, 0);
-      if (rdlen < 0)
-        {
-          xfree (hunk);
-          return NULL;
+        if (rdlen == 0) {
+            if (tail == 0) {
+                /* EOF without anything having been read */
+                xfree (hunk);
+                errno = 0;
+                return NULL;
+            } else
+                /* EOF seen: return the data we've read. */
+                return hunk;
         }
-      tail += rdlen;
-      hunk[tail] = '\0';
-
-      if (rdlen == 0)
-        {
-          if (tail == 0)
-            {
-              /* EOF without anything having been read */
-              xfree (hunk);
-              errno = 0;
-              return NULL;
-            }
-          else
-            /* EOF seen: return the data we've read. */
+        if (end && rdlen == remain)
+            /* The terminator was seen and the remaining data drained --
+               we got what we came for.  */
             return hunk;
-        }
-      if (end && rdlen == remain)
-        /* The terminator was seen and the remaining data drained --
-           we got what we came for.  */
-        return hunk;
 
-      /* Keep looping until all the data arrives. */
+        /* Keep looping until all the data arrives. */
 
-      if (tail == bufsize - 1)
-        {
-          /* Double the buffer size, but refuse to allocate more than
-             MAXSIZE bytes.  */
-          if (maxsize && bufsize >= maxsize)
-            {
-              xfree (hunk);
-              errno = ENOMEM;
-              return NULL;
+        if (tail == bufsize - 1) {
+            /* Double the buffer size, but refuse to allocate more than
+               MAXSIZE bytes.  */
+            if (maxsize && bufsize >= maxsize) {
+                xfree (hunk);
+                errno = ENOMEM;
+                return NULL;
             }
-          bufsize <<= 1;
-          if (maxsize && bufsize > maxsize)
-            bufsize = maxsize;
-          hunk = xrealloc (hunk, bufsize);
+            bufsize <<= 1;
+            if (maxsize && bufsize > maxsize)
+                bufsize = maxsize;
+            hunk = xrealloc(hunk, bufsize);
         }
     }
 }
 
 static const char *
-line_terminator (const char *start _GL_UNUSED, const char *peeked, int peeklen)
-{
-  const char *p = memchr (peeked, '\n', peeklen);
-  if (p)
-    /* p+1 because the line must include '\n' */
-    return p + 1;
-  return NULL;
+line_terminator(const char *start _GL_UNUSED, const char *peeked, int peeklen) {
+    const char *p = memchr(peeked, '\n', peeklen);
+    if (p)
+        /* p+1 because the line must include '\n' */
+        return p + 1;
+    return NULL;
 }
 
 /* The maximum size of the single line we agree to accept.  This is
@@ -755,30 +697,28 @@ line_terminator (const char *start _GL_UNUSED, const char *peeked, int peeklen)
    latter case, errno is NULL.  */
 
 char *
-fd_read_line (int fd)
-{
-  return fd_read_hunk (fd, line_terminator, 128, FD_READ_LINE_MAX);
+fd_read_line(int fd) {
+    return fd_read_hunk(fd, line_terminator, 128, FD_READ_LINE_MAX);
 }
 
 /* Return a printed representation of the download rate, along with
    the units appropriate for the download speed.  */
 
 const char *
-retr_rate (wgint bytes, double secs)
-{
-  static char res[20];
-  static const char *rate_names[] = {"B/s", "KB/s", "MB/s", "GB/s" };
-  static const char *rate_names_bits[] = {"b/s", "Kb/s", "Mb/s", "Gb/s" };
-  int units;
+retr_rate(wgint bytes, double secs) {
+    static char res[20];
+    static const char *rate_names[] = {"B/s", "KB/s", "MB/s", "GB/s"};
+    static const char *rate_names_bits[] = {"b/s", "Kb/s", "Mb/s", "Gb/s"};
+    int units;
 
-  double dlrate = calc_rate (bytes, secs, &units);
-  /* Use more digits for smaller numbers (regardless of unit used),
-     e.g. "1022", "247", "12.5", "2.38".  */
-  snprintf (res, sizeof(res), "%.*f %s",
-           dlrate >= 99.95 ? 0 : dlrate >= 9.995 ? 1 : 2,
-           dlrate, !opt.report_bps ? rate_names[units]: rate_names_bits[units]);
+    double dlrate = calc_rate(bytes, secs, &units);
+    /* Use more digits for smaller numbers (regardless of unit used),
+       e.g. "1022", "247", "12.5", "2.38".  */
+    snprintf(res, sizeof(res), "%.*f %s",
+             dlrate >= 99.95 ? 0 : dlrate >= 9.995 ? 1 : 2,
+             dlrate, !opt.report_bps ? rate_names[units] : rate_names_bits[units]);
 
-  return res;
+    return res;
 }
 
 /* Calculate the download rate and trim it as appropriate for the
@@ -790,38 +730,37 @@ retr_rate (wgint bytes, double secs)
    GB/s.  */
 
 double
-calc_rate (wgint bytes, double secs, int *units)
-{
-  double dlrate;
-  double bibyte = 1000.0;
+calc_rate(wgint bytes, double secs, int *units) {
+    double dlrate;
+    double bibyte = 1000.0;
 
-  if (!opt.report_bps)
-    bibyte = 1024.0;
+    if (!opt.report_bps)
+        bibyte = 1024.0;
 
 
-  assert (secs >= 0);
-  assert (bytes >= 0);
+    assert (secs >= 0);
+    assert (bytes >= 0);
 
-  if (secs == 0)
-    /* If elapsed time is exactly zero, it means we're under the
-       resolution of the timer.  This can easily happen on systems
-       that use time() for the timer.  Since the interval lies between
-       0 and the timer's resolution, assume half the resolution.  */
-    secs = ptimer_resolution () / 2.0;
+    if (secs == 0)
+        /* If elapsed time is exactly zero, it means we're under the
+           resolution of the timer.  This can easily happen on systems
+           that use time() for the timer.  Since the interval lies between
+           0 and the timer's resolution, assume half the resolution.  */
+        secs = ptimer_resolution() / 2.0;
 
-  dlrate = convert_to_bits (bytes) / secs;
-  if (dlrate < bibyte)
-    *units = 0;
-  else if (dlrate < (bibyte * bibyte))
-    *units = 1, dlrate /= bibyte;
-  else if (dlrate < (bibyte * bibyte * bibyte))
-    *units = 2, dlrate /= (bibyte * bibyte);
+    dlrate = convert_to_bits(bytes) / secs;
+    if (dlrate < bibyte)
+        *units = 0;
+    else if (dlrate < (bibyte * bibyte))
+        *units = 1, dlrate /= bibyte;
+    else if (dlrate < (bibyte * bibyte * bibyte))
+        *units = 2, dlrate /= (bibyte * bibyte);
 
-  else
-    /* Maybe someone will need this, one day. */
-    *units = 3, dlrate /= (bibyte * bibyte * bibyte);
+    else
+        /* Maybe someone will need this, one day. */
+        *units = 3, dlrate /= (bibyte * bibyte * bibyte);
 
-  return dlrate;
+    return dlrate;
 }
 
 
@@ -845,7 +784,7 @@ calc_rate (wgint bytes, double secs, int *units)
     }                                                   \
 } while (0)
 
-static char *getproxy (struct url *);
+static char *getproxy(struct url *);
 
 /* Retrieve the given URL.  Decides which loop to call -- HTTP, FTP,
    FTP, proxy, etc.  */
@@ -854,326 +793,320 @@ static char *getproxy (struct url *);
    multiple points. */
 
 uerr_t
-retrieve_url (struct url * orig_parsed, const char *origurl, char **file,
-              char **newloc, const char *refurl, int *dt, bool recursive,
-              struct iri *iri, bool register_status)
-{
-  fprintf(stdout, _("retrieve_url() origurl: %s\n"), origurl);
-  fprintf(stdout, _("retrieve_url() refurl: %s\n"), refurl);
-  fprintf(stdout, _("retrieve_url() recursive: %d\n"), recursive);
-  fprintf(stdout, _("retrieve_url() register_status: %d\n"), register_status);
-  fprintf(stdout, _("retrieve_url() *dt: %d\n"), *dt);
+retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
+             char **newloc, const char *refurl, int *dt, bool recursive,
+             struct iri *iri, bool register_status) {
+    // https://services.gradle.org/distributions/gradle-2.14.1-all.zip
+    fprintf(stdout, _("retrieve_url() origurl: %s\n"), origurl);
+    fprintf(stdout, _("retrieve_url() *file: %s\n"), *file);// NULL
+    fprintf(stdout, _("retrieve_url() *newloc: %s\n"), *newloc);// NULL
+    fprintf(stdout, _("retrieve_url() refurl: %s\n"), refurl);// NULL
+    fprintf(stdout, _("retrieve_url() *dt: %d\n"), *dt);// 0
+    fprintf(stdout, _("retrieve_url() recursive: %d\n"), recursive);// 0
+    fprintf(stdout, _("retrieve_url() register_status: %d\n"), register_status);// 1
 
-  uerr_t result;
-  char *url;
-  bool location_changed;
-  bool iri_fallbacked = 0;
-  int dummy;
-  char *mynewloc, *proxy;
-  struct url *u = orig_parsed, *proxy_url;
-  int up_error_code;            /* url parse error code */
-  char *local_file = NULL;
-  int redirection_count = 0;
+    uerr_t result;
+    char *url;
+    bool location_changed;
+    bool iri_fallbacked = 0;
+    int dummy;
+    char *mynewloc, *proxy;
+    struct url *u = orig_parsed, *proxy_url = NULL;
+    int up_error_code;            /* url parse error code */
+    char *local_file = NULL;
+    int redirection_count = 0;
 
-  bool method_suspended = false;
-  char *saved_body_data = NULL;
-  char *saved_method = NULL;
-  char *saved_body_file_name = NULL;
+    bool method_suspended = false;
+    char *saved_body_data = NULL;
+    char *saved_method = NULL;
+    char *saved_body_file_name = NULL;
 
-  /* If dt is NULL, use local storage.  */
-  if (!dt)
-    {
-      dt = &dummy;
-      dummy = 0;
+    /* If dt is NULL, use local storage.  */
+    if (!dt) {
+        dt = &dummy;
+        dummy = 0;
     }
-  url = xstrdup (origurl);
-  fprintf(stdout, _("retrieve_url() url: %s\n"), url);
-  if (newloc)
-    *newloc = NULL;
-  if (file)
-    *file = NULL;
+    url = xstrdup(origurl);
+    // https://services.gradle.org/distributions/gradle-2.14.1-all.zip
+    fprintf(stdout, _("retrieve_url() url: %s\n"), url);
+    if (newloc)
+        *newloc = NULL;
+    if (file)
+        *file = NULL;
 
-  if (!refurl)
-    refurl = opt.referer;
+    if (!refurl)
+        refurl = opt.referer;
 
- redirected:
-  /* (also for IRI fallbacking) */
+    redirected:
+    /* (also for IRI fallbacking) */
 
-  result = NOCONERROR;
-  mynewloc = NULL;
-  xfree(local_file);
-  proxy_url = NULL;
+    result = NOCONERROR;
+    mynewloc = NULL;
+    xfree(local_file);
 
-  proxy = getproxy (u);
-  if (proxy)
-    {
-      struct iri *pi = iri_new ();
-      set_uri_encoding (pi, opt.locale, true);
-      pi->utf8_encode = false;
+    // 如果有代理,那么处理代理地址
+    proxy = getproxy(u);
+    fprintf(stdout, _("retrieve_url() proxy: %s\n"), proxy);// NULL
+    if (proxy) {
+        struct iri *pi = iri_new ();
+        set_uri_encoding (pi, opt.locale, true);
+        pi->utf8_encode = false;
 
-      /* Parse the proxy URL.  */
-      proxy_url = url_parse (proxy, &up_error_code, pi, true);
-      if (!proxy_url)
-        {
-          char *error = url_error (proxy, up_error_code);
-          logprintf (LOG_NOTQUIET, _("Error parsing proxy URL %s: %s.\n"),
-                     proxy, error);
-          xfree (url);
-          xfree (error);
-          xfree (proxy);
-          iri_free (pi);
-          RESTORE_METHOD;
-          result = PROXERR;
-          goto bail;
+        /* Parse the proxy URL.  */
+        proxy_url = url_parse(proxy, &up_error_code, pi, true);
+        if (!proxy_url) {
+            char *error = url_error(proxy, up_error_code);
+            logprintf(LOG_NOTQUIET, _("Error parsing proxy URL %s: %s.\n"),
+                      proxy, error);
+            xfree (url);
+            xfree (error);
+            xfree (proxy);
+            iri_free (pi);
+            RESTORE_METHOD;
+            result = PROXERR;
+            goto bail;
         }
-      if (proxy_url->scheme != SCHEME_HTTP && proxy_url->scheme != u->scheme)
-        {
-          logprintf (LOG_NOTQUIET, _("Error in proxy URL %s: Must be HTTP.\n"), proxy);
-          url_free (proxy_url);
-          xfree (url);
-          xfree (proxy);
-          iri_free (pi);
-          RESTORE_METHOD;
-          result = PROXERR;
-          goto bail;
+        if (proxy_url->scheme != SCHEME_HTTP && proxy_url->scheme != u->scheme) {
+            logprintf(LOG_NOTQUIET, _("Error in proxy URL %s: Must be HTTP.\n"), proxy);
+            url_free(proxy_url);
+            xfree (url);
+            xfree (proxy);
+            iri_free (pi);
+            RESTORE_METHOD;
+            result = PROXERR;
+            goto bail;
         }
-      iri_free(pi);
-      xfree (proxy);
+        iri_free(pi);
+        xfree (proxy);
     }
 
-  if (u->scheme == SCHEME_HTTP
-#ifdef HAVE_SSL
-      || u->scheme == SCHEME_HTTPS
-#endif
-      || (proxy_url && proxy_url->scheme == SCHEME_HTTP))
-    {
+    fprintf(stdout, _("retrieve_url() u->scheme: %d\n"), u->scheme);
+    fprintf(stdout, _("retrieve_url() proxy_url: %p\n"), proxy_url);
+    if (proxy_url) {
+        fprintf(stdout, _("retrieve_url() proxy_url->scheme: %d\n"), proxy_url->scheme);
+    }
+    if (u->scheme == SCHEME_HTTP
+        #ifdef HAVE_SSL
+        || u->scheme == SCHEME_HTTPS
+        #endif
+        || (proxy_url && proxy_url->scheme == SCHEME_HTTP)) {
 #ifdef HAVE_HSTS
 #ifdef TESTING
-      /* we don't link against main.o when we're testing */
-      hsts_store_t hsts_store = NULL;
+        /* we don't link against main.o when we're testing */
+        hsts_store_t hsts_store = NULL;
 #else
-      extern hsts_store_t hsts_store;
+        extern hsts_store_t hsts_store;
 #endif
 
-      if (opt.hsts && hsts_store)
-	{
-	  if (hsts_match (hsts_store, u))
-	    logprintf (LOG_VERBOSE, "URL transformed to HTTPS due to an HSTS policy\n");
-	}
-#endif
-      fprintf(stdout, _("retrieve_url() mynewloc: %s\n"), mynewloc);
-      fprintf(stdout, _("retrieve_url() local_file: %s\n"), local_file);
-      fprintf(stdout, _("retrieve_url() proxy_url: %s\n"), proxy_url);
-      result = http_loop (u, orig_parsed, &mynewloc, &local_file, refurl, dt, proxy_url, iri);
-      fprintf(stdout, _("retrieve_url() result: %d\n"), result);
-    }
-  else if (u->scheme == SCHEME_FTP
-#ifdef HAVE_SSL
-      || u->scheme == SCHEME_FTPS
-#endif
-      )
-    {
-      /* If this is a redirection, temporarily turn off opt.ftp_glob
-         and opt.recursive, both being undesirable when following
-         redirects.  */
-      bool oldrec = recursive, glob = opt.ftp_glob;
-      if (redirection_count)
-        oldrec = glob = false;
-
-      result = ftp_loop (u, orig_parsed, &local_file, dt, proxy_url,
-                         recursive, glob);
-      recursive = oldrec;
-
-      /* There is a possibility of having HTTP being redirected to
-         FTP.  In these cases we must decide whether the text is HTML
-         according to the suffix.  The HTML suffixes are `.html',
-         `.htm' and a few others, case-insensitive.  */
-      if (redirection_count && local_file && (u->scheme == SCHEME_FTP
-#ifdef HAVE_SSL
-          || u->scheme == SCHEME_FTPS
-#endif
-          ))
-        {
-          if (has_html_suffix_p (local_file))
-            *dt |= TEXTHTML;
+        if (opt.hsts && hsts_store) {
+            if (hsts_match(hsts_store, u))
+                logprintf(LOG_VERBOSE, "URL transformed to HTTPS due to an HSTS policy\n");
         }
+#endif
+        fprintf(stdout, _("retrieve_url() orig_parsed->port: %d\n"), orig_parsed->port);
+        fprintf(stdout, _("retrieve_url() orig_parsed->url: %s\n"), orig_parsed->url);
+        fprintf(stdout, _("retrieve_url() orig_parsed->host: %s\n"), orig_parsed->host);
+        fprintf(stdout, _("retrieve_url() orig_parsed->path: %s\n"), orig_parsed->path);
+
+        fprintf(stdout, _("retrieve_url() mynewloc: %s\n"), mynewloc);// NULL
+        fprintf(stdout, _("retrieve_url() local_file: %s\n"), local_file);// NULL
+        fprintf(stdout, _("retrieve_url() refurl: %s\n"), refurl);// NULL
+        fprintf(stdout, _("retrieve_url() *dt: %d\n"), *dt);
+        result = http_loop(u, orig_parsed, &mynewloc, &local_file, refurl, dt, proxy_url, iri);
+        fprintf(stdout, _("retrieve_url() result: %d\n"), result);
+    } else if (u->scheme == SCHEME_FTP
+               #ifdef HAVE_SSL
+               || u->scheme == SCHEME_FTPS
+#endif
+            ) {
+        /* If this is a redirection, temporarily turn off opt.ftp_glob
+           and opt.recursive, both being undesirable when following
+           redirects.  */
+        bool oldrec = recursive, glob = opt.ftp_glob;
+        if (redirection_count)
+            oldrec = glob = false;
+
+        result = ftp_loop(u, orig_parsed, &local_file, dt, proxy_url,
+                          recursive, glob);
+        recursive = oldrec;
+
+        /* There is a possibility of having HTTP being redirected to
+           FTP.  In these cases we must decide whether the text is HTML
+           according to the suffix.  The HTML suffixes are `.html',
+           `.htm' and a few others, case-insensitive.  */
+        if (redirection_count && local_file && (u->scheme == SCHEME_FTP
+                                                #ifdef HAVE_SSL
+                                                || u->scheme == SCHEME_FTPS
+#endif
+        )) {
+            if (has_html_suffix_p(local_file))
+                *dt |= TEXTHTML;
+        }
+    }// SCHEME_FTP or SCHEME_FTPS
+
+    if (proxy_url) {
+        url_free(proxy_url);
+        proxy_url = NULL;
     }
 
-  if (proxy_url)
-    {
-      url_free (proxy_url);
-      proxy_url = NULL;
-    }
+    location_changed = (result == NEWLOCATION || result == NEWLOCATION_KEEP_POST);
+    fprintf(stdout, _("retrieve_url() location_changed: %d\n"), location_changed);
+    if (location_changed) {
+        char *construced_newloc;
+        struct url *newloc_parsed;
 
-  location_changed = (result == NEWLOCATION || result == NEWLOCATION_KEEP_POST);
-  if (location_changed)
-    {
-      char *construced_newloc;
-      struct url *newloc_parsed;
+        assert (mynewloc != NULL);
+        // https://downloads.gradle.org/distributions/gradle-2.14.1-all.zip
+        fprintf(stdout, _("retrieve_url() mynewloc 1: %s\n"), mynewloc);
 
-      assert (mynewloc != NULL);
+        xfree (local_file);
 
-      xfree (local_file);
-
-      /* The HTTP specs only allow absolute URLs to appear in
-         redirects, but a ton of boneheaded webservers and CGIs out
-         there break the rules and use relative URLs, and popular
-         browsers are lenient about this, so wget should be too. */
-      construced_newloc = uri_merge (url, mynewloc ? mynewloc : "");
-      xfree (mynewloc);
-      mynewloc = construced_newloc;
+        /* The HTTP specs only allow absolute URLs to appear in
+           redirects, but a ton of boneheaded webservers and CGIs out
+           there break the rules and use relative URLs, and popular
+           browsers are lenient about this, so wget should be too. */
+        construced_newloc = uri_merge(url, mynewloc ? mynewloc : "");
+        fprintf(stdout, _("retrieve_url() construced_newloc: %s\n"), construced_newloc);
+        xfree (mynewloc);
+        mynewloc = construced_newloc;
 
 #ifdef ENABLE_IRI
-      /* Reset UTF-8 encoding state, set the URI encoding and reset
-         the content encoding. */
-      iri->utf8_encode = opt.enable_iri;
-      if (opt.encoding_remote)
-       set_uri_encoding (iri, opt.encoding_remote, true);
-      set_content_encoding (iri, NULL);
-      xfree (iri->orig_url);
+        /* Reset UTF-8 encoding state, set the URI encoding and reset
+           the content encoding. */
+        iri->utf8_encode = opt.enable_iri;
+        if (opt.encoding_remote)
+         set_uri_encoding (iri, opt.encoding_remote, true);
+        set_content_encoding (iri, NULL);
+        xfree (iri->orig_url);
 #endif
 
-      /* Now, see if this new location makes sense. */
-      newloc_parsed = url_parse (mynewloc, &up_error_code, iri, true);
-      if (!newloc_parsed)
-        {
-          char *error = url_error (mynewloc, up_error_code);
-          logprintf (LOG_NOTQUIET, "%s: %s.\n", escnonprint_uri (mynewloc),
-                     error);
-          if (orig_parsed != u)
-            {
-              url_free (u);
+        /* Now, see if this new location makes sense. */
+        newloc_parsed = url_parse(mynewloc, &up_error_code, iri, true);
+        if(newloc_parsed){
+            fprintf(stdout, _("retrieve_url() newloc_parsed->url: %s\n"), newloc_parsed->url);
+        }
+        if (!newloc_parsed) {
+            char *error = url_error(mynewloc, up_error_code);
+            logprintf(LOG_NOTQUIET, "%s: %s.\n", escnonprint_uri(mynewloc), error);
+            if (orig_parsed != u) {
+                url_free(u);
             }
-          xfree (url);
-          xfree (mynewloc);
-          xfree (error);
-          RESTORE_METHOD;
-          goto bail;
+            xfree (url);
+            xfree (mynewloc);
+            xfree (error);
+            RESTORE_METHOD;
+            goto bail;
         }
 
-      /* Now mynewloc will become newloc_parsed->url, because if the
-         Location contained relative paths like .././something, we
-         don't want that propagating as url.  */
-      xfree (mynewloc);
-      mynewloc = xstrdup (newloc_parsed->url);
+        /* Now mynewloc will become newloc_parsed->url, because if the
+           Location contained relative paths like .././something, we
+           don't want that propagating as url.  */
+        xfree (mynewloc);
+        mynewloc = xstrdup(newloc_parsed->url);
+        fprintf(stdout, _("retrieve_url() mynewloc 2: %s\n"), mynewloc);
+        fprintf(stdout, _("retrieve_url() opt.max_redirect: %d\n"), opt.max_redirect);
 
-      /* Check for max. number of redirections.  */
-      if (++redirection_count > opt.max_redirect)
-        {
-          logprintf (LOG_NOTQUIET, _("%d redirections exceeded.\n"),
-                     opt.max_redirect);
-          url_free (newloc_parsed);
-          if (orig_parsed != u)
-            {
-              url_free (u);
+        /* Check for max. number of redirections.  */
+        if (++redirection_count > opt.max_redirect) {
+            logprintf(LOG_NOTQUIET, _("%d redirections exceeded.\n"), opt.max_redirect);
+            url_free(newloc_parsed);
+            if (orig_parsed != u) {
+                url_free(u);
             }
-          xfree (url);
-          xfree (mynewloc);
-          RESTORE_METHOD;
-          result = WRONGCODE;
-          goto bail;
+            xfree (url);
+            xfree (mynewloc);
+            RESTORE_METHOD;
+            result = WRONGCODE;
+            goto bail;
         }
 
-      xfree (url);
-      url = mynewloc;
-      if (orig_parsed != u)
-        {
-          url_free (u);
+        xfree (url);
+        url = mynewloc;
+        if (orig_parsed != u) {
+            url_free(u);
         }
-      u = newloc_parsed;
+        u = newloc_parsed;
 
-      /* If we're being redirected from POST, and we received a
-         redirect code different than 307, we don't want to POST
-         again.  Many requests answer POST with a redirection to an
-         index page; that redirection is clearly a GET.  We "suspend"
-         POST data for the duration of the redirections, and restore
-         it when we're done.
+        /* If we're being redirected from POST, and we received a
+           redirect code different than 307, we don't want to POST
+           again.  Many requests answer POST with a redirection to an
+           index page; that redirection is clearly a GET.  We "suspend"
+           POST data for the duration of the redirections, and restore
+           it when we're done.
 
-         RFC2616 HTTP/1.1 introduces code 307 Temporary Redirect
-         specifically to preserve the method of the request.
-     */
-      if (result != NEWLOCATION_KEEP_POST && !method_suspended)
-        SUSPEND_METHOD;
-      fprintf(stdout, _("retrieve_url() goto redirected 1\n"));
-      goto redirected;
-    }
-  else
-    {
-      xfree(mynewloc);
-    }
-
-  /* Try to not encode in UTF-8 if fetching failed */
-  if (!(*dt & RETROKF) && iri->utf8_encode)
-    {
-      iri->utf8_encode = false;
-      if (orig_parsed != u)
-        {
-          url_free (u);
+           RFC2616 HTTP/1.1 introduces code 307 Temporary Redirect
+           specifically to preserve the method of the request.
+       */
+        if (result != NEWLOCATION_KEEP_POST && !method_suspended) {
+            SUSPEND_METHOD;
         }
-      u = url_parse (origurl, NULL, iri, true);
-      if (u)
-        {
-          if (strcmp(u->url, orig_parsed->url))
-            {
-              DEBUGP (("[IRI fallbacking to non-utf8 for %s\n", quote (url)));
-              xfree (url);
-              url = xstrdup (u->url);
-              iri_fallbacked = 1;
-              fprintf(stdout, _("retrieve_url() goto redirected 2\n"));
-              goto redirected;
-            }
-          else
-              DEBUGP (("[Needn't fallback to non-utf8 for %s\n", quote (url)));
+        fprintf(stdout, _("retrieve_url() goto redirected 1\n"));
+        goto redirected;
+    } else {
+        xfree(mynewloc);
+    }
+
+    /* Try to not encode in UTF-8 if fetching failed */
+    if (!(*dt & RETROKF) && iri->utf8_encode) {
+        iri->utf8_encode = false;
+        if (orig_parsed != u) {
+            url_free(u);
         }
-      else
-          DEBUGP (("[Couldn't fallback to non-utf8 for %s\n", quote (url)));
+        u = url_parse(origurl, NULL, iri, true);
+        if (u) {
+            if (strcmp(u->url, orig_parsed->url)) {
+                DEBUGP (("[IRI fallbacking to non-utf8 for %s\n", quote(url)));
+                xfree (url);
+                url = xstrdup(u->url);
+                iri_fallbacked = 1;
+                fprintf(stdout, _("retrieve_url() goto redirected 2\n"));
+                goto redirected;
+            } else
+                DEBUGP (("[Needn't fallback to non-utf8 for %s\n", quote(url)));
+        } else
+            DEBUGP (("[Couldn't fallback to non-utf8 for %s\n", quote(url)));
     }
 
-  if (local_file && u && (*dt & RETROKF || opt.content_on_error))
-    {
-      register_download (u->url, local_file);
+    if (local_file && u && (*dt & RETROKF || opt.content_on_error)) {
+        register_download(u->url, local_file);
 
-      if (!opt.spider && redirection_count && 0 != strcmp (origurl, u->url))
-        register_redirection (origurl, u->url);
+        if (!opt.spider && redirection_count && 0 != strcmp(origurl, u->url))
+            register_redirection(origurl, u->url);
 
-      if (*dt & TEXTHTML)
-        register_html (local_file);
+        if (*dt & TEXTHTML)
+            register_html(local_file);
 
-      if (*dt & TEXTCSS)
-        register_css (local_file);
+        if (*dt & TEXTCSS)
+            register_css(local_file);
     }
 
-  if (file)
-    *file = local_file ? local_file : NULL;
-  else
-    xfree (local_file);
+    if (file)
+        *file = local_file ? local_file : NULL;
+    else
+        xfree (local_file);
 
-  if (orig_parsed != u)
-    {
-      url_free (u);
+    if (orig_parsed != u) {
+        url_free(u);
     }
 
-  if (redirection_count || iri_fallbacked)
-    {
-      if (newloc)
-        *newloc = url;
-      else
+    if (redirection_count || iri_fallbacked) {
+        if (newloc)
+            *newloc = url;
+        else
+            xfree (url);
+    } else {
+        if (newloc)
+            *newloc = NULL;
         xfree (url);
     }
-  else
-    {
-      if (newloc)
-        *newloc = NULL;
-      xfree (url);
-    }
 
-  RESTORE_METHOD;
+    RESTORE_METHOD;
 
-bail:
-  if (register_status)
-    inform_exit_status (result);
+    bail:
+    if (register_status)
+        inform_exit_status(result);
 
-  return result;
+    return result;
 }
 
 /* Find the URLs in the file and call retrieve_url() for each of them.
@@ -1183,149 +1116,143 @@ bail:
    If opt.recursive is set, call retrieve_tree() for each file.  */
 
 uerr_t
-retrieve_from_file (const char *file, bool html, int *count)
-{
-  uerr_t status;
-  struct urlpos *url_list, *cur_url;
-  struct iri *iri = iri_new();
+retrieve_from_file(const char *file, bool html, int *count) {
+    uerr_t status;
+    struct urlpos *url_list, *cur_url;
+    struct iri *iri = iri_new();
 
-  char *input_file, *url_file = NULL;
-  const char *url = file;
+    char *input_file, *url_file = NULL;
+    const char *url = file;
 
-  status = RETROK;             /* Suppose everything is OK.  */
-  *count = 0;                  /* Reset the URL count.  */
+    status = RETROK;             /* Suppose everything is OK.  */
+    *count = 0;                  /* Reset the URL count.  */
 
-  /* sXXXav : Assume filename and links in the file are in the locale */
-  set_uri_encoding (iri, opt.locale, true);
-  set_content_encoding (iri, opt.locale);
+    /* sXXXav : Assume filename and links in the file are in the locale */
+    set_uri_encoding (iri, opt.locale, true);
+    set_content_encoding (iri, opt.locale);
 
-  if (url_valid_scheme (url))
-    {
-      int dt,url_err;
-      struct url *url_parsed = url_parse (url, &url_err, iri, true);
-      if (!url_parsed)
-        {
-          char *error = url_error (url, url_err);
-          logprintf (LOG_NOTQUIET, "%s: %s.\n", url, error);
-          xfree (error);
-          iri_free (iri);
-          return URLERROR;
+    if (url_valid_scheme(url)) {
+        int dt, url_err;
+        struct url *url_parsed = url_parse(url, &url_err, iri, true);
+        if (!url_parsed) {
+            char *error = url_error(url, url_err);
+            logprintf(LOG_NOTQUIET, "%s: %s.\n", url, error);
+            xfree (error);
+            iri_free (iri);
+            return URLERROR;
         }
 
-      if (!opt.base_href)
-        opt.base_href = xstrdup (url);
+        if (!opt.base_href)
+            opt.base_href = xstrdup(url);
+        fprintf(stdout, _("retrieve_from_file() retrieve_url() start\n"));
+        status = retrieve_url(url_parsed, url, &url_file, NULL, NULL, &dt,
+                              false, iri, true);
+        fprintf(stdout, _("retrieve_from_file() retrieve_url() end\n"));
+        url_free(url_parsed);
 
-      status = retrieve_url (url_parsed, url, &url_file, NULL, NULL, &dt,
-                             false, iri, true);
-      url_free (url_parsed);
+        if (!url_file || (status != RETROK))
+            return status;
 
-      if (!url_file || (status != RETROK))
-        return status;
-
-      if (dt & TEXTHTML)
-        html = true;
+        if (dt & TEXTHTML)
+            html = true;
 
 #ifdef ENABLE_IRI
-      /* If we have a found a content encoding, use it.
-       * ( == is okay, because we're checking for identical object) */
-      if (iri->content_encoding != opt.locale)
-          set_uri_encoding (iri, iri->content_encoding, false);
+        /* If we have a found a content encoding, use it.
+         * ( == is okay, because we're checking for identical object) */
+        if (iri->content_encoding != opt.locale)
+            set_uri_encoding (iri, iri->content_encoding, false);
 #endif
 
-      /* Reset UTF-8 encode status */
-      iri->utf8_encode = opt.enable_iri;
-      xfree (iri->orig_url);
+        /* Reset UTF-8 encode status */
+        iri->utf8_encode = opt.enable_iri;
+        xfree (iri->orig_url);
 
-      input_file = url_file;
-    }
-  else
-    input_file = (char *) file;
+        input_file = url_file;
+    } else
+        input_file = (char *) file;
 
-  url_list = (html ? get_urls_html (input_file, NULL, NULL, iri)
-              : get_urls_file (input_file));
+    url_list = (html ? get_urls_html(input_file, NULL, NULL, iri)
+                     : get_urls_file(input_file));
 
-  xfree (url_file);
+    xfree (url_file);
 
-  for (cur_url = url_list; cur_url; cur_url = cur_url->next, ++*count)
-    {
-      char *filename = NULL, *new_file = NULL, *proxy;
-      int dt = 0;
-      struct iri *tmpiri = iri_dup (iri);
-      struct url *parsed_url = NULL;
+    for (cur_url = url_list; cur_url; cur_url = cur_url->next, ++*count) {
+        char *filename = NULL, *new_file = NULL, *proxy;
+        int dt = 0;
+        struct iri *tmpiri = iri_dup (iri);
+        struct url *parsed_url = NULL;
 
-      if (cur_url->ignore_when_downloading)
-        continue;
+        if (cur_url->ignore_when_downloading)
+            continue;
 
-      if (opt.quota && total_downloaded_bytes > opt.quota)
-        {
-          status = QUOTEXC;
-          break;
+        if (opt.quota && total_downloaded_bytes > opt.quota) {
+            status = QUOTEXC;
+            break;
         }
 
-      parsed_url = url_parse (cur_url->url->url, NULL, tmpiri, true);
+        parsed_url = url_parse(cur_url->url->url, NULL, tmpiri, true);
 
-      proxy = getproxy (cur_url->url);
-      if ((opt.recursive || opt.page_requisites)
-          && ((cur_url->url->scheme != SCHEME_FTP
-#ifdef HAVE_SSL
-          && cur_url->url->scheme != SCHEME_FTPS
+        proxy = getproxy(cur_url->url);
+        if ((opt.recursive || opt.page_requisites)
+            && ((cur_url->url->scheme != SCHEME_FTP
+                 #ifdef HAVE_SSL
+                 && cur_url->url->scheme != SCHEME_FTPS
 #endif
-          ) || proxy))
-        {
-          int old_follow_ftp = opt.follow_ftp;
+                ) || proxy)) {
+            int old_follow_ftp = opt.follow_ftp;
 
-          /* Turn opt.follow_ftp on in case of recursive FTP retrieval */
-          if (cur_url->url->scheme == SCHEME_FTP
-#ifdef HAVE_SSL
-              || cur_url->url->scheme == SCHEME_FTPS
+            /* Turn opt.follow_ftp on in case of recursive FTP retrieval */
+            if (cur_url->url->scheme == SCHEME_FTP
+                #ifdef HAVE_SSL
+                || cur_url->url->scheme == SCHEME_FTPS
 #endif
-              )
-            opt.follow_ftp = 1;
+                    )
+                opt.follow_ftp = 1;
 
-          status = retrieve_tree (parsed_url ? parsed_url : cur_url->url,
-                                  tmpiri);
+            status = retrieve_tree(parsed_url ? parsed_url : cur_url->url,
+                                   tmpiri);
 
-          opt.follow_ftp = old_follow_ftp;
+            opt.follow_ftp = old_follow_ftp;
+        } else {
+            fprintf(stdout, _("retrieve_from_file() retrieve_url() start 2\n"));
+            status = retrieve_url(parsed_url ? parsed_url : cur_url->url,
+                                  cur_url->url->url, &filename,
+                                  &new_file, NULL, &dt, opt.recursive, tmpiri,
+                                  true);
+            fprintf(stdout, _("retrieve_from_file() retrieve_url() end 2\n"));
         }
-      else
-        status = retrieve_url (parsed_url ? parsed_url : cur_url->url,
-                               cur_url->url->url, &filename,
-                               &new_file, NULL, &dt, opt.recursive, tmpiri,
-                               true);
-      xfree (proxy);
+        xfree (proxy);
 
-      if (parsed_url)
-          url_free (parsed_url);
+        if (parsed_url)
+            url_free(parsed_url);
 
-      if (filename && opt.delete_after && file_exists_p (filename, NULL))
-        {
-          DEBUGP (("\
+        if (filename && opt.delete_after && file_exists_p(filename, NULL)) {
+            DEBUGP (("\
 Removing file due to --delete-after in retrieve_from_file():\n"));
-          logprintf (LOG_VERBOSE, _("Removing %s.\n"), filename);
-          if (unlink (filename))
-            logprintf (LOG_NOTQUIET, "Failed to unlink %s: (%d) %s\n", filename, errno, strerror (errno));
-          dt &= ~RETROKF;
+            logprintf(LOG_VERBOSE, _("Removing %s.\n"), filename);
+            if (unlink(filename))
+                logprintf(LOG_NOTQUIET, "Failed to unlink %s: (%d) %s\n", filename, errno, strerror(errno));
+            dt &= ~RETROKF;
         }
 
-      xfree (new_file);
-      xfree (filename);
-      iri_free (tmpiri);
+        xfree (new_file);
+        xfree (filename);
+        iri_free (tmpiri);
     }
 
-  /* Free the linked list of URL-s.  */
-  free_urlpos (url_list);
+    /* Free the linked list of URL-s.  */
+    free_urlpos(url_list);
 
-  iri_free (iri);
+    iri_free (iri);
 
-  return status;
+    return status;
 }
 
 /* Print `giving up', or `retrying', depending on the impending
    action.  N1 and N2 are the attempt number and the attempt limit.  */
 void
-printwhat (int n1, int n2)
-{
-  logputs (LOG_VERBOSE, (n1 == n2) ? _("Giving up.\n\n") : _("Retrying.\n\n"));
+printwhat(int n1, int n2) {
+    logputs(LOG_VERBOSE, (n1 == n2) ? _("Giving up.\n\n") : _("Retrying.\n\n"));
 }
 
 /* If opt.wait or opt.waitretry are specified, and if certain
@@ -1335,65 +1262,56 @@ printwhat (int n1, int n2)
    COUNT is the count of current retrieval, beginning with 1. */
 
 void
-sleep_between_retrievals (int count)
-{
-  static bool first_retrieval = true;
+sleep_between_retrievals(int count) {
+    static bool first_retrieval = true;
 
-  if (first_retrieval)
-    {
-      /* Don't sleep before the very first retrieval. */
-      first_retrieval = false;
-      return;
+    if (first_retrieval) {
+        /* Don't sleep before the very first retrieval. */
+        first_retrieval = false;
+        return;
     }
 
-  if (opt.waitretry && count > 1)
-    {
-      /* If opt.waitretry is specified and this is a retry, wait for
-         COUNT-1 number of seconds, or for opt.waitretry seconds.  */
-      if (count <= opt.waitretry)
-        xsleep (count - 1);
-      else
-        xsleep (opt.waitretry);
-    }
-  else if (opt.wait)
-    {
-      if (!opt.random_wait || count > 1)
-        /* If random-wait is not specified, or if we are sleeping
-           between retries of the same download, sleep the fixed
-           interval.  */
-        xsleep (opt.wait);
-      else
-        {
-          /* Sleep a random amount of time averaging in opt.wait
-             seconds.  The sleeping amount ranges from 0.5*opt.wait to
-             1.5*opt.wait.  */
-          double waitsecs = (0.5 + random_float ()) * opt.wait;
-          DEBUGP (("sleep_between_retrievals: avg=%f,sleep=%f\n",
-                   opt.wait, waitsecs));
-          xsleep (waitsecs);
+    if (opt.waitretry && count > 1) {
+        /* If opt.waitretry is specified and this is a retry, wait for
+           COUNT-1 number of seconds, or for opt.waitretry seconds.  */
+        if (count <= opt.waitretry)
+            xsleep(count - 1);
+        else
+            xsleep(opt.waitretry);
+    } else if (opt.wait) {
+        if (!opt.random_wait || count > 1)
+            /* If random-wait is not specified, or if we are sleeping
+               between retries of the same download, sleep the fixed
+               interval.  */
+            xsleep(opt.wait);
+        else {
+            /* Sleep a random amount of time averaging in opt.wait
+               seconds.  The sleeping amount ranges from 0.5*opt.wait to
+               1.5*opt.wait.  */
+            double waitsecs = (0.5 + random_float()) * opt.wait;
+            DEBUGP (("sleep_between_retrievals: avg=%f,sleep=%f\n",
+                    opt.wait, waitsecs));
+            xsleep(waitsecs);
         }
     }
 }
 
 /* Free the linked list of urlpos.  */
 void
-free_urlpos (struct urlpos *l)
-{
-  while (l)
-    {
-      struct urlpos *next = l->next;
-      if (l->url)
-        url_free (l->url);
-      xfree (l->local_name);
-      xfree (l);
-      l = next;
+free_urlpos(struct urlpos *l) {
+    while (l) {
+        struct urlpos *next = l->next;
+        if (l->url)
+            url_free(l->url);
+        xfree (l->local_name);
+        xfree (l);
+        l = next;
     }
 }
 
 /* Rotate FNAME opt.backups times */
 void
-rotate_backups(const char *fname)
-{
+rotate_backups(const char *fname) {
 #ifdef __VMS
 # define SEP "_"
 # define AVS ";*"                       /* All-version suffix. */
@@ -1403,141 +1321,130 @@ rotate_backups(const char *fname)
 # define AVSL 0
 #endif
 
-  int maxlen = strlen (fname) + sizeof (SEP) + numdigit (opt.backups) + AVSL;
-  char *from = alloca (maxlen);
-  char *to = alloca (maxlen);
-  struct stat sb;
-  int i;
+    int maxlen = strlen(fname) + sizeof(SEP) + numdigit(opt.backups) + AVSL;
+    char *from = alloca(maxlen);
+    char *to = alloca(maxlen);
+    struct stat sb;
+    int i;
 
-  if (stat (fname, &sb) == 0)
-    if (S_ISREG (sb.st_mode) == 0)
-      return;
+    if (stat(fname, &sb) == 0)
+        if (S_ISREG (sb.st_mode) == 0)
+            return;
 
-  for (i = opt.backups; i > 1; i--)
-    {
+    for (i = opt.backups; i > 1; i--) {
 #ifdef VMS
-      /* Delete (all versions of) any existing max-suffix file, to avoid
-       * creating multiple versions of it.  (On VMS, rename() will
-       * create a new version of an existing destination file, not
-       * destroy/overwrite it.)
-       */
-      if (i == opt.backups)
-        {
-          snprintf (to, sizeof(to), "%s%s%d%s", fname, SEP, i, AVS);
-          delete (to);
-        }
+        /* Delete (all versions of) any existing max-suffix file, to avoid
+         * creating multiple versions of it.  (On VMS, rename() will
+         * create a new version of an existing destination file, not
+         * destroy/overwrite it.)
+         */
+        if (i == opt.backups)
+          {
+            snprintf (to, sizeof(to), "%s%s%d%s", fname, SEP, i, AVS);
+            delete (to);
+          }
 #endif
-      snprintf (to, maxlen, "%s%s%d", fname, SEP, i);
-      snprintf (from, maxlen, "%s%s%d", fname, SEP, i - 1);
-      if (rename (from, to))
-        logprintf (LOG_NOTQUIET, "Failed to rename %s to %s: (%d) %s\n",
-                   from, to, errno, strerror (errno));
+        snprintf(to, maxlen, "%s%s%d", fname, SEP, i);
+        snprintf(from, maxlen, "%s%s%d", fname, SEP, i - 1);
+        if (rename(from, to))
+            logprintf(LOG_NOTQUIET, "Failed to rename %s to %s: (%d) %s\n",
+                      from, to, errno, strerror(errno));
     }
 
-  snprintf (to, maxlen, "%s%s%d", fname, SEP, 1);
-  if (rename(fname, to))
-    logprintf (LOG_NOTQUIET, "Failed to rename %s to %s: (%d) %s\n",
-               fname, to, errno, strerror (errno));
+    snprintf(to, maxlen, "%s%s%d", fname, SEP, 1);
+    if (rename(fname, to))
+        logprintf(LOG_NOTQUIET, "Failed to rename %s to %s: (%d) %s\n",
+                  fname, to, errno, strerror(errno));
 }
 
-static bool no_proxy_match (const char *, const char **);
+static bool no_proxy_match(const char *, const char **);
 
 /* Return the URL of the proxy appropriate for url U.  */
 
 static char *
-getproxy (struct url *u)
-{
-  char *proxy = NULL;
-  char *rewritten_url;
+getproxy(struct url *u) {
+    char *proxy = NULL;
+    char *rewritten_url;
 
-  if (!opt.use_proxy)
-    return NULL;
-  if (no_proxy_match (u->host, (const char **)opt.no_proxy))
-    return NULL;
+    if (!opt.use_proxy)
+        return NULL;
+    if (no_proxy_match(u->host, (const char **) opt.no_proxy))
+        return NULL;
 
-  switch (u->scheme)
-    {
-    case SCHEME_HTTP:
-      proxy = opt.http_proxy ? opt.http_proxy : getenv ("http_proxy");
-      break;
+    switch (u->scheme) {
+        case SCHEME_HTTP:
+            proxy = opt.http_proxy ? opt.http_proxy : getenv("http_proxy");
+            break;
 #ifdef HAVE_SSL
-    case SCHEME_HTTPS:
-      proxy = opt.https_proxy ? opt.https_proxy : getenv ("https_proxy");
-      break;
-    case SCHEME_FTPS:
-      proxy = opt.ftp_proxy ? opt.ftp_proxy : getenv ("ftps_proxy");
-      break;
+        case SCHEME_HTTPS:
+            proxy = opt.https_proxy ? opt.https_proxy : getenv("https_proxy");
+            break;
+        case SCHEME_FTPS:
+            proxy = opt.ftp_proxy ? opt.ftp_proxy : getenv("ftps_proxy");
+            break;
 #endif
-    case SCHEME_FTP:
-      proxy = opt.ftp_proxy ? opt.ftp_proxy : getenv ("ftp_proxy");
-      break;
-    case SCHEME_INVALID:
-      break;
+        case SCHEME_FTP:
+            proxy = opt.ftp_proxy ? opt.ftp_proxy : getenv("ftp_proxy");
+            break;
+        case SCHEME_INVALID:
+            break;
     }
-  if (!proxy || !*proxy)
-    return NULL;
+    if (!proxy || !*proxy)
+        return NULL;
 
-  /* Handle shorthands.  `rewritten_storage' is a kludge to allow
-     getproxy() to return static storage. */
-  rewritten_url = rewrite_shorthand_url (proxy);
-  if (rewritten_url)
-    return rewritten_url;
+    /* Handle shorthands.  `rewritten_storage' is a kludge to allow
+       getproxy() to return static storage. */
+    rewritten_url = rewrite_shorthand_url(proxy);
+    if (rewritten_url)
+        return rewritten_url;
 
-  return strdup(proxy);
+    return strdup(proxy);
 }
 
 /* Returns true if URL would be downloaded through a proxy. */
 
 bool
-url_uses_proxy (struct url * u)
-{
-  bool ret;
-  char *proxy;
+url_uses_proxy(struct url *u) {
+    bool ret;
+    char *proxy;
 
-  if (!u)
-    return false;
-  proxy = getproxy (u);
-  ret = proxy != NULL;
-  xfree (proxy);
-  return ret;
+    if (!u)
+        return false;
+    proxy = getproxy(u);
+    ret = proxy != NULL;
+    xfree (proxy);
+    return ret;
 }
 
 /* Should a host be accessed through proxy, concerning no_proxy?  */
 static bool
-no_proxy_match (const char *host, const char **no_proxy)
-{
-  if (!no_proxy)
-    return false;
-  else
-    return sufmatch (no_proxy, host);
+no_proxy_match(const char *host, const char **no_proxy) {
+    if (!no_proxy)
+        return false;
+    else
+        return sufmatch(no_proxy, host);
 }
 
 /* Set the file parameter to point to the local file string.  */
 void
-set_local_file (const char **file, const char *default_file)
-{
-  if (opt.output_document)
-    {
-      if (output_stream_regular)
-        *file = opt.output_document;
-    }
-  else
-    *file = default_file;
+set_local_file(const char **file, const char *default_file) {
+    if (opt.output_document) {
+        if (output_stream_regular)
+            *file = opt.output_document;
+    } else
+        *file = default_file;
 }
 
 /* Return true for an input file's own URL, false otherwise.  */
 bool
-input_file_url (const char *input_file)
-{
-  static bool first = true;
+input_file_url(const char *input_file) {
+    static bool first = true;
 
-  if (input_file
-      && url_has_scheme (input_file)
-      && first)
-    {
-      first = false;
-      return true;
-    }
-  else
-    return false;
+    if (input_file
+        && url_has_scheme(input_file)
+        && first) {
+        first = false;
+        return true;
+    } else
+        return false;
 }
