@@ -97,7 +97,50 @@ n	不打印。相应的参数必须是指向带符号整形的指针，到目前
  */
 
 int test(int argc, char **argv) {
+    int a = 100;
+    int *p1 = &a;
+    int **p2 = &p1;
+/***
+ 总结:
+  p1用 %s 打印就是字符串内容
+  p1用 %p 打印就是字符串内容的地址
+  p2用 %s 打印是个随机值
+  p2用 %p 打印是p1自身的地址
+ *p2用 %s 打印就是字符串内容
+ *p2用 %p 打印就是字符串内容的地址
 
+ *p1用 %s 打印程序会crash
+**p2用 %s 打印程序会crash
+
+下面的结果为:
+test() p1  %s: Hello World
+test() p1  %p: 0x41b723
+test() *p2 %s: Hello World
+test() *p2 %p: 0x41b723
+test() &p1 %p: 0x7fff2acddaf0
+test() p2  %p: 0x7fff2acddaf0
+test() &p2 %p: 0x7fff2acddaf8
+test() p1[0] %p: 0x48
+test() *p1   %p: 0x48
+test() **p2  %p: 0x48
+ */
+    fprintf(stdout, "test() *p1 %%d: %d\n", *p1);// 指向字符串内容
+    fprintf(stdout, "test() **p2 %%d: %d\n", **p2);// 指向字符串内容
+    fprintf(stdout, "test() *p1 %%p: %p\n", *p1);// 指向字符串内容的地址
+    fprintf(stdout, "test() **p2 %%p: %p\n", **p2);// 指向字符串内容的地址,也就是指向p1地址处的值
+
+    fprintf(stdout, "test() p1 %%d: %d\n", p1);// 指向字符串内容
+    fprintf(stdout, "test() p1 %%p: %p\n", p1);// 指向字符串内容的地址
+    fprintf(stdout, "test() *p2 %%d: %d\n", *p2);// 指向字符串内容
+    fprintf(stdout, "test() *p2 %%p: %p\n", *p2);// 指向字符串内容的地址,也就是指向p1地址处的值
+
+    fprintf(stdout, "test() &p1 %%p: %p\n", &p1);// 指向p1自身的地址,被保存到p2中了
+    fprintf(stdout, "test() p2 %%p: %p\n", p2);// 指向p1自身的地址
+    fprintf(stdout, "test() &p2 %%p: %p\n", &p2);// 指向p2自身的地址
+
+    fprintf(stdout, "test() p1[0] %%p: %p\n", p1[0]);
+    fprintf(stdout, "test() *p1 %%p: %p\n", *p1);
+    fprintf(stdout, "test() **p2 %%p: %p\n", **p2);
 
     return 0;
 }

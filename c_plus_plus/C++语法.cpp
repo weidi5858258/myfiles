@@ -200,7 +200,14 @@ test() &p2 %p: 0x7fff2acddaf8
 test() p1[0] %p: 0x48
 test() *p1   %p: 0x48
 test() **p2  %p: 0x48
- */
+
+int a = 100;
+int *p1 = &a;
+int **p2 = &p1;
+fprintf(stdout, "test() *p1 %%d: %d\n", *p1);// 指向int内容
+fprintf(stdout, "test() **p2 %%d: %d\n", **p2);// 指向int内容
+*/
+// 下面4句代码的输出只针对于char类型,像int类型就不是这样子输出
 fprintf(stdout, "test() p1 %%s: %s\n", p1);// 指向字符串内容
 fprintf(stdout, "test() p1 %%p: %p\n", p1);// 指向字符串内容的地址
 fprintf(stdout, "test() *p2 %%s: %s\n", *p2);// 指向字符串内容
@@ -1319,7 +1326,78 @@ time_ *day_ = &sum(one, two);
 
 结构体与string
 
+typedef struct stud {
+    int num;
+    int score;
+    struct stud *next = NULL;
+};
 
+void testLink() {
+    struct stud *head = NULL, *p = NULL;
+
+    p = (struct stud *) malloc(sizeof(struct stud));
+    scanf("%d%d", &(p->num), &(p->score));
+
+    head = p;
+    p->next = NULL;
+
+    p = (struct stud *) malloc(sizeof(struct stud));
+    scanf("%d%d", &(p->num), &(p->score));
+
+    p->next = head;
+    head = p;
+}
+
+/***
+ 头插法建立单链表
+ */
+struct stud *h_create() {
+    struct stud *head = NULL, *p = NULL;
+    int n;
+    while (1) {
+        printf("\nInput num:");
+        scanf("%d", &n);
+        if (n < 0) {
+            break;
+        }
+        p = (struct stud *) malloc(sizeof(struct stud));
+        p->num = n;
+        printf("\nInput score:");
+        scanf("%d", &(p->score));
+        p->next = head;
+        head = p;
+    }
+    return head;
+}
+
+/***
+ 尾插法建立单链表
+ */
+struct stud *r_create() {
+    struct stud *head = NULL, *rear = NULL, *p = NULL;
+    int n;
+    while (1) {
+        printf("\nInput num:");
+        scanf("%d", &n);
+        if (n < 0) {
+            break;
+        }
+        p = (struct stud *) malloc(sizeof(struct stud));
+        p->num = n;
+        printf("\nInput score:");
+        scanf("%d", &(p->score));
+        if (rear == NULL) {
+            head = p;
+            p->next = NULL;
+            rear = p;
+        } else {
+            p->next = rear->next;
+            rear->next = p;
+            rear = p;
+        }
+    }
+    return head;
+}
 
 
 

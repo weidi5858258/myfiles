@@ -558,8 +558,7 @@ response_head_terminator(const char *start, const char *peeked, int peeklen) {
 
 static char *
 read_http_response_head(int fd) {
-    return fd_read_hunk(fd, response_head_terminator, 512,
-                        HTTP_RESPONSE_MAX_SIZE);
+    return fd_read_hunk(fd, response_head_terminator, 512, HTTP_RESPONSE_MAX_SIZE);
 }
 
 struct response {
@@ -2931,16 +2930,51 @@ static uerr_t
 gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
         int *dt, struct url *proxy, struct iri *iri, int count) {
 
+    fprintf(stdout, _("\n"));
     fprintf(stdout, _("gethttp() start\n"));
-    fprintf(stdout, _("gethttp() u->port: %d\n"), u->port);
-    fprintf(stdout, _("gethttp() u->url: %s\n"), u->url);
-    fprintf(stdout, _("gethttp() u->host: %s\n"), u->host);
-    fprintf(stdout, _("gethttp() u->path: %s\n"), u->path);
-    fprintf(stdout, _("gethttp() u->params: %s\n"), u->params);
-    fprintf(stdout, _("gethttp() u->query: %s\n"), u->query);
-    fprintf(stdout, _("gethttp() u->fragment: %s\n"), u->fragment);
+    if (u) {
+        fprintf(stdout, _("gethttp() u->url: %s\n"), u->url);
+        fprintf(stdout, _("gethttp() u->scheme: %d\n"), u->scheme);
+        fprintf(stdout, _("gethttp() u->host: %s\n"), u->host);
+        fprintf(stdout, _("gethttp() u->port: %d\n"), u->port);
+        fprintf(stdout, _("gethttp() u->path: %s\n"), u->path);
+        fprintf(stdout, _("gethttp() u->params: %s\n"), u->params);
+        fprintf(stdout, _("gethttp() u->query: %s\n"), u->query);
+        fprintf(stdout, _("gethttp() u->fragment: %s\n"), u->fragment);
+        fprintf(stdout, _("gethttp() u->dir: %s\n"), u->dir);
+        fprintf(stdout, _("gethttp() u->file: %s\n"), u->file);
+        fprintf(stdout, _("gethttp() u->user: %s\n"), u->user);
+        fprintf(stdout, _("gethttp() u->passwd: %s\n"), u->passwd);
+    }
+    if (original_url) {
+        fprintf(stdout, _("gethttp() original_url->url: %s\n"), original_url->url);
+        fprintf(stdout, _("gethttp() original_url->scheme: %d\n"), original_url->scheme);
+        fprintf(stdout, _("gethttp() original_url->host: %s\n"), original_url->host);
+        fprintf(stdout, _("gethttp() original_url->port: %d\n"), original_url->port);
+        fprintf(stdout, _("gethttp() original_url->path: %s\n"), original_url->path);
+        fprintf(stdout, _("gethttp() original_url->params: %s\n"), original_url->params);
+        fprintf(stdout, _("gethttp() original_url->query: %s\n"), original_url->query);
+        fprintf(stdout, _("gethttp() original_url->fragment: %s\n"), original_url->fragment);
+        fprintf(stdout, _("gethttp() original_url->dir: %s\n"), original_url->dir);
+        fprintf(stdout, _("gethttp() original_url->file: %s\n"), original_url->file);
+        fprintf(stdout, _("gethttp() original_url->user: %s\n"), original_url->user);
+        fprintf(stdout, _("gethttp() original_url->passwd: %s\n"), original_url->passwd);
+    }
+    if (iri) {
+        fprintf(stdout, _("gethttp() iri->uri_encoding: %s\n"), iri->uri_encoding);
+        fprintf(stdout, _("gethttp() iri->content_encoding: %s\n"), iri->content_encoding);
+        fprintf(stdout, _("gethttp() iri->orig_url: %s\n"), iri->orig_url);
+        fprintf(stdout, _("gethttp() iri->utf8_encode: %d\n"), iri->utf8_encode);
+    }
+    fprintf(stdout, _("gethttp() *dt: %d\n"), *dt);
+    fprintf(stdout, _("gethttp() count: %d\n"), count);
+    if (!proxy) {
+        fprintf(stdout, _("gethttp() proxy is NULL\n"));
+    }
 
-    struct request *req = NULL;
+    // opt.debug = 1;
+
+    struct request *local_request = NULL;
 
     char *type = NULL;
     char *user, *passwd;
@@ -3000,6 +3034,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
     /* Declare WARC variables. */
     bool warc_enabled = (opt.warc_filename != NULL);
+    fprintf(stdout, _("gethttp() warc_enabled: %d\n"), warc_enabled);// 0
     FILE *warc_tmp = NULL;
     char warc_timestamp_str[21];
     char warc_request_uuid[48];
@@ -3016,6 +3051,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
     /* Whether keep-alive should be inhibited.  */
     bool inhibit_keep_alive =
             !opt.http_keep_alive || opt.ignore_length;
+    fprintf(stdout, _("gethttp() inhibit_keep_alive: %d\n"), inhibit_keep_alive);
 
     /* Headers sent when using POST. */
     wgint body_data_size = 0;
@@ -3026,8 +3062,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
            it becomes a no-op.  */
         if (!ssl_init()) {
             scheme_disable(SCHEME_HTTPS);
-            logprintf(LOG_NOTQUIET,
-                      _("Disabling SSL due to encountered errors.\n"));
+            logprintf(LOG_NOTQUIET, _("Disabling SSL due to encountered errors.\n"));
             retval = SSLINITFAILED;
             goto cleanup;
         }
@@ -3050,12 +3085,23 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
     {
         uerr_t ret;
-        req = initialize_request(u, hstat, dt, proxy, inhibit_keep_alive,
-                                 &basic_auth_finished, &body_data_size,
-                                 &user, &passwd, &ret);
-        if (req == NULL) {
+        local_request = initialize_request(u, hstat, dt, proxy, inhibit_keep_alive,
+                                           &basic_auth_finished, &body_data_size,
+                                           &user, &passwd, &ret);
+        if (local_request == NULL) {
             retval = ret;
             goto cleanup;
+        } else {
+            fprintf(stdout, _("gethttp() local_request->method: %s\n"), local_request->method);
+            fprintf(stdout, _("gethttp() local_request->arg: %s\n"), local_request->arg);
+            fprintf(stdout, _("gethttp() local_request->hcount: %d\n"), local_request->hcount);
+            fprintf(stdout, _("gethttp() local_request->hcapacity: %d\n"), local_request->hcapacity);
+            if (local_request->headers) {
+                fprintf(stdout, _("gethttp() local_request->headers->name: %s\n"), local_request->headers->name);
+                fprintf(stdout, _("gethttp() local_request->headers->value: %s\n"), local_request->headers->value);
+                fprintf(stdout, _("gethttp() local_request->headers->release_policy: %d\n"),
+                        local_request->headers->release_policy);
+            }
         }
     }
     retry_with_auth:
@@ -3063,8 +3109,9 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
        without authorization header fails.  (Expected to happen at least
        for the Digest authorization scheme.)  */
 
+    fprintf(stdout, _("gethttp() opt.cookies: %d\n"), opt.cookies);// 1
     if (opt.cookies)
-        request_set_header(req, "Cookie",
+        request_set_header(local_request, "Cookie",
                            cookie_header(wget_cookie_jar,
                                          u->host, u->port, u->path,
 #ifdef HAVE_SSL
@@ -3077,25 +3124,28 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
     /* Add the user headers. */
     if (opt.user_headers) {
+        fprintf(stdout, _("gethttp() *opt.user_headers: %s\n"), *opt.user_headers);
         int i;
         for (i = 0; opt.user_headers[i]; i++)
-            request_set_user_header(req, opt.user_headers[i]);
+            request_set_user_header(local_request, opt.user_headers[i]);
     }
 
     proxyauth = NULL;
     if (proxy) {
         conn = proxy;
-        initialize_proxy_configuration(u, req, proxy, &proxyauth);
+        initialize_proxy_configuration(u, local_request, proxy, &proxyauth);
     }
     keep_alive = true;
 
     /* Establish the connection.  */
-    if (inhibit_keep_alive)
+    if (inhibit_keep_alive) {
         keep_alive = false;
+    }
 
     {
-        uerr_t conn_err = establish_connection(u, &conn, hstat, proxy, &proxyauth, &req,
+        uerr_t conn_err = establish_connection(u, &conn, hstat, proxy, &proxyauth, &local_request,
                                                &using_ssl, inhibit_keep_alive, &sock);
+        fprintf(stdout, _("gethttp() conn_err: %d\n"), conn_err);
         if (conn_err != RETROK) {
             retval = conn_err;
             goto cleanup;
@@ -3118,8 +3168,8 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
     }
 
     /* Send the request to server.  */
-    write_error = request_send(req, sock, warc_tmp);
-
+    write_error = request_send(local_request, sock, warc_tmp);
+    fprintf(stdout, _("gethttp() write_error: %d\n"), write_error);
     if (write_error >= 0) {
         if (opt.body_data) {
             DEBUGP (("[BODY data: %s]\n", opt.body_data));
@@ -3132,19 +3182,19 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
                 /* Write a copy of the data to the WARC record. */
                 warc_tmp_written = fwrite(opt.body_data, 1, body_data_size, warc_tmp);
-                if (warc_tmp_written != body_data_size)
+                if (warc_tmp_written != body_data_size) {
                     write_error = -2;
+                }
             }
         } else if (opt.body_file && body_data_size != 0) {
-            if (warc_tmp != NULL)
+            if (warc_tmp != NULL) {
                 /* Remember end of headers / start of payload */
                 warc_payload_offset = ftello(warc_tmp);
+            }
 
             write_error = body_file_send(sock, opt.body_file, body_data_size, warc_tmp);
         }
-    }
-
-    if (write_error < 0) {
+    } else {
         CLOSE_INVALIDATE (sock);
 
         if (warc_tmp != NULL)
@@ -3156,8 +3206,10 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
             retval = WRITEFAILED;
         goto cleanup;
     }
+    // 已发出 HTTP 请求，正在等待回应...
     logprintf(LOG_VERBOSE, _("%s request sent, awaiting response... "),
               proxy ? "Proxy" : "HTTP");
+    fprintf(stdout, _("\n"));
     contlen = -1;
     contrange = 0;
     *dt &= ~RETROKF;
@@ -3189,6 +3241,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
         do {
             head = read_http_response_head(sock);
+            fprintf(stdout, _("gethttp() head: \n%s\n"), head);
             if (!head) {
                 if (errno == 0) {
                     logputs(LOG_NOTQUIET, _("No data received.\n"));
@@ -3209,6 +3262,8 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
             /* Check for status line.  */
             xfree (message);
             statcode = resp_status(resp, &message);
+            fprintf(stdout, _("gethttp() message: %s\n"), message);
+            fprintf(stdout, _("gethttp() statcode: %d\n"), statcode);
             if (statcode < 0) {
                 char *tms = datetime_str(time(NULL));
                 logprintf(LOG_VERBOSE, "%d\n", statcode);
@@ -3233,10 +3288,11 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
     xfree (hstat->message);
     hstat->message = xstrdup(message);
-    if (!opt.server_response)
+    fprintf(stdout, _("gethttp() hstat->message: %s\n"), hstat->message);
+    if (!opt.server_response) {
         logprintf(LOG_VERBOSE, "%2d %s\n", statcode,
                   message ? quotearg_style(escape_quoting_style, message) : "");
-    else {
+    } else {
         logprintf(LOG_VERBOSE, "\n");
         print_server_response(resp, "  ");
     }
@@ -3346,7 +3402,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
         pconn.authorized = false;
 
         {
-            auth_err = check_auth(u, user, passwd, resp, req,
+            auth_err = check_auth(u, user, passwd, resp, local_request,
                                   &ntlm_seen, &retry,
                                   &basic_auth_finished,
                                   &auth_finished);
@@ -3875,9 +3931,10 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
     xfree (type);
     xfree (message);
     resp_free(&resp);
-    request_free(&req);
+    request_free(&local_request);
 
     fprintf(stdout, _("gethttp() end\n"));
+    fprintf(stdout, _("\n"));
     return retval;
 }
 

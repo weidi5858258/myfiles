@@ -1299,7 +1299,8 @@ int alexander_how_to_use_sws_scale3() {
 /***
  使用这个函数.
  这个函数可以改变源视频的分辨率大小和像素格式.
- 像素格式现在只支持(
+ 像素格式现在只支持
+ (
  AV_PIX_FMT_GRAY8,
  AV_PIX_FMT_YUV420P,
  AV_PIX_FMT_YUV422P,
@@ -1307,7 +1308,9 @@ int alexander_how_to_use_sws_scale3() {
  AV_PIX_FMT_YUYV422,
  AV_PIX_FMT_RGB24,
  AV_PIX_FMT_BGR24,
- AV_PIX_FMT_BGRA)这几种之间的互转.
+ AV_PIX_FMT_BGRA
+ )
+ 这几种之间的互转.
  */
 int alexander_how_to_use_sws_scale4() {
     in_file_path = "/root/视频/yuv/720_576_yuv420p.yuv";
@@ -1343,7 +1346,8 @@ int alexander_how_to_use_sws_scale4() {
         return -1;
     }
 
-    /*//Init Method 1
+    /***
+    //Init Method 1
     video_sws_context = sws_alloc_context();
     //Show AVOption
     av_opt_show2(video_sws_context, NULL, AV_OPT_FLAG_VIDEO_PARAM, 0);
