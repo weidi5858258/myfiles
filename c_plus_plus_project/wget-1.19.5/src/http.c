@@ -3241,7 +3241,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
         do {
             head = read_http_response_head(sock);
-            fprintf(stdout, _("gethttp() head: \n%s\n"), head);
+            //fprintf(stdout, _("gethttp() head: \n%s\n"), head);
             if (!head) {
                 if (errno == 0) {
                     logputs(LOG_NOTQUIET, _("No data received.\n"));
@@ -3288,8 +3288,9 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
     xfree (hstat->message);
     hstat->message = xstrdup(message);
-    fprintf(stdout, _("gethttp() hstat->message: %s\n"), hstat->message);
+    fprintf(stdout, _("gethttp() opt.server_response: %d\n"), opt.server_response);
     if (!opt.server_response) {
+        // 200 OK
         logprintf(LOG_VERBOSE, "%2d %s\n", statcode,
                   message ? quotearg_style(escape_quoting_style, message) : "");
     } else {
