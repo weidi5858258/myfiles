@@ -1,0 +1,11 @@
+/root/mydev/tools/clion-2018.2.6/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /root/mydev/workspace_github/myfiles/c_plus_plus_project/gnu-coreutils-8.30
+-- The C compiler identification is GNU 4.8.5
+-- Check for working C compiler: /usr/bin/cc
+-- Check for working C compiler: /usr/bin/cc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/mydev/workspace_github/myfiles/c_plus_plus_project/gnu-coreutils-8.30/cmake-build-debug

@@ -127,9 +127,9 @@ https://ke.qq.com/webcourse/index.html#course_id=130901&term_id=100146035&taid=1
 
 
 
-
-
-
+linux基本命令的源码
+http://blog.chinaunix.net/uid-26669601-id-5167405.html
+ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.30.tar.xz
 
 
 

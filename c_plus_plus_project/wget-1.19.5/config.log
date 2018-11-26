@@ -615,11 +615,11 @@ configure:9974: checking lex output file root
 configure:9988: result: lex.yy
 configure:9993: checking lex library
 configure:10007: gcc -o conftest -DNDEBUG    conftest.c   >&5
-/tmp/ccSJlEnn.o: In function `yylex':
+/tmp/ccRLA0jy.o: In function `yylex':
 conftest.c:(.text+0x708): undefined reference to `yywrap'
-/tmp/ccSJlEnn.o: In function `input':
+/tmp/ccRLA0jy.o: In function `input':
 conftest.c:(.text+0x11cf): undefined reference to `yywrap'
-/tmp/ccSJlEnn.o: In function `main':
+/tmp/ccRLA0jy.o: In function `main':
 conftest.c:(.text+0x1e82): undefined reference to `yywrap'
 collect2: error: ld returned 1 exit status
 configure:10007: $? = 1
@@ -4412,7 +4412,7 @@ configure:12055: $? = 0
 configure:12055: result: yes
 configure:12055: checking for _set_invalid_parameter_handler
 configure:12055: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccKgU63e.o: In function `main':
+/tmp/ccQihDsC.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `_set_invalid_parameter_handler'
 collect2: error: ld returned 1 exit status
 configure:12055: $? = 1
@@ -4661,7 +4661,7 @@ configure:12055: $? = 0
 configure:12055: result: yes
 configure:12055: checking for getprogname
 configure:12055: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccTkUh7V.o: In function `main':
+/tmp/ccQ5M0no.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `getprogname'
 collect2: error: ld returned 1 exit status
 configure:12055: $? = 1
@@ -4856,7 +4856,7 @@ configure: failed program was:
 configure:12055: result: no
 configure:12055: checking for getexecname
 configure:12055: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/cc1dth5Y.o: In function `main':
+/tmp/ccyfJEWt.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `getexecname'
 collect2: error: ld returned 1 exit status
 configure:12055: $? = 1
@@ -5055,7 +5055,7 @@ configure:12055: $? = 0
 configure:12055: result: yes
 configure:12055: checking for nanotime
 configure:12055: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccpFOwB7.o: In function `main':
+/tmp/ccwFFtDz.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `nanotime'
 collect2: error: ld returned 1 exit status
 configure:12055: $? = 1
@@ -5406,7 +5406,7 @@ configure:12055: $? = 0
 configure:12055: result: yes
 configure:12055: checking for vasnprintf
 configure:12055: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccO6dcaT.o: In function `main':
+/tmp/cc0IKDIV.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `vasnprintf'
 collect2: error: ld returned 1 exit status
 configure:12055: $? = 1
@@ -8456,7 +8456,7 @@ configure:20130: result: yes
 configure:20130: checking for pthread.h
 configure:20130: result: yes
 configure:20168: gcc -o conftest -DNDEBUG    conftest.c   >&5
-/tmp/cctxpkDJ.o: In function `main':
+/tmp/ccWks4uq.o: In function `main':
 conftest.c:(.text+0x14): undefined reference to `pthread_mutexattr_init'
 collect2: error: ld returned 1 exit status
 configure:20168: $? = 1
@@ -15686,7 +15686,7 @@ configure:33333: $? = 0
 configure:33345: result: yes
 configure:33439: checking for __mktime_internal
 configure:33439: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccse1dpV.o: In function `main':
+/tmp/ccq4zpg7.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `__mktime_internal'
 collect2: error: ld returned 1 exit status
 configure:33439: $? = 1
@@ -25212,7 +25212,7 @@ configure:42331: $? = 0
 configure:42331: result: yes
 configure:42331: checking for sigsetjmp
 configure:42331: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccDWX7KK.o: In function `main':
+/tmp/ccFGUMtj.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `sigsetjmp'
 collect2: error: ld returned 1 exit status
 configure:42331: $? = 1
@@ -25965,7 +25965,7 @@ configure:42343: checking for utime
 configure:42343: result: yes
 configure:42343: checking for strlcpy
 configure:42343: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccVjIKrY.o: In function `main':
+/tmp/ccJgGcww.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `strlcpy'
 collect2: error: ld returned 1 exit status
 configure:42343: $? = 1
@@ -26736,7 +26736,7 @@ configure:42555: result: no
 No package 'libpsl' found
 configure:42572: checking for library containing psl_builtin
 configure:42603: gcc -o conftest -DNDEBUG    conftest.c  >&5
-/tmp/ccVxsrT8.o: In function `main':
+/tmp/cc3coJRW.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `psl_builtin'
 collect2: error: ld returned 1 exit status
 configure:42603: $? = 1
@@ -28988,7 +28988,7 @@ configure:45216: found /usr/bin/pod2man
 configure:45229: result: /usr/bin/pod2man
 configure:45302: checking for library containing idn2_lookup_u8
 configure:45333: gcc -o conftest -I/usr/include/p11-kit-1 -DHAVE_LIBGNUTLS  -DNDEBUG    conftest.c -lnettle -lgnutls -lz  >&5
-/tmp/ccj5HbJT.o: In function `main':
+/tmp/ccbthcTr.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `idn2_lookup_u8'
 collect2: error: ld returned 1 exit status
 configure:45333: $? = 1
@@ -36392,34 +36392,3 @@ target_alias=''
 #define ENABLE_XATTR 1
 
 configure: exit 0
-
-## ---------------------- ##
-## Running config.status. ##
-## ---------------------- ##
-
-This file was extended by wget config.status 1.19.5, which was
-generated by GNU Autoconf 2.69.  Invocation command line was
-
-  CONFIG_FILES    = 
-  CONFIG_HEADERS  = 
-  CONFIG_LINKS    = 
-  CONFIG_COMMANDS = 
-  $ ./config.status 
-
-on alexander-Lenovo
-
-config.status:2617: creating Makefile
-config.status:2617: creating src/Makefile
-config.status:2617: creating doc/Makefile
-config.status:2617: creating util/Makefile
-config.status:2617: creating po/Makefile.in
-config.status:2617: creating tests/Makefile
-config.status:2617: creating fuzz/Makefile
-config.status:2617: creating lib/Makefile
-config.status:2617: creating testenv/Makefile
-config.status:2617: creating tests/certs/interca.conf
-config.status:2617: creating tests/certs/rootca.conf
-config.status:2617: creating src/config.h
-config.status:2798: src/config.h is unchanged
-config.status:2877: executing depfiles commands
-config.status:2877: executing po-directories commands
