@@ -68,7 +68,7 @@ retrieve_from_metalink (const metalink_t* metalink)
 
   FILE *_output_stream = output_stream;
   bool _output_stream_regular = output_stream_regular;
-  char *_output_document = opt.output_document;
+  char *_output_document = global_options.output_document;
 
   /* metalink file counter */
   unsigned mfc = 0;
@@ -77,7 +77,7 @@ retrieve_from_metalink (const metalink_t* metalink)
   const char *metatpy = metalink->origin ? "Metalink/HTTP" : "Metalink/XML";
 
   /* metalink mother source */
-  char *metasrc = metalink->origin ? metalink->origin : opt.input_metalink;
+  char *metasrc = metalink->origin ? metalink->origin : global_options.input_metalink;
 
   DEBUGP (("Retrieving from Metalink %s\n", quote (metasrc)));
 
@@ -85,7 +85,7 @@ retrieve_from_metalink (const metalink_t* metalink)
   if (!metalink->files)
     return RETROK;
 
-  if (opt.output_document)
+  if (global_options.output_document)
     {
       /* We cannot support output_document as we need to compute checksum
          of downloaded file, and to remove it if the checksum is bad.  */
@@ -119,10 +119,10 @@ retrieve_from_metalink (const metalink_t* metalink)
 
       mfc++;
 
-      /* The directory prefix for opt.metalink_over_http is handled by
+      /* The directory prefix for global_options.metalink_over_http is handled by
          src/url.c (url_file_name), do not add it a second time.  */
-      if (!metalink->origin && opt.dir_prefix && strlen (opt.dir_prefix))
-        planname = aprintf ("%s/%s", opt.dir_prefix, mfile->name);
+      if (!metalink->origin && global_options.dir_prefix && strlen (global_options.dir_prefix))
+        planname = aprintf ("%s/%s", global_options.dir_prefix, mfile->name);
       else
         planname = xstrdup (mfile->name);
 
@@ -130,19 +130,19 @@ retrieve_from_metalink (const metalink_t* metalink)
          With --trust-server-names, trust the Metalink/XML file name,
          otherwise, use the basename of --input-metalink followed by
          the metalink file counter as suffix.  */
-      if (metalink->origin || opt.trustservernames)
+      if (metalink->origin || global_options.trustservernames)
         {
           trsrname = xstrdup (mfile->name);
         }
       else
         {
-          trsrname = xstrdup (get_metalink_basename (opt.input_metalink));
+          trsrname = xstrdup (get_metalink_basename (global_options.input_metalink));
           append_suffix_number (&trsrname, ".#", mfc);
         }
 
-      /* Add the directory prefix for opt.input_metalink.  */
-      if (!metalink->origin && opt.dir_prefix && strlen (opt.dir_prefix))
-        filename = aprintf ("%s/%s", opt.dir_prefix, trsrname);
+      /* Add the directory prefix for global_options.input_metalink.  */
+      if (!metalink->origin && global_options.dir_prefix && strlen (global_options.dir_prefix))
+        filename = aprintf ("%s/%s", global_options.dir_prefix, trsrname);
       else
         filename = xstrdup (trsrname);
 
@@ -154,8 +154,8 @@ retrieve_from_metalink (const metalink_t* metalink)
       DEBUGP (("\n"));
       DEBUGP (("  %s\n", metatpy));
       DEBUGP (("\n"));
-      DEBUGP (("  --trust-server-names   %s\n", opt.trustservernames ? "true" : "false"));
-      DEBUGP (("  --directory-prefix     %s\n", quote (opt.dir_prefix ? opt.dir_prefix : "")));
+      DEBUGP (("  --trust-server-names   %s\n", global_options.trustservernames ? "true" : "false"));
+      DEBUGP (("  --directory-prefix     %s\n", quote (global_options.dir_prefix ? global_options.dir_prefix : "")));
       DEBUGP (("\n"));
       DEBUGP (("   Counted metalink file %u\n", mfc));
       DEBUGP (("   Planned metalink file %s\n", quote (planname ? planname : "")));
@@ -170,8 +170,8 @@ retrieve_from_metalink (const metalink_t* metalink)
         {
           logprintf (LOG_NOTQUIET,
                      _("[--trust-server-names %s, --directory-prefix=%s]\n"),
-                     (opt.trustservernames ? "true" : "false"),
-                     quote (opt.dir_prefix ? opt.dir_prefix : ""));
+                     (global_options.trustservernames ? "true" : "false"),
+                     quote (global_options.dir_prefix ? global_options.dir_prefix : ""));
           logprintf (LOG_NOTQUIET,
                      _("Planned metalink file: %s\n"),
                      quote (planname ? planname : ""));
@@ -190,16 +190,16 @@ retrieve_from_metalink (const metalink_t* metalink)
         }
 
       /* Process the chosen application/metalink4+xml metaurl.  */
-      if (opt.metalink_index >= 0)
+      if (global_options.metalink_index >= 0)
         {
-          int _metalink_index = opt.metalink_index;
+          int _metalink_index = global_options.metalink_index;
 
           metalink_metaurl_t **murl_ptr;
           int abs_count = 0, meta_count = 0;
 
           uerr_t x_retr_err = METALINK_MISSING_RESOURCE;
 
-          opt.metalink_index = -1;
+          global_options.metalink_index = -1;
 
           DEBUGP (("Searching application/metalink4+xml ordinal number %d...\n", _metalink_index));
 
@@ -210,8 +210,8 @@ retrieve_from_metalink (const metalink_t* metalink)
                 metalink_error_t meta_err;
                 metalink_metaurl_t *murl = *murl_ptr;
 
-                char *_dir_prefix = opt.dir_prefix;
-                char *_input_metalink = opt.input_metalink;
+                char *_dir_prefix = global_options.dir_prefix;
+                char *_input_metalink = global_options.input_metalink;
 
                 char *metafile = NULL;
                 char *metadest = NULL;
@@ -240,7 +240,7 @@ retrieve_from_metalink (const metalink_t* metalink)
                 /* Metalink/XML download file name.  */
                 metafile = xstrdup (safename);
 
-                if (opt.trustservernames)
+                if (global_options.trustservernames)
                   replace_metalink_basename (&metafile, murl->name ? murl->name : murl->url);
                 else
                   append_suffix_number (&metafile, ".meta#", meta_count);
@@ -294,7 +294,7 @@ retrieve_from_metalink (const metalink_t* metalink)
 
                 /* We need to sort the resources if preferred location
                    was specified by the user.  */
-                if (opt.preferred_location && opt.preferred_location[0])
+                if (global_options.preferred_location && global_options.preferred_location[0])
                   {
                     metalink_file_t **x_mfile_ptr;
                     for (x_mfile_ptr = metaurl_xml->files; *x_mfile_ptr; x_mfile_ptr++)
@@ -324,11 +324,11 @@ retrieve_from_metalink (const metalink_t* metalink)
                   }
                 else
                   {
-                    metadir = xstrdup (opt.dir_prefix);
+                    metadir = xstrdup (global_options.dir_prefix);
                   }
 
-                opt.dir_prefix = metadir;
-                opt.input_metalink = metadest;
+                global_options.dir_prefix = metadir;
+                global_options.input_metalink = metadest;
 
                 x_retr_err = retrieve_from_metalink (metaurl_xml);
 
@@ -340,8 +340,8 @@ retrieve_from_metalink (const metalink_t* metalink)
                 metalink_delete (metaurl_xml);
                 metaurl_xml = NULL;
 
-                opt.input_metalink = _input_metalink;
-                opt.dir_prefix = _dir_prefix;
+                global_options.input_metalink = _input_metalink;
+                global_options.dir_prefix = _dir_prefix;
 
                 xfree (metadir);
                 xfree (metadest);
@@ -358,11 +358,11 @@ retrieve_from_metalink (const metalink_t* metalink)
           xfree (trsrname);
           xfree (planname);
 
-          opt.output_document = _output_document;
+          global_options.output_document = _output_document;
           output_stream_regular = _output_stream_regular;
           output_stream = _output_stream;
 
-          opt.metalink_index = _metalink_index;
+          global_options.metalink_index = _metalink_index;
 
           return x_retr_err;
         }
@@ -394,7 +394,7 @@ retrieve_from_metalink (const metalink_t* metalink)
           if (output_stream && retr_err == RETROK)
             {
               /* Do not rename/remove a continued file. Skip it.  */
-              if (opt.always_rest)
+              if (global_options.always_rest)
                 {
                   skip_mfile = true;
                   continue;
@@ -414,7 +414,7 @@ retrieve_from_metalink (const metalink_t* metalink)
 
           /* Parse our resource URL.  */
           iri = iri_new ();
-          set_uri_encoding (iri, opt.locale, true);
+          set_uri_encoding (iri, global_options.locale, true);
           url = url_parse (mres->url, &url_err, iri, false);
 
           if (!url)
@@ -429,7 +429,7 @@ retrieve_from_metalink (const metalink_t* metalink)
           else
             {
               /* Avoid recursive Metalink from HTTP headers.  */
-              bool _metalink_http = opt.metalink_over_http;
+              bool _metalink_http = global_options.metalink_over_http;
 
               /* If output_stream is not NULL, then we have failed on
                  previous resource and are retrying. Thus, continue
@@ -447,7 +447,7 @@ retrieve_from_metalink (const metalink_t* metalink)
                      To do that we create the local file here and put
                      it as output_stream. We restore the original configuration
                      after we are finished with the file.  */
-                  if (opt.always_rest)
+                  if (global_options.always_rest)
                     /* continue previous download */
                     output_stream = fopen (safename, "ab");
                   else
@@ -467,23 +467,23 @@ retrieve_from_metalink (const metalink_t* metalink)
                 * src/utils.c (unique_create)
 
                 RFC5854 requires a proper "path/file" format handling,
-                this can be achieved setting opt.output_document while
+                this can be achieved setting global_options.output_document while
                 output_stream is left to NULL:
                 * src/http.c (open_output_stream): If output_stream is
-                  NULL, create the opt.output_document "path/file"
+                  NULL, create the global_options.output_document "path/file"
               */
               if (!destname)
                 destname = xstrdup (safename);
 
               /* Store the real file name for displaying in messages,
                  and for proper RFC5854 "path/file" handling.  */
-              opt.output_document = destname;
+              global_options.output_document = destname;
 
-              opt.metalink_over_http = false;
+              global_options.metalink_over_http = false;
               DEBUGP (("Storing to %s\n", destname));
               retr_err = retrieve_url (url, mres->url, NULL, NULL,
-                                       NULL, NULL, opt.recursive, iri, false);
-              opt.metalink_over_http = _metalink_http;
+                                       NULL, NULL, global_options.recursive, iri, false);
+              global_options.metalink_over_http = _metalink_http;
 
               /*
                 Bug: output_stream is NULL, but retrieve_url() somehow
@@ -900,7 +900,7 @@ gpg_skip_verification:
       /* Rename the file if error encountered; remove if option specified.
          Note: the file has been downloaded using *_loop. Therefore, it
          is not necessary to keep the file for continuated download.  */
-      if (((retr_err != RETROK && !opt.always_rest) || opt.delete_after)
+      if (((retr_err != RETROK && !global_options.always_rest) || global_options.delete_after)
            && destname != NULL && file_exists_p (destname, NULL))
         {
           badhash_or_remove (destname);
@@ -917,7 +917,7 @@ gpg_skip_verification:
     } /* Iterate over files.  */
 
   /* Restore original values.  */
-  opt.output_document = _output_document;
+  global_options.output_document = _output_document;
   output_stream_regular = _output_stream_regular;
   output_stream = _output_stream;
 
@@ -1130,7 +1130,7 @@ badhash_suffix (char *name)
 void
 badhash_or_remove (char *name)
 {
-  if (opt.delete_after || !opt.keep_badhash)
+  if (global_options.delete_after || !global_options.keep_badhash)
     {
       logprintf (LOG_VERBOSE, _("Removing %s.\n"), quote (name));
       if (unlink (name))
@@ -1157,8 +1157,8 @@ fetch_metalink_file (const char *url_str,
 {
   FILE *_output_stream = output_stream;
   bool _output_stream_regular = output_stream_regular;
-  char *_output_document = opt.output_document;
-  bool _metalink_http = opt.metalink_over_http;
+  char *_output_document = global_options.output_document;
+  bool _metalink_http = global_options.metalink_over_http;
 
   char *local_file = NULL;
 
@@ -1170,7 +1170,7 @@ fetch_metalink_file (const char *url_str,
 
   /* Parse the URL.  */
   iri = iri_new ();
-  set_uri_encoding (iri, opt.locale, true);
+  set_uri_encoding (iri, global_options.locale, true);
   url = url_parse (url_str, &url_err, iri, false);
 
   if (!url)
@@ -1201,23 +1201,23 @@ fetch_metalink_file (const char *url_str,
     * src/utils.c (unique_create)
 
     A call to retrieve_url() can indirectly create a directory tree,
-    when opt.output_document is set to the destination file name and
+    when global_options.output_document is set to the destination file name and
     output_stream is left to NULL:
     * src/http.c (open_output_stream): If output_stream is NULL,
-      create the destination opt.output_document "path/file"
+      create the destination global_options.output_document "path/file"
   */
   if (!local_file)
     local_file = xstrdup (filename);
 
   /* Store the real file name for displaying in messages, and for
      proper "path/file" handling.  */
-  opt.output_document = local_file;
+  global_options.output_document = local_file;
 
-  opt.metalink_over_http = metalink_http;
+  global_options.metalink_over_http = metalink_http;
 
   DEBUGP (("Storing to %s\n", local_file));
   retr_err = retrieve_url (url, url_str, NULL, NULL,
-                           NULL, NULL, opt.recursive, iri, false);
+                           NULL, NULL, global_options.recursive, iri, false);
 
   if (retr_err == RETROK)
     {
@@ -1233,8 +1233,8 @@ fetch_metalink_file (const char *url_str,
       output_stream = NULL;
     }
 
-  opt.metalink_over_http = _metalink_http;
-  opt.output_document = _output_document;
+  global_options.metalink_over_http = _metalink_http;
+  global_options.output_document = _output_document;
   output_stream_regular = _output_stream_regular;
   output_stream = _output_stream;
 
@@ -1254,14 +1254,14 @@ int metalink_res_cmp (const void* v1, const void* v2)
     return res2->preference - res1->preference;
   if (res1->priority != res2->priority)
     return res1->priority - res2->priority;
-  if (opt.preferred_location)
+  if (global_options.preferred_location)
     {
       int cmp = 0;
       if (res1->location &&
-          !c_strcasecmp (opt.preferred_location, res1->location))
+          !c_strcasecmp (global_options.preferred_location, res1->location))
         cmp -= 1;
       if (res2->location &&
-          !c_strcasecmp (opt.preferred_location, res2->location))
+          !c_strcasecmp (global_options.preferred_location, res2->location))
         cmp += 1;
       return cmp;
     }

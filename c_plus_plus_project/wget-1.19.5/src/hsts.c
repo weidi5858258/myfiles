@@ -627,9 +627,9 @@ get_hsts_store_filename (void)
   char *filename = NULL;
   FILE *fp = NULL;
 
-  if (opt.homedir)
+  if (global_options.homedir)
     {
-      filename = aprintf ("%s/.wget-hsts-test", opt.homedir);
+      filename = aprintf ("%s/.wget-hsts-test", global_options.homedir);
       fp = fopen (filename, "w");
       if (fp)
         fclose (fp);
@@ -791,9 +791,9 @@ test_hsts_read_database (void)
   FILE *fp = NULL;
   time_t created = time(NULL) - 10;
 
-  if (opt.homedir)
+  if (global_options.homedir)
     {
-      file = aprintf ("%s/.wget-hsts-testing", opt.homedir);
+      file = aprintf ("%s/.wget-hsts-testing", global_options.homedir);
       fp = fopen (file, "w");
       if (fp)
         {

@@ -69,7 +69,7 @@ ftp_response (int fd, char **ret_line)
       if ((p = strpbrk(line , "\r\n")))
         *p = 0;
 
-      if (opt.server_response)
+      if (global_options.server_response)
         logprintf (LOG_NOTQUIET, "%s\n",
                    quotearg_style (escape_quoting_style, line));
       else
@@ -118,7 +118,7 @@ ftp_request (const char *command, const char *value)
     }
   else
     res = concat_strings (command, "\r\n", (char *) 0);
-  if (opt.server_response)
+  if (global_options.server_response)
     {
       /* Hack: don't print out password.  */
       if (strncmp (res, "PASS", 4) != 0)

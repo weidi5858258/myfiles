@@ -716,7 +716,7 @@ AC_DEFUN([AC_LIB_LINKFLAGS_FROM_LIBS],
       dnl binary.
       rpathdirs=
       next=
-      for opt in $2; do
+      for global_options in $2; do
         if test -n "$next"; then
           dir="$next"
           dnl No need to hardcode the standard /usr/lib.
@@ -726,9 +726,9 @@ AC_DEFUN([AC_LIB_LINKFLAGS_FROM_LIBS],
           fi
           next=
         else
-          case $opt in
+          case $global_options in
             -L) next=yes ;;
-            -L*) dir=`echo "X$opt" | sed -e 's,^X-L,,'`
+            -L*) dir=`echo "X$global_options" | sed -e 's,^X-L,,'`
                  dnl No need to hardcode the standard /usr/lib.
                  if test "X$dir" != "X/usr/$acl_libdirstem" \
                     && test "X$dir" != "X/usr/$acl_libdirstem2"; then

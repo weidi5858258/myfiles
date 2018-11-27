@@ -106,7 +106,7 @@ ares_channel ares;
 void *ares;
 #endif
 
-struct options opt;
+struct options global_options;
 
 /* defined in version.c */
 extern char *system_getrc;
@@ -175,11 +175,11 @@ hsts_store_t hsts_store;
 
 static char *
 get_hsts_database(void) {
-    if (opt.hsts_file)
-        return xstrdup(opt.hsts_file);
+    if (global_options.hsts_file)
+        return xstrdup(global_options.hsts_file);
 
-    if (opt.homedir) {
-        char *dir = aprintf("%s/.wget-hsts", opt.homedir);
+    if (global_options.homedir) {
+        char *dir = aprintf("%s/.wget-hsts", global_options.homedir);
         return dir;
     }
 
@@ -1060,8 +1060,8 @@ secs_to_human_time(double interval) {
 
 static char *
 prompt_for_password(void) {
-    if (opt.user)
-        fprintf(stderr, _("Password for user %s: "), quote(opt.user));
+    if (global_options.user)
+        fprintf(stderr, _("Password for user %s: "), quote(global_options.user));
     else
         fprintf(stderr, _("Password: "));
 #ifndef TESTING
@@ -1073,7 +1073,7 @@ prompt_for_password(void) {
 }
 
 
-/* Execute external application opt.use_askpass */
+/* Execute external application global_options.use_askpass */
 static void
 run_use_askpass(char *question, char **answer) {
     char tmp[1024];
@@ -1107,13 +1107,13 @@ run_use_askpass(char *question, char **answer) {
 
     /* C89 initializer lists must be computable at load time,
      * thus this explicit initialization. */
-    argv[0] = opt.use_askpass;
+    argv[0] = global_options.use_askpass;
     argv[1] = question;
     argv[2] = NULL;
 
-    status = posix_spawnp(&pid, opt.use_askpass, &fa, NULL, argv, environ);
+    status = posix_spawnp(&pid, global_options.use_askpass, &fa, NULL, argv, environ);
     if (status) {
-        fprintf(stderr, "Error spawning %s: %d\n", opt.use_askpass, status);
+        fprintf(stderr, "Error spawning %s: %d\n", global_options.use_askpass, status);
         exit(WGET_EXIT_GENERIC_ERROR);
     }
 
@@ -1123,7 +1123,7 @@ run_use_askpass(char *question, char **answer) {
     if (bytes <= 0) {
         fprintf(stderr,
                 _("Error reading response from command \"%s %s\": %s\n"),
-                opt.use_askpass, question, strerror(errno));
+                global_options.use_askpass, question, strerror(errno));
         exit(WGET_EXIT_GENERIC_ERROR);
     }
 
@@ -1147,8 +1147,8 @@ use_askpass(struct url *u) {
                  scheme_leading_string(u->scheme), u->host);
         /* Prompt for username */
         run_use_askpass(question, &u->user);
-        if (opt.recursive)
-            opt.user = xstrdup(u->user);
+        if (global_options.recursive)
+            global_options.user = xstrdup(u->user);
     }
 
     if (u->passwd == NULL || u->passwd[0] == '\0') {
@@ -1156,8 +1156,8 @@ use_askpass(struct url *u) {
                  scheme_leading_string(u->scheme), u->user, u->host);
         /* Prompt for password */
         run_use_askpass(question, &u->passwd);
-        if (opt.recursive)
-            opt.passwd = xstrdup(u->passwd);
+        if (global_options.recursive)
+            global_options.passwd = xstrdup(u->passwd);
     }
 }
 
@@ -1378,7 +1378,7 @@ int main(int argc, char **argv) {
 
     /* Load the hard-coded defaults.  */
     defaults();
-    opt.homedir = home_dir();
+    global_options.homedir = home_dir();
 
     init_switches();
 
@@ -1529,176 +1529,176 @@ int main(int argc, char **argv) {
     nurl = argc - optind;
 
     /* Initialize logging ASAP.  */
-    log_init(opt.lfilename, append_to_log);
+    log_init(global_options.lfilename, append_to_log);
 
     /* If we do not have Debug support compiled in AND Wget is invoked with the
      * --debug switch, instead of failing, we silently turn it into a no-op. For
-     *  this no-op, we explicitly set opt.debug to false and hence none of the
+     *  this no-op, we explicitly set global_options.debug to false and hence none of the
      *  Debug output messages will be printed.
      */
 #ifndef ENABLE_DEBUG
-    if (opt.debug) {
+    if (global_options.debug) {
         fprintf(stderr, _("Debugging support not compiled in. "
                           "Ignoring --debug flag.\n"));
-        opt.debug = false;
+        global_options.debug = false;
     }
 #endif
 
     /* All user options have now been processed, so it's now safe to do
        interoption dependency checks. */
 
-    if (opt.noclobber && (opt.convert_links || opt.convert_file_only)) {
+    if (global_options.noclobber && (global_options.convert_links || global_options.convert_file_only)) {
         fprintf(stderr,
-                opt.convert_links ?
+                global_options.convert_links ?
                 _("Both --no-clobber and --convert-links were specified,"
                   " only --convert-links will be used.\n") :
                 _("Both --no-clobber and --convert-file-only were specified,"
                   " only --convert-file-only will be used.\n"));
-        opt.noclobber = false;
+        global_options.noclobber = false;
     }
 
-    if (opt.reclevel == 0)
-        opt.reclevel = INFINITE_RECURSION; /* see recur.h for commentary */
+    if (global_options.reclevel == 0)
+        global_options.reclevel = INFINITE_RECURSION; /* see recur.h for commentary */
 
-    if (opt.spider || opt.delete_after)
-        opt.no_dirstruct = true;
+    if (global_options.spider || global_options.delete_after)
+        global_options.no_dirstruct = true;
 
-    if (opt.page_requisites && !opt.recursive) {
-        /* Don't set opt.recursive here because it would confuse the FTP
+    if (global_options.page_requisites && !global_options.recursive) {
+        /* Don't set global_options.recursive here because it would confuse the FTP
            code.  Instead, call retrieve_tree below when either
            page_requisites or recursive is requested.  */
-        opt.reclevel = 0;
-        if (!opt.no_dirstruct)
-            opt.dirstruct = 1;      /* normally handled by cmd_spec_recursive() */
+        global_options.reclevel = 0;
+        if (!global_options.no_dirstruct)
+            global_options.dirstruct = 1;      /* normally handled by cmd_spec_recursive() */
     }
 
-    if (opt.verbose == -1)
-        opt.verbose = !opt.quiet;
+    if (global_options.verbose == -1)
+        global_options.verbose = !global_options.quiet;
 
-    if (!opt.verbose && opt.show_progress == -1)
-        opt.show_progress = false;
+    if (!global_options.verbose && global_options.show_progress == -1)
+        global_options.show_progress = false;
 
-    if (opt.quiet && opt.show_progress == -1)
-        opt.show_progress = false;
+    if (global_options.quiet && global_options.show_progress == -1)
+        global_options.show_progress = false;
 
     /* Sanity checks.  */
-    if (opt.verbose && opt.quiet) {
+    if (global_options.verbose && global_options.quiet) {
         fprintf(stderr, _("Can't be verbose and quiet at the same time.\n"));
         print_usage(1);
         exit(WGET_EXIT_GENERIC_ERROR);
     }
-    if (opt.timestamping && opt.noclobber) {
+    if (global_options.timestamping && global_options.noclobber) {
         fprintf(stderr, _("\
 Can't timestamp and not clobber old files at the same time.\n"));
         print_usage(1);
         exit(WGET_EXIT_GENERIC_ERROR);
     }
 #ifdef ENABLE_IPV6
-    if (opt.ipv4_only && opt.ipv6_only) {
+    if (global_options.ipv4_only && global_options.ipv6_only) {
         fprintf(stderr,
                 _("Cannot specify both --inet4-only and --inet6-only.\n"));
         print_usage(1);
         exit(WGET_EXIT_GENERIC_ERROR);
     }
 #endif
-    if (opt.output_document) {
-        if ((opt.convert_links || opt.convert_file_only)
-            && (nurl > 1 || opt.page_requisites || opt.recursive)) {
+    if (global_options.output_document) {
+        if ((global_options.convert_links || global_options.convert_file_only)
+            && (nurl > 1 || global_options.page_requisites || global_options.recursive)) {
             fputs(_("\
 Cannot specify both -k or --convert-file-only and -O if multiple URLs are given, or in combination\n\
 with -p or -r. See the manual for details.\n\n"), stderr);
             print_usage(1);
             exit(WGET_EXIT_GENERIC_ERROR);
         }
-        if (opt.page_requisites
-            || opt.recursive) {
+        if (global_options.page_requisites
+            || global_options.recursive) {
             logprintf(LOG_NOTQUIET, "%s", _("\
 WARNING: combining -O with -r or -p will mean that all downloaded content\n\
 will be placed in the single file you specified.\n\n"));
         }
-        if (opt.timestamping) {
+        if (global_options.timestamping) {
             logprintf(LOG_NOTQUIET, "%s", _("\
 WARNING: timestamping does nothing in combination with -O. See the manual\n\
 for details.\n\n"));
-            opt.timestamping = false;
+            global_options.timestamping = false;
         }
-        if (opt.noclobber && file_exists_p(opt.output_document, NULL)) {
+        if (global_options.noclobber && file_exists_p(global_options.output_document, NULL)) {
             /* Check if output file exists; if it does, exit. */
             logprintf(LOG_VERBOSE,
                       _("File %s already there; not retrieving.\n"),
-                      quote(opt.output_document));
+                      quote(global_options.output_document));
             exit(WGET_EXIT_GENERIC_ERROR);
         }
     }
 
-    if (opt.warc_filename != 0) {
-        if (opt.noclobber) {
+    if (global_options.warc_filename != 0) {
+        if (global_options.noclobber) {
             fprintf(stderr,
                     _("WARC output does not work with --no-clobber, "
                       "--no-clobber will be disabled.\n"));
-            opt.noclobber = false;
+            global_options.noclobber = false;
         }
-        if (opt.timestamping) {
+        if (global_options.timestamping) {
             fprintf(stderr,
                     _("WARC output does not work with timestamping, "
                       "timestamping will be disabled.\n"));
-            opt.timestamping = false;
+            global_options.timestamping = false;
         }
-        if (opt.spider) {
+        if (global_options.spider) {
             fprintf(stderr,
                     _("WARC output does not work with --spider.\n"));
             exit(WGET_EXIT_GENERIC_ERROR);
         }
-        if (opt.always_rest || opt.start_pos >= 0) {
+        if (global_options.always_rest || global_options.start_pos >= 0) {
             fprintf(stderr,
                     _("WARC output does not work with --continue or"
                       " --start-pos, they will be disabled.\n"));
-            opt.always_rest = false;
-            opt.start_pos = -1;
+            global_options.always_rest = false;
+            global_options.start_pos = -1;
         }
-        if (opt.warc_cdx_dedup_filename != 0 && !opt.warc_digests_enabled) {
+        if (global_options.warc_cdx_dedup_filename != 0 && !global_options.warc_digests_enabled) {
             fprintf(stderr,
                     _("Digests are disabled; WARC deduplication will "
                       "not find duplicate records.\n"));
         }
-        if (opt.warc_keep_log) {
-            opt.progress_type = xstrdup("dot");
+        if (global_options.warc_keep_log) {
+            global_options.progress_type = xstrdup("dot");
         }
     }
 
 #ifdef HAVE_LIBZ
-    if (opt.always_rest || opt.start_pos >= 0) {
-        if (opt.compression == compression_auto) {
+    if (global_options.always_rest || global_options.start_pos >= 0) {
+        if (global_options.compression == compression_auto) {
             /* Compression does not work with --continue or --start-pos.
                Since compression was not explicitly set, it will be disabled. */
-            opt.compression = compression_none;
-        } else if (opt.compression != compression_none) {
+            global_options.compression = compression_none;
+        } else if (global_options.compression != compression_none) {
             fprintf(stderr,
                     _("Compression does not work with --continue or"
                       " --start-pos, they will be disabled.\n"));
-            opt.always_rest = false;
-            opt.start_pos = -1;
+            global_options.always_rest = false;
+            global_options.start_pos = -1;
         }
     }
 #endif
 
-    if (opt.ask_passwd && opt.passwd) {
+    if (global_options.ask_passwd && global_options.passwd) {
         fprintf(stderr,
                 _("Cannot specify both --ask-password and --password.\n"));
         print_usage(1);
         exit(WGET_EXIT_GENERIC_ERROR);
     }
 
-    if (opt.start_pos >= 0 && opt.always_rest) {
+    if (global_options.start_pos >= 0 && global_options.always_rest) {
         fprintf(stderr,
                 _("Specifying both --start-pos and --continue is not "
                   "recommended; --continue will be disabled.\n"));
-        opt.always_rest = false;
+        global_options.always_rest = false;
     }
 
-    if (!nurl && !opt.input_filename
+    if (!nurl && !global_options.input_filename
 #ifdef HAVE_METALINK
-        && !opt.input_metalink
+        && !global_options.input_metalink
 #endif
             ) {
         /* No URL specified.  */
@@ -1714,56 +1714,56 @@ for details.\n\n"));
     }
 
     /* Compile the regular expressions.  */
-    switch (opt.regex_type) {
+    switch (global_options.regex_type) {
 #ifdef HAVE_LIBPCRE
         case regex_type_pcre:
-            opt.regex_compile_fun = compile_pcre_regex;
-            opt.regex_match_fun = match_pcre_regex;
+            global_options.regex_compile_fun = compile_pcre_regex;
+            global_options.regex_match_fun = match_pcre_regex;
             break;
 #endif
 
         case regex_type_posix:
         default:
-            opt.regex_compile_fun = compile_posix_regex;
-            opt.regex_match_fun = match_posix_regex;
+            global_options.regex_compile_fun = compile_posix_regex;
+            global_options.regex_match_fun = match_posix_regex;
             break;
     }
-    if (opt.acceptregex_s) {
-        opt.acceptregex = opt.regex_compile_fun(opt.acceptregex_s);
-        if (!opt.acceptregex)
+    if (global_options.acceptregex_s) {
+        global_options.acceptregex = global_options.regex_compile_fun(global_options.acceptregex_s);
+        if (!global_options.acceptregex)
             exit(WGET_EXIT_GENERIC_ERROR);
     }
-    if (opt.rejectregex_s) {
-        opt.rejectregex = opt.regex_compile_fun(opt.rejectregex_s);
-        if (!opt.rejectregex)
+    if (global_options.rejectregex_s) {
+        global_options.rejectregex = global_options.regex_compile_fun(global_options.rejectregex_s);
+        if (!global_options.rejectregex)
             exit(WGET_EXIT_GENERIC_ERROR);
     }
-    if (opt.post_data || opt.post_file_name) {
-        if (opt.post_data && opt.post_file_name) {
+    if (global_options.post_data || global_options.post_file_name) {
+        if (global_options.post_data && global_options.post_file_name) {
             fprintf(stderr, _("You cannot specify both --post-data and --post-file.\n"));
             exit(WGET_EXIT_GENERIC_ERROR);
-        } else if (opt.method) {
+        } else if (global_options.method) {
             fprintf(stderr, _("You cannot use --post-data or --post-file along with --method. "
                               "--method expects data through --body-data and --body-file options\n"));
             exit(WGET_EXIT_GENERIC_ERROR);
         }
     }
-    if (opt.body_data || opt.body_file) {
-        if (!opt.method) {
+    if (global_options.body_data || global_options.body_file) {
+        if (!global_options.method) {
             fprintf(stderr, _("You must specify a method through --method=HTTPMethod "
                               "to use with --body-data or --body-file.\n"));
             exit(WGET_EXIT_GENERIC_ERROR);
-        } else if (opt.body_data && opt.body_file) {
+        } else if (global_options.body_data && global_options.body_file) {
             fprintf(stderr, _("You cannot specify both --body-data and --body-file.\n"));
             exit(WGET_EXIT_GENERIC_ERROR);
         }
     }
 
-    /* Set various options as required for opt.method.  */
+    /* Set various options as required for global_options.method.  */
 
     /* When user specifies HEAD as the method, we do not wish to download any
        files. Hence, set wget to run in spider mode.  */
-    if (opt.method && c_strcasecmp(opt.method, "HEAD") == 0)
+    if (global_options.method && c_strcasecmp(global_options.method, "HEAD") == 0)
         setoptval("spider", "1", "spider");
 
     /* Convert post_data to body-data and post_file_name to body-file options.
@@ -1774,47 +1774,47 @@ for details.\n\n"));
        This MUST occur only after the sanity checks so as to prevent the
        user from setting both post and body options simultaneously.
     */
-    if (opt.post_data || opt.post_file_name) {
+    if (global_options.post_data || global_options.post_file_name) {
         setoptval("method", "POST", "method");
-        if (opt.post_data) {
-            setoptval("bodydata", opt.post_data, "body-data");
-            xfree(opt.post_data);
+        if (global_options.post_data) {
+            setoptval("bodydata", global_options.post_data, "body-data");
+            xfree(global_options.post_data);
         } else {
-            setoptval("bodyfile", opt.post_file_name, "body-file");
-            xfree(opt.post_file_name);
+            setoptval("bodyfile", global_options.post_file_name, "body-file");
+            xfree(global_options.post_file_name);
         }
     }
 
 #ifdef ENABLE_IRI
-    if (opt.enable_iri)
+    if (global_options.enable_iri)
       {
-        if (opt.locale && !check_encoding_name (opt.locale))
-          xfree (opt.locale);
+        if (global_options.locale && !check_encoding_name (global_options.locale))
+          xfree (global_options.locale);
 
-        if (!opt.locale)
-          opt.locale = find_locale ();
+        if (!global_options.locale)
+          global_options.locale = find_locale ();
 
-        if (opt.encoding_remote && !check_encoding_name (opt.encoding_remote))
-          xfree (opt.encoding_remote);
+        if (global_options.encoding_remote && !check_encoding_name (global_options.encoding_remote))
+          xfree (global_options.encoding_remote);
       }
 #else
     memset(&dummy_iri, 0, sizeof(dummy_iri));
-    if (opt.enable_iri || opt.locale || opt.encoding_remote) {
+    if (global_options.enable_iri || global_options.locale || global_options.encoding_remote) {
         /* sXXXav : be more specific... */
         fprintf(stderr, _("This version does not have support for IRIs\n"));
         exit(WGET_EXIT_GENERIC_ERROR);
     }
 #endif
 
-    if (opt.ask_passwd) {
-        opt.passwd = prompt_for_password();
+    if (global_options.ask_passwd) {
+        global_options.passwd = prompt_for_password();
 
-        if (opt.passwd == NULL || opt.passwd[0] == '\0')
+        if (global_options.passwd == NULL || global_options.passwd[0] == '\0')
             exit(WGET_EXIT_GENERIC_ERROR);
     }
 
-    if (opt.use_askpass) {
-        if (opt.use_askpass[0] == '\0') {
+    if (global_options.use_askpass) {
+        if (global_options.use_askpass[0] == '\0') {
             fprintf(stderr,
                     _("use-askpass requires a string or either environment variable WGET_ASKPASS or SSH_ASKPASS to be set.\n"));
             exit(WGET_EXIT_GENERIC_ERROR);
@@ -1822,22 +1822,22 @@ for details.\n\n"));
     }
 
 #ifdef USE_WATT32
-    if (opt.wdebug)
+    if (global_options.wdebug)
         dbug_init();
     sock_init();
 #elif !defined TESTING
-    if (opt.background) {
+    if (global_options.background) {
         bool logfile_changed = fork_to_background();
 
         if (logfile_changed)
-            log_init(opt.lfilename, append_to_log);
+            log_init(global_options.lfilename, append_to_log);
     }
 #endif
 
     /* Initialize progress.  Have to do this after the options are
        processed so we know where the log file is.  */
-    if (opt.show_progress)
-        set_progress_implementation(opt.progress_type);
+    if (global_options.show_progress)
+        set_progress_implementation(global_options.progress_type);
 
     /* Fill in the arguments.  */
     url = alloca_array (char *, nurl + 1);
@@ -1855,7 +1855,7 @@ for details.\n\n"));
     url[i] = NULL;
 
     /* Open WARC file. */
-    if (opt.warc_filename != 0)
+    if (global_options.warc_filename != 0)
         warc_init();
 
     DEBUGP (("DEBUG output created by Wget %s on %s.\n\n",
@@ -1871,8 +1871,8 @@ for details.\n\n"));
    failure to be detected immediately, without first connecting to the
    server.)
 */
-    if (opt.output_document) {
-        if (HYPHENP (opt.output_document)) {
+    if (global_options.output_document) {
+        if (HYPHENP (global_options.output_document)) {
 #ifdef WINDOWS
             _setmode (_fileno (stdout), _O_BINARY);
 #endif
@@ -1890,22 +1890,22 @@ for details.\n\n"));
 # define FOPEN_OPT_ARGS
 #endif /* def __VMS [else] */
 
-            output_stream = fopen(opt.output_document,
-                                  opt.always_rest ? "ab" : "wb"
+            output_stream = fopen(global_options.output_document,
+                                  global_options.always_rest ? "ab" : "wb"
                                   FOPEN_OPT_ARGS);
             if (output_stream == NULL) {
-                perror(opt.output_document);
+                perror(global_options.output_document);
                 exit(WGET_EXIT_GENERIC_ERROR);
             }
             if (fstat(fileno(output_stream), &st) == 0 && S_ISREG (st.st_mode))
                 output_stream_regular = true;
         }
-        if (!output_stream_regular && (opt.convert_links || opt.recursive)) {
+        if (!output_stream_regular && (global_options.convert_links || global_options.recursive)) {
             fprintf(stderr, _("-k or -r can be used together with -O only if \
 outputting to a regular file.\n"));
             exit(WGET_EXIT_GENERIC_ERROR);
         }
-        if (!output_stream_regular && (opt.convert_links || opt.convert_file_only)) {
+        if (!output_stream_regular && (global_options.convert_links || global_options.convert_file_only)) {
             fprintf(stderr, _("--convert-links or --convert-file-only can be used together \
 only if outputting to a regular file.\n"));
             exit(WGET_EXIT_GENERIC_ERROR);
@@ -1913,7 +1913,7 @@ only if outputting to a regular file.\n"));
     }
 
 #ifdef HAVE_LIBCARES
-    if (opt.bind_dns_address || opt.dns_servers)
+    if (global_options.bind_dns_address || global_options.dns_servers)
       {
         if (ares_library_init (ARES_LIB_INIT_ALL))
           {
@@ -1927,37 +1927,37 @@ only if outputting to a regular file.\n"));
             exit (WGET_EXIT_GENERIC_ERROR);
           }
 
-        if (opt.bind_dns_address)
+        if (global_options.bind_dns_address)
           {
             struct in_addr a4;
 #ifdef ENABLE_IPV6
             struct in6_addr a6;
 #endif
 
-            if (inet_pton (AF_INET, opt.bind_dns_address, &a4) == 1)
+            if (inet_pton (AF_INET, global_options.bind_dns_address, &a4) == 1)
               {
                 ares_set_local_ip4 (ares, ntohl (a4.s_addr));
               }
 #ifdef ENABLE_IPV6
-            else if (inet_pton (AF_INET6, opt.bind_dns_address, &a6) == 1)
+            else if (inet_pton (AF_INET6, global_options.bind_dns_address, &a6) == 1)
               {
                 ares_set_local_ip6 (ares, (unsigned char *) &a6);
               }
 #endif
             else
               {
-                fprintf (stderr, _("Failed to parse IP address '%s'\n"), opt.bind_dns_address);
+                fprintf (stderr, _("Failed to parse IP address '%s'\n"), global_options.bind_dns_address);
                 exit (WGET_EXIT_GENERIC_ERROR);
               }
           }
 
-        if (opt.dns_servers)
+        if (global_options.dns_servers)
           {
             int result;
 
-            if ((result = ares_set_servers_csv (ares, opt.dns_servers)) != ARES_SUCCESS)
+            if ((result = ares_set_servers_csv (ares, global_options.dns_servers)) != ARES_SUCCESS)
               {
-                fprintf (stderr, _("Failed to set DNS server(s) '%s' (%d)\n"), opt.dns_servers, result);
+                fprintf (stderr, _("Failed to set DNS server(s) '%s' (%d)\n"), global_options.dns_servers, result);
                 exit (WGET_EXIT_GENERIC_ERROR);
               }
           }
@@ -1971,7 +1971,7 @@ only if outputting to a regular file.\n"));
     if (output_stream == NULL)
       set_ods5_dest( "SYS$DISK");
     else if (output_stream != stdout)
-      set_ods5_dest( opt.output_document);
+      set_ods5_dest( global_options.output_document);
 #endif /* def __VMS */
 
 #ifdef WINDOWS
@@ -2004,7 +2004,7 @@ only if outputting to a regular file.\n"));
        but this is the best place to do it, and it shouldn't be a critical
        performance hit.
      */
-    if (opt.hsts)
+    if (global_options.hsts)
         load_hsts();
 #endif
 
@@ -2018,7 +2018,7 @@ only if outputting to a regular file.\n"));
         struct iri *iri = iri_new ();
         struct url *url_parsed;
 
-        set_uri_encoding (iri, opt.locale, true);
+        set_uri_encoding (iri, global_options.locale, true);
         url_parsed = url_parse(*t, &url_err, iri, true);
 
         if (!url_parsed) {
@@ -2028,38 +2028,38 @@ only if outputting to a regular file.\n"));
             inform_exit_status(URLERROR);
         } else {
             /* Request credentials if use_askpass is set. */
-            if (opt.use_askpass)
+            if (global_options.use_askpass)
                 use_askpass(url_parsed);
 
-            if ((opt.recursive || opt.page_requisites)
+            if ((global_options.recursive || global_options.page_requisites)
                 && ((url_scheme(*t) != SCHEME_FTP
                      #ifdef HAVE_SSL
                      && url_scheme(*t) != SCHEME_FTPS
 #endif
                     )
                     || url_uses_proxy(url_parsed))) {
-                int old_follow_ftp = opt.follow_ftp;
+                int old_follow_ftp = global_options.follow_ftp;
 
-                /* Turn opt.follow_ftp on in case of recursive FTP retrieval */
+                /* Turn global_options.follow_ftp on in case of recursive FTP retrieval */
                 if (url_scheme(*t) == SCHEME_FTP
                     #ifdef HAVE_SSL
                     || url_scheme(*t) == SCHEME_FTPS
 #endif
                         )
-                    opt.follow_ftp = 1;
+                    global_options.follow_ftp = 1;
 
                 retrieve_tree(url_parsed, NULL);
 
-                opt.follow_ftp = old_follow_ftp;
+                global_options.follow_ftp = old_follow_ftp;
             } else {
                 fprintf(stdout, _("main() retrieve_url() start\n"));
                 // dosomething
                 retrieve_url(url_parsed, *t, &filename, &redirected_URL, NULL,
-                             &dt, opt.recursive, iri, true);
+                             &dt, global_options.recursive, iri, true);
                 fprintf(stdout, _("main() retrieve_url() end\n"));
             }
 
-            if (opt.delete_after && filename != NULL && file_exists_p(filename, NULL)) {
+            if (global_options.delete_after && filename != NULL && file_exists_p(filename, NULL)) {
                 DEBUGP (("Removing file due to --delete-after in main():\n"));
                 logprintf(LOG_VERBOSE, _("Removing %s.\n"), filename);
                 if (unlink(filename))
@@ -2073,37 +2073,37 @@ only if outputting to a regular file.\n"));
     }
 
     /* And then from the input file, if any.  */
-    if (opt.input_filename) {
+    if (global_options.input_filename) {
         int count;
         int status;
-        status = retrieve_from_file(opt.input_filename, opt.force_html, &count);
+        status = retrieve_from_file(global_options.input_filename, global_options.force_html, &count);
         inform_exit_status(status);
         if (!count)
             logprintf(LOG_NOTQUIET, _("No URLs found in %s.\n"),
-                      opt.input_filename);
+                      global_options.input_filename);
     }
 
 #ifdef HAVE_METALINK
     /* Finally, from metlink file, if any.  */
-    if (opt.input_metalink)
+    if (global_options.input_metalink)
       {
         metalink_error_t meta_err;
         uerr_t retr_err;
         metalink_t *metalink;
 
-        meta_err = metalink_parse_file (opt.input_metalink, &metalink);
+        meta_err = metalink_parse_file (global_options.input_metalink, &metalink);
 
         if (meta_err)
           {
             logprintf (LOG_NOTQUIET, _("Unable to parse metalink file %s.\n"),
-                       opt.input_metalink);
+                       global_options.input_metalink);
             retr_err = METALINK_PARSE_ERROR;
           }
         else
           {
             /* We need to sort the resources if preferred location
                was specified by the user.  */
-            if (opt.preferred_location && opt.preferred_location[0])
+            if (global_options.preferred_location && global_options.preferred_location[0])
               {
                 metalink_file_t **mfile_ptr;
                 for (mfile_ptr = metalink->files; *mfile_ptr; mfile_ptr++)
@@ -2126,7 +2126,7 @@ only if outputting to a regular file.\n"));
               {
                 logprintf (LOG_NOTQUIET,
                            _("Could not download all resources from %s.\n"),
-                           quote (opt.input_metalink));
+                           quote (global_options.input_metalink));
               }
             metalink_delete (metalink);
           }
@@ -2135,13 +2135,13 @@ only if outputting to a regular file.\n"));
 #endif /* HAVE_METALINK */
 
     /* Print broken links. */
-    if (opt.recursive && opt.spider)
+    if (global_options.recursive && global_options.spider)
         print_broken_links();
 
     /* Print the downloaded sum.  */
-    if ((opt.recursive || opt.page_requisites
+    if ((global_options.recursive || global_options.page_requisites
          || nurl > 1
-         || (opt.input_filename && total_downloaded_bytes != 0))
+         || (global_options.input_filename && total_downloaded_bytes != 0))
         &&
         total_downloaded_bytes != 0) {
         double end_time = ptimer_measure(timer);
@@ -2164,21 +2164,21 @@ only if outputting to a regular file.\n"));
         xfree (download_time);
 
         /* Print quota warning, if exceeded.  */
-        if (opt.quota && total_downloaded_bytes > opt.quota)
+        if (global_options.quota && total_downloaded_bytes > global_options.quota)
             logprintf(LOG_NOTQUIET,
                       _("Download quota of %s EXCEEDED!\n"),
-                      human_readable(opt.quota, 10, 1));
+                      human_readable(global_options.quota, 10, 1));
     }
 
-    if (opt.cookies_output)
+    if (global_options.cookies_output)
         save_cookies();
 
 #ifdef HAVE_HSTS
-    if (opt.hsts && hsts_store)
+    if (global_options.hsts && hsts_store)
         save_hsts();
 #endif
 
-    if ((opt.convert_links || opt.convert_file_only) && !opt.delete_after)
+    if ((global_options.convert_links || global_options.convert_file_only) && !global_options.delete_after)
         convert_all_links();
 
     cleanup();

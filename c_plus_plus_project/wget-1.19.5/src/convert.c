@@ -122,7 +122,7 @@ convert_links_in_hashtable (struct hash_table *downloaded_set,
              ABS2REL, whereas non-downloaded will be converted REL2ABS.  */
 
           pi = iri_new ();
-          set_uri_encoding (pi, opt.locale, true);
+          set_uri_encoding (pi, global_options.locale, true);
 
           u = url_parse (cur_url->url->url, NULL, pi, true);
           if (!u)
@@ -139,7 +139,7 @@ convert_links_in_hashtable (struct hash_table *downloaded_set,
                  not be identical to that on the server (think `-nd',
                  `--cut-dirs', etc.). If --convert-file-only was passed,
                  we only convert the basename portion of the URL.  */
-              cur_url->convert = (opt.convert_file_only ? CO_CONVERT_BASENAME_ONLY : CO_CONVERT_TO_RELATIVE);
+              cur_url->convert = (global_options.convert_file_only ? CO_CONVERT_BASENAME_ONLY : CO_CONVERT_TO_RELATIVE);
               cur_url->local_name = xstrdup (local_name);
               DEBUGP (("will convert url %s to local %s\n", u->url, local_name));
             }
@@ -251,7 +251,7 @@ convert_links (const char *file, struct urlpos *links)
     }
 
   downloaded_file_return = downloaded_file (CHECK_FOR_FILE, file);
-  if (opt.backup_converted && downloaded_file_return)
+  if (global_options.backup_converted && downloaded_file_return)
     write_backup_file (file, downloaded_file_return);
 
   /* Before opening the file for writing, unlink the file.  This is
@@ -748,7 +748,7 @@ local_quote_string (const char *file, bool no_html_quote)
         *to++ = 'B';
         break;
       case '?':
-        if (opt.adjust_extension)
+        if (global_options.adjust_extension)
           {
             *to++ = '%';
             *to++ = '3';

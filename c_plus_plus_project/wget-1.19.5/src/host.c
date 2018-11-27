@@ -699,7 +699,7 @@ wait_ares (ares_channel channel)
 {
   struct ptimer *timer = NULL;
 
-  if (opt.dns_timeout)
+  if (global_options.dns_timeout)
     timer = ptimer_new ();
 
   for (;;)
@@ -716,7 +716,7 @@ wait_ares (ares_channel channel)
 
       if (timer)
         {
-          double max = opt.dns_timeout - ptimer_measure (timer);
+          double max = global_options.dns_timeout - ptimer_measure (timer);
 
           tv.tv_sec = (long) max;
           tv.tv_usec = 1000000 * (max - (long) max);
@@ -726,7 +726,7 @@ wait_ares (ares_channel channel)
         tvp = ares_timeout (channel, NULL, &tv);
 
       rc = select (nfds, &read_fds, &write_fds, NULL, tvp);
-      if (rc == 0 && timer && ptimer_measure (timer) >= opt.dns_timeout)
+      if (rc == 0 && timer && ptimer_measure (timer) >= global_options.dns_timeout)
         ares_cancel (channel);
       else
         ares_process (channel, &read_fds, &write_fds);
@@ -754,11 +754,11 @@ callback (void *arg, int status, int timeouts _GL_UNUSED, struct hostent *host)
 
    This function caches its result so that, if the same host is passed
    the second time, the addresses are returned without DNS lookup.
-   (Use LH_REFRESH to force lookup, or set opt.dns_cache to 0 to
+   (Use LH_REFRESH to force lookup, or set global_options.dns_cache to 0 to
    globally disable caching.)
 
    The order of the returned addresses is affected by the setting of
-   opt.prefer_family: if it is set to prefer_ipv4, IPv4 addresses are
+   global_options.prefer_family: if it is set to prefer_ipv4, IPv4 addresses are
    placed at the beginning; if it is prefer_ipv6, IPv6 ones are placed
    at the beginning; otherwise, the order is left intact.  The
    relative order of addresses with the same family is left
@@ -779,7 +779,7 @@ lookup_host (const char *host, int flags)
   bool silent = !!(flags & LH_SILENT);
   bool use_cache;
   bool numeric_address = false;
-  double timeout = opt.dns_timeout;
+  double timeout = global_options.dns_timeout;
 
 #ifndef ENABLE_IPV6
   /* If we're not using getaddrinfo, first check if HOST specifies a
@@ -813,7 +813,7 @@ lookup_host (const char *host, int flags)
 
   /* Cache is normally on, but can be turned off with --no-dns-cache.
      Don't cache passive lookups under IPv6.  */
-  use_cache = opt.dns_cache;
+  use_cache = global_options.dns_cache;
 #ifdef ENABLE_IPV6
   if ((flags & LH_BIND) || numeric_address)
     use_cache = false;
@@ -840,7 +840,7 @@ lookup_host (const char *host, int flags)
     {
       char *str = NULL, *name;
 
-      if (opt.enable_iri && (name = idn_decode ((char *) host)) != NULL)
+      if (global_options.enable_iri && (name = idn_decode ((char *) host)) != NULL)
         {
           str = aprintf ("%s (%s)", name, host);
           xfree (name);
@@ -859,9 +859,9 @@ lookup_host (const char *host, int flags)
       struct address_list *al4;
       struct address_list *al6;
 
-      if (opt.ipv4_only || !opt.ipv6_only)
+      if (global_options.ipv4_only || !global_options.ipv6_only)
         ares_gethostbyname (ares, host, AF_INET, callback, &al4);
-      if (opt.ipv6_only || !opt.ipv4_only)
+      if (global_options.ipv6_only || !global_options.ipv4_only)
         ares_gethostbyname (ares, host, AF_INET6, callback, &al6);
 
       wait_ares (ares);
@@ -881,9 +881,9 @@ lookup_host (const char *host, int flags)
 
       xzero (hints);
       hints.ai_socktype = SOCK_STREAM;
-      if (opt.ipv4_only)
+      if (global_options.ipv4_only)
         hints.ai_family = AF_INET;
-      else if (opt.ipv6_only)
+      else if (global_options.ipv6_only)
         hints.ai_family = AF_INET6;
       else
         /* We tried using AI_ADDRCONFIG, but removed it because: it
@@ -929,9 +929,9 @@ lookup_host (const char *host, int flags)
   /* Reorder addresses so that IPv4 ones (or IPv6 ones, as per
      --prefer-family) come first.  Sorting is stable so the order of
      the addresses with the same family is undisturbed.  */
-  if (al->count > 1 && opt.prefer_family != prefer_none)
+  if (al->count > 1 && global_options.prefer_family != prefer_none)
     stable_sort (al->addresses, al->count, sizeof (ip_address),
-                 opt.prefer_family == prefer_ipv4
+                 global_options.prefer_family == prefer_ipv4
                  ? cmp_prefer_ipv4 : cmp_prefer_ipv6);
 #else  /* not ENABLE_IPV6 */
 #ifdef HAVE_LIBCARES
@@ -968,7 +968,7 @@ lookup_host (const char *host, int flags)
       int i;
       int printmax = al->count;
 
-      if (!opt.show_all_dns_entries && printmax > 3)
+      if (!global_options.show_all_dns_entries && printmax > 3)
           printmax = 3;
 
       for (i = 0; i < printmax; i++)
@@ -995,14 +995,14 @@ bool
 accept_domain (struct url *u)
 {
   assert (u->host != NULL);
-  if (opt.domains)
+  if (global_options.domains)
     {
-      if (!sufmatch ((const char **)opt.domains, u->host))
+      if (!sufmatch ((const char **)global_options.domains, u->host))
         return false;
     }
-  if (opt.exclude_domains)
+  if (global_options.exclude_domains)
     {
-      if (sufmatch ((const char **)opt.exclude_domains, u->host))
+      if (sufmatch ((const char **)global_options.exclude_domains, u->host))
         return false;
     }
   return true;

@@ -181,7 +181,7 @@ warc_write_string (const char *str)
 #define OFF_FLG             3
 
 /* Starts a new WARC record.  Writes the version header.
-   If opt.warc_maxsize is set and the current file is becoming
+   If global_options.warc_maxsize is set and the current file is becoming
    too large, this will open a new WARC file.
 
    If compression is enabled, this will start a new
@@ -196,12 +196,12 @@ warc_write_start_record (void)
     return false;
 
   fflush (warc_current_file);
-  if (opt.warc_maxsize > 0 && ftello (warc_current_file) >= opt.warc_maxsize)
+  if (global_options.warc_maxsize > 0 && ftello (warc_current_file) >= global_options.warc_maxsize)
     warc_start_new_file (false);
 
 #ifdef HAVE_LIBZ
   /* Start a GZIP stream, if required. */
-  if (opt.warc_compression_enabled)
+  if (global_options.warc_compression_enabled)
     {
       /* Record the starting offset of the new record. */
       warc_current_gzfile_offset = ftello (warc_current_file);
@@ -575,7 +575,7 @@ warc_base32_sha1_digest (const char *sha1_digest, char *sha1_base32, size_t sha1
 static void
 warc_write_digest_headers (FILE *file, long payload_offset)
 {
-  if (opt.warc_digests_enabled)
+  if (global_options.warc_digests_enabled)
     {
       /* Calculate the block and payload digests. */
       char sha1_res_block[SHA1_DIGEST_SIZE];
@@ -779,14 +779,14 @@ warc_write_warcinfo_record (const char *filename)
   fprintf (warc_tmp, "format: WARC File Format 1.0\r\n");
   fprintf (warc_tmp,
 "conformsTo: http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf\r\n");
-  fprintf (warc_tmp, "robots: %s\r\n", (opt.use_robots ? "classic" : "off"));
+  fprintf (warc_tmp, "robots: %s\r\n", (global_options.use_robots ? "classic" : "off"));
   fprintf (warc_tmp, "wget-arguments: %s\r\n", program_argstring);
   /* Add the user headers, if any. */
-  if (opt.warc_user_headers)
+  if (global_options.warc_user_headers)
     {
       int i;
-      for (i = 0; opt.warc_user_headers[i]; i++)
-        fprintf (warc_tmp, "%s\r\n", opt.warc_user_headers[i]);
+      for (i = 0; global_options.warc_user_headers[i]; i++)
+        fprintf (warc_tmp, "%s\r\n", global_options.warc_user_headers[i]);
     }
   fprintf(warc_tmp, "\r\n");
 
@@ -822,7 +822,7 @@ warc_start_new_file (bool meta)
 #endif /* def __VMS [else] */
 
 #ifdef HAVE_LIBZ
-  const char *extension = (opt.warc_compression_enabled ? WARC_GZ : "warc");
+  const char *extension = (global_options.warc_compression_enabled ? WARC_GZ : "warc");
 #else
   const char *extension = "warc";
 #endif
@@ -830,7 +830,7 @@ warc_start_new_file (bool meta)
   int base_filename_length;
   char *new_filename;
 
-  if (opt.warc_filename == NULL)
+  if (global_options.warc_filename == NULL)
     return false;
 
   if (warc_current_file != NULL)
@@ -841,7 +841,7 @@ warc_start_new_file (bool meta)
 
   warc_current_file_number++;
 
-  base_filename_length = strlen (opt.warc_filename);
+  base_filename_length = strlen (global_options.warc_filename);
   /* filename format:  base + "-" + 5 digit serial number + ".warc.gz" */
   new_filename = xmalloc (base_filename_length + 1 + 5 + 8 + 1);
 
@@ -849,14 +849,14 @@ warc_start_new_file (bool meta)
 
   /* If max size is enabled, we add a serial number to the file names. */
   if (meta)
-    sprintf (new_filename, "%s-meta.%s", opt.warc_filename, extension);
-  else if (opt.warc_maxsize > 0)
+    sprintf (new_filename, "%s-meta.%s", global_options.warc_filename, extension);
+  else if (global_options.warc_maxsize > 0)
     {
-      sprintf (new_filename, "%s-%05d.%s", opt.warc_filename,
+      sprintf (new_filename, "%s-%05d.%s", global_options.warc_filename,
                warc_current_file_number, extension);
     }
   else
-    sprintf (new_filename, "%s.%s", opt.warc_filename, extension);
+    sprintf (new_filename, "%s.%s", global_options.warc_filename, extension);
 
   logprintf (LOG_VERBOSE, _("Opening WARC file %s.\n\n"), quote (new_filename));
 
@@ -883,9 +883,9 @@ warc_start_new_file (bool meta)
 static bool
 warc_start_cdx_file (void)
 {
-  int filename_length = strlen (opt.warc_filename);
+  int filename_length = strlen (global_options.warc_filename);
   char *cdx_filename = alloca (filename_length + 4 + 1);
-  memcpy (cdx_filename, opt.warc_filename, filename_length);
+  memcpy (cdx_filename, global_options.warc_filename, filename_length);
   memcpy (cdx_filename + filename_length, ".cdx", 5);
   warc_current_cdx_file = fopen (cdx_filename, "a+");
   if (warc_current_cdx_file == NULL)
@@ -1027,7 +1027,7 @@ warc_process_cdx_line (char *lineptr, int field_num_original_url,
     }
 }
 
-/* Loads the CDX file from opt.warc_cdx_dedup_filename and fills
+/* Loads the CDX file from global_options.warc_cdx_dedup_filename and fills
    the warc_cdx_dedup_table. */
 static bool
 warc_load_cdx_dedup_file (void)
@@ -1040,7 +1040,7 @@ warc_load_cdx_dedup_file (void)
   int field_num_checksum = -1;
   int field_num_record_id = -1;
 
-  f = fopen (opt.warc_cdx_dedup_filename, "r");
+  f = fopen (global_options.warc_cdx_dedup_filename, "r");
   if (f == NULL)
     return false;
 
@@ -1123,22 +1123,22 @@ warc_find_duplicate_cdx_record (const char *url, char *sha1_digest_payload)
     return NULL;
 }
 
-/* Initializes the WARC writer (if opt.warc_filename is set).
+/* Initializes the WARC writer (if global_options.warc_filename is set).
    This should be called before any WARC record is written. */
 void
 warc_init (void)
 {
   warc_write_ok = true;
 
-  if (opt.warc_filename != NULL)
+  if (global_options.warc_filename != NULL)
     {
-      if (opt.warc_cdx_dedup_filename != NULL)
+      if (global_options.warc_cdx_dedup_filename != NULL)
         {
           if (! warc_load_cdx_dedup_file ())
             {
               logprintf (LOG_NOTQUIET,
                          _("Could not read CDX file %s for deduplication.\n"),
-                         quote (opt.warc_cdx_dedup_filename));
+                         quote (global_options.warc_cdx_dedup_filename));
               exit (WGET_EXIT_GENERIC_ERROR);
             }
         }
@@ -1151,7 +1151,7 @@ warc_init (void)
           exit (WGET_EXIT_GENERIC_ERROR);
         }
 
-      if (opt.warc_keep_log)
+      if (global_options.warc_keep_log)
         {
           warc_log_fp = warc_tempfile ();
           if (warc_log_fp == NULL)
@@ -1170,7 +1170,7 @@ warc_init (void)
           exit (WGET_EXIT_GENERIC_ERROR);
         }
 
-      if (opt.warc_cdx_enabled)
+      if (global_options.warc_cdx_enabled)
         {
           if (! warc_start_cdx_file ())
             {
@@ -1190,7 +1190,7 @@ warc_write_metadata (void)
   FILE *warc_tmp_fp;
 
   /* If there are multiple WARC files, the metadata should be written to a separate file. */
-  if (opt.warc_maxsize > 0)
+  if (global_options.warc_maxsize > 0)
     warc_start_new_file (true);
 
   warc_uuid_str (manifest_uuid);
@@ -1257,7 +1257,7 @@ warc_close (void)
 }
 
 /* Creates a temporary file for writing WARC output.
-   The temporary file will be created in opt.warc_tempdir.
+   The temporary file will be created in global_options.warc_tempdir.
    Returns the pointer to the temporary file, or NULL. */
 FILE *
 warc_tempfile (void)
@@ -1265,7 +1265,7 @@ warc_tempfile (void)
   char filename[100];
   int fd;
 
-  if (path_search (filename, 100, opt.warc_tempdir, "wget", true) == -1)
+  if (path_search (filename, 100, global_options.warc_tempdir, "wget", true) == -1)
     return NULL;
 
 #ifdef __VMS
@@ -1462,7 +1462,7 @@ warc_write_response_record (const char *url, const char *timestamp_str,
   char response_uuid [48];
   off_t offset;
 
-  if (opt.warc_digests_enabled)
+  if (global_options.warc_digests_enabled)
     {
       /* Calculate the block and payload digests. */
       rewind (body);
@@ -1525,7 +1525,7 @@ warc_write_response_record (const char *url, const char *timestamp_str,
 
   fclose (body);
 
-  if (warc_write_ok && opt.warc_cdx_enabled)
+  if (warc_write_ok && global_options.warc_cdx_enabled)
     {
       /* Add this record to the CDX. */
       warc_write_cdx_record (url, timestamp_str, mime_type, response_code,

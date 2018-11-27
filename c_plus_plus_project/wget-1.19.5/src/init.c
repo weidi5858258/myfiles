@@ -177,227 +177,227 @@ static const struct {
     bool (*action)(const char *, const char *, void *);
 } commands[] = {
         /* KEEP THIS LIST ALPHABETICALLY SORTED */
-        {"accept", &opt.accepts, cmd_vector},
-        {"acceptregex", &opt.acceptregex_s, cmd_string},
-        {"addhostdir", &opt.add_hostdir, cmd_boolean},
-        {"adjustextension", &opt.adjust_extension, cmd_boolean},
-        {"alwaysrest", &opt.always_rest, cmd_boolean}, /* deprecated */
-        {"askpassword", &opt.ask_passwd, cmd_boolean},
-        {"authnochallenge", &opt.auth_without_challenge,
+        {"accept", &global_options.accepts, cmd_vector},
+        {"acceptregex", &global_options.acceptregex_s, cmd_string},
+        {"addhostdir", &global_options.add_hostdir, cmd_boolean},
+        {"adjustextension", &global_options.adjust_extension, cmd_boolean},
+        {"alwaysrest", &global_options.always_rest, cmd_boolean}, /* deprecated */
+        {"askpassword", &global_options.ask_passwd, cmd_boolean},
+        {"authnochallenge", &global_options.auth_without_challenge,
          cmd_boolean},
-        {"background", &opt.background, cmd_boolean},
-        {"backupconverted", &opt.backup_converted, cmd_boolean},
-        {"backups", &opt.backups, cmd_number},
-        {"base", &opt.base_href, cmd_string},
-        {"bindaddress", &opt.bind_address, cmd_string},
+        {"background", &global_options.background, cmd_boolean},
+        {"backupconverted", &global_options.backup_converted, cmd_boolean},
+        {"backups", &global_options.backups, cmd_number},
+        {"base", &global_options.base_href, cmd_string},
+        {"bindaddress", &global_options.bind_address, cmd_string},
 #ifdef HAVE_LIBCARES
-        { "binddnsaddress",   &opt.bind_dns_address,  cmd_string },
+        { "binddnsaddress",   &global_options.bind_dns_address,  cmd_string },
 #endif
-        {"bodydata", &opt.body_data, cmd_string},
-        {"bodyfile", &opt.body_file, cmd_string},
+        {"bodydata", &global_options.body_data, cmd_string},
+        {"bodyfile", &global_options.body_file, cmd_string},
 #ifdef HAVE_SSL
-        {"cacertificate", &opt.ca_cert, cmd_file},
+        {"cacertificate", &global_options.ca_cert, cmd_file},
 #endif
-        {"cache", &opt.allow_cache, cmd_boolean},
+        {"cache", &global_options.allow_cache, cmd_boolean},
 #ifdef HAVE_SSL
-        {"cadirectory", &opt.ca_directory, cmd_directory},
-        {"certificate", &opt.cert_file, cmd_file},
-        {"certificatetype", &opt.cert_type, cmd_cert_type},
-        {"checkcertificate", &opt.check_cert, cmd_check_cert},
+        {"cadirectory", &global_options.ca_directory, cmd_directory},
+        {"certificate", &global_options.cert_file, cmd_file},
+        {"certificatetype", &global_options.cert_type, cmd_cert_type},
+        {"checkcertificate", &global_options.check_cert, cmd_check_cert},
 #endif
-        {"chooseconfig", &opt.choose_config, cmd_file},
+        {"chooseconfig", &global_options.choose_config, cmd_file},
 #ifdef HAVE_SSL
-        {"ciphers", &opt.tls_ciphers_string, cmd_string},
+        {"ciphers", &global_options.tls_ciphers_string, cmd_string},
 #endif
 #ifdef HAVE_LIBZ
-        {"compression", &opt.compression, cmd_spec_compression},
+        {"compression", &global_options.compression, cmd_spec_compression},
 #endif
-        {"connecttimeout", &opt.connect_timeout, cmd_time},
-        {"contentdisposition", &opt.content_disposition, cmd_boolean},
-        {"contentonerror", &opt.content_on_error, cmd_boolean},
-        {"continue", &opt.always_rest, cmd_boolean},
-        {"convertfileonly", &opt.convert_file_only, cmd_boolean},
-        {"convertlinks", &opt.convert_links, cmd_boolean},
-        {"cookies", &opt.cookies, cmd_boolean},
+        {"connecttimeout", &global_options.connect_timeout, cmd_time},
+        {"contentdisposition", &global_options.content_disposition, cmd_boolean},
+        {"contentonerror", &global_options.content_on_error, cmd_boolean},
+        {"continue", &global_options.always_rest, cmd_boolean},
+        {"convertfileonly", &global_options.convert_file_only, cmd_boolean},
+        {"convertlinks", &global_options.convert_links, cmd_boolean},
+        {"cookies", &global_options.cookies, cmd_boolean},
 #ifdef HAVE_SSL
-        {"crlfile", &opt.crl_file, cmd_file_once},
+        {"crlfile", &global_options.crl_file, cmd_file_once},
 #endif
-        {"cutdirs", &opt.cut_dirs, cmd_number},
-        {"debug", &opt.debug, cmd_boolean},
-        {"defaultpage", &opt.default_page, cmd_string},
-        {"deleteafter", &opt.delete_after, cmd_boolean},
-        {"dirprefix", &opt.dir_prefix, cmd_directory},
+        {"cutdirs", &global_options.cut_dirs, cmd_number},
+        {"debug", &global_options.debug, cmd_boolean},
+        {"defaultpage", &global_options.default_page, cmd_string},
+        {"deleteafter", &global_options.delete_after, cmd_boolean},
+        {"dirprefix", &global_options.dir_prefix, cmd_directory},
         {"dirstruct", NULL, cmd_spec_dirstruct},
-        {"dnscache", &opt.dns_cache, cmd_boolean},
+        {"dnscache", &global_options.dns_cache, cmd_boolean},
 #ifdef HAVE_LIBCARES
-        { "dnsservers",       &opt.dns_servers,       cmd_string },
+        { "dnsservers",       &global_options.dns_servers,       cmd_string },
 #endif
-        {"dnstimeout", &opt.dns_timeout, cmd_time},
-        {"domains", &opt.domains, cmd_vector},
-        {"dotbytes", &opt.dot_bytes, cmd_bytes},
-        {"dotsinline", &opt.dots_in_line, cmd_number},
-        {"dotspacing", &opt.dot_spacing, cmd_number},
-        {"dotstyle", &opt.dot_style, cmd_string}, /* deprecated */
+        {"dnstimeout", &global_options.dns_timeout, cmd_time},
+        {"domains", &global_options.domains, cmd_vector},
+        {"dotbytes", &global_options.dot_bytes, cmd_bytes},
+        {"dotsinline", &global_options.dots_in_line, cmd_number},
+        {"dotspacing", &global_options.dot_spacing, cmd_number},
+        {"dotstyle", &global_options.dot_style, cmd_string}, /* deprecated */
 #ifdef HAVE_SSL
-        {"egdfile", &opt.egd_file, cmd_file},
+        {"egdfile", &global_options.egd_file, cmd_file},
 #endif
-        {"excludedirectories", &opt.excludes, cmd_directory_vector},
-        {"excludedomains", &opt.exclude_domains, cmd_vector},
-        {"followftp", &opt.follow_ftp, cmd_boolean},
-        {"followtags", &opt.follow_tags, cmd_vector},
-        {"forcehtml", &opt.force_html, cmd_boolean},
-        {"ftppasswd", &opt.ftp_passwd, cmd_string}, /* deprecated */
-        {"ftppassword", &opt.ftp_passwd, cmd_string},
-        {"ftpproxy", &opt.ftp_proxy, cmd_string},
+        {"excludedirectories", &global_options.excludes, cmd_directory_vector},
+        {"excludedomains", &global_options.exclude_domains, cmd_vector},
+        {"followftp", &global_options.follow_ftp, cmd_boolean},
+        {"followtags", &global_options.follow_tags, cmd_vector},
+        {"forcehtml", &global_options.force_html, cmd_boolean},
+        {"ftppasswd", &global_options.ftp_passwd, cmd_string}, /* deprecated */
+        {"ftppassword", &global_options.ftp_passwd, cmd_string},
+        {"ftpproxy", &global_options.ftp_proxy, cmd_string},
 #ifdef HAVE_SSL
-        {"ftpscleardataconnection", &opt.ftps_clear_data_connection, cmd_boolean},
-        {"ftpsfallbacktoftp", &opt.ftps_fallback_to_ftp, cmd_boolean},
-        {"ftpsimplicit", &opt.ftps_implicit, cmd_boolean},
-        {"ftpsresumessl", &opt.ftps_resume_ssl, cmd_boolean},
+        {"ftpscleardataconnection", &global_options.ftps_clear_data_connection, cmd_boolean},
+        {"ftpsfallbacktoftp", &global_options.ftps_fallback_to_ftp, cmd_boolean},
+        {"ftpsimplicit", &global_options.ftps_implicit, cmd_boolean},
+        {"ftpsresumessl", &global_options.ftps_resume_ssl, cmd_boolean},
 #endif
 #ifdef __VMS
-        { "ftpstmlf",         &opt.ftp_stmlf,         cmd_boolean },
+        { "ftpstmlf",         &global_options.ftp_stmlf,         cmd_boolean },
 #endif /* def __VMS */
-        {"ftpuser", &opt.ftp_user, cmd_string},
-        {"glob", &opt.ftp_glob, cmd_boolean},
+        {"ftpuser", &global_options.ftp_user, cmd_string},
+        {"glob", &global_options.ftp_glob, cmd_boolean},
         {"header", NULL, cmd_spec_header},
 #ifdef HAVE_HSTS
-        {"hsts", &opt.hsts, cmd_boolean},
-        {"hstsfile", &opt.hsts_file, cmd_file},
+        {"hsts", &global_options.hsts, cmd_boolean},
+        {"hstsfile", &global_options.hsts_file, cmd_file},
 #endif
-        {"htmlextension", &opt.adjust_extension, cmd_boolean}, /* deprecated */
+        {"htmlextension", &global_options.adjust_extension, cmd_boolean}, /* deprecated */
         {"htmlify", NULL, cmd_spec_htmlify},
-        {"httpkeepalive", &opt.http_keep_alive, cmd_boolean},
-        {"httppasswd", &opt.http_passwd, cmd_string}, /* deprecated */
-        {"httppassword", &opt.http_passwd, cmd_string},
-        {"httpproxy", &opt.http_proxy, cmd_string},
+        {"httpkeepalive", &global_options.http_keep_alive, cmd_boolean},
+        {"httppasswd", &global_options.http_passwd, cmd_string}, /* deprecated */
+        {"httppassword", &global_options.http_passwd, cmd_string},
+        {"httpproxy", &global_options.http_proxy, cmd_string},
 #ifdef HAVE_SSL
-        {"httpsonly", &opt.https_only, cmd_boolean},
+        {"httpsonly", &global_options.https_only, cmd_boolean},
 #endif
-        {"httpsproxy", &opt.https_proxy, cmd_string},
-        {"httpuser", &opt.http_user, cmd_string},
-        {"ifmodifiedsince", &opt.if_modified_since, cmd_boolean},
-        {"ignorecase", &opt.ignore_case, cmd_boolean},
-        {"ignorelength", &opt.ignore_length, cmd_boolean},
-        {"ignoretags", &opt.ignore_tags, cmd_vector},
-        {"includedirectories", &opt.includes, cmd_directory_vector},
+        {"httpsproxy", &global_options.https_proxy, cmd_string},
+        {"httpuser", &global_options.http_user, cmd_string},
+        {"ifmodifiedsince", &global_options.if_modified_since, cmd_boolean},
+        {"ignorecase", &global_options.ignore_case, cmd_boolean},
+        {"ignorelength", &global_options.ignore_length, cmd_boolean},
+        {"ignoretags", &global_options.ignore_tags, cmd_vector},
+        {"includedirectories", &global_options.includes, cmd_directory_vector},
 #ifdef ENABLE_IPV6
-        {"inet4only", &opt.ipv4_only, cmd_boolean},
-        {"inet6only", &opt.ipv6_only, cmd_boolean},
+        {"inet4only", &global_options.ipv4_only, cmd_boolean},
+        {"inet6only", &global_options.ipv6_only, cmd_boolean},
 #endif
-        {"input", &opt.input_filename, cmd_file},
+        {"input", &global_options.input_filename, cmd_file},
 #ifdef HAVE_METALINK
-        { "inputmetalink",    &opt.input_metalink,    cmd_file },
+        { "inputmetalink",    &global_options.input_metalink,    cmd_file },
 #endif
-        {"iri", &opt.enable_iri, cmd_boolean},
-        {"keepbadhash", &opt.keep_badhash, cmd_boolean},
-        {"keepsessioncookies", &opt.keep_session_cookies, cmd_boolean},
-        {"limitrate", &opt.limit_rate, cmd_bytes},
-        {"loadcookies", &opt.cookies_input, cmd_file},
-        {"localencoding", &opt.locale, cmd_string},
-        {"logfile", &opt.lfilename, cmd_file},
-        {"login", &opt.ftp_user, cmd_string},/* deprecated*/
-        {"maxredirect", &opt.max_redirect, cmd_number},
+        {"iri", &global_options.enable_iri, cmd_boolean},
+        {"keepbadhash", &global_options.keep_badhash, cmd_boolean},
+        {"keepsessioncookies", &global_options.keep_session_cookies, cmd_boolean},
+        {"limitrate", &global_options.limit_rate, cmd_bytes},
+        {"loadcookies", &global_options.cookies_input, cmd_file},
+        {"localencoding", &global_options.locale, cmd_string},
+        {"logfile", &global_options.lfilename, cmd_file},
+        {"login", &global_options.ftp_user, cmd_string},/* deprecated*/
+        {"maxredirect", &global_options.max_redirect, cmd_number},
 #ifdef HAVE_METALINK
-{ "metalinkindex",    &opt.metalink_index,     cmd_number_inf },
-{ "metalinkoverhttp", &opt.metalink_over_http, cmd_boolean },
+{ "metalinkindex",    &global_options.metalink_index,     cmd_number_inf },
+{ "metalinkoverhttp", &global_options.metalink_over_http, cmd_boolean },
 #endif
-        {"method", &opt.method, cmd_string_uppercase},
+        {"method", &global_options.method, cmd_string_uppercase},
         {"mirror", NULL, cmd_spec_mirror},
-        {"netrc", &opt.netrc, cmd_boolean},
-        {"noclobber", &opt.noclobber, cmd_boolean},
-        {"noconfig", &opt.noconfig, cmd_boolean},
-        {"noparent", &opt.no_parent, cmd_boolean},
-        {"noproxy", &opt.no_proxy, cmd_vector},
-        {"numtries", &opt.ntry, cmd_number_inf},/* deprecated*/
-        {"outputdocument", &opt.output_document, cmd_file},
-        {"pagerequisites", &opt.page_requisites, cmd_boolean},
-        {"passiveftp", &opt.ftp_pasv, cmd_boolean},
-        {"passwd", &opt.ftp_passwd, cmd_string},/* deprecated*/
-        {"password", &opt.passwd, cmd_string},
+        {"netrc", &global_options.netrc, cmd_boolean},
+        {"noclobber", &global_options.noclobber, cmd_boolean},
+        {"noconfig", &global_options.noconfig, cmd_boolean},
+        {"noparent", &global_options.no_parent, cmd_boolean},
+        {"noproxy", &global_options.no_proxy, cmd_vector},
+        {"numtries", &global_options.ntry, cmd_number_inf},/* deprecated*/
+        {"outputdocument", &global_options.output_document, cmd_file},
+        {"pagerequisites", &global_options.page_requisites, cmd_boolean},
+        {"passiveftp", &global_options.ftp_pasv, cmd_boolean},
+        {"passwd", &global_options.ftp_passwd, cmd_string},/* deprecated*/
+        {"password", &global_options.passwd, cmd_string},
 #ifdef HAVE_SSL
-        {"pinnedpubkey", &opt.pinnedpubkey, cmd_string},
+        {"pinnedpubkey", &global_options.pinnedpubkey, cmd_string},
 #endif
-        {"postdata", &opt.post_data, cmd_string},
-        {"postfile", &opt.post_file_name, cmd_file},
+        {"postdata", &global_options.post_data, cmd_string},
+        {"postfile", &global_options.post_file_name, cmd_file},
         {"preferfamily", NULL, cmd_spec_prefer_family},
 #ifdef HAVE_METALINK
-        { "preferredlocation", &opt.preferred_location, cmd_string },
+        { "preferredlocation", &global_options.preferred_location, cmd_string },
 #endif
-        {"preservepermissions", &opt.preserve_perm, cmd_boolean},
+        {"preservepermissions", &global_options.preserve_perm, cmd_boolean},
 #ifdef HAVE_SSL
-        {"privatekey", &opt.private_key, cmd_file},
-        {"privatekeytype", &opt.private_key_type, cmd_cert_type},
+        {"privatekey", &global_options.private_key, cmd_file},
+        {"privatekeytype", &global_options.private_key_type, cmd_cert_type},
 #endif
-        {"progress", &opt.progress_type, cmd_spec_progress},
-        {"protocoldirectories", &opt.protocol_directories, cmd_boolean},
-        {"proxypasswd", &opt.proxy_passwd, cmd_string}, /* deprecated */
-        {"proxypassword", &opt.proxy_passwd, cmd_string},
-        {"proxyuser", &opt.proxy_user, cmd_string},
-        {"quiet", &opt.quiet, cmd_boolean},
-        {"quota", &opt.quota, cmd_bytes_sum},
+        {"progress", &global_options.progress_type, cmd_spec_progress},
+        {"protocoldirectories", &global_options.protocol_directories, cmd_boolean},
+        {"proxypasswd", &global_options.proxy_passwd, cmd_string}, /* deprecated */
+        {"proxypassword", &global_options.proxy_passwd, cmd_string},
+        {"proxyuser", &global_options.proxy_user, cmd_string},
+        {"quiet", &global_options.quiet, cmd_boolean},
+        {"quota", &global_options.quota, cmd_bytes_sum},
 #ifdef HAVE_SSL
-        {"randomfile", &opt.random_file, cmd_file},
+        {"randomfile", &global_options.random_file, cmd_file},
 #endif
-        {"randomwait", &opt.random_wait, cmd_boolean},
-        {"readtimeout", &opt.read_timeout, cmd_time},
-        {"reclevel", &opt.reclevel, cmd_number_inf},
+        {"randomwait", &global_options.random_wait, cmd_boolean},
+        {"readtimeout", &global_options.read_timeout, cmd_time},
+        {"reclevel", &global_options.reclevel, cmd_number_inf},
         {"recursive", NULL, cmd_spec_recursive},
-        {"referer", &opt.referer, cmd_string},
-        {"regextype", &opt.regex_type, cmd_spec_regex_type},
-        {"reject", &opt.rejects, cmd_vector},
-        {"rejectedlog", &opt.rejected_log, cmd_file},
-        {"rejectregex", &opt.rejectregex_s, cmd_string},
-        {"relativeonly", &opt.relative_only, cmd_boolean},
-        {"remoteencoding", &opt.encoding_remote, cmd_string},
-        {"removelisting", &opt.remove_listing, cmd_boolean},
-        {"reportspeed", &opt.report_bps, cmd_spec_report_speed},
+        {"referer", &global_options.referer, cmd_string},
+        {"regextype", &global_options.regex_type, cmd_spec_regex_type},
+        {"reject", &global_options.rejects, cmd_vector},
+        {"rejectedlog", &global_options.rejected_log, cmd_file},
+        {"rejectregex", &global_options.rejectregex_s, cmd_string},
+        {"relativeonly", &global_options.relative_only, cmd_boolean},
+        {"remoteencoding", &global_options.encoding_remote, cmd_string},
+        {"removelisting", &global_options.remove_listing, cmd_boolean},
+        {"reportspeed", &global_options.report_bps, cmd_spec_report_speed},
         {"restrictfilenames", NULL, cmd_spec_restrict_file_names},
-        {"retrsymlinks", &opt.retr_symlinks, cmd_boolean},
-        {"retryconnrefused", &opt.retry_connrefused, cmd_boolean},
-        {"retryonhttperror", &opt.retry_on_http_error, cmd_string},
-        {"robots", &opt.use_robots, cmd_boolean},
-        {"savecookies", &opt.cookies_output, cmd_file},
-        {"saveheaders", &opt.save_headers, cmd_boolean},
+        {"retrsymlinks", &global_options.retr_symlinks, cmd_boolean},
+        {"retryconnrefused", &global_options.retry_connrefused, cmd_boolean},
+        {"retryonhttperror", &global_options.retry_on_http_error, cmd_string},
+        {"robots", &global_options.use_robots, cmd_boolean},
+        {"savecookies", &global_options.cookies_output, cmd_file},
+        {"saveheaders", &global_options.save_headers, cmd_boolean},
 #ifdef HAVE_SSL
-        {"secureprotocol", &opt.secure_protocol, cmd_spec_secure_protocol},
+        {"secureprotocol", &global_options.secure_protocol, cmd_spec_secure_protocol},
 #endif
-        {"serverresponse", &opt.server_response, cmd_boolean},
-        {"showalldnsentries", &opt.show_all_dns_entries, cmd_boolean},
-        {"showprogress", &opt.show_progress, cmd_spec_progressdisp},
-        {"spanhosts", &opt.spanhost, cmd_boolean},
-        {"spider", &opt.spider, cmd_boolean},
-        {"startpos", &opt.start_pos, cmd_bytes},
-        {"strictcomments", &opt.strict_comments, cmd_boolean},
+        {"serverresponse", &global_options.server_response, cmd_boolean},
+        {"showalldnsentries", &global_options.show_all_dns_entries, cmd_boolean},
+        {"showprogress", &global_options.show_progress, cmd_spec_progressdisp},
+        {"spanhosts", &global_options.spanhost, cmd_boolean},
+        {"spider", &global_options.spider, cmd_boolean},
+        {"startpos", &global_options.start_pos, cmd_bytes},
+        {"strictcomments", &global_options.strict_comments, cmd_boolean},
         {"timeout", NULL, cmd_spec_timeout},
-        {"timestamping", &opt.timestamping, cmd_boolean},
-        {"tries", &opt.ntry, cmd_number_inf},
-        {"trustservernames", &opt.trustservernames, cmd_boolean},
-        {"unlink", &opt.unlink_requested, cmd_boolean},
-        {"useaskpass", &opt.use_askpass, cmd_use_askpass},
-        {"useproxy", &opt.use_proxy, cmd_boolean},
-        {"user", &opt.user, cmd_string},
+        {"timestamping", &global_options.timestamping, cmd_boolean},
+        {"tries", &global_options.ntry, cmd_number_inf},
+        {"trustservernames", &global_options.trustservernames, cmd_boolean},
+        {"unlink", &global_options.unlink_requested, cmd_boolean},
+        {"useaskpass", &global_options.use_askpass, cmd_use_askpass},
+        {"useproxy", &global_options.use_proxy, cmd_boolean},
+        {"user", &global_options.user, cmd_string},
         {"useragent", NULL, cmd_spec_useragent},
-        {"useservertimestamps", &opt.useservertimestamps, cmd_boolean},
+        {"useservertimestamps", &global_options.useservertimestamps, cmd_boolean},
         {"verbose", NULL, cmd_spec_verbose},
-        {"wait", &opt.wait, cmd_time},
-        {"waitretry", &opt.waitretry, cmd_time},
-        {"warccdx", &opt.warc_cdx_enabled, cmd_boolean},
-        {"warccdxdedup", &opt.warc_cdx_dedup_filename, cmd_file},
+        {"wait", &global_options.wait, cmd_time},
+        {"waitretry", &global_options.waitretry, cmd_time},
+        {"warccdx", &global_options.warc_cdx_enabled, cmd_boolean},
+        {"warccdxdedup", &global_options.warc_cdx_dedup_filename, cmd_file},
 #ifdef HAVE_LIBZ
-        {"warccompression", &opt.warc_compression_enabled, cmd_boolean},
+        {"warccompression", &global_options.warc_compression_enabled, cmd_boolean},
 #endif
-        {"warcdigests", &opt.warc_digests_enabled, cmd_boolean},
-        {"warcfile", &opt.warc_filename, cmd_file},
+        {"warcdigests", &global_options.warc_digests_enabled, cmd_boolean},
+        {"warcfile", &global_options.warc_filename, cmd_file},
         {"warcheader", NULL, cmd_spec_warc_header},
-        {"warckeeplog", &opt.warc_keep_log, cmd_boolean},
-        {"warcmaxsize", &opt.warc_maxsize, cmd_bytes},
-        {"warctempdir", &opt.warc_tempdir, cmd_directory},
+        {"warckeeplog", &global_options.warc_keep_log, cmd_boolean},
+        {"warcmaxsize", &global_options.warc_maxsize, cmd_bytes},
+        {"warctempdir", &global_options.warc_tempdir, cmd_directory},
 #ifdef USE_WATT32
-        { "wdebug",           &opt.wdebug,            cmd_boolean },
+        { "wdebug",           &global_options.wdebug,            cmd_boolean },
 #endif
 #ifdef ENABLE_XATTR
-        {"xattr", &opt.enable_xattr, cmd_boolean},
+        {"xattr", &global_options.enable_xattr, cmd_boolean},
 #endif
 };
 
@@ -433,43 +433,43 @@ defaults(void) {
        that initializing pointers to NULL this way is technically
        illegal, but porting Wget to a machine where NULL is not all-zero
        bit pattern will be the least of the implementors' worries.  */
-    xzero (opt);
+    xzero (global_options);
 
 #ifdef HAVE_METALINK
-    opt.metalink_index = -1;
+    global_options.metalink_index = -1;
 #endif
 
-    opt.cookies = true;
-    opt.verbose = -1;
-    opt.ntry = 20;
-    opt.reclevel = 5;
-    opt.add_hostdir = true;
-    opt.netrc = true;
-    opt.ftp_glob = true;
-    opt.htmlify = true;
-    opt.http_keep_alive = true;
-    opt.use_proxy = true;
-    opt.convert_file_only = false;
+    global_options.cookies = true;
+    global_options.verbose = -1;
+    global_options.ntry = 20;
+    global_options.reclevel = 5;
+    global_options.add_hostdir = true;
+    global_options.netrc = true;
+    global_options.ftp_glob = true;
+    global_options.htmlify = true;
+    global_options.http_keep_alive = true;
+    global_options.use_proxy = true;
+    global_options.convert_file_only = false;
     tmp = getenv("no_proxy");
     if (tmp)
-        opt.no_proxy = sepstring(tmp);
-    opt.prefer_family = prefer_none;
-    opt.allow_cache = true;
-    opt.if_modified_since = true;
+        global_options.no_proxy = sepstring(tmp);
+    global_options.prefer_family = prefer_none;
+    global_options.allow_cache = true;
+    global_options.if_modified_since = true;
 
-    opt.read_timeout = 900;
-    opt.use_robots = true;
+    global_options.read_timeout = 900;
+    global_options.use_robots = true;
 
-    opt.remove_listing = true;
+    global_options.remove_listing = true;
 
-    opt.dot_bytes = 1024;
-    opt.dot_spacing = 10;
-    opt.dots_in_line = 50;
+    global_options.dot_bytes = 1024;
+    global_options.dot_spacing = 10;
+    global_options.dots_in_line = 50;
 
-    opt.dns_cache = true;
-    opt.ftp_pasv = true;
+    global_options.dns_cache = true;
+    global_options.ftp_pasv = true;
     /* 2014-09-07  Darshit Shah  <darnir@gmail.com>
-     * opt.retr_symlinks is set to true by default. Creating symbolic links on the
+     * global_options.retr_symlinks is set to true by default. Creating symbolic links on the
      * local filesystem pose a security threat by malicious FTP Servers that
      * server a specially crafted .listing file akin to this:
      *
@@ -483,75 +483,75 @@ defaults(void) {
      * Hence, by default Wget attempts to retrieve the pointed-to files and does
      * not create the symbolic links locally.
      */
-    opt.retr_symlinks = true;
+    global_options.retr_symlinks = true;
 
 #ifdef HAVE_SSL
-    opt.check_cert = CHECK_CERT_ON;
-    opt.ftps_resume_ssl = true;
-    opt.ftps_fallback_to_ftp = false;
-    opt.ftps_implicit = false;
-    opt.ftps_clear_data_connection = false;
+    global_options.check_cert = CHECK_CERT_ON;
+    global_options.ftps_resume_ssl = true;
+    global_options.ftps_fallback_to_ftp = false;
+    global_options.ftps_implicit = false;
+    global_options.ftps_clear_data_connection = false;
 #endif
 
 #ifdef HAVE_LIBZ
-    opt.compression = compression_none;
+    global_options.compression = compression_none;
 #endif
 
     /* The default for file name restriction defaults to the OS type. */
 #if defined(WINDOWS) || defined(MSDOS) || defined(__CYGWIN__)
-    opt.restrict_files_os = restrict_windows;
+    global_options.restrict_files_os = restrict_windows;
 #elif defined(__VMS)
-    opt.restrict_files_os = restrict_vms;
+    global_options.restrict_files_os = restrict_vms;
 #else
-    opt.restrict_files_os = restrict_unix;
+    global_options.restrict_files_os = restrict_unix;
 #endif
-    opt.restrict_files_ctrl = true;
-    opt.restrict_files_nonascii = false;
-    opt.restrict_files_case = restrict_no_case_restriction;
+    global_options.restrict_files_ctrl = true;
+    global_options.restrict_files_nonascii = false;
+    global_options.restrict_files_case = restrict_no_case_restriction;
 
-    opt.regex_type = regex_type_posix;
+    global_options.regex_type = regex_type_posix;
 
-    opt.max_redirect = 20;
+    global_options.max_redirect = 20;
 
-    opt.waitretry = 10;
+    global_options.waitretry = 10;
 
 #ifdef ENABLE_IRI
-    opt.enable_iri = true;
+    global_options.enable_iri = true;
 #else
-    opt.enable_iri = false;
+    global_options.enable_iri = false;
 #endif
-    opt.locale = NULL;
-    opt.encoding_remote = NULL;
+    global_options.locale = NULL;
+    global_options.encoding_remote = NULL;
 
-    opt.useservertimestamps = true;
-    opt.show_all_dns_entries = false;
+    global_options.useservertimestamps = true;
+    global_options.show_all_dns_entries = false;
 
-    opt.warc_maxsize = 0; /* 1024 * 1024 * 1024; */
+    global_options.warc_maxsize = 0; /* 1024 * 1024 * 1024; */
 #ifdef HAVE_LIBZ
-    opt.warc_compression_enabled = true;
+    global_options.warc_compression_enabled = true;
 #else
-    opt.warc_compression_enabled = false;
+    global_options.warc_compression_enabled = false;
 #endif
-    opt.warc_digests_enabled = true;
-    opt.warc_cdx_enabled = false;
-    opt.warc_cdx_dedup_filename = NULL;
-    opt.warc_tempdir = NULL;
-    opt.warc_keep_log = true;
+    global_options.warc_digests_enabled = true;
+    global_options.warc_cdx_enabled = false;
+    global_options.warc_cdx_dedup_filename = NULL;
+    global_options.warc_tempdir = NULL;
+    global_options.warc_keep_log = true;
 
     /* Use a negative value to mark the absence of --start-pos option */
-    opt.start_pos = -1;
-    opt.show_progress = -1;
-    opt.noscroll = false;
+    global_options.start_pos = -1;
+    global_options.show_progress = -1;
+    global_options.noscroll = false;
 
 #ifdef HAVE_HSTS
     /* HSTS is enabled by default */
-    opt.hsts = true;
+    global_options.hsts = true;
 #endif
 
 #ifdef ENABLE_XATTR
-    opt.enable_xattr = true;
+    global_options.enable_xattr = true;
 #else
-    opt.enable_xattr = false;
+    global_options.enable_xattr = false;
 #endif
 }
 
@@ -634,8 +634,8 @@ wgetrc_user_file_name(void) {
 #ifdef __VMS
     file = "SYS$LOGIN:.wgetrc";
 #else /* def __VMS */
-    if (opt.homedir)
-        file = aprintf("%s/.wgetrc", opt.homedir);
+    if (global_options.homedir)
+        file = aprintf("%s/.wgetrc", global_options.homedir);
 #endif /* def __VMS [else] */
 
     if (!file)
@@ -796,26 +796,26 @@ or specify a different file using --config.\n"), env_sysrc);
       }
 #endif
     /* Override it with your own, if one exists.  */
-    opt.wgetrcfile = wgetrc_file_name();
-    if (!opt.wgetrcfile)
+    global_options.wgetrcfile = wgetrc_file_name();
+    if (!global_options.wgetrcfile)
         return 0;
     /* #### We should canonicalize `file' and SYSTEM_WGETRC with
        something like realpath() before comparing them with `strcmp'  */
 #ifdef SYSTEM_WGETRC
-    if (!strcmp (opt.wgetrcfile, SYSTEM_WGETRC))
+    if (!strcmp (global_options.wgetrcfile, SYSTEM_WGETRC))
       {
         fprintf (stderr, _("\
   %s: Warning: Both system and user wgetrc point to %s.\n"),
-                 exec_name, quote (opt.wgetrcfile));
+                 exec_name, quote (global_options.wgetrcfile));
       }
     else
 #endif
 #ifndef FUZZING
-    if (file_exists_p(opt.wgetrcfile, &flstats))
+    if (file_exists_p(global_options.wgetrcfile, &flstats))
 #endif
-        ok &= run_wgetrc(opt.wgetrcfile, &flstats);
+        ok &= run_wgetrc(global_options.wgetrcfile, &flstats);
 
-    xfree (opt.wgetrcfile);
+    xfree (global_options.wgetrcfile);
 
     /* If there were errors processing either `.wgetrc', abort. */
     if (!ok)
@@ -938,8 +938,8 @@ setval_internal_tilde(int comind, const char *com, const char *val) {
          (commands[comind].action == cmd_directory))
         && ret && (*val == '~' && ISSEP (val[1]))) {
         pstring = commands[comind].place;
-        if (opt.homedir) {
-            char *home = xstrdup(opt.homedir);
+        if (global_options.homedir) {
+            char *home = xstrdup(global_options.homedir);
             homelen = strlen(home);
             while (homelen && ISSEP (home[homelen - 1]))
                 home[--homelen] = '\0';
@@ -1466,14 +1466,14 @@ cmd_spec_compression(const char *com, const char *val, void *place) {
 
 static bool
 cmd_spec_dirstruct(const char *com, const char *val, void *place_ignored _GL_UNUSED) {
-    if (!cmd_boolean(com, val, &opt.dirstruct))
+    if (!cmd_boolean(com, val, &global_options.dirstruct))
         return false;
     /* Since dirstruct behaviour is explicitly changed, no_dirstruct
        must be affected inversely.  */
-    if (opt.dirstruct)
-        opt.no_dirstruct = false;
+    if (global_options.dirstruct)
+        global_options.no_dirstruct = false;
     else
-        opt.no_dirstruct = true;
+        global_options.no_dirstruct = true;
     return true;
 }
 
@@ -1481,8 +1481,8 @@ static bool
 cmd_spec_header(const char *com, const char *val, void *place_ignored _GL_UNUSED) {
     /* Empty value means reset the list of headers. */
     if (*val == '\0') {
-        free_vec(opt.user_headers);
-        opt.user_headers = NULL;
+        free_vec(global_options.user_headers);
+        global_options.user_headers = NULL;
         return true;
     }
 
@@ -1491,7 +1491,7 @@ cmd_spec_header(const char *com, const char *val, void *place_ignored _GL_UNUSED
                 exec_name, com, quote(val));
         return false;
     }
-    opt.user_headers = vec_append(opt.user_headers, val);
+    global_options.user_headers = vec_append(global_options.user_headers, val);
     return true;
 }
 
@@ -1499,8 +1499,8 @@ static bool
 cmd_spec_warc_header(const char *com, const char *val, void *place_ignored _GL_UNUSED) {
     /* Empty value means reset the list of headers. */
     if (*val == '\0') {
-        free_vec(opt.warc_user_headers);
-        opt.warc_user_headers = NULL;
+        free_vec(global_options.warc_user_headers);
+        global_options.warc_user_headers = NULL;
         return true;
     }
 
@@ -1509,15 +1509,15 @@ cmd_spec_warc_header(const char *com, const char *val, void *place_ignored _GL_U
                 exec_name, com, quote(val));
         return false;
     }
-    opt.warc_user_headers = vec_append(opt.warc_user_headers, val);
+    global_options.warc_user_headers = vec_append(global_options.warc_user_headers, val);
     return true;
 }
 
 static bool
 cmd_spec_htmlify(const char *com, const char *val, void *place_ignored _GL_UNUSED) {
-    int flag = cmd_boolean(com, val, &opt.htmlify);
-    if (flag && !opt.htmlify)
-        opt.remove_listing = false;
+    int flag = cmd_boolean(com, val, &global_options.htmlify);
+    if (flag && !global_options.htmlify)
+        global_options.remove_listing = false;
     return flag;
 }
 
@@ -1531,12 +1531,12 @@ cmd_spec_mirror(const char *com, const char *val, void *place_ignored _GL_UNUSED
     if (!cmd_boolean(com, val, &mirror))
         return false;
     if (mirror) {
-        opt.recursive = true;
-        if (!opt.no_dirstruct)
-            opt.dirstruct = true;
-        opt.timestamping = true;
-        opt.reclevel = INFINITE_RECURSION;
-        opt.remove_listing = false;
+        global_options.recursive = true;
+        if (!global_options.no_dirstruct)
+            global_options.dirstruct = true;
+        global_options.timestamping = true;
+        global_options.reclevel = INFINITE_RECURSION;
+        global_options.remove_listing = false;
     }
     return true;
 }
@@ -1555,7 +1555,7 @@ cmd_spec_prefer_family(const char *com, const char *val, void *place_ignored _GL
     int ok = decode_string(val, choices, countof (choices), &prefer_family);
     if (!ok)
         fprintf(stderr, _("%s: %s: Invalid value %s.\n"), exec_name, com, quote(val));
-    opt.prefer_family = prefer_family;
+    global_options.prefer_family = prefer_family;
     return ok;
 }
 
@@ -1569,25 +1569,25 @@ cmd_spec_progress(const char *com, const char *val, void *place_ignored _GL_UNUS
                 exec_name, com, quote(val));
         return false;
     }
-    xfree (opt.progress_type);
+    xfree (global_options.progress_type);
 
     /* Don't call set_progress_implementation here.  It will be called
        in main when it becomes clear what the log output is.  */
-    opt.progress_type = xstrdup(val);
+    global_options.progress_type = xstrdup(val);
     return true;
 }
 
-/* Set opt.recursive to VAL as with cmd_boolean.  If opt.recursive is
-   set to true, also set opt.dirstruct to true, unless opt.no_dirstruct
+/* Set global_options.recursive to VAL as with cmd_boolean.  If global_options.recursive is
+   set to true, also set global_options.dirstruct to true, unless global_options.no_dirstruct
    is specified.  */
 
 static bool
 cmd_spec_recursive(const char *com, const char *val, void *place_ignored _GL_UNUSED) {
-    if (!cmd_boolean(com, val, &opt.recursive))
+    if (!cmd_boolean(com, val, &global_options.recursive))
         return false;
     else {
-        if (opt.recursive && !opt.no_dirstruct)
-            opt.dirstruct = true;
+        if (global_options.recursive && !global_options.no_dirstruct)
+            global_options.dirstruct = true;
     }
     return true;
 }
@@ -1606,16 +1606,16 @@ cmd_spec_regex_type(const char *com, const char *val, void *place_ignored _GL_UN
     int ok = decode_string(val, choices, countof (choices), &regex_type);
     if (!ok)
         fprintf(stderr, _("%s: %s: Invalid value %s.\n"), exec_name, com, quote(val));
-    opt.regex_type = regex_type;
+    global_options.regex_type = regex_type;
     return ok;
 }
 
 static bool
 cmd_spec_restrict_file_names(const char *com, const char *val, void *place_ignored _GL_UNUSED) {
-    int restrict_os = opt.restrict_files_os;
-    int restrict_ctrl = opt.restrict_files_ctrl;
-    int restrict_case = opt.restrict_files_case;
-    int restrict_nonascii = opt.restrict_files_nonascii;
+    int restrict_os = global_options.restrict_files_os;
+    int restrict_ctrl = global_options.restrict_files_ctrl;
+    int restrict_case = global_options.restrict_files_case;
+    int restrict_nonascii = global_options.restrict_files_nonascii;
 
     const char *end;
 
@@ -1654,20 +1654,20 @@ cmd_spec_restrict_file_names(const char *com, const char *val, void *place_ignor
 
 #undef VAL_IS
 
-    opt.restrict_files_os = restrict_os;
-    opt.restrict_files_ctrl = restrict_ctrl;
-    opt.restrict_files_case = restrict_case;
-    opt.restrict_files_nonascii = restrict_nonascii;
+    global_options.restrict_files_os = restrict_os;
+    global_options.restrict_files_ctrl = restrict_ctrl;
+    global_options.restrict_files_case = restrict_case;
+    global_options.restrict_files_nonascii = restrict_nonascii;
 
     return true;
 }
 
 static bool
 cmd_spec_report_speed(const char *com, const char *val, void *place_ignored _GL_UNUSED) {
-    opt.report_bps = c_strcasecmp(val, "bits") == 0;
-    if (!opt.report_bps)
+    global_options.report_bps = c_strcasecmp(val, "bits") == 0;
+    if (!global_options.report_bps)
         fprintf(stderr, _("%s: %s: Invalid value %s.\n"), exec_name, com, quote(val));
-    return opt.report_bps;
+    return global_options.report_bps;
 }
 
 #ifdef HAVE_SSL
@@ -1699,9 +1699,9 @@ cmd_spec_timeout(const char *com, const char *val, void *place_ignored _GL_UNUSE
     double value;
     if (!cmd_time(com, val, &value))
         return false;
-    opt.read_timeout = value;
-    opt.connect_timeout = value;
-    opt.dns_timeout = value;
+    global_options.read_timeout = value;
+    global_options.connect_timeout = value;
+    global_options.dns_timeout = value;
     return true;
 }
 
@@ -1713,8 +1713,8 @@ cmd_spec_useragent(const char *com, const char *val, void *place_ignored _GL_UNU
                 exec_name, com, quote(val));
         return false;
     }
-    xfree (opt.useragent);
-    opt.useragent = xstrdup(val);
+    xfree (global_options.useragent);
+    global_options.useragent = xstrdup(val);
     return true;
 }
 
@@ -1725,7 +1725,7 @@ static bool
 cmd_spec_progressdisp(const char *com, const char *val, void *place _GL_UNUSED) {
     bool flag;
     if (cmd_boolean(com, val, &flag)) {
-        opt.show_progress = flag;
+        global_options.show_progress = flag;
         return true;
     }
     return false;
@@ -1740,8 +1740,8 @@ static bool
 cmd_spec_verbose(const char *com, const char *val, void *place_ignored _GL_UNUSED) {
     bool flag;
     if (cmd_boolean(com, val, &flag)) {
-        opt.verbose = flag;
-        opt.show_progress = -1;
+        global_options.verbose = flag;
+        global_options.show_progress = -1;
         return true;
     }
     return false;
@@ -1842,7 +1842,7 @@ cleanup(void) {
         return; /* cleanup() must not be called twice */
 
     /* Close WARC file. */
-    if (opt.warc_filename != 0)
+    if (global_options.warc_filename != 0)
         warc_close();
 
     log_close();
@@ -1875,85 +1875,85 @@ cleanup(void) {
     log_cleanup ();
     netrc_cleanup ();
 
-    xfree (opt.choose_config);
-    xfree (opt.lfilename);
-    xfree (opt.dir_prefix);
-    xfree (opt.input_filename);
+    xfree (global_options.choose_config);
+    xfree (global_options.lfilename);
+    xfree (global_options.dir_prefix);
+    xfree (global_options.input_filename);
 #ifdef HAVE_METALINK
-    xfree (opt.input_metalink);
-    xfree (opt.preferred_location);
+    xfree (global_options.input_metalink);
+    xfree (global_options.preferred_location);
 #endif
-    xfree (opt.output_document);
-    xfree (opt.default_page);
-    if (opt.regex_type == regex_type_posix)
+    xfree (global_options.output_document);
+    xfree (global_options.default_page);
+    if (global_options.regex_type == regex_type_posix)
       {
-        if (opt.acceptregex)
-          regfree (opt.acceptregex);
-        if (opt.rejectregex)
-          regfree (opt.rejectregex);
+        if (global_options.acceptregex)
+          regfree (global_options.acceptregex);
+        if (global_options.rejectregex)
+          regfree (global_options.rejectregex);
       }
-    xfree (opt.acceptregex);
-    xfree (opt.rejectregex);
-    xfree (opt.acceptregex_s);
-    xfree (opt.rejectregex_s);
-    free_vec (opt.accepts);
-    free_vec (opt.rejects);
-    free_vec ((char **)opt.excludes);
-    free_vec ((char **)opt.includes);
-    free_vec (opt.domains);
-    free_vec (opt.exclude_domains);
-    free_vec (opt.follow_tags);
-    free_vec (opt.ignore_tags);
-    xfree (opt.progress_type);
-    xfree (opt.warc_filename);
-    xfree (opt.warc_tempdir);
-    xfree (opt.warc_cdx_dedup_filename);
-    xfree (opt.ftp_user);
-    xfree (opt.ftp_passwd);
-    xfree (opt.ftp_proxy);
-    xfree (opt.https_proxy);
-    xfree (opt.http_proxy);
-    free_vec (opt.no_proxy);
-    xfree (opt.proxy_user);
-    xfree (opt.proxy_passwd);
-    xfree (opt.useragent);
-    xfree (opt.referer);
-    xfree (opt.http_user);
-    xfree (opt.http_passwd);
-    xfree (opt.dot_style);
-    free_vec (opt.user_headers);
-    free_vec (opt.warc_user_headers);
+    xfree (global_options.acceptregex);
+    xfree (global_options.rejectregex);
+    xfree (global_options.acceptregex_s);
+    xfree (global_options.rejectregex_s);
+    free_vec (global_options.accepts);
+    free_vec (global_options.rejects);
+    free_vec ((char **)global_options.excludes);
+    free_vec ((char **)global_options.includes);
+    free_vec (global_options.domains);
+    free_vec (global_options.exclude_domains);
+    free_vec (global_options.follow_tags);
+    free_vec (global_options.ignore_tags);
+    xfree (global_options.progress_type);
+    xfree (global_options.warc_filename);
+    xfree (global_options.warc_tempdir);
+    xfree (global_options.warc_cdx_dedup_filename);
+    xfree (global_options.ftp_user);
+    xfree (global_options.ftp_passwd);
+    xfree (global_options.ftp_proxy);
+    xfree (global_options.https_proxy);
+    xfree (global_options.http_proxy);
+    free_vec (global_options.no_proxy);
+    xfree (global_options.proxy_user);
+    xfree (global_options.proxy_passwd);
+    xfree (global_options.useragent);
+    xfree (global_options.referer);
+    xfree (global_options.http_user);
+    xfree (global_options.http_passwd);
+    xfree (global_options.dot_style);
+    free_vec (global_options.user_headers);
+    free_vec (global_options.warc_user_headers);
 # ifdef HAVE_SSL
-    xfree (opt.cert_file);
-    xfree (opt.private_key);
-    xfree (opt.ca_directory);
-    xfree (opt.ca_cert);
-    xfree (opt.crl_file);
-    xfree (opt.pinnedpubkey);
-    xfree (opt.random_file);
-    xfree (opt.egd_file);
+    xfree (global_options.cert_file);
+    xfree (global_options.private_key);
+    xfree (global_options.ca_directory);
+    xfree (global_options.ca_cert);
+    xfree (global_options.crl_file);
+    xfree (global_options.pinnedpubkey);
+    xfree (global_options.random_file);
+    xfree (global_options.egd_file);
 # endif
-    xfree (opt.bind_address);
-    xfree (opt.cookies_input);
-    xfree (opt.cookies_output);
-    xfree (opt.user);
-    xfree (opt.passwd);
-    xfree (opt.base_href);
-    xfree (opt.method);
-    xfree (opt.post_file_name);
-    xfree (opt.post_data);
-    xfree (opt.body_data);
-    xfree (opt.body_file);
-    xfree (opt.rejected_log);
-    xfree (opt.use_askpass);
-    xfree (opt.retry_on_http_error);
+    xfree (global_options.bind_address);
+    xfree (global_options.cookies_input);
+    xfree (global_options.cookies_output);
+    xfree (global_options.user);
+    xfree (global_options.passwd);
+    xfree (global_options.base_href);
+    xfree (global_options.method);
+    xfree (global_options.post_file_name);
+    xfree (global_options.post_data);
+    xfree (global_options.body_data);
+    xfree (global_options.body_file);
+    xfree (global_options.rejected_log);
+    xfree (global_options.use_askpass);
+    xfree (global_options.retry_on_http_error);
 
-    xfree (opt.encoding_remote);
-    xfree (opt.locale);
-    xfree (opt.hsts_file);
+    xfree (global_options.encoding_remote);
+    xfree (global_options.locale);
+    xfree (global_options.hsts_file);
 
-    xfree (opt.wgetrcfile);
-    xfree (opt.homedir);
+    xfree (global_options.wgetrcfile);
+    xfree (global_options.homedir);
     xfree (exec_name);
     xfree (program_argstring);
     ptimer_destroy (timer); timer = NULL;
@@ -1963,8 +1963,8 @@ cleanup(void) {
     {
       extern ares_channel ares;
 
-      xfree (opt.bind_dns_address);
-      xfree (opt.dns_servers);
+      xfree (global_options.bind_dns_address);
+      xfree (global_options.dns_servers);
       ares_destroy (ares);
       ares_library_cleanup ();
     }
@@ -2021,15 +2021,15 @@ test_cmd_spec_restrict_file_names(void)
 
       /*
       fprintf (stderr, "test_cmd_spec_restrict_file_names: TEST %d\n", i); fflush (stderr);
-      fprintf (stderr, "opt.restrict_files_os: %d\n",   opt.restrict_files_os); fflush (stderr);
-      fprintf (stderr, "opt.restrict_files_ctrl: %d\n", opt.restrict_files_ctrl); fflush (stderr);
-      fprintf (stderr, "opt.restrict_files_case: %d\n", opt.restrict_files_case); fflush (stderr);
+      fprintf (stderr, "global_options.restrict_files_os: %d\n",   global_options.restrict_files_os); fflush (stderr);
+      fprintf (stderr, "global_options.restrict_files_ctrl: %d\n", global_options.restrict_files_ctrl); fflush (stderr);
+      fprintf (stderr, "global_options.restrict_files_case: %d\n", global_options.restrict_files_case); fflush (stderr);
       */
       mu_assert ("test_cmd_spec_restrict_file_names: wrong result",
                  res == test_array[i].result
-                 && (int) opt.restrict_files_os   == test_array[i].expected_restrict_files_os
-                 && opt.restrict_files_ctrl == test_array[i].expected_restrict_files_ctrl
-                 && (int) opt.restrict_files_case == test_array[i].expected_restrict_files_case);
+                 && (int) global_options.restrict_files_os   == test_array[i].expected_restrict_files_os
+                 && global_options.restrict_files_ctrl == test_array[i].expected_restrict_files_ctrl
+                 && (int) global_options.restrict_files_case == test_array[i].expected_restrict_files_case);
     }
 
   return NULL;

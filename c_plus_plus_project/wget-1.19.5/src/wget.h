@@ -115,7 +115,7 @@ as that of the covered work.  */
    compile-time and requested at run-time; a no-op otherwise.  */
 
 #ifdef ENABLE_DEBUG
-# define IF_DEBUG if (UNLIKELY (opt.debug))
+# define IF_DEBUG if (UNLIKELY (global_options.debug))
 #else
 # define IF_DEBUG if (0)
 #endif

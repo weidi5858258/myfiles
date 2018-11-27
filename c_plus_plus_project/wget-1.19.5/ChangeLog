@@ -308,13 +308,13 @@
 	* src/init.c (cleanup): Set output_stream to NULL after closing
 
 	Fix homedir memory leaks
-	* src/hsts.c: Use opt.homedir
+	* src/hsts.c: Use global_options.homedir
 	* src/init.c: Likewise
 	* src/main.c: Likewise
 	* src/netrc.c: Likewise
 	* src/options.h (struct options): Add homedir
 
-	* src/main.c (main): Free opt.encoding_remote properly
+	* src/main.c (main): Free global_options.encoding_remote properly
 
 	* src/host.c (wait_ares): Free ptimer
 
@@ -680,8 +680,8 @@
 	Add --compression option
 	* doc/wget.texi: Add --compression documentation.
 	* src/init.c (cmd_spec_compression): New function.
-	(commands[]): Add opt.compression.
-	(defaults): Set default opt.compression value.
+	(commands[]): Add global_options.compression.
+	(defaults): Set default global_options.compression value.
 	* src/main.c (option_data[]): Add struct for --compression.
 	(print_help, help[]): Add description for --compression.
 	(main): Add incompatibility checks for --compression.
@@ -1191,7 +1191,7 @@
 	Add support for --retry-on-http-error
 	* doc/wget.text: Add documentation
 	* src/http.c: Add function check_retry_on_http_error ()
-	* src/init.c: Add opt.retry_on_http_error
+	* src/init.c: Add global_options.retry_on_http_error
 	* src/main.c: Add struct for retry-on-http-error to option_data[]
 	* src/options.h: Add retry_on_http_error to struct options
 
@@ -1448,7 +1448,7 @@
 2016-11-09  Piotr Wajda  <pwajda@gmail.net.pl>
 
 	Respect -o parameter again
-	 * log.c: don't choose log output dynamically when opt.lfilename is set
+	 * log.c: don't choose log output dynamically when global_options.lfilename is set
 
 	 Regression introduced by dd5c549f6af8e1143e1a6ef66725eea4bcd9ad50
 	 Reported-by: Dale R. Worley
@@ -1582,7 +1582,7 @@
 	New: --metalink-over-http Content-Type/Disposition Metalink/XML processing
 	* src/http.c (metalink_from_http): Process the Content-Type header.
 	  Add an application/metalink4+xml URL as metalink metaurl.  If the
-	  option opt.content_disposition is true, the Content-Disposition's
+	  option global_options.content_disposition is true, the Content-Disposition's
 	  filename is the metaurl's name
 	* doc/wget.texi: Update --content-disposition and --metalink-over-http
 	* doc/metalink-standard.txt: Update doc. Content-Type/Disposition
@@ -1613,12 +1613,12 @@
 
 	Bugfix: Set NULL variable due to --content-disposition to Metalink origin
 	* src/http.c (http_loop): Prevent SIGSEGV when hstat.local_file is
-	  NULL, opt.content_disposition has a role in leaving the value unset
+	  NULL, global_options.content_disposition has a role in leaving the value unset
 	* src/http.c (gethttp): If hs->local_file is NULL (aka http_loop()'s
 	  hstat.local_file), set it to the value of hs->metalink->origin
 
 	New: --trust-server-names saves Metalink/HTTP xml files using the "name" field
-	* src/metalink.c (retrieve_from_metalink): If opt.trustservernames is
+	* src/metalink.c (retrieve_from_metalink): If global_options.trustservernames is
 	  true, use the basename of the metaurl's name to save the xml file
 	* doc/metalink-standard.txt: Update doc. With --trust-server-names any
 	  Metalink/HTTP Link application/metalink4+xml file is saved using the
@@ -1655,7 +1655,7 @@
 
 	New option --metalink-index to process Metalink application/metalink4+xml
 	* NEWS: Mention the effect of --metalink-index over Metalink
-	* src/init.c: Add new option metalinkindex (opt.metalink_index),
+	* src/init.c: Add new option metalinkindex (global_options.metalink_index),
 	  initialize to -1
 	* src/main.c: Add new option metalink-index (--metalink-index=NUMBER)
 	* src/options.h: Add new option metalink_index (int)
@@ -1664,7 +1664,7 @@
 	* src/metalink.c: Add functions fetch_metalink_file() simple file
 	  fetch, replace_metalink_basename() replace file basename
 	* src/metalink.c (retrieve_from_metalink): New. Process Metalink
-	  application/metalink4+xml of opt.metalink_index ordinal number
+	  application/metalink4+xml of global_options.metalink_index ordinal number
 	* doc/wget.texi: Add new option metalink-index (--metalink-index)
 	  documentation
 	* doc/metalink-standard.txt: Updated doc. Add documentation about
@@ -1796,7 +1796,7 @@
 	* src/metalink.c: Add function append_suffix_number() append number to
 	  string
 	* src/metalink.c (retrieve_from_metalink): Safer Metalink/XML and
-	  Metalink/HTTP download naming system, opt.trustservernames based
+	  Metalink/HTTP download naming system, global_options.trustservernames based
 	* doc/metalink-standard.txt: Update doc. Explain new Metalink/XML and
 	  Metalin/HTTP download naming system and --trust-server-names role
 	* testenv/Makefile.am: Add new files
@@ -1868,7 +1868,7 @@
 
 	Implement Metalink/XML --directory-prefix option in Metalink module
 	* NEWS: Mention the effect of --directory-prefix over Metalink
-	* src/metalink.c (retrieve_from_metalink): Add opt.dir_prefix as
+	* src/metalink.c (retrieve_from_metalink): Add global_options.dir_prefix as
 	  prefix to the metalink:file name mfile->name
 	* doc/metalink.txt: Update document. Explain --directory-prefix
 
@@ -1952,7 +1952,7 @@
 
 	Setting filename to the right value is sufficient to prevent SIGSEGV
 	generating from testing a NULL value. This also allows retrieve_url()
-	to create a "path/file" tree through opt.output_document.
+	to create a "path/file" tree through global_options.output_document.
 
 	Reading NULL as output_stream, when it shall not be, leads to wrong
 	results. For instance, a non-NULL output_stream tells when a stream
@@ -2081,10 +2081,10 @@
 
 	Add --use-askpass=COMMAND support
 	* doc/wget.texi: Add --use-askpass to documentation.
-	* src/init.c: Add cmd_use_askpasss to set opt.use_askpass based on
+	* src/init.c: Add cmd_use_askpasss to set global_options.use_askpass based on
 	argument, WGET_ASKPASS, and SSH_ASKPASS environment variables.
-	opt.wget-askpass is freed in cleanup ()
-	* src/main.c: Update options & add spawn process of opt.use_askpass
+	global_options.wget-askpass is freed in cleanup ()
+	* src/main.c: Update options & add spawn process of global_options.use_askpass
 	command.
 	* src/options.h: Addition of string use_askpass.
 	* src/url.c: Function scheme_leading_string to access the leading
@@ -2236,7 +2236,7 @@
 
 	New: --continue continues partially downloaded Metalink's files
 	* src/metalink.c (retrieve_from_metalink): Continue file download if
-	  opt.always_rest is true
+	  global_options.always_rest is true
 
 	Without --continue, download as a new file with an unique name (this
 	conforms to the old behaviour).
@@ -3697,8 +3697,8 @@
 2015-04-27  Rohit Mathulla  <rohit_mathulla@yahoo.com>
 
 	openssl: Read cert from private key file when needed
-	* src/openssl.c (ssl_init): Assign opt.cert_{file, type}
-	  from opt.private_key(_type)
+	* src/openssl.c (ssl_init): Assign global_options.cert_{file, type}
+	  from global_options.private_key(_type)
 
 	Fix double free bug in SSL code
 	* src/openssl.c, src/gnutls.c (ssl_init): Copy options using xstrdup
@@ -3797,12 +3797,12 @@
 
 	Add option to restrict filenames used VMS.
 	* src/options.h (enum restrict_files_os): Define "restrict_vms".
-	* src/init.c (defaults) [__VMS]: Set "opt.restrict_files_os" to
+	* src/init.c (defaults) [__VMS]: Set "global_options.restrict_files_os" to
 	"restrict_vms".
 	(cmd_spec_restrict_file_names): honor "vms".
 	* src/url.c (filechr_not_unix): Define "filechr_not_vms".
 	(filechr_table): Update for VMS.
-	(append_uri_pathel): Honor opt.restrict_files_os.
+	(append_uri_pathel): Honor global_options.restrict_files_os.
 	(FN_QUERY_SEP): Update for VMS.
 	(FN_QUERY_SEP_STR): Update for VMS.
 
@@ -4849,7 +4849,7 @@
 	* src/ftp.c (ftp_loop_internal): Fix memory leak
 	* src/http.c (gethttp): Fix two memory leaks
 	* src/init.c (cleanup): Fix compile errors and warnings
-	* src/init.c (cleanup): Free more opt variables
+	* src/init.c (cleanup): Free more global_options variables
 	* src/main.c (main): Fix two memory leaks
 	* src/retr.c (retrieve_url): Fix two memory leaks
 	* src/retr.c (retrieve_url): Add iri to call to url_parse()
@@ -5570,7 +5570,7 @@
 	* src/options.h (options): Add new option, show_progress
 	* src/retr.c (fd_read_body): Accept new parameter for filename of currently
 	downlaoding file
-	(fd_read_body): Create and update progress bar when opt.show_progress is set
+	(fd_read_body): Create and update progress bar when global_options.show_progress is set
 	(fd_read_body): Display progress information in Windows console titlebars
 	* src/retr.h (fd_read_body): Update declaration
 	* src/ftp.c (getftp): Send filename of the local file so that it can be printed
@@ -5590,8 +5590,8 @@
 
 	* src/init.c, main.c, options.h: Add option --start-pos for specifying
 	start position of a download.
-	* src/http.c: Utilize opt.start_pos for HTTP download.
-	* src/ftp.c: Utilize opt.start_pos for FTP retrieval.
+	* src/http.c: Utilize global_options.start_pos for HTTP download.
+	* src/ftp.c: Utilize global_options.start_pos for FTP retrieval.
 
 2014-03-13  Zihang Chen  <chsc4698@gmail.com>
 
@@ -5799,7 +5799,7 @@
 	* src/main.c: Remove pre-processor variable WHEN_DEBUG
 	(option_data[]): Do not fail on --debug even if debug support is not
 	compiled in.
-	(main): Explicitly set opt.debug to false in case debugging support was not
+	(main): Explicitly set global_options.debug to false in case debugging support was not
 	compiled.
 	* src/init.c (commands[]): Support --debug wven when support is not compiled in.
 	* src/options.h: Same
@@ -6435,7 +6435,7 @@
 	handling redirections. Do not suspend the method on 301/302 redirects.
 	(gethttp): If method if not GET, we do not intend to download
 	anything.
-	* src/main.c (main): Set spider mode when opt.method is HEAD. This will
+	* src/main.c (main): Set spider mode when global_options.method is HEAD. This will
 	prevent Wget from downloading any file.
 	* src/retr.c (SUSPEND_METHOD): Rename macro SUSPEND_POST_DATA to
 	SUSPEND_METHOD to more accurately reflect its use. Similarly rename
@@ -6502,7 +6502,7 @@
 	* src/init.c: Declare `cmd_string_uppercase'.
 	(commands): Now `method' uses cmd_string_uppercase.
 	(cmd_string_uppercase): New method
-	* src/http.c (gethttp): Do not transform opt.method to uppercase.
+	* src/http.c (gethttp): Do not transform global_options.method to uppercase.
 	Reported by: Stefano Lattarini <stefano.lattarini@gmail.com>
 
 2013-05-01  Gijs van Tulder  <gvtulder@gmail.com>
@@ -6525,15 +6525,15 @@
 
 2013-04-24  Darshit Shah <darnir@gmail.com>
 
-	* src/http.c (gethttp): Remove check for opt.post_data and
-	opt.post_file_name.
+	* src/http.c (gethttp): Remove check for global_options.post_data and
+	global_options.post_file_name.
 	* src/main.c (main): Change location in code where --post-data and
 	--post-file options are converted to --body-data --body-file.
 
 2013-04-21  Gijs van Tulder  <gvtulder@gmail.com>
 
-	* src/http.c: Copy opt.body_data to the WARC file, instead of
-	opt.post_data (the old option).
+	* src/http.c: Copy global_options.body_data to the WARC file, instead of
+	global_options.post_data (the old option).
 
 2013-04-14  Giuseppe Scrivano  <gscrivano@gnu.org>
 
@@ -6943,7 +6943,7 @@
 
 2012-04-22  Tim Ruehsen <tim.ruehsen@gmx.de>
 
-	* src/main.c (main): Dynamically allocate `opt.progress_type'.
+	* src/main.c (main): Dynamically allocate `global_options.progress_type'.
 
 2012-04-21  Tim Ruehsen  <tim.ruehsen@gmx.de>
 
@@ -7068,7 +7068,7 @@
 	option and download rate calculated as bits per sec (SI-prefix)
 	for --bits otherwise bytes (IEC-prefix).
 	(retr_rate): Rates will display in bits per sec for --bits.
-	* src/options.h (struct opt): Added --bit option bool variable bits_fmt.
+	* src/options.h (struct global_options): Added --bit option bool variable bits_fmt.
 	* src/main.c (print_help) : Added help for --bit.
 	* src/init.c: Defined command for --bit option.
 	* src/retr.h: Added function prototype.
@@ -7168,9 +7168,9 @@
 	* src/ftp.c (getftp): Move BIN_TYPE_TRANSFER macro into VMS-specific
 	section.  On VMS, use Stream_LF attributes for listing files.  Pass
 	BIN_TYPE_FILE to fopen_excl() instead of constant-everywhere "true".
-	* src/ftp.c (ftp_retrieve_list): Restore lost test of opt.preserve_perm
+	* src/ftp.c (ftp_retrieve_list): Restore lost test of global_options.preserve_perm
 	(--preserve-permissions) on the chmod() operation.
-	* src/init.c, main.c: Remove "deprecated" from opt.preserve_perm
+	* src/init.c, main.c: Remove "deprecated" from global_options.preserve_perm
 	(--preserve-permissions).
 	* src/init.c (initialize): Use distinct messages for errors in C macro
 	SYSTEM_WGETRC and environment-variable SYSTEM_WGETRC.  Avoid use of
@@ -7220,7 +7220,7 @@
 
 2011-09-07  Giuseppe Scrivano  <gscrivano@gnu.org>
 
-	* src/http.c (gethttp): Don't inhibit arest request if opt.timestamping is
+	* src/http.c (gethttp): Don't inhibit arest request if global_options.timestamping is
 	set.
 	Reported by <natrio@list.ru>
 
@@ -9494,7 +9494,7 @@
 	* src/convert.c (local_quote_string): Ditto.
 
 	* src/init.c (commands): Add "adjustextension", and reflect rename
-	change for opt.adjust_extension, for both "adjustextension" and
+	change for global_options.adjust_extension, for both "adjustextension" and
 	"htmlextension".
 
 2009-07-28  Micah Cowan  <micah@cowan.name>
@@ -10471,8 +10471,8 @@
 	* src/iri.c : Include missing stringprep.h file and add a
 	cast.
 
-	* src/init.c : set a default initial value for opt.enable_iri,
-	opt.locale and opt.encoding_remote.
+	* src/init.c : set a default initial value for global_options.enable_iri,
+	global_options.locale and global_options.encoding_remote.
 
 2008-06-19  Xavier Saint  <wget@sxav.eu>
 
@@ -11627,7 +11627,7 @@
 	* src/openssl.c (ssl_init): const-ified the meth local variable.
 	* src/main.c: Include all the static function definitions in the
 	"#ifndef TESTING" clause, leaving just the definitions for
-	exec_name (not set), and opt.
+	exec_name (not set), and global_options.
 	* src/utils.c (run_with_timeout): Now returns bool, to align with
 	declaration in utils.h.
 
@@ -11787,12 +11787,12 @@
 
 2007-07-28  Micah Cowan  <micah@cowan.name>
 
-	* src/options.h, init.c, retr.c, main.c: renamed opt maxredirect
+	* src/options.h, init.c, retr.c, main.c: renamed global_options maxredirect
 	field to max_redirect, for improved consistency.
 	* src/init.c: changed max_redirect parser from cmd_number_inf to
 	cmd_number, as infinite redirects may not be appropriate.
 	Alternatively, if cmd_number_inf should be used, then
-	opt.max_redirect's value should be checked a bit differently in
+	global_options.max_redirect's value should be checked a bit differently in
 	retr.c, to allow for the "infinite" meaning of zero.
 
 2007-07-28  Micah Cowan  <micah@cowan.name>
@@ -11842,7 +11842,7 @@
 
 	* src/options.h: added maxredirect to options struct
 	* src/init.c: added maxredirect to list of variables
-	* src/retr.c (retrieve_url): replaced MAX_REDIRECTIONS with opt.maxredirect
+	* src/retr.c (retrieve_url): replaced MAX_REDIRECTIONS with global_options.maxredirect
 	* src/main.c: added option --max-redirect
 
 2007-07-10  Mauro Tortonesi  <mauro@ferrara.linux.it>
@@ -11999,7 +11999,7 @@
 	* src/retr.c (retrieve_from_file): Ditto.
 	(url_uses_proxy): New function.
 
-	* src/main.c (main): Don't check for opt.use_proxy when deciding
+	* src/main.c (main): Don't check for global_options.use_proxy when deciding
 	whether to call retrieve_url or retrieve_tree; check whether the
 	proxy would be used for *this* URL.
 
@@ -12106,7 +12106,7 @@
 
 	* src/recur.c: Ditto.
 
-	* src/res.c (res_retrieve_file): Disable opt.timestamping and opt.spider
+	* src/res.c (res_retrieve_file): Disable global_options.timestamping and global_options.spider
 	when retrieving robots.txt. Updated copyright information.
 
 	* src/convert.c: Moved code tracking broken links to spider.c.
@@ -12277,10 +12277,10 @@
 2006-06-12  Mauro Tortonesi  <mauro@ferrara.linux.it>
 
 	* src/retr.c (retrieve_from_file): Use retrieve_tree and automatically
-	turn on opt.follow_ftp in case of recursive FTP retrieval through HTTP
+	turn on global_options.follow_ftp in case of recursive FTP retrieval through HTTP
 	proxy.
 
-	* src/main.c: Automatically turn on opt.follow_ftp in case of recursive
+	* src/main.c: Automatically turn on global_options.follow_ftp in case of recursive
 	FTP retrieval through HTTP proxy.
 
 2006-06-12  CHEN Peng  <chenpeng@alumni.nus.edu.sg>
@@ -12764,12 +12764,12 @@
 2005-07-06  Hrvoje Niksic  <hniksic@xemacs.org>
 
 	* src/utils.c (fnmatch_nocase): New function.
-	(proclist): Use it instead of fnmatch when opt.ignore_case is
+	(proclist): Use it instead of fnmatch when global_options.ignore_case is
 	requested.
-	(in_acclist): Respect opt.ignore_case.
-	(frontcmp): Respect opt.ignore_case.
+	(in_acclist): Respect global_options.ignore_case.
+	(frontcmp): Respect global_options.ignore_case.
 
-	* src/options.h (struct options): New flag opt.ignore_case.
+	* src/options.h (struct options): New flag global_options.ignore_case.
 
 2005-07-06  Hrvoje Niksic  <hniksic@xemacs.org>
 
@@ -13262,7 +13262,7 @@
 
 2005-06-24  Hrvoje Niksic  <hniksic@xemacs.org>
 
-	* src/init.c: opt.verbose must be declared as int.
+	* src/init.c: global_options.verbose must be declared as int.
 
 2005-06-24  Hrvoje Niksic  <hniksic@xemacs.org>
 
@@ -13361,7 +13361,7 @@
 2005-06-22  Hrvoje Niksic  <hniksic@xemacs.org>
 
 	* src/openssl.c, connect.c, host.c: Replace instances of #ifdef
-	ENABLE_DEBUG if (opt.debug) {...} #endif with IF_DEBUG {...}.
+	ENABLE_DEBUG if (global_options.debug) {...} #endif with IF_DEBUG {...}.
 
 	* src/main.c: Rename the IF_DEBUG defined here to WHEN_DEBUG.
 
@@ -13375,7 +13375,7 @@
 2005-06-22  Hrvoje Niksic  <hniksic@xemacs.org>
 
 	* src/http.c (gethttp): Only handle --set-cookies (and assert that
-	cookie jar exists) if opt.cookies is true.  Failure to do so
+	cookie jar exists) if global_options.cookies is true.  Failure to do so
 	triggered the assert when --no-cookies was used and the server
 	sent a Set-Cookie header.  Ouch!
 
@@ -13664,7 +13664,7 @@
 
 2005-05-16  Hrvoje Niksic  <hniksic@xemacs.org>
 
-	* src/init.c (cleanup): Don't free the non-existent opt.ftp_acc.  Free
+	* src/init.c (cleanup): Don't free the non-existent global_options.ftp_acc.  Free
 	the SSL-related stuff.
 
 2005-05-16  Hrvoje Niksic  <hniksic@xemacs.org>
@@ -13850,7 +13850,7 @@
 
 	* src/http.c (gethttp): Don't print "unknown authentication scheme"
 	for failed Basic authentication.
-	(SET_USER_AGENT): Don't set user-agent if opt.useragent is empty.
+	(SET_USER_AGENT): Don't set user-agent if global_options.useragent is empty.
 	(gethttp): Use alloca for allocation of www_authenticate.
 
 2005-05-06  Hrvoje Niksic  <hniksic@xemacs.org>
@@ -14020,7 +14020,7 @@
 
 2005-04-28  Hrvoje Niksic  <hniksic@xemacs.org>
 
-	* src/init.c (commands): Wrap the use of opt.random_file in #ifdef
+	* src/init.c (commands): Wrap the use of global_options.random_file in #ifdef
 	HAVE_SSL.
 
 2005-04-28  Hrvoje Niksic  <hniksic@xemacs.org>
@@ -14108,7 +14108,7 @@
 	* src/http.c (gethttp): Simplify SSL initialization; disable SSL when
 	anything goes wrong with the initialization.
 
-	* src/options.h (struct options): New option opt.random_file.
+	* src/options.h (struct options): New option global_options.random_file.
 
 2005-04-27  Hrvoje Niksic  <hniksic@xemacs.org>
 
@@ -14121,7 +14121,7 @@
 2005-04-27  Hrvoje Niksic  <hniksic@xemacs.org>
 
 	* src/init.c (cmd_spec_useragent): Free the old value of
-	opt.useragent before setting the new one.
+	global_options.useragent before setting the new one.
 
 2005-04-27  Hrvoje Niksic  <hniksic@xemacs.org>
 
@@ -14232,7 +14232,7 @@
 	* src/host.c (cmp_prefer_ipv4): New function.
 	(cmp_prefer_ipv6): New function.
 	(lookup_host): Use the appropriate comparator according to
-	opt.prefer_family.
+	global_options.prefer_family.
 
 	* src/init.c: New option prefer_family.
 
@@ -14467,7 +14467,7 @@
 2005-04-10  Hrvoje Niksic  <hniksic@xemacs.org>
 
 	* src/wget.h (DEBUGP): Use __builtin_expect to give a hint to GCC that
-	opt.debug is false in the vast majority of cases.
+	global_options.debug is false in the vast majority of cases.
 
 2005-04-10  Hrvoje Niksic  <hniksic@xemacs.org>
 
@@ -14706,7 +14706,7 @@
 
 	* src/init.c (cleanup): Don't free the cookie jar explicitly, it is
 	now done by http_cleanup.
-	(cleanup): opt.user_headers is now a vector, free it with
+	(cleanup): global_options.user_headers is now a vector, free it with
 	free_vec.
 
 	* src/http.c (gethttp): Make sure to free the request data, the status
@@ -15080,7 +15080,7 @@
 2004-06-12  Larry Jones <lawrence.jones@ugsplm.com>
 
 	* src/recur.c (download_child_p): Correct the logic in check number 6:
-	test opt.reclevel (not DEPTH) against INFINITE_RECURSION.
+	test global_options.reclevel (not DEPTH) against INFINITE_RECURSION.
 
 2004-05-13  Nico R.  <n-roeser@gmx.net>
 
@@ -15357,7 +15357,7 @@
 2003-12-06  Hrvoje Niksic  <hniksic@xemacs.org>
 
 	* src/url.c (url_file_name): Respect the setting of
-	opt.protocol_directories.
+	global_options.protocol_directories.
 
 	* src/main.c (main): Only check for ret=='?' when longindex is unset.
 	(option_data): New option --protocol-directories.
@@ -15441,7 +15441,7 @@
 	* src/http.c (gethttp): When adding headers specified with `--header',
 	allow them to override the headers generated by Wget.
 
-	* src/init.c (cmd_spec_header): Made opt.user_headers a vector.
+	* src/init.c (cmd_spec_header): Made global_options.user_headers a vector.
 
 	* src/http.c (request_new): New function.  Returns a request structure
 	which can be modified in various ways, most notably by adding HTTP
@@ -15553,7 +15553,7 @@
 
 2003-11-19  Hrvoje Niksic  <hniksic@xemacs.org>
 
-	* src/main.c (main): Don't reference opt.ipv4_only and opt.ipv6_only
+	* src/main.c (main): Don't reference global_options.ipv4_only and global_options.ipv6_only
 	if IPv6 is disabled.
 
 2003-11-19  Hrvoje Niksic  <hniksic@xemacs.org>
@@ -15600,10 +15600,10 @@
 
 2003-11-16  Hrvoje Niksic  <hniksic@xemacs.org>
 
-	* src/main.c (main): Don't allow setting of both opt.ipv4_only and
-	opt.ipv6_only.
+	* src/main.c (main): Don't allow setting of both global_options.ipv4_only and
+	global_options.ipv6_only.
 
-	* src/init.c (defaults): Mark opt.ipv4_only specially when set
+	* src/init.c (defaults): Mark global_options.ipv4_only specially when set
 	automatically.
 
 2003-11-16  Hrvoje Niksic  <hniksic@xemacs.org>
@@ -15693,7 +15693,7 @@
 
 2003-11-13  Hrvoje Niksic  <hniksic@xemacs.org>
 
-	* src/init.c (defaults): Turn on opt.ipv4_only if we're compiling with
+	* src/init.c (defaults): Turn on global_options.ipv4_only if we're compiling with
 	IPv6, and AI_ADDRINFO is not available, and AF_INET6 sockets can't
 	be created.
 
@@ -15762,7 +15762,7 @@
 2003-11-10  Hrvoje Niksic  <hniksic@xemacs.org>
 
 	* src/connect.c (resolve_bind_address): Call lookup_host_passive.
-	Make sure that opt.bind_address is resolved only once.
+	Make sure that global_options.bind_address is resolved only once.
 
 	* src/host.c (lookup_host_passive): New function, handles "passive"
 	lookups.
@@ -16272,7 +16272,7 @@
 	* src/retr.c (retrieve_from_file): Use retrieve_tree for
 	page-requisites.
 
-	* src/main.c (main): Don't define opt.recursive when -p is used.
+	* src/main.c (main): Don't define global_options.recursive when -p is used.
 	Instead, make sure that recursion is used for HTTP in that case.
 
 2003-10-29  Hrvoje Niksic  <hniksic@xemacs.org>
@@ -16461,7 +16461,7 @@
 
 	* src/retr.c (downloaded_exceeds_quota): Removed.
 	(downloaded_increase): Ditto.
-	(total_downloaded_bytes): New variable, replaces opt.downloaded,
+	(total_downloaded_bytes): New variable, replaces global_options.downloaded,
 	which was the wrong place for it anyway.  Updated callers of
 	downloaded_exceeds_quota and downloaded_increase to check this
 	variable directly.
@@ -16919,7 +16919,7 @@
 	its decimal part.
 
 	* src/retr.c (sleep_between_retrievals): In the random-wait case, use
-	random_float() to wait between 0 and 2*opt.wait seconds.
+	random_float() to wait between 0 and 2*global_options.wait seconds.
 
 	* src/utils.c (run_with_timeout): Accept `double' timeouts.  Correctly
 	handle timeout values in (0, 1) range.
@@ -17190,7 +17190,7 @@
 
 2003-09-14  Hrvoje Niksic  <hniksic@xemacs.org>
 
-	* src/url.c (append_uri_pathel): Use opt.restrict_file_names when
+	* src/url.c (append_uri_pathel): Use global_options.restrict_file_names when
 	calling file_unsafe_char.
 
 	* src/init.c: New command restrict_file_names.
@@ -17664,7 +17664,7 @@
 2002-04-11  Hrvoje Niksic  <hniksic@arsdigita.com>
 
 	* src/url.c (url_filename): Use compose_file_name regardless of
-	whether opt.dirstruct is set.
+	whether global_options.dirstruct is set.
 	(mkstruct): Don't handle the query and the reencoding of DIR; that
 	is done in compose_file_name.
 
@@ -18016,7 +18016,7 @@
 	(ssl_init_prng): Don't seed the PRNG; random_number will do that.
 
 	* src/retr.c (sleep_between_retrievals): Use it.  Make sure that the
-	random amount averages in opt.wait.
+	random amount averages in global_options.wait.
 	(sleep_between_retrievals): Don't seed the PRNG; random_number
 	will do that.
 
@@ -18488,7 +18488,7 @@
 
 2001-12-01  Hrvoje Niksic  <hniksic@arsdigita.com>
 
-	* src/url.c (get_urls_file): If opt.base_href is specified, merge each
+	* src/url.c (get_urls_file): If global_options.base_href is specified, merge each
 	URL with the base.
 
 2001-12-01  Hrvoje Niksic  <hniksic@arsdigita.com>
@@ -18547,7 +18547,7 @@
 
 	* src/recur.c (retrieve_tree): Skip the non-inline entries when
 	enqueuing the children of a leaf HTML node in -p mode.
-	(descend_url_p): Ignore opt.no_parent when in -p mode and UPOS is
+	(descend_url_p): Ignore global_options.no_parent when in -p mode and UPOS is
 	"inline".
 
 	* src/html-url.c (get_urls_html): Don't accept dash_p_leaf_HTML.
@@ -19542,7 +19542,7 @@
 
 	* src/netrc.c: Use the latest read_whole_line.
 
-	* src/init.c (defaults): Set opt.ftp_pass to "-wget@".
+	* src/init.c (defaults): Set global_options.ftp_pass to "-wget@".
 
 	* src/mswindows.c (pwd_cuserid): Ditto.
 
@@ -20018,7 +20018,7 @@
 
 	* src/ftp.c (getftp): Ditto.
 
-	* src/http.c (gethttp): Rewind opt.dfp only on first retrieval.
+	* src/http.c (gethttp): Rewind global_options.dfp only on first retrieval.
 
 2001-04-02  Hrvoje Niksic  <hniksic@arsdigita.com>
 
@@ -20810,7 +20810,7 @@
 	* src/http.c (http_loop): Use it.
 
 	* src/retr.c (sleep_between_retrievals): New function that handles the
-	logic of opt.wait and opt.waitretry.
+	logic of global_options.wait and global_options.waitretry.
 
 2000-12-05  Hrvoje Niksic  <hniksic@arsdigita.com>
 
@@ -20833,7 +20833,7 @@
 	* src/http.c: added HTTPS fuctionality
 	* src/retrc.c: ditto
 	* src/url.c: ditto
-	* src/init.c: added opt.httpsproxy
+	* src/init.c: added global_options.httpsproxy
 	* src/options.h: ditto
 	* src/rbuf.h: added alternate rbuf struct
 	* src/wget.h: added CONSSLERR
@@ -20845,7 +20845,7 @@
 
 	* src/url.c: Ditto.
 
-	* src/init.c: Added opt.httpsproxy.
+	* src/init.c: Added global_options.httpsproxy.
 
 	* src/options.h: Ditto.
 
@@ -20921,7 +20921,7 @@
 	(getftp): Make pwd_len a local variable.
 	(ftp_loop): Free PWD before returning.
 
-	* src/init.c (cleanup): Free opt.ftp_pass only if it's non-NULL.
+	* src/init.c (cleanup): Free global_options.ftp_pass only if it's non-NULL.
 
 2000-11-22  Hrvoje Niksic  <hniksic@arsdigita.com>
 
@@ -21007,7 +21007,7 @@
 2000-11-20  Hrvoje Niksic  <hniksic@arsdigita.com>
 
 	* src/http.c (gethttp): Don't use the return value of sprintf().
-	(gethttp): Inhibit keep-alive if opt.http_keep_alive is 0.
+	(gethttp): Inhibit keep-alive if global_options.http_keep_alive is 0.
 
 2000-11-20  Hrvoje Niksic  <hniksic@arsdigita.com>
 
@@ -21039,7 +21039,7 @@
 	* src/http.c (gethttp): Check for both `Keep-Alive: ...' and
 	`Connection: Keep-Alive'.
 
-	* src/wget.h (DEBUGP): Call debug_logprintf only if opt.debug is
+	* src/wget.h (DEBUGP): Call debug_logprintf only if global_options.debug is
 	turned on.
 
 2000-11-19  Hrvoje Niksic  <hniksic@arsdigita.com>
@@ -21393,7 +21393,7 @@
 2000-11-01  Hrvoje Niksic  <hniksic@arsdigita.com>
 
 	* src/main.c (main): Use legible_very_long() for printing
-	opt.downloaded.
+	global_options.downloaded.
 
 	* src/utils.c (legible_1): New function that operates on strings and
 	does the brunt of legible()'s work.
@@ -21402,7 +21402,7 @@
 	sprintf(), and call legible_1().
 
 	* src/options.h (struct options): Use VERY_LONG_TYPE for
-	opt.downloaded.
+	global_options.downloaded.
 
 	* src/sysdep.h (VERY_LONG_TYPE): Define it to have a 64-bit or greater
 	type.
@@ -21412,7 +21412,7 @@
 
 2000-11-01  Hrvoje Niksic  <hniksic@arsdigita.com>
 
-	* src/main.c (main): In case of opt.downloaded overflowing, print
+	* src/main.c (main): In case of global_options.downloaded overflowing, print
 	<overflow> instead of a totally bogus random value.
 
 	* src/retr.c (retrieve_from_file): Ditto.
@@ -21431,8 +21431,8 @@
 	(ftp_retrieve_glob): Ditto.
 
 	* src/retr.c (downloaded_increase): New function.  Notice overflows of
-	opt.downloaded.
-	(downloaded_exceeds_quota): Make sure that opt.downloaded is not
+	global_options.downloaded.
+	(downloaded_exceeds_quota): Make sure that global_options.downloaded is not
 	used if it overflowed.
 
 	* src/options.h (struct options): New member downloaded_overflow.
@@ -21733,7 +21733,7 @@
 
 2000-07-14  Jan Prikryl  <prikryl@cg.tuwien.ac.at>
 
-	* src/retr.c (retrieve_url): Consistently strdup opt.referer when
+	* src/retr.c (retrieve_url): Consistently strdup global_options.referer when
 	setting u->referer.
 
 2000-06-09  Hrvoje Niksic  <hniksic@iskon.hr>
@@ -22571,7 +22571,7 @@
 
 1998-03-31  Hrvoje Niksic  <hniksic@srce.hr>
 
-	* src/utils.c (mkdirhier): Use 0777 instead of opt.dirmode.
+	* src/utils.c (mkdirhier): Use 0777 instead of global_options.dirmode.
 
 	* src/init.c (cmd_spec_dotstyle): Use 48 dots per line for binary
 	style.
@@ -22806,7 +22806,7 @@
 
 	* src/ftp-ls.c (ftp_parse_unix_ls): Open file as binary.
 
-	* src/init.c (defaults): Initialize `opt' to zero via memset.
+	* src/init.c (defaults): Initialize `global_options' to zero via memset.
 
 	* src/http.c (digest_authentication_encode): goto considered harmful.
 
@@ -22945,7 +22945,7 @@
 
 	* src/ftp.c (ftp_loop): Determine `filename' more precisely.
 
-	* src/init.c (setval): Don't set `opt.quiet' if output-document is
+	* src/init.c (setval): Don't set `global_options.quiet' if output-document is
 	`-'.
 
 	* src/log.c (log_init): Print to STDERR instead of STDOUT.
@@ -23245,10 +23245,10 @@
 
 1998-01-31  Hrvoje Niksic  <hniksic@srce.hr>
 
-	* src/ftp.c (getftp): Initialize opt.ftp_pass here.
+	* src/ftp.c (getftp): Initialize global_options.ftp_pass here.
 	(ftp_retrieve_dirs): Use alloca().
 
-	* src/init.c (defaults): Don't initialize opt.ftp_pass.
+	* src/init.c (defaults): Don't initialize global_options.ftp_pass.
 
 	* src/sysdep.h (S_ISLNK): Declare for OS/2; ditto for lstat.
 	From Ivan F. Martinez <ivanfm@ecodigit.com.br>.
@@ -23310,7 +23310,7 @@
 
 1998-01-28  Hrvoje Niksic  <hniksic@srce.hr>
 
-	* src/url.c (mkstruct): Check for opt.cut_dirs.
+	* src/url.c (mkstruct): Check for global_options.cut_dirs.
 	(mkstruct): alloca()-te more, xmalloc() less.
 
 	* src/utils.c (load_file): Check for ferror().
@@ -23435,7 +23435,7 @@
 
 1998-01-24  Hrvoje Niksic  <hniksic@srce.hr>
 
-	* src/recur.c (parse_robots): Respect opt.useragent; use alloca().
+	* src/recur.c (parse_robots): Respect global_options.useragent; use alloca().
 
 	* src/http.c (gethttp): Construct useragent accordingly.
 
@@ -23639,7 +23639,7 @@
 
 	* src/url.h (URL_UNSAFE): Change default under Windows.
 
-	* src/retr.c (retrieve_from_file): Respect opt.delete_after.
+	* src/retr.c (retrieve_from_file): Respect global_options.delete_after.
 
 	* src/main.c (main): Call ws_help on Windows.
 
@@ -23871,7 +23871,7 @@
 
 	* src/ftp.c (ftp_retrieve_list): Ditto.
 
-	* src/http.c (http_loop): Don't touch the file if opt.dfp.
+	* src/http.c (http_loop): Don't touch the file if global_options.dfp.
 
 1997-01-24  Hrvoje Niksic  <hniksic@srce.hr>
 
@@ -23946,7 +23946,7 @@
 
 	* src/http.c (gethttp): Be a little bit smarter about status codes.
 
-	* src/recur.c (recursive_retrieve): Always reset opt.recursive when
+	* src/recur.c (recursive_retrieve): Always reset global_options.recursive when
 	dealing with FTP.
 
 1997-01-18  Hrvoje Niksic  <hniksic@srce.hr>
@@ -24096,7 +24096,7 @@
 
 1996-12-17  Hrvoje Niksic  <hniksic@srce.hr>
 
-	* src/retr.c (retrieve_url): Reset opt.recursion before calling
+	* src/retr.c (retrieve_url): Reset global_options.recursion before calling
 	ftp_loop if it is reached through newloc.
 
 	* src/init.c (run_wgetrc): Print the wgetrc path too, when reporting
@@ -24226,7 +24226,7 @@
 
 	* src/ftp.c (rel_constr): Removed.
 	(ftp_retrieve_list): Don't use it.
-	(ftp_retrieve_list): Use opt.retr_symlinks.
+	(ftp_retrieve_list): Use global_options.retr_symlinks.
 
 1996-11-25  Hrvoje Niksic  <hniksic@srce.hr>
 
@@ -24255,7 +24255,7 @@
 
 	* src/main.c (main): Print the OS_TYPE in the debug output, too.
 
-	* src/recur.c (recursive_retrieve): Check for opt.delete_after.
+	* src/recur.c (recursive_retrieve): Check for global_options.delete_after.
 
 	* src/main.c (main): New option delete-after.
 
@@ -24283,7 +24283,7 @@
 	loop.
 	(ftp_retrieve_list): Warn about non-matching sizes.
 
-	* src/http.c (http_loop): Made -nc non-dependent on opt.recursive.
+	* src/http.c (http_loop): Made -nc non-dependent on global_options.recursive.
 
 	* src/init.c (setnum): Renamed from setnuminf; New argument flags.
 	(setval): Use it.
@@ -24299,7 +24299,7 @@
 	(ftp_index): Use it.
 	(htmlfindurl): A more gentle ending debug message.
 
-	* src/ftp.c (ftp_loop): Check for opt.htmlify.
+	* src/ftp.c (ftp_loop): Check for global_options.htmlify.
 
 	* src/init.c: New command htmlify.
 
@@ -24410,10 +24410,10 @@
 
 	* src/html.c (htmlfindurl): Recognize <area href=...>.
 
-	* src/ftp.c (ftp_retrieve_dirs): Implemented opt.includes.
+	* src/ftp.c (ftp_retrieve_dirs): Implemented global_options.includes.
 
-	* src/init.c (setval): Free the existing opt.excludes and
-	opt.includes, if available.
+	* src/init.c (setval): Free the existing global_options.excludes and
+	global_options.includes, if available.
 
 	* src/main.c (main): New option -I.
 
@@ -24477,7 +24477,7 @@
 1996-11-08  Hrvoje Niksic  <hniksic@srce.hr>
 
 	* src/url.c (url_filename): Do not create numbered suffixes if
-	opt.noclobber -- would bug out on -nc.
+	global_options.noclobber -- would bug out on -nc.
 
 1996-11-07  Hrvoje Niksic  <hniksic@srce.hr>
 
@@ -24571,7 +24571,7 @@
 
 1996-11-02  Hrvoje Niksic  <hniksic@srce.hr>
 
-	* src/ftp.c (ftp_loop): Check for opt.ftp_glob too before calling
+	* src/ftp.c (ftp_loop): Check for global_options.ftp_glob too before calling
 	ftp_retrieve_glob.
 
 	* src/version.c: Changed version to 1.4.0-test2.
@@ -24663,10 +24663,10 @@
 	* src/options.h (struct options): New variable no_parent.
 
 	* src/recur.c (recursive_retrieve): Only files are checked for
-	opt.accepts and opt.rejects.
-	(recursive_retrieve): Check directories for opt.excludes.
+	global_options.accepts and global_options.rejects.
+	(recursive_retrieve): Check directories for global_options.excludes.
 	(recursive_retrieve): Make the dir absolute when checking
-	opt.excludes.
+	global_options.excludes.
 
 	* src/html.c (htmlfindurl): Recognize <applet code=...> and <script
 	src=...>
@@ -24741,8 +24741,8 @@
 
 	* src/http.c (http_loop): Do not return RETROK on code != 20x.
 
-	* src/init.c (cleanup): Free opt.user_header.
-	(cleanup): Free opt.domains.
+	* src/init.c (cleanup): Free global_options.user_header.
+	(cleanup): Free global_options.domains.
 
 	* src/url.c (freelists): Moved to cleanup().
 
@@ -24753,7 +24753,7 @@
 
 	* src/init.c (setval): Do not remove listing when mirroring.
 
-	* src/url.c (url_filename): Use opt.fileprefix.
+	* src/url.c (url_filename): Use global_options.fileprefix.
 
 	* src/ftp.c (ftp_get_listing): Use url_filename to get filename for
 	.listing.
@@ -24787,7 +24787,7 @@
 	* src/version.c: "Released" 1.4b26.
 
 	* src/retr.c (retrieve_from_file): If call get_urls_html with
-	opt.spider to make it silent in spider mode.
+	global_options.spider to make it silent in spider mode.
 
 	* src/url.c (str_url): Use CLEANDUP instead of URL_CLEANSE.
 
@@ -24873,11 +24873,11 @@
 
 	* src/url.c (no_proxy_match): Simplify using char** for no_proxy.
 
-	* src/options.h (struct options): Make opt.no_proxy a vector.
+	* src/options.h (struct options): Make global_options.no_proxy a vector.
 
 	* src/utils.c (sepstring): Use !*s instead of !strlen(s).
 
-	* src/init.c (setval): Set opt.maxreclevel to 0 on --mirror.
+	* src/init.c (setval): Set global_options.maxreclevel to 0 on --mirror.
 	(getperms): Use ISODIGIT instead of isdigit.
 
 	* src/ftp.c (getftp): Print time.
@@ -24997,7 +24997,7 @@
 	* src/geturl.texi: New file.
 
 	* src/main.c (main): Do not print the warnings and download summary if
-	opt.quiet is set.
+	global_options.quiet is set.
 
 	* src/version.c: Changed version to 1.4b23.
 
@@ -25028,9 +25028,9 @@
 
 	* src/html.c (ftp_index): Made it dfp-aware.
 
-	* src/init.c (cleanup): New name of freemem. Close opt.dfp.
+	* src/init.c (cleanup): New name of freemem. Close global_options.dfp.
 
-	* src/ftp.c (getftp): Use opt.dfp if it is set.
+	* src/ftp.c (getftp): Use global_options.dfp if it is set.
 
 	* src/ftp-unix.c (ftp_parse_ls): Recognize time in h:mm format.
 
@@ -25047,7 +25047,7 @@
 	* src/ftp-unix.c (ftp_parse_ls): Added better debug output.
 
 	* src/ftp.c (getftp): Print out the LIST in case of
-	opt.print_server_response.
+	global_options.print_server_response.
 
 	* src/version.c: Changed version to 1.4b21.
 
@@ -25211,11 +25211,11 @@
 
 	* src/html.c (htmlfindurl): Rewrite.
 
-	* src/http.c (gethttp): Use opt.proxy_cache.
+	* src/http.c (gethttp): Use global_options.proxy_cache.
 
 	* src/main.c (main): Added --cache option.
 
-	* src/ftp.c (ftp_response): Print server response if opt.print_server
+	* src/ftp.c (ftp_response): Print server response if global_options.print_server
 	response is set.
 	(getftp): Print newlines after each request if the server response
 	is to be printed.
@@ -25314,17 +25314,17 @@
 
 	* src/url.h (ISDOT): New macro.
 
-	* src/recur.c (recursive_retrieve): Change only opt.recursive for
+	* src/recur.c (recursive_retrieve): Change only global_options.recursive for
 	following FTP.
 
 1996-07-11  Hrvoje Niksic  <hniksic@srce.hr>
 
-	* src/url.c (url_filename): Check for opt.dirstruct instead for
-	opt.recursive && opt.dirstruct.
+	* src/url.c (url_filename): Check for global_options.dirstruct instead for
+	global_options.recursive && global_options.dirstruct.
 
 	* src/init.c (defaults): Ditto.
 	(defaults): Reset dirstruct by default.
-	(setval): Set opt.dirstruct whenever setting recursive.
+	(setval): Set global_options.dirstruct whenever setting recursive.
 
 	* src/init.h: Removed FORCEDIRHIER.
 
@@ -25366,7 +25366,7 @@
 	* src/socks/download.html: Created from download-netscape.html, made
 	HTML-2.0 compliant.
 
-	* src/recur.c (recursive_retrieve): Set opt.force_dir_hier when
+	* src/recur.c (recursive_retrieve): Set global_options.force_dir_hier when
 	following FTP links from recursions.
 
 1996-07-09  Hrvoje Niksic  <hniksic@srce.hr>

@@ -78,7 +78,7 @@ EXTRA_libgnu_a_SOURCES += alloca.c
 
 ## end   gnulib module alloca
 
-## begin gnulib module alloca-opt
+## begin gnulib module alloca-global_options
 
 BUILT_SOURCES += $(ALLOCA_H)
 
@@ -99,7 +99,7 @@ MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 EXTRA_DIST += alloca.in.h
 
-## end   gnulib module alloca-opt
+## end   gnulib module alloca-global_options
 
 ## begin gnulib module announce-gen
 

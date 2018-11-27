@@ -344,4 +344,4 @@ struct options {
     const char *wgetrcfile;       /* the wgetrc file to be loaded */
 };
 
-extern struct options opt;
+extern struct options global_options;

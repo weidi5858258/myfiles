@@ -154,15 +154,15 @@ fake_fork_child (void)
   event = info->event;
 
   info->logfile_changed = false;
-  if (!opt.lfilename && (!opt.quiet || opt.server_response))
+  if (!global_options.lfilename && (!global_options.quiet || global_options.server_response))
     {
       /* See utils:fork_to_background for explanation. */
-      FILE *new_log_fp = unique_create (DEFAULT_LOGFILE, false, &opt.lfilename);
+      FILE *new_log_fp = unique_create (DEFAULT_LOGFILE, false, &global_options.lfilename);
       if (new_log_fp)
         {
           info->logfile_changed = true;
           snprintf (info->lfilename, sizeof (info->lfilename), "%s",
-                    opt.lfilename);
+                    global_options.lfilename);
           fclose (new_log_fp);
         }
     }

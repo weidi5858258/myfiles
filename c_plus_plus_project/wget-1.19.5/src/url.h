@@ -49,8 +49,8 @@ as that of the covered work.  */
 /* The flags that allow clobbering the file (opening with "wb").
    Defined here to avoid repetition later.  #### This will require
    rework.  */
-#define ALLOW_CLOBBER (opt.noclobber || opt.always_rest || opt.timestamping \
-                  || opt.dirstruct || opt.output_document || opt.backups > 0)
+#define ALLOW_CLOBBER (global_options.noclobber || global_options.always_rest || global_options.timestamping \
+                  || global_options.dirstruct || global_options.output_document || global_options.backups > 0)
 
 /* Specifies how, or whether, user auth information should be included
  * in URLs regenerated from URL parse structures. */

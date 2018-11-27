@@ -42,7 +42,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module absolute-header:
   # Code from module accept:
   # Code from module alloca:
-  # Code from module alloca-opt:
+  # Code from module alloca-global_options:
   # Code from module announce-gen:
   # Code from module arpa_inet:
   # Code from module array-mergesort:
@@ -1206,7 +1206,7 @@ AC_DEFUN([gl_REPLACE_FUNCS], [
 
 # Like AC_LIBSOURCES, except the directory where the source file is
 # expected is derived from the gnulib-tool parameterization,
-# and alloca is special cased (for the alloca-opt module).
+# and alloca is special cased (for the alloca-global_options module).
 # We could also entirely rely on EXTRA_lib..._SOURCES.
 AC_DEFUN([gl_LIBSOURCES], [
   m4_foreach([_gl_NAME], [$1], [
@@ -1233,7 +1233,7 @@ AC_DEFUN([gltests_REPLACE_FUNCS], [
 
 # Like AC_LIBSOURCES, except the directory where the source file is
 # expected is derived from the gnulib-tool parameterization,
-# and alloca is special cased (for the alloca-opt module).
+# and alloca is special cased (for the alloca-global_options module).
 # We could also entirely rely on EXTRA_lib..._SOURCES.
 AC_DEFUN([gltests_LIBSOURCES], [
   m4_foreach([_gl_NAME], [$1], [

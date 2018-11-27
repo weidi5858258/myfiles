@@ -83,7 +83,7 @@ search_netrc (const char *host, const char **acc, const char **passwd,
 {
   acc_t *l;
 
-  if (!opt.netrc)
+  if (!global_options.netrc)
     return;
   /* Find ~/.netrc.  */
   if (!processed_netrc)
@@ -108,12 +108,12 @@ search_netrc (const char *host, const char **acc, const char **passwd,
 
       if (fp_netrc)
         netrc_list = parse_netrc_fp (".netrc", fp_netrc);
-      else if (opt.homedir)
+      else if (global_options.homedir)
         {
           struct stat buf;
-          char *path = (char *)alloca (strlen (opt.homedir) + 1
+          char *path = (char *)alloca (strlen (global_options.homedir) + 1
                                        + strlen (NETRC_FILE_NAME) + 1);
-          sprintf (path, "%s/%s", opt.homedir, NETRC_FILE_NAME);
+          sprintf (path, "%s/%s", global_options.homedir, NETRC_FILE_NAME);
           if (stat (path, &buf) == 0)
             netrc_list = parse_netrc (path);
         }

@@ -1360,7 +1360,7 @@ cookie_jar_save (struct cookie_jar *jar, const char *file)
       struct cookie *cookie = iter.value;
       for (; cookie; cookie = cookie->next)
         {
-          if (!cookie->permanent && !opt.keep_session_cookies)
+          if (!cookie->permanent && !global_options.keep_session_cookies)
             continue;
           if (cookie_expired_p (cookie))
             continue;

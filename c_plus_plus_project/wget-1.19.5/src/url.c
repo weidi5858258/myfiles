@@ -935,7 +935,7 @@ url_parse (const char *url, int *error, struct iri *iri, bool percent_encode)
         }
 
       /* Apply IDNA regardless of iri->utf8_encode status */
-      if (opt.enable_iri && iri)
+      if (global_options.enable_iri && iri)
         {
           char *new = idn_encode (iri, u->host);
           if (new)
@@ -954,7 +954,7 @@ url_parse (const char *url, int *error, struct iri *iri, bool percent_encode)
   if (fragment_b)
     u->fragment = strdupdelim (fragment_b, fragment_e);
 
-  if (opt.enable_iri || path_modified || u->fragment || host_modified || path_b == path_e)
+  if (global_options.enable_iri || path_modified || u->fragment || host_modified || path_b == path_e)
     {
       /* If we suspect that a transformation has rendered what
          url_string might return different from URL_ENCODED, rebuild
@@ -1375,7 +1375,7 @@ enum {
 };
 
 #define FILE_CHAR_TEST(c, mask) \
-    ((opt.restrict_files_nonascii && !c_isascii ((unsigned char)(c))) || \
+    ((global_options.restrict_files_nonascii && !c_isascii ((unsigned char)(c))) || \
     (filechr_table[(unsigned char)(c)] & (mask)))
 
 /* Shorthands for the table: */
@@ -1438,17 +1438,17 @@ UVWC, VC, VC, VC,  VC, VC, VC, VC,   /* NUL SOH STX ETX  EOT ENQ ACK BEL */
    for non-standard port numbers.  On Unix this is normally ':', as in
    "www.xemacs.org:4001/index.html".  Under Windows, we set it to +
    because Windows can't handle ':' in file names.  */
-#define FN_PORT_SEP  (opt.restrict_files_os != restrict_windows ? ':' : '+')
+#define FN_PORT_SEP  (global_options.restrict_files_os != restrict_windows ? ':' : '+')
 
 /* FN_QUERY_SEP is the separator between the file name and the URL
    query, normally '?'.  Because VMS and Windows cannot handle '?' in a
    file name, we use '@' instead there.  */
 #define FN_QUERY_SEP \
- (((opt.restrict_files_os != restrict_vms) && \
-   (opt.restrict_files_os != restrict_windows)) ? '?' : '@')
+ (((global_options.restrict_files_os != restrict_vms) && \
+   (global_options.restrict_files_os != restrict_windows)) ? '?' : '@')
 #define FN_QUERY_SEP_STR \
- (((opt.restrict_files_os != restrict_vms) && \
-   (opt.restrict_files_os != restrict_windows)) ? "?" : "@")
+ (((global_options.restrict_files_os != restrict_vms) && \
+   (global_options.restrict_files_os != restrict_windows)) ? "?" : "@")
 
 /* Quote path element, characters in [b, e), as file name, and append
    the quoted string to DEST.  Each character is quoted as per
@@ -1465,13 +1465,13 @@ append_uri_pathel (const char *b, const char *e, bool escaped,
   int quoted, outlen;
 
   int mask;
-  if (opt.restrict_files_os == restrict_unix)
+  if (global_options.restrict_files_os == restrict_unix)
     mask = filechr_not_unix;
-  else if (opt.restrict_files_os == restrict_vms)
+  else if (global_options.restrict_files_os == restrict_vms)
     mask = filechr_not_vms;
   else
     mask = filechr_not_windows;
-  if (opt.restrict_files_ctrl)
+  if (global_options.restrict_files_ctrl)
     mask |= filechr_control;
 
   /* Copy [b, e) to PATHEL and URL-unescape it. */
@@ -1530,13 +1530,13 @@ append_uri_pathel (const char *b, const char *e, bool escaped,
     }
 
   /* Perform inline case transformation if required.  */
-  if (opt.restrict_files_case == restrict_lowercase
-      || opt.restrict_files_case == restrict_uppercase)
+  if (global_options.restrict_files_case == restrict_lowercase
+      || global_options.restrict_files_case == restrict_uppercase)
     {
       char *q;
       for (q = TAIL (dest); q < TAIL (dest) + outlen; ++q)
         {
-          if (opt.restrict_files_case == restrict_lowercase)
+          if (global_options.restrict_files_case == restrict_lowercase)
             *q = c_tolower (*q);
           else
             *q = c_toupper (*q);
@@ -1552,8 +1552,8 @@ static char *
 convert_fname (char *fname)
 {
   char *converted_fname;
-  const char *from_encoding = opt.encoding_remote;
-  const char *to_encoding = opt.locale;
+  const char *from_encoding = global_options.encoding_remote;
+  const char *to_encoding = global_options.locale;
   iconv_t cd;
   size_t len, done, inlen, outlen;
   char *s;
@@ -1644,7 +1644,7 @@ convert_fname (char *fname)
    examined, url-unescaped, and re-escaped as file name element.
 
    Additionally, it cuts as many directories from the path as
-   specified by opt.cut_dirs.  For example, if opt.cut_dirs is 1, it
+   specified by global_options.cut_dirs.  For example, if global_options.cut_dirs is 1, it
    will produce "bar" for the above example.  For 2 or more, it will
    produce "".
 
@@ -1654,7 +1654,7 @@ static void
 append_dir_structure (const struct url *u, struct growable *dest)
 {
   char *pathel, *next;
-  int cut = opt.cut_dirs;
+  int cut = global_options.cut_dirs;
 
   /* Go through the path components, de-URL-quote them, and quote them
      (if necessary) as file names.  */
@@ -1697,13 +1697,13 @@ url_file_name (const struct url *u, char *replaced_filename)
   temp_fnres.tail = 0;
 
   /* If an alternative index file was defined, change index_filename */
-  if (opt.default_page)
-    index_filename = opt.default_page;
+  if (global_options.default_page)
+    index_filename = global_options.default_page;
 
 
   /* Start with the directory prefix, if specified. */
-  if (opt.dir_prefix)
-    append_string (opt.dir_prefix, &fnres);
+  if (global_options.dir_prefix)
+    append_string (global_options.dir_prefix, &fnres);
 
   /* If "dirstruct" is turned on (typically the case with -r), add
      the host and port (unless those have been turned off) and
@@ -1716,15 +1716,15 @@ url_file_name (const struct url *u, char *replaced_filename)
      Non-ASCII code chars in the path:
      https://en.wikipedia.org/wiki/List_of_Unicode_characters
      https://en.wikipedia.org/wiki/List_of_writing_systems */
-  if (opt.dirstruct)
+  if (global_options.dirstruct)
     {
-      if (opt.protocol_directories)
+      if (global_options.protocol_directories)
         {
           if (temp_fnres.tail)
             append_char ('/', &temp_fnres);
           append_string (supported_schemes[u->scheme].name, &temp_fnres);
         }
-      if (opt.add_hostdir)
+      if (global_options.add_hostdir)
         {
           if (temp_fnres.tail)
             append_char ('/', &temp_fnres);

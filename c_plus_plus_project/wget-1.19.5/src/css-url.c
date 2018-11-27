@@ -226,7 +226,7 @@ get_urls_css_file (const char *file, const char *url)
   ctx.text = fm->content;
   ctx.head = NULL;
   ctx.base = NULL;
-  ctx.parent_base = url ? url : opt.base_href;
+  ctx.parent_base = url ? url : global_options.base_href;
   ctx.document_file = file;
   ctx.nofollow = 0;
 

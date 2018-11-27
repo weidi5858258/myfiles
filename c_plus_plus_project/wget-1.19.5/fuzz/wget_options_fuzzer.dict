@@ -137,7 +137,7 @@
 "plugin="
 "plugin-dirs="
 "plugin-help="
-"plugin-opt="
+"plugin-global_options="
 "post-data="
 "post-file="
 "prefer-family="

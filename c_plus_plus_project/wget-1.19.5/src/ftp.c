@@ -135,19 +135,19 @@ ftp_do_pasv (int csock, ip_address *addr, int *port)
   switch (addr->family)
     {
     case AF_INET:
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logputs (LOG_VERBOSE, "==> PASV ... ");
       err = ftp_pasv (csock, addr, port);
       break;
     case AF_INET6:
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logputs (LOG_VERBOSE, "==> EPSV ... ");
       err = ftp_epsv (csock, addr, port);
 
       /* If EPSV is not supported try LPSV */
       if (err == FTPNOPASV)
         {
-          if (!opt.server_response)
+          if (!global_options.server_response)
             logputs (LOG_VERBOSE, "==> LPSV ... ");
           err = ftp_lpsv (csock, addr, port);
         }
@@ -178,19 +178,19 @@ ftp_do_port (int csock, int *local_sock)
   switch (cip.family)
     {
     case AF_INET:
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logputs (LOG_VERBOSE, "==> PORT ... ");
       err = ftp_port (csock, local_sock);
       break;
     case AF_INET6:
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logputs (LOG_VERBOSE, "==> EPRT ... ");
       err = ftp_eprt (csock, local_sock);
 
       /* If EPRT is not supported try LPRT */
       if (err == FTPPORTERR)
         {
-          if (!opt.server_response)
+          if (!global_options.server_response)
             logputs (LOG_VERBOSE, "==> LPRT ... ");
           err = ftp_lprt (csock, local_sock);
         }
@@ -205,7 +205,7 @@ ftp_do_port (int csock, int *local_sock)
 static uerr_t
 ftp_do_pasv (int csock, ip_address *addr, int *port)
 {
-  if (!opt.server_response)
+  if (!global_options.server_response)
     logputs (LOG_VERBOSE, "==> PASV ... ");
   return ftp_pasv (csock, addr, port);
 }
@@ -213,7 +213,7 @@ ftp_do_pasv (int csock, ip_address *addr, int *port)
 static uerr_t
 ftp_do_port (int csock, int *local_sock)
 {
-  if (!opt.server_response)
+  if (!global_options.server_response)
     logputs (LOG_VERBOSE, "==> PORT ... ");
   return ftp_port (csock, local_sock);
 }
@@ -268,9 +268,9 @@ init_control_ssl_connection (int csock, struct url *u, bool *using_control_secur
    * Otherwise send an AUTH sequence before login,
    * and perform the SSL handshake if accepted by server.
    */
-  if (!opt.ftps_implicit && !opt.server_response)
+  if (!global_options.ftps_implicit && !global_options.server_response)
     logputs (LOG_VERBOSE, "==> AUTH TLS ... ");
-  if (opt.ftps_implicit || ftp_auth (csock, SCHEME_FTPS) == FTPOK)
+  if (global_options.ftps_implicit || ftp_auth (csock, SCHEME_FTPS) == FTPOK)
     {
       if (!ssl_connect_wget (csock, u->host, NULL))
         {
@@ -283,7 +283,7 @@ init_control_ssl_connection (int csock, struct url *u, bool *using_control_secur
           return VERIFCERTERR;
         }
 
-      if (!opt.ftps_implicit && !opt.server_response)
+      if (!global_options.ftps_implicit && !global_options.server_response)
         logputs (LOG_VERBOSE, " done.\n");
 
       /* If implicit FTPS was requested, we act as "normal" FTP, but over SSL.
@@ -295,7 +295,7 @@ init_control_ssl_connection (int csock, struct url *u, bool *using_control_secur
     {
       /* The server does not support 'AUTH TLS'.
        * Check if --ftps-fallback-to-ftp was passed. */
-      if (opt.ftps_fallback_to_ftp)
+      if (global_options.ftps_fallback_to_ftp)
         {
           logputs (LOG_NOTQUIET, "Server does not support AUTH TLS. Falling back to FTP.\n");
           using_security = false;
@@ -337,7 +337,7 @@ getftp (struct url *u, struct url *original_url,
   bool try_again;
   bool list_a_used = false;
 #ifdef HAVE_SSL
-  enum prot_level prot = (opt.ftps_clear_data_connection ? PROT_CLEAR : PROT_PRIVATE);
+  enum prot_level prot = (global_options.ftps_clear_data_connection ? PROT_CLEAR : PROT_PRIVATE);
   /* these variables tell whether the target server
    * accepts the security extensions (RFC 2228) or not,
    * and whether we're actually using any of them
@@ -361,29 +361,29 @@ getftp (struct url *u, struct url *original_url,
   /* Find the username with priority */
   if (u->user)
     user = u->user;
-  else if (opt.user && (opt.use_askpass || opt.ask_passwd))
-    user = opt.user;
-  else if (opt.ftp_user)
-    user = opt.ftp_user;
-  else if (opt.user)
-    user = opt.user;
+  else if (global_options.user && (global_options.use_askpass || global_options.ask_passwd))
+    user = global_options.user;
+  else if (global_options.ftp_user)
+    user = global_options.ftp_user;
+  else if (global_options.user)
+    user = global_options.user;
   else
     user = NULL;
 
   /* Find the password with priority */
   if (u->passwd)
     passwd = u->passwd;
-  else if (opt.passwd && (opt.use_askpass || opt.ask_passwd))
-    passwd = opt.passwd;
-  else if (opt.ftp_passwd)
-    passwd = opt.ftp_passwd;
-  else if (opt.passwd)
-    passwd = opt.passwd;
+  else if (global_options.passwd && (global_options.use_askpass || global_options.ask_passwd))
+    passwd = global_options.passwd;
+  else if (global_options.ftp_passwd)
+    passwd = global_options.ftp_passwd;
+  else if (global_options.passwd)
+    passwd = global_options.passwd;
   else
     passwd = NULL;
 
   /* Check for ~/.netrc if none of the above match */
-  if (opt.netrc && (!user || !passwd))
+  if (global_options.netrc && (!user || !passwd))
     search_netrc (u->host, (const char **) &user, (const char **) &passwd, 1, NULL);
 
   if (!user) user = "anonymous";
@@ -408,7 +408,7 @@ getftp (struct url *u, struct url *original_url,
       /* If we're using the default FTP port and implicit FTPS was requested,
        * rewrite the port to the default *implicit* FTPS port.
        */
-      if (opt.ftps_implicit && u->port == DEFAULT_FTP_PORT)
+      if (global_options.ftps_implicit && u->port == DEFAULT_FTP_PORT)
         {
           DEBUGP (("Implicit FTPS was specified. Rewriting default port to %d.\n", DEFAULT_FTPS_IMPLICIT_PORT));
           u->port = DEFAULT_FTPS_IMPLICIT_PORT;
@@ -450,7 +450,7 @@ getftp (struct url *u, struct url *original_url,
           /* If we're in implicit FTPS mode, we have to set up SSL/TLS before everything else.
            * Otherwise we first read the server's greeting, and then send an "AUTH TLS".
            */
-          if (opt.ftps_implicit)
+          if (global_options.ftps_implicit)
             {
               err = init_control_ssl_connection (csock, u, &using_control_security);
               if (err != NOCONERROR)
@@ -484,7 +484,7 @@ getftp (struct url *u, struct url *original_url,
       /* Second: Login with proper USER/PASS sequence.  */
       logprintf (LOG_VERBOSE, _("Logging in as %s ... "),
                  quotearg_style (escape_quoting_style, user));
-      if (opt.server_response)
+      if (global_options.server_response)
         logputs (LOG_ALWAYS, "\n");
       if (con->proxy)
         {
@@ -532,7 +532,7 @@ Error in server response, closing control connection.\n"));
           con->csock = -1;
           return FTPLOGINC;
         case FTPOK:
-          if (!opt.server_response)
+          if (!global_options.server_response)
             logputs (LOG_VERBOSE, _("Logged in!\n"));
           break;
         default:
@@ -549,24 +549,24 @@ Error in server response, closing control connection.\n"));
            * --ftps-fallback-to-ftp or similar options. */
           if (u->scheme == SCHEME_FTPS)
             {
-              if (!opt.server_response)
+              if (!global_options.server_response)
                 logputs (LOG_VERBOSE, "==> PBSZ 0 ... ");
               if ((err = ftp_pbsz (csock, 0)) == FTPNOPBSZ)
                 {
                   logputs (LOG_NOTQUIET, _("Server did not accept the 'PBSZ 0' command.\n"));
                   return err;
                 }
-              if (!opt.server_response)
+              if (!global_options.server_response)
                 logputs (LOG_VERBOSE, "done.");
 
-              if (!opt.server_response)
+              if (!global_options.server_response)
                 logprintf (LOG_VERBOSE, "  ==> PROT %c ... ", (int) prot);
               if ((err = ftp_prot (csock, prot)) == FTPNOPROT)
                 {
                   logprintf (LOG_NOTQUIET, _("Server did not accept the 'PROT %c' command.\n"), (int) prot);
                   return err;
                 }
-              if (!opt.server_response)
+              if (!global_options.server_response)
                 logputs (LOG_VERBOSE, "done.\n");
 
               if (prot != PROT_CLEAR)
@@ -579,7 +579,7 @@ Error in server response, closing control connection.\n"));
 #endif
 
       /* Third: Get the system type */
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logprintf (LOG_VERBOSE, "==> SYST ... ");
       err = ftp_syst (csock, &con->rs, &con->rsu);
       /* FTPRERR */
@@ -603,7 +603,7 @@ Error in server response, closing control connection.\n"));
         default:
           abort ();
         }
-      if (!opt.server_response && err != FTPSRVERR)
+      if (!global_options.server_response && err != FTPSRVERR)
         logputs (LOG_VERBOSE, _("done.    "));
 
       /* 2013-10-17 Andrea Urbani (matfanjol)
@@ -646,7 +646,7 @@ Error in server response, closing control connection.\n"));
 
       /* Fourth: Find the initial ftp directory */
 
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logprintf (LOG_VERBOSE, "==> PWD ... ");
       err = ftp_pwd (csock, &con->id);
       /* FTPRERR */
@@ -706,12 +706,12 @@ Error in server response, closing control connection.\n"));
         }
 #endif /* 0 */
 
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logputs (LOG_VERBOSE, _("done.\n"));
 
       /* Fifth: Set the FTP type.  */
       type_char = ftp_process_type (u->params);
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logprintf (LOG_VERBOSE, "==> TYPE %c ... ", type_char);
       err = ftp_type (csock, type_char);
       /* FTPRERR, WRITEFAILED, FTPUNKNOWNTYPE */
@@ -745,7 +745,7 @@ Error in server response, closing control connection.\n"));
         default:
           abort ();
         }
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logputs (LOG_VERBOSE, _("done.  "));
     } /* do login */
 
@@ -942,7 +942,7 @@ Error in server response, closing control connection.\n"));
                     abort ();
                 }
 
-              if (!opt.server_response)
+              if (!global_options.server_response)
                 logprintf (LOG_VERBOSE, "==> CWD (%d) %s ... ", cwd_count,
                            quotearg_style (escape_quoting_style, target));
 
@@ -978,7 +978,7 @@ Error in server response, closing control connection.\n"));
                     abort ();
                 }
 
-              if (!opt.server_response)
+              if (!global_options.server_response)
                 logputs (LOG_VERBOSE, _("done.\n"));
 
             } /* for */
@@ -992,9 +992,9 @@ Error in server response, closing control connection.\n"));
 
   if ((cmd & DO_RETR) && passed_expected_bytes == 0)
     {
-      if (opt.verbose)
+      if (global_options.verbose)
         {
-          if (!opt.server_response)
+          if (!global_options.server_response)
             logprintf (LOG_VERBOSE, "==> SIZE %s ... ",
                        quotearg_style (escape_quoting_style, u->file));
         }
@@ -1018,7 +1018,7 @@ Error in server response, closing control connection.\n"));
         default:
           abort ();
         }
-        if (!opt.server_response)
+        if (!global_options.server_response)
           {
             logprintf (LOG_VERBOSE, "%s\n",
                     expected_bytes ?
@@ -1043,7 +1043,7 @@ Error in server response, closing control connection.\n"));
   /* If anything is to be retrieved, PORT (or PASV) must be sent.  */
   if (cmd & (DO_LIST | DO_RETR))
     {
-      if (opt.ftp_pasv)
+      if (global_options.ftp_pasv)
         {
           ip_address passive_addr;
           int        passive_port;
@@ -1095,7 +1095,7 @@ Error in server response, closing control connection.\n"));
                           ? CONERROR : CONIMPOSSIBLE);
                 }
 
-              if (!opt.server_response)
+              if (!global_options.server_response)
                 logputs (LOG_VERBOSE, _("done.    "));
             }
           else
@@ -1159,7 +1159,7 @@ Error in server response, closing control connection.\n"));
             default:
               abort ();
             } /* port switch */
-          if (!opt.server_response)
+          if (!global_options.server_response)
             logputs (LOG_VERBOSE, _("done.    "));
         } /* dtsock == -1 */
     } /* cmd & (DO_LIST | DO_RETR) */
@@ -1167,7 +1167,7 @@ Error in server response, closing control connection.\n"));
   /* Restart if needed.  */
   if (restval && (cmd & DO_RETR))
     {
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logprintf (LOG_VERBOSE, "==> REST %s ... ",
                    number_to_static_string (restval));
       err = ftp_rest (csock, restval);
@@ -1202,7 +1202,7 @@ Error in server response, closing control connection.\n"));
         default:
           abort ();
         }
-      if (err != FTPRESTFAIL && !opt.server_response)
+      if (err != FTPRESTFAIL && !global_options.server_response)
         logputs (LOG_VERBOSE, _("done.    "));
     } /* restval && cmd & DO_RETR */
 
@@ -1210,7 +1210,7 @@ Error in server response, closing control connection.\n"));
     {
       /* If we're in spider mode, don't really retrieve anything except
          the directory listing and verify whether the given "file" exists.  */
-      if (opt.spider)
+      if (global_options.spider)
         {
           bool exists = false;
           bool all_exist = true;
@@ -1258,9 +1258,9 @@ Error in server response, closing control connection.\n"));
           }
         }
 
-      if (opt.verbose)
+      if (global_options.verbose)
         {
-          if (!opt.server_response)
+          if (!global_options.server_response)
             {
               if (restval)
                 logputs (LOG_VERBOSE, "\n");
@@ -1304,7 +1304,7 @@ Error in server response, closing control connection.\n"));
           abort ();
         }
 
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logputs (LOG_VERBOSE, _("done.\n"));
 
       if (! got_expected_bytes)
@@ -1313,7 +1313,7 @@ Error in server response, closing control connection.\n"));
 
   if (cmd & DO_LIST)
     {
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logputs (LOG_VERBOSE, "==> LIST ... ");
       /* As Maciej W. Rozycki (macro@ds2.pg.gda.pl) says, `LIST'
          without arguments is better than `LIST .'; confirmed by
@@ -1353,14 +1353,14 @@ Error in server response, closing control connection.\n"));
         default:
           abort ();
         }
-      if (!opt.server_response)
+      if (!global_options.server_response)
         logputs (LOG_VERBOSE, _("done.\n"));
 
       if (! got_expected_bytes)
         expected_bytes = *last_expected_bytes;
     } /* cmd & DO_LIST */
 
-  if (!(cmd & (DO_LIST | DO_RETR)) || (opt.spider && !(cmd & DO_LIST)))
+  if (!(cmd & (DO_LIST | DO_RETR)) || (global_options.spider && !(cmd & DO_LIST)))
     return RETRFINISHED;
 
   /* Some FTP servers return the total length of file after REST
@@ -1373,7 +1373,7 @@ Error in server response, closing control connection.\n"));
     }
 
   /* If no transmission was required, then everything is OK.  */
-  if (!opt.ftp_pasv)  /* we are not using passive mode so we need
+  if (!global_options.ftp_pasv)  /* we are not using passive mode so we need
                          to accept */
     {
       /* Wait for the server to connect to the address we're waiting
@@ -1410,7 +1410,7 @@ Error in server response, closing control connection.\n"));
 #endif /* def __VMS */
 
       mkalldirs (con->target);
-      if (opt.backups)
+      if (global_options.backups)
         rotate_backups (con->target);
 
 /* 2005-04-15 SMS.
@@ -1433,7 +1433,7 @@ Error in server response, closing control connection.\n"));
 #ifdef __VMS
 # define BIN_TYPE_TRANSFER (type_char != 'A')
 # define BIN_TYPE_FILE \
-   ((!(cmd & DO_LIST)) && BIN_TYPE_TRANSFER && (opt.ftp_stmlf == 0))
+   ((!(cmd & DO_LIST)) && BIN_TYPE_TRANSFER && (global_options.ftp_stmlf == 0))
 # define FOPEN_OPT_ARGS "fop=sqo", "acc", acc_cb, &open_id
 # define FOPEN_OPT_ARGS_BIN "ctx=bin,stm", "rfm=fix", "mrs=512" FOPEN_OPT_ARGS
 #else /* def __VMS */
@@ -1459,10 +1459,10 @@ Error in server response, closing control connection.\n"));
           fp = fopen (con->target, "ab");
 #endif /* def __VMS [else] */
         }
-      else if (opt.noclobber || opt.always_rest || opt.timestamping || opt.dirstruct
-               || opt.output_document || count > 0)
+      else if (global_options.noclobber || global_options.always_rest || global_options.timestamping || global_options.dirstruct
+               || global_options.output_document || count > 0)
         {
-          if (opt.unlink_requested && file_exists_p (con->target, NULL))
+          if (global_options.unlink_requested && file_exists_p (con->target, NULL))
             {
               if (unlink (con->target) < 0)
                 {
@@ -1539,9 +1539,9 @@ Error in server response, closing control connection.\n"));
       /* We should try to restore the existing SSL session in the data connection
        * and fall back to establishing a new session if the server doesn't want to restore it.
        */
-      if (!opt.ftps_resume_ssl || !ssl_connect_wget (dtsock, u->host, &csock))
+      if (!global_options.ftps_resume_ssl || !ssl_connect_wget (dtsock, u->host, &csock))
         {
-          if (opt.ftps_resume_ssl)
+          if (global_options.ftps_resume_ssl)
             logputs (LOG_NOTQUIET, "Server does not want to resume the SSL session. Trying with a new one.\n");
           if (!ssl_connect_wget (dtsock, u->host, NULL))
             {
@@ -1579,7 +1579,7 @@ Error in server response, closing control connection.\n"));
   total_download_time += con->dltime;
 
 #ifdef ENABLE_XATTR
-  if (opt.enable_xattr)
+  if (global_options.enable_xattr)
     set_file_metadata (u->url, NULL, fp);
 #endif
 
@@ -1605,7 +1605,7 @@ Error in server response, closing control connection.\n"));
     {
       logprintf (LOG_NOTQUIET, _("%s (%s) - Data connection: %s; "),
                  tms, tmrate, fd_errstr (dtsock));
-      if (opt.server_response)
+      if (global_options.server_response)
         logputs (LOG_ALWAYS, "\n");
     }
   fd_close (dtsock);
@@ -1664,11 +1664,11 @@ Error in server response, closing control connection.\n"));
       fd_close (csock);
       con->csock = -1;
     }
-  /* If it was a listing, and opt.server_response is true,
+  /* If it was a listing, and global_options.server_response is true,
      print it out.  */
   if (con->cmd & DO_LIST)
     {
-      if (opt.server_response)
+      if (global_options.server_response)
         {
 /* 2005-02-25 SMS.
    Much of this work may already have been done, but repeating it should
@@ -1697,7 +1697,7 @@ Error in server response, closing control connection.\n"));
           ssize_t len;
 
           /* The lines are being read with getline because of
-             no-buffering on opt.lfile.  */
+             no-buffering on global_options.lfile.  */
           while ((len = getline (&line, &bufsize, fp)) > 0)
             {
               while (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r'))
@@ -1828,7 +1828,7 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
   struct stat st;
 
   /* Declare WARC variables. */
-  bool warc_enabled = (opt.warc_filename != NULL);
+  bool warc_enabled = (global_options.warc_filename != NULL);
   FILE *warc_tmp = NULL;
   ip_address *warc_ip = NULL;
   wgint last_expected_bytes = 0;
@@ -1843,20 +1843,20 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
     {
       /* URL-derived file.  Consider "-O file" name. */
       xfree (con->target);
-      con->target = url_file_name (opt.trustservernames || !original_url ? u : original_url, NULL);
-      if (!opt.output_document)
+      con->target = url_file_name (global_options.trustservernames || !original_url ? u : original_url, NULL);
+      if (!global_options.output_document)
         locf = con->target;
       else
-        locf = opt.output_document;
+        locf = global_options.output_document;
     }
 
   /* If the output_document was given, then this check was already done and
-     the file didn't exist. Hence the !opt.output_document */
+     the file didn't exist. Hence the !global_options.output_document */
 
   /* If we receive .listing file it is necessary to determine system type of the ftp
-     server even if opn.noclobber is given. Thus we must ignore opt.noclobber in
+     server even if opn.noclobber is given. Thus we must ignore global_options.noclobber in
      order to establish connection with the server and get system type. */
-  if (opt.noclobber && !opt.output_document && file_exists_p (con->target, NULL)
+  if (global_options.noclobber && !global_options.output_document && file_exists_p (con->target, NULL)
       && !((con->cmd & DO_LIST) && !(con->cmd & DO_RETR)))
     {
       logprintf (LOG_VERBOSE,
@@ -1922,9 +1922,9 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
         restval = 0;
       else if (force_full_retrieve)
         restval = 0;
-      else if (opt.start_pos >= 0)
-        restval = opt.start_pos;
-      else if (opt.always_rest
+      else if (global_options.start_pos >= 0)
+        restval = global_options.start_pos;
+      else if (global_options.always_rest
           && stat (locf, &st) == 0
           && S_ISREG (st.st_mode))
         /* When -c is used, continue from on-disk size.  (Can't use
@@ -1938,8 +1938,8 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
 
       /* Get the current time string.  */
       tms = datetime_str (time (NULL));
-      /* Print fetch message, if opt.verbose.  */
-      if (opt.verbose)
+      /* Print fetch message, if global_options.verbose.  */
+      if (global_options.verbose)
         {
           char *hurl = url_string (u, URL_AUTH_HIDE_PASSWD);
           char tmp[256];
@@ -1977,7 +1977,7 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
 #ifdef HAVE_SSL
           if (err == FTPNOAUTH)
             logputs (LOG_NOTQUIET, "Server does not support AUTH TLS.\n");
-          if (opt.ftps_implicit)
+          if (global_options.ftps_implicit)
             logputs (LOG_NOTQUIET, "Server does not like implicit FTPS connections.\n");
 #endif
           /* Fatal errors, give up.  */
@@ -1991,7 +1991,7 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
         case WRITEFAILED: case FTPUNKNOWNTYPE: case FTPSYSERR:
         case FTPPORTERR: case FTPLOGREFUSED: case FTPINVPASV:
         case FOPEN_EXCL_ERR:
-          printwhat (count, opt.ntry);
+          printwhat (count, global_options.ntry);
           /* non-fatal errors */
           if (err == FOPEN_EXCL_ERR)
             {
@@ -2006,7 +2006,7 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
              will be considered OK if f->size == len.  */
           if (!f || qtyread != f->size)
             {
-              printwhat (count, opt.ntry);
+              printwhat (count, global_options.ntry);
               continue;
             }
           break;
@@ -2018,7 +2018,7 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
           abort ();
         }
       tms = datetime_str (time (NULL));
-      if (!opt.spider)
+      if (!global_options.spider)
         tmrate = retr_rate (qtyread - restval, con->dltime);
 
       /* If we get out of the switch above without continue'ing, we've
@@ -2030,9 +2030,9 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
           fd_close (con->csock);
           con->csock = -1;
         }
-      if (!opt.spider)
+      if (!global_options.spider)
         {
-          bool write_to_stdout = (opt.output_document && HYPHENP (opt.output_document));
+          bool write_to_stdout = (global_options.output_document && HYPHENP (global_options.output_document));
 
           logprintf (LOG_VERBOSE,
                      write_to_stdout
@@ -2042,7 +2042,7 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
                      write_to_stdout ? "" : quote (locf),
                      number_to_static_string (qtyread));
         }
-      if (!opt.verbose && !opt.quiet)
+      if (!global_options.verbose && !global_options.quiet)
         {
           /* Need to hide the password from the URL.  The `if' is here
              so that we don't do the needless allocation every
@@ -2071,7 +2071,7 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
       if (con->cmd & DO_LIST)
         /* This is a directory listing file. */
         {
-          if (!opt.remove_listing)
+          if (!global_options.remove_listing)
             /* --dont-remove-listing was specified, so do count this towards the
                number of bytes and files downloaded. */
             {
@@ -2083,7 +2083,7 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
              by the more specific option --dont-remove-listing, and the code
              to do this deletion is in another function. */
         }
-      else if (!opt.spider)
+      else if (!global_options.spider)
         /* This is not a directory listing file. */
         {
           /* Unlike directory listing files, don't pretend normal files weren't
@@ -2093,7 +2093,7 @@ ftp_loop_internal (struct url *u, struct url *original_url, struct fileinfo *f,
           total_downloaded_bytes += qtyread;
           numurls++;
 
-          if (opt.delete_after && !input_file_url (opt.input_filename))
+          if (global_options.delete_after && !input_file_url (global_options.input_filename))
             {
               DEBUGP (("\
 Removing file due to --delete-after in ftp_loop_internal():\n"));
@@ -2119,7 +2119,7 @@ Removing file due to --delete-after in ftp_loop_internal():\n"));
         }
 
       return RETROK;
-    } while (!opt.ntry || (count < opt.ntry));
+    } while (!global_options.ntry || (count < global_options.ntry));
 
   if (con->csock != -1 && (con->st & ON_YOUR_OWN))
     {
@@ -2166,7 +2166,7 @@ ftp_get_listing (struct url *u, struct url *original_url, ccon *con,
   if (err == RETROK)
     {
       *f = ftp_parse_ls (lf, con->rs);
-      if (opt.remove_listing)
+      if (global_options.remove_listing)
         {
           if (unlink (lf))
             logprintf (LOG_NOTQUIET, "unlink: %s\n", strerror (errno));
@@ -2191,7 +2191,7 @@ static struct fileinfo *delelement (struct fileinfo *, struct fileinfo **);
    set up a similar link on the local disk, if the symlinks are
    supported.
 
-   If opt.recursive is set, after all files have been retrieved,
+   If global_options.recursive is set, after all files have been retrieved,
    ftp_retrieve_dirs will be called to retrieve the directories.  */
 static uerr_t
 ftp_retrieve_list (struct url *u, struct url *original_url,
@@ -2208,10 +2208,10 @@ ftp_retrieve_list (struct url *u, struct url *original_url,
 
   /* Increase the depth.  */
   ++depth;
-  if (opt.reclevel != INFINITE_RECURSION && depth > opt.reclevel)
+  if (global_options.reclevel != INFINITE_RECURSION && depth > global_options.reclevel)
     {
       DEBUGP ((_("Recursion depth %d exceeded max. depth %d.\n"),
-               depth, opt.reclevel));
+               depth, global_options.reclevel));
       --depth;
       return RECLEVELEXC;
     }
@@ -2237,7 +2237,7 @@ ftp_retrieve_list (struct url *u, struct url *original_url,
     {
       char *old_target, *ofile;
 
-      if (opt.quota && total_downloaded_bytes > opt.quota)
+      if (global_options.quota && total_downloaded_bytes > global_options.quota)
         {
           --depth;
           return QUOTEXC;
@@ -2251,7 +2251,7 @@ ftp_retrieve_list (struct url *u, struct url *original_url,
       err = RETROK;
 
       dlthis = true;
-      if (opt.timestamping && f->type == FT_PLAINFILE)
+      if (global_options.timestamping && f->type == FT_PLAINFILE)
         {
           struct stat st;
           /* If conversion of HTML files retrieved via FTP is ever implemented,
@@ -2300,15 +2300,15 @@ The sizes do not match (local %s) -- retrieving.\n\n"),
                              number_to_static_string (local_size));
                 }
             }
-        }       /* opt.timestamping && f->type == FT_PLAINFILE */
+        }       /* global_options.timestamping && f->type == FT_PLAINFILE */
       switch (f->type)
         {
         case FT_SYMLINK:
-          /* If opt.retr_symlinks is defined, we treat symlinks as
+          /* If global_options.retr_symlinks is defined, we treat symlinks as
              if they were normal files.  There is currently no way
              to distinguish whether they might be directories, and
              follow them.  */
-          if (!opt.retr_symlinks)
+          if (!global_options.retr_symlinks)
             {
 #ifdef HAVE_SYMLINK
               if (!f->linkto)
@@ -2353,17 +2353,17 @@ Already have correct symlink %s -> %s\n\n"),
                          quote (con->target));
 #endif /* not HAVE_SYMLINK */
             }
-          else                /* opt.retr_symlinks */
+          else                /* global_options.retr_symlinks */
             {
               if (dlthis)
                 {
                   err = ftp_loop_internal (u, original_url, f, con, NULL,
                                            force_full_retrieve);
                 }
-            } /* opt.retr_symlinks */
+            } /* global_options.retr_symlinks */
           break;
         case FT_DIRECTORY:
-          if (!opt.recursive)
+          if (!global_options.recursive)
             logprintf (LOG_NOTQUIET, _("Skipping directory %s.\n"),
                        quote (f->name));
           break;
@@ -2386,7 +2386,7 @@ Already have correct symlink %s -> %s\n\n"),
       /* 2004-12-15 SMS.
        * Set permissions _before_ setting the times, as setting the
        * permissions changes the modified-time, at least on VMS.
-       * Also, use the opt.output_document name here, too, as
+       * Also, use the global_options.output_document name here, too, as
        * appropriate.  (Do the test once, and save the result.)
        */
 
@@ -2395,7 +2395,7 @@ Already have correct symlink %s -> %s\n\n"),
       /* If downloading a plain file, and the user requested it, then
          set valid (non-zero) permissions. */
       if (dlthis && (actual_target != NULL) &&
-       (f->type == FT_PLAINFILE) && opt.preserve_perm)
+       (f->type == FT_PLAINFILE) && global_options.preserve_perm)
         {
           if (f->perms)
             {
@@ -2413,8 +2413,8 @@ Already have correct symlink %s -> %s\n\n"),
          original.  :( */
       if (actual_target != NULL)
         {
-          if (opt.useservertimestamps
-              && !(f->type == FT_SYMLINK && !opt.retr_symlinks)
+          if (global_options.useservertimestamps
+              && !(f->type == FT_SYMLINK && !global_options.retr_symlinks)
               && f->tstamp != -1
               && dlthis
               && file_exists_p (con->target, NULL))
@@ -2442,12 +2442,12 @@ Already have correct symlink %s -> %s\n\n"),
     }
 
   /* We do not want to call ftp_retrieve_dirs here */
-  if (opt.recursive &&
-      !(opt.reclevel != INFINITE_RECURSION && depth >= opt.reclevel))
+  if (global_options.recursive &&
+      !(global_options.reclevel != INFINITE_RECURSION && depth >= global_options.reclevel))
     err = ftp_retrieve_dirs (u, original_url, orig, con);
-  else if (opt.recursive)
+  else if (global_options.recursive)
     DEBUGP ((_("Will not retrieve dirs since depth is %d (max %d).\n"),
-             depth, opt.reclevel));
+             depth, global_options.reclevel));
   --depth;
   return err;
 }
@@ -2468,7 +2468,7 @@ ftp_retrieve_dirs (struct url *u, struct url *original_url,
       int size;
       char *odir, *newdir;
 
-      if (opt.quota && total_downloaded_bytes > opt.quota)
+      if (global_options.quota && total_downloaded_bytes > global_options.quota)
         break;
       if (f->type != FT_DIRECTORY)
         continue;
@@ -2515,7 +2515,7 @@ Not descending to %s as it is excluded/not-included.\n"),
       /* Set the time-stamp?  */
     }
 
-  if (opt.quota && total_downloaded_bytes > opt.quota)
+  if (global_options.quota && total_downloaded_bytes > global_options.quota)
     return QUOTEXC;
   else
     return RETROK;
@@ -2579,8 +2579,8 @@ ftp_retrieve_glob (struct url *u, struct url *original_url,
   if (res != RETROK)
     return res;
   /* First: weed out that do not conform the global rules given in
-     opt.accepts and opt.rejects.  */
-  if (opt.accepts || opt.rejects)
+     global_options.accepts and global_options.rejects.  */
+  if (global_options.accepts || global_options.rejects)
     {
       f = start;
       while (f)
@@ -2615,7 +2615,7 @@ ftp_retrieve_glob (struct url *u, struct url *original_url,
       if (action == GLOB_GLOBALL)
         {
           int (*matcher) (const char *, const char *, int)
-            = opt.ignore_case ? fnmatch_nocase : fnmatch;
+            = global_options.ignore_case ? fnmatch_nocase : fnmatch;
           int matchres = 0;
 
           f = start;
@@ -2653,10 +2653,10 @@ ftp_retrieve_glob (struct url *u, struct url *original_url,
            * harmless.
            */
           int (*cmp) (const char *, const char *)
-            = opt.ignore_case ? strcasecmp : (int (*)())strcmp;
+            = global_options.ignore_case ? strcasecmp : (int (*)())strcmp;
 #else /* def __VMS */
           int (*cmp) (const char *, const char *)
-            = opt.ignore_case ? strcasecmp : strcmp;
+            = global_options.ignore_case ? strcasecmp : strcmp;
 #endif /* def __VMS [else] */
           f = start;
           while (f)
@@ -2697,7 +2697,7 @@ ftp_retrieve_glob (struct url *u, struct url *original_url,
       */
     }
   freefileinfo (start);
-  if (opt.quota && total_downloaded_bytes > opt.quota)
+  if (global_options.quota && total_downloaded_bytes > global_options.quota)
     return QUOTEXC;
   else
     return res;
@@ -2725,7 +2725,7 @@ ftp_loop (struct url *u, struct url *original_url, char **local_file, int *dt,
 
   /* If the file name is empty, the user probably wants a directory
      index.  We'll provide one, properly HTML-ized.  Unless
-     opt.htmlify is 0, of course.  :-) */
+     global_options.htmlify is 0, of course.  :-) */
   if (!*u->file && !recursive)
     {
       struct fileinfo *f;
@@ -2733,17 +2733,17 @@ ftp_loop (struct url *u, struct url *original_url, char **local_file, int *dt,
 
       if (res == RETROK)
         {
-          if (opt.htmlify && !opt.spider)
+          if (global_options.htmlify && !global_options.spider)
             {
-              struct url *url_file = opt.trustservernames ? u : original_url;
-              char *filename = (opt.output_document
-                                ? xstrdup (opt.output_document)
+              struct url *url_file = global_options.trustservernames ? u : original_url;
+              char *filename = (global_options.output_document
+                                ? xstrdup (global_options.output_document)
                                 : (con.target ? xstrdup (con.target)
                                    : url_file_name (url_file, NULL)));
               res = ftp_index (filename, u, f);
-              if (res == FTPOK && opt.verbose)
+              if (res == FTPOK && global_options.verbose)
                 {
-                  if (!opt.output_document)
+                  if (!global_options.output_document)
                     {
                       struct stat st;
                       wgint sz;
@@ -2779,7 +2779,7 @@ ftp_loop (struct url *u, struct url *original_url, char **local_file, int *dt,
             file_part = u->path;
           ispattern = has_wildcards_p (file_part);
         }
-      if (ispattern || recursive || opt.timestamping || opt.preserve_perm)
+      if (ispattern || recursive || global_options.timestamping || global_options.preserve_perm)
         {
           /* ftp_retrieve_glob is a catch-all function that gets called
              if we need globbing, time-stamping, recursion or preserve

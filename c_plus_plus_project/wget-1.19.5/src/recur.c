@@ -243,7 +243,7 @@ retrieve_tree (struct url *start_url_parsed, struct iri *pi)
     }
 #ifdef ENABLE_IRI
   else
-    set_uri_encoding (i, opt.locale, true);
+    set_uri_encoding (i, global_options.locale, true);
 #endif
 
   queue = url_queue_new ();
@@ -255,12 +255,12 @@ retrieve_tree (struct url *start_url_parsed, struct iri *pi)
                false);
   blacklist_add (blacklist, start_url_parsed->url);
 
-  if (opt.rejected_log)
+  if (global_options.rejected_log)
     {
-      rejectedlog = fopen (opt.rejected_log, "w");
+      rejectedlog = fopen (global_options.rejected_log, "w");
       write_reject_log_header (rejectedlog);
       if (!rejectedlog)
-        logprintf (LOG_NOTQUIET, "%s: %s\n", opt.rejected_log, strerror (errno));
+        logprintf (LOG_NOTQUIET, "%s: %s\n", global_options.rejected_log, strerror (errno));
     }
 
   while (1)
@@ -272,7 +272,7 @@ retrieve_tree (struct url *start_url_parsed, struct iri *pi)
       bool is_css = false;
       bool dash_p_leaf_HTML = false;
 
-      if (opt.quota && total_downloaded_bytes > opt.quota)
+      if (global_options.quota && total_downloaded_bytes > global_options.quota)
         break;
       if (status == FWRITEERR)
         break;
@@ -383,16 +383,16 @@ retrieve_tree (struct url *start_url_parsed, struct iri *pi)
             }
         }
 
-      if (opt.spider)
+      if (global_options.spider)
         {
           visited_url (url, referer);
         }
 
       if (descend
-          && depth >= opt.reclevel && opt.reclevel != INFINITE_RECURSION)
+          && depth >= global_options.reclevel && global_options.reclevel != INFINITE_RECURSION)
         {
-          if (opt.page_requisites
-              && (depth == opt.reclevel || depth == opt.reclevel + 1))
+          if (global_options.page_requisites
+              && (depth == global_options.reclevel || depth == global_options.reclevel + 1))
             {
               /* When -p is specified, we are allowed to exceed the
                  maximum depth, but only for the "inline" links,
@@ -409,7 +409,7 @@ retrieve_tree (struct url *start_url_parsed, struct iri *pi)
                  already spent the two extra (pseudo-)levels that it
                  affords us, so we need to bail out. */
               DEBUGP (("Not descending further; at depth %d, max. %d.\n",
-                       depth, opt.reclevel));
+                       depth, global_options.reclevel));
               descend = false;
             }
         }
@@ -424,7 +424,7 @@ retrieve_tree (struct url *start_url_parsed, struct iri *pi)
             = is_css ? get_urls_css_file (file, url) :
                        get_urls_html (file, url, &meta_disallow_follow, i);
 
-          if (opt.use_robots && meta_disallow_follow)
+          if (global_options.use_robots && meta_disallow_follow)
             {
               free_urlpos (children);
               children = NULL;
@@ -494,8 +494,8 @@ retrieve_tree (struct url *start_url_parsed, struct iri *pi)
         }
 
       if (file
-          && (opt.delete_after
-              || opt.spider /* opt.recursive is implicitly true */
+          && (global_options.delete_after
+              || global_options.spider /* global_options.recursive is implicitly true */
               || !acceptable (file)))
         {
           /* Either --delete-after was specified, or we loaded this
@@ -503,11 +503,11 @@ retrieve_tree (struct url *start_url_parsed, struct iri *pi)
              HTML file just to harvest its hyperlinks -- in either case,
              delete the local file. */
           DEBUGP (("Removing file due to %s in recursive_retrieve():\n",
-                   opt.delete_after ? "--delete-after" :
-                   (opt.spider ? "--spider" :
+                   global_options.delete_after ? "--delete-after" :
+                   (global_options.spider ? "--spider" :
                     "recursive rejection criteria")));
           logprintf (LOG_VERBOSE,
-                     (opt.delete_after || opt.spider
+                     (global_options.delete_after || global_options.spider
                       ? _("Removing %s.\n")
                       : _("Removing %s since it should be rejected.\n")),
                      file);
@@ -548,7 +548,7 @@ retrieve_tree (struct url *start_url_parsed, struct iri *pi)
 
   string_set_free (blacklist);
 
-  if (opt.quota && total_downloaded_bytes > opt.quota)
+  if (global_options.quota && total_downloaded_bytes > global_options.quota)
     return QUOTEXC;
   else if (status == FWRITEERR)
     return FWRITEERR;
@@ -578,7 +578,7 @@ download_child (const struct urlpos *upos, struct url *parent, int depth,
 
   if (blacklist_contains (blacklist, url))
     {
-      if (opt.spider)
+      if (global_options.spider)
         {
           char *referrer = url_string (parent, URL_AUTH_HIDE_PASSWD);
           DEBUGP (("download_child: parent->url is: %s\n", quote (parent->url)));
@@ -613,7 +613,7 @@ download_child (const struct urlpos *upos, struct url *parent, int depth,
      the list.  */
 
 #ifdef HAVE_SSL
-  if (opt.https_only && u->scheme != SCHEME_HTTPS)
+  if (global_options.https_only && u->scheme != SCHEME_HTTPS)
     {
       DEBUGP (("Not following non-HTTPS links.\n"));
       reason = WG_RR_NOTHTTPS;
@@ -629,7 +629,7 @@ download_child (const struct urlpos *upos, struct url *parent, int depth,
 #ifdef HAVE_SSL
       || u->scheme == SCHEME_FTPS
 #endif
-      ) && opt.follow_ftp))
+      ) && global_options.follow_ftp))
     {
       DEBUGP (("Not following non-HTTP schemes.\n"));
       reason = WG_RR_NONHTTP;
@@ -639,7 +639,7 @@ download_child (const struct urlpos *upos, struct url *parent, int depth,
   /* 2. If it is an absolute link and they are not followed, throw it
      out.  */
   if (u_scheme_like_http)
-    if (opt.relative_only && !upos->link_relative_p)
+    if (global_options.relative_only && !upos->link_relative_p)
       {
         DEBUGP (("It doesn't really look like a relative link.\n"));
         reason = WG_RR_ABSOLUTE;
@@ -658,14 +658,14 @@ download_child (const struct urlpos *upos, struct url *parent, int depth,
   /* 4. Check for parent directory.
 
      If we descended to a different host or changed the scheme, ignore
-     opt.no_parent.  Also ignore it for documents needed to display
+     global_options.no_parent.  Also ignore it for documents needed to display
      the parent page when in -p mode.  */
-  if (opt.no_parent
+  if (global_options.no_parent
       && schemes_are_similar_p (u->scheme, start_url_parsed->scheme)
       && 0 == strcasecmp (u->host, start_url_parsed->host)
       && (u->scheme != start_url_parsed->scheme
           || u->port == start_url_parsed->port)
-      && !(opt.page_requisites && upos->link_inline_p))
+      && !(global_options.page_requisites && upos->link_inline_p))
     {
       if (!subdir_p (start_url_parsed->dir, u->dir))
         {
@@ -679,7 +679,7 @@ download_child (const struct urlpos *upos, struct url *parent, int depth,
   /* 5. If the file does not match the acceptance list, or is on the
      rejection list, chuck it out.  The same goes for the directory
      exclusion and inclusion lists.  */
-  if (opt.includes || opt.excludes)
+  if (global_options.includes || global_options.excludes)
     {
       if (!accdir (u->dir))
         {
@@ -706,11 +706,11 @@ download_child (const struct urlpos *upos, struct url *parent, int depth,
               always implies non-leaf because we can overstep the
               maximum depth to get the requisites): */
            && (/* non-leaf */
-               opt.reclevel == INFINITE_RECURSION
+               global_options.reclevel == INFINITE_RECURSION
                /* also non-leaf */
-               || depth < opt.reclevel - 1
+               || depth < global_options.reclevel - 1
                /* -p, which implies non-leaf (see above) */
-               || opt.page_requisites)))
+               || global_options.page_requisites)))
     {
       if (!acceptable (u->file))
         {
@@ -723,7 +723,7 @@ download_child (const struct urlpos *upos, struct url *parent, int depth,
 
   /* 7. */
   if (schemes_are_similar_p (u->scheme, parent->scheme))
-    if (!opt.spanhost && 0 != strcasecmp (parent->host, u->host))
+    if (!global_options.spanhost && 0 != strcasecmp (parent->host, u->host))
       {
         DEBUGP (("This is not the same hostname as the parent's (%s and %s).\n",
                  u->host, parent->host));
@@ -732,7 +732,7 @@ download_child (const struct urlpos *upos, struct url *parent, int depth,
       }
 
   /* 8. */
-  if (opt.use_robots && u_scheme_like_http)
+  if (global_options.use_robots && u_scheme_like_http)
     {
       struct robot_specs *specs = res_get_specs (u->host, u->port);
       if (!specs)
@@ -744,7 +744,7 @@ download_child (const struct urlpos *upos, struct url *parent, int depth,
 
               /* Delete the robots.txt file if we chose to either delete the
                  files after downloading or we're just running a spider. */
-              if (opt.delete_after || opt.spider)
+              if (global_options.delete_after || global_options.spider)
                 {
                   logprintf (LOG_VERBOSE, _("Removing %s.\n"), rfile);
                   if (unlink (rfile))

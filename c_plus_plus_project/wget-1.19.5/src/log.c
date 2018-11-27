@@ -257,35 +257,35 @@ saved_append(const char *s) {
     }
 }
 
-/* Check X against opt.verbose and opt.quiet.  The semantics is as
+/* Check X against global_options.verbose and global_options.quiet.  The semantics is as
    follows:
 
    * LOG_ALWAYS - print the message unconditionally;
 
-   * LOG_NOTQUIET - print the message if opt.quiet is non-zero;
+   * LOG_NOTQUIET - print the message if global_options.quiet is non-zero;
 
-   * LOG_NONVERBOSE - print the message if opt.verbose is zero;
+   * LOG_NONVERBOSE - print the message if global_options.verbose is zero;
 
-   * LOG_VERBOSE - print the message if opt.verbose is non-zero.  */
+   * LOG_VERBOSE - print the message if global_options.verbose is non-zero.  */
 #define CHECK_VERBOSE(x)                        \
   switch (x)                                    \
     {                                           \
     case LOG_PROGRESS:                          \
-      if (!opt.show_progress)                   \
+      if (!global_options.show_progress)                   \
         return;                                 \
       break;                                    \
     case LOG_ALWAYS:                            \
       break;                                    \
     case LOG_NOTQUIET:                          \
-      if (opt.quiet)                            \
+      if (global_options.quiet)                            \
         return;                                 \
       break;                                    \
     case LOG_NONVERBOSE:                        \
-      if (opt.verbose || opt.quiet)             \
+      if (global_options.verbose || global_options.quiet)             \
         return;                                 \
       break;                                    \
     case LOG_VERBOSE:                           \
-      if (!opt.verbose)                         \
+      if (!global_options.verbose)                         \
         return;                                 \
     }
 
@@ -306,7 +306,7 @@ get_log_fp(void) {
 
 static FILE *
 get_progress_fp(void) {
-    if (opt.show_progress == true)
+    if (global_options.show_progress == true)
         return stderr;
     return get_log_fp();
 }
@@ -552,11 +552,11 @@ logprintf(enum log_options o, const char *fmt, ...) {
 
 #ifdef ENABLE_DEBUG
 
-/* The same as logprintf(), but does anything only if opt.debug is
+/* The same as logprintf(), but does anything only if global_options.debug is
    true.  */
 void
 debug_logprintf(const char *fmt, ...) {
-    if (opt.debug) {
+    if (global_options.debug) {
         va_list args;
         struct logvprintf_state lpstate;
         bool done;
@@ -893,7 +893,7 @@ check_redirect_output(void) {
      * it was permanent.
      * If there was no SIGHUP or SIGUSR1 and shell is interactive
      * we check if process is fg or bg before every line is printed.*/
-    if (!redirect_request_signal_name && shell_is_interactive && !opt.lfilename) {
+    if (!redirect_request_signal_name && shell_is_interactive && !global_options.lfilename) {
         pid_t foreground_pgrp = tcgetpgrp(STDIN_FILENO);
 
         if (foreground_pgrp != -1 && foreground_pgrp != getpgrp()) {

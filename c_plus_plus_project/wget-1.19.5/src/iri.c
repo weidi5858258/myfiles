@@ -49,7 +49,7 @@ as that of the covered work.  */
 #include "c-strcasestr.h"
 #include "xstrndup.h"
 
-/* Note: locale encoding is kept in options struct (opt.locale) */
+/* Note: locale encoding is kept in options struct (global_options.locale) */
 
 /* Given a string containing "charset=XXX", return the encoding if found,
    or NULL otherwise */
@@ -230,16 +230,16 @@ locale_to_utf8 (const char *str)
   char *new;
 
   /* That shouldn't happen, just in case */
-  if (!opt.locale)
+  if (!global_options.locale)
     {
       logprintf (LOG_VERBOSE, _("locale_to_utf8: locale is unset\n"));
-      opt.locale = find_locale ();
+      global_options.locale = find_locale ();
     }
 
-  if (!opt.locale || !c_strcasecmp (opt.locale, "utf-8"))
+  if (!global_options.locale || !c_strcasecmp (global_options.locale, "utf-8"))
     return str;
 
-  if (do_conversion ("UTF-8", opt.locale, (char *) str, strlen ((char *) str), &new))
+  if (do_conversion ("UTF-8", global_options.locale, (char *) str, strlen ((char *) str), &new))
     return (const char *) new;
 
   xfree (new);
@@ -380,10 +380,10 @@ struct iri *
 iri_new (void)
 {
   struct iri *i = xmalloc (sizeof *i);
-  i->uri_encoding = opt.encoding_remote ? xstrdup (opt.encoding_remote) : NULL;
+  i->uri_encoding = global_options.encoding_remote ? xstrdup (global_options.encoding_remote) : NULL;
   i->content_encoding = NULL;
   i->orig_url = NULL;
-  i->utf8_encode = opt.enable_iri;
+  i->utf8_encode = global_options.enable_iri;
   return i;
 }
 
@@ -417,7 +417,7 @@ void
 set_uri_encoding (struct iri *i, const char *charset, bool force)
 {
   DEBUGP (("URI encoding = %s\n", charset ? quote (charset) : "None"));
-  if (!force && opt.encoding_remote)
+  if (!force && global_options.encoding_remote)
     return;
   if (i->uri_encoding)
     {
@@ -434,7 +434,7 @@ void
 set_content_encoding (struct iri *i, const char *charset)
 {
   DEBUGP (("URI content encoding = %s\n", charset ? quote (charset) : "None"));
-  if (opt.encoding_remote)
+  if (global_options.encoding_remote)
     return;
   if (i->content_encoding)
     {

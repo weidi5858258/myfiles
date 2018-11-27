@@ -473,17 +473,17 @@ bool
 fork_to_background (void)
 {
   pid_t pid;
-  /* Whether we arrange our own version of opt.lfilename here.  */
+  /* Whether we arrange our own version of global_options.lfilename here.  */
   bool logfile_changed = false;
 
-  if (!opt.lfilename && (!opt.quiet || opt.server_response))
+  if (!global_options.lfilename && (!global_options.quiet || global_options.server_response))
     {
       /* We must create the file immediately to avoid either a race
          condition (which arises from using unique_name and failing to
          use fopen_excl) or lying to the user about the log file name
          (which arises from using unique_name, printing the name, and
          using fopen_excl later on.)  */
-      FILE *new_log_fp = unique_create (DEFAULT_LOGFILE, false, &opt.lfilename);
+      FILE *new_log_fp = unique_create (DEFAULT_LOGFILE, false, &global_options.lfilename);
       if (new_log_fp)
         {
           logfile_changed = true;
@@ -502,7 +502,7 @@ fork_to_background (void)
       /* parent, no error */
       printf (_("Continuing in background, pid %d.\n"), (int) pid);
       if (logfile_changed)
-        printf (_("Output will be written to %s.\n"), quote (opt.lfilename));
+        printf (_("Output will be written to %s.\n"), quote (global_options.lfilename));
       exit (WGET_EXIT_SUCCESS);                 /* #### should we use _exit()? */
     }
 
@@ -1037,22 +1037,22 @@ acceptable (const char *s)
 {
   const char *p;
 
-  if (opt.output_document && strcmp (s, opt.output_document) == 0)
+  if (global_options.output_document && strcmp (s, global_options.output_document) == 0)
     return true;
 
   if ((p = strrchr (s, '/')))
     s = p + 1;
 
-  if (opt.accepts)
+  if (global_options.accepts)
     {
-      if (opt.rejects)
-        return (in_acclist ((const char *const *)opt.accepts, s, true)
-                && !in_acclist ((const char *const *)opt.rejects, s, true));
+      if (global_options.rejects)
+        return (in_acclist ((const char *const *)global_options.accepts, s, true)
+                && !in_acclist ((const char *const *)global_options.rejects, s, true));
       else
-        return in_acclist ((const char *const *)opt.accepts, s, true);
+        return in_acclist ((const char *const *)global_options.accepts, s, true);
     }
-  else if (opt.rejects)
-    return !in_acclist ((const char *const *)opt.rejects, s, true);
+  else if (global_options.rejects)
+    return !in_acclist ((const char *const *)global_options.rejects, s, true);
 
   return true;
 }
@@ -1062,9 +1062,9 @@ acceptable (const char *s)
 bool
 accept_url (const char *s)
 {
-  if (opt.acceptregex && !opt.regex_match_fun (opt.acceptregex, s))
+  if (global_options.acceptregex && !global_options.regex_match_fun (global_options.acceptregex, s))
     return false;
-  if (opt.rejectregex && opt.regex_match_fun (opt.rejectregex, s))
+  if (global_options.rejectregex && global_options.regex_match_fun (global_options.rejectregex, s))
     return false;
 
   return true;
@@ -1078,7 +1078,7 @@ subdir_p (const char *d1, const char *d2)
 {
   if (*d1 == '\0')
     return true;
-  if (!opt.ignore_case)
+  if (!global_options.ignore_case)
     for (; *d1 && *d2 && (*d1 == *d2); ++d1, ++d2)
       ;
   else
@@ -1096,7 +1096,7 @@ dir_matches_p (const char **dirlist, const char *dir)
 {
   const char **x;
   int (*matcher) (const char *, const char *, int)
-    = opt.ignore_case ? fnmatch_nocase : fnmatch;
+    = global_options.ignore_case ? fnmatch_nocase : fnmatch;
 
   for (x = dirlist; *x; x++)
     {
@@ -1129,14 +1129,14 @@ accdir (const char *directory)
   /* Remove starting '/'.  */
   if (*directory == '/')
     ++directory;
-  if (opt.includes)
+  if (global_options.includes)
     {
-      if (!dir_matches_p (opt.includes, directory))
+      if (!dir_matches_p (global_options.includes, directory))
         return false;
     }
-  if (opt.excludes)
+  if (global_options.excludes)
     {
-      if (dir_matches_p (opt.excludes, directory))
+      if (dir_matches_p (global_options.excludes, directory))
         return false;
     }
   return true;
@@ -1177,7 +1177,7 @@ in_acclist (const char *const *accepts, const char *s, bool backward)
     {
       if (has_wildcards_p (*accepts))
         {
-          int res = opt.ignore_case
+          int res = global_options.ignore_case
             ? fnmatch_nocase (*accepts, s, 0) : fnmatch (*accepts, s, 0);
           /* fnmatch returns 0 if the pattern *does* match the string.  */
           if (res == 0)
@@ -1187,12 +1187,12 @@ in_acclist (const char *const *accepts, const char *s, bool backward)
         {
           if (backward)
             {
-              if (match_tail (s, *accepts, opt.ignore_case))
+              if (match_tail (s, *accepts, global_options.ignore_case))
                 return true;
             }
           else
             {
-              int cmp = opt.ignore_case
+              int cmp = global_options.ignore_case
                 ? strcasecmp (s, *accepts) : strcmp (s, *accepts);
               if (cmp == 0)
                 return true;
@@ -1919,7 +1919,7 @@ number_to_static_string (wgint number)
 wgint
 convert_to_bits (wgint num)
 {
-  if (opt.report_bps)
+  if (global_options.report_bps)
     return num * 8;
   return num;
 }
@@ -1937,7 +1937,7 @@ determine_screen_width (void)
   int fd;
   struct winsize wsz;
 
-  if (opt.lfilename != NULL && opt.show_progress != 1)
+  if (global_options.lfilename != NULL && global_options.show_progress != 1)
     return 0;
 
   fd = fileno (stderr);
@@ -2504,9 +2504,9 @@ match_posix_regex (const void *regex, const char *str)
     return true;
   else
     {
-      size_t errbuf_size = regerror (rc, opt.acceptregex, NULL, 0);
+      size_t errbuf_size = regerror (rc, global_options.acceptregex, NULL, 0);
       char *errbuf = xmalloc (errbuf_size);
-      regerror (rc, opt.acceptregex, errbuf, errbuf_size);
+      regerror (rc, global_options.acceptregex, errbuf, errbuf_size);
       logprintf (LOG_VERBOSE, _("Error while matching %s: %d\n"),
                  quote (str), rc);
       xfree (errbuf);

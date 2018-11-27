@@ -231,7 +231,7 @@ release_header(struct request_header *hdr) {
      request_set_header (req, "Pragma", "no-cache", rel_none);
 
      // Don't free a global variable, we'll need it later.
-     request_set_header (req, "Referer", opt.referer, rel_none);
+     request_set_header (req, "Referer", global_options.referer, rel_none);
 
      // Value freshly allocated, free it when done.
      request_set_header (req, "Range",
@@ -418,7 +418,7 @@ maybe_send_basic_creds(const char *hostname, const char *user,
                        const char *passwd, struct request *req) {
     bool do_challenge = false;
 
-    if (opt.auth_without_challenge) {
+    if (global_options.auth_without_challenge) {
         DEBUGP (("Auth-without-challenge set, sending Basic credentials.\n"));
         do_challenge = true;
     } else if (basic_authed_hosts
@@ -1151,7 +1151,7 @@ append_value_to_filename(char **filename, param_token const *const value,
    The file name is stripped of directory components and must not be
    empty.
 
-   Historically, this function returned filename prefixed with opt.dir_prefix,
+   Historically, this function returned filename prefixed with global_options.dir_prefix,
    now that logic is handled by the caller, new code should pay attention,
    changed by crq, Sep 2010.
 
@@ -1563,7 +1563,7 @@ read_response_body(struct http_stat *hs, int sock, FILE *fp, wgint contlen,
     int warcerr = 0;
     int flags = 0;
 
-    if (opt.warc_filename != NULL) {
+    if (global_options.warc_filename != NULL) {
         /* Open a temporary file where we can write the response before we
            add it to the WARC record.  */
         warc_tmp = warc_tempfile();
@@ -1589,7 +1589,7 @@ read_response_body(struct http_stat *hs, int sock, FILE *fp, wgint contlen,
     if (fp != NULL) {
         /* This confuses the timestamping code that checks for file size.
            #### The timestamping code should be smarter about file size.  */
-        if (opt.save_headers && hs->restval == 0)
+        if (global_options.save_headers && hs->restval == 0)
             fwrite(head, 1, strlen(head), fp);
     }
 
@@ -1660,23 +1660,23 @@ read_response_body(struct http_stat *hs, int sock, FILE *fp, wgint contlen,
 
 #ifdef __VMS
 #define SET_USER_AGENT(req) do {                                         \
-  if (!opt.useragent)                                                    \
+  if (!global_options.useragent)                                                    \
     request_set_header (req, "User-Agent",                               \
                         aprintf ("Wget/%s (VMS %s %s)",                  \
                         version_string, vms_arch(), vms_vers()),         \
                         rel_value);                                      \
-  else if (*opt.useragent)                                               \
-    request_set_header (req, "User-Agent", opt.useragent, rel_none);     \
+  else if (*global_options.useragent)                                               \
+    request_set_header (req, "User-Agent", global_options.useragent, rel_none);     \
 } while (0)
 #else /* def __VMS */
 #define SET_USER_AGENT(req) do {                                         \
-  if (!opt.useragent)                                                    \
+  if (!global_options.useragent)                                                    \
     request_set_header (req, "User-Agent",                               \
                         aprintf ("Wget/%s (%s)",                         \
                         version_string, OS_TYPE),                        \
                         rel_value);                                      \
-  else if (*opt.useragent)                                               \
-    request_set_header (req, "User-Agent", opt.useragent, rel_none);     \
+  else if (*global_options.useragent)                                               \
+    request_set_header (req, "User-Agent", global_options.useragent, rel_none);     \
 } while (0)
 #endif /* def __VMS [else] */
 
@@ -1734,6 +1734,8 @@ static struct request *
 initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct url *proxy,
                    bool inhibit_keep_alive, bool *basic_auth_finished,
                    wgint *body_data_size, char **user, char **passwd, uerr_t *ret) {
+    fprintf(stdout, _("initialize_request() *body_data_size: %ld\n"), *body_data_size);
+
     bool head_only = !!(*dt & HEAD_ONLY);
     struct request *req;
 
@@ -1743,8 +1745,8 @@ initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct ur
         const char *meth = "GET";
         if (head_only)
             meth = "HEAD";
-        else if (opt.method)
-            meth = opt.method;
+        else if (global_options.method)
+            meth = global_options.method;
         /* Use the full path, i.e. one that includes the leading slash and
            the query string.  E.g. if u->path is "foo/bar" and u->query is
            "param=value", full_path will be "/foo/bar?param=value".  */
@@ -1790,7 +1792,7 @@ initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct ur
     SET_USER_AGENT (req);
     request_set_header(req, "Accept", "*/*", rel_none);
 #ifdef HAVE_LIBZ
-    if (opt.compression != compression_none)
+    if (global_options.compression != compression_none)
         request_set_header(req, "Accept-Encoding", "gzip", rel_none);
     else
 #endif
@@ -1799,35 +1801,35 @@ initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct ur
     /* Find the username with priority */
     if (u->user)
         *user = u->user;
-    else if (opt.user && (opt.use_askpass || opt.ask_passwd))
-        *user = opt.user;
-    else if (opt.http_user)
-        *user = opt.http_user;
-    else if (opt.user)
-        *user = opt.user;
+    else if (global_options.user && (global_options.use_askpass || global_options.ask_passwd))
+        *user = global_options.user;
+    else if (global_options.http_user)
+        *user = global_options.http_user;
+    else if (global_options.user)
+        *user = global_options.user;
     else
         *user = NULL;
 
     /* Find the password with priority */
     if (u->passwd)
         *passwd = u->passwd;
-    else if (opt.passwd && (opt.use_askpass || opt.ask_passwd))
-        *passwd = opt.passwd;
-    else if (opt.http_passwd)
-        *passwd = opt.http_passwd;
-    else if (opt.passwd)
-        *passwd = opt.passwd;
+    else if (global_options.passwd && (global_options.use_askpass || global_options.ask_passwd))
+        *passwd = global_options.passwd;
+    else if (global_options.http_passwd)
+        *passwd = global_options.http_passwd;
+    else if (global_options.passwd)
+        *passwd = global_options.passwd;
     else
         *passwd = NULL;
 
     /* Check for ~/.netrc if none of the above match */
-    if (opt.netrc && (!*user || !*passwd))
+    if (global_options.netrc && (!*user || !*passwd))
         search_netrc(u->host, (const char **) user, (const char **) passwd, 0, NULL);
 
     /* We only do "site-wide" authentication with "global" user/password
      * values unless --auth-no-challenge has been requested; URL user/password
      * info overrides. */
-    if (*user && *passwd && (!u->user || opt.auth_without_challenge)) {
+    if (*user && *passwd && (!u->user || global_options.auth_without_challenge)) {
         /* If this is a host for which we've already received a Basic
          * challenge, we'll go ahead and send Basic authentication creds. */
         *basic_auth_finished = maybe_send_basic_creds(u->host, *user, *passwd, req);
@@ -1863,30 +1865,32 @@ initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct ur
             request_set_header(req, "Proxy-Connection", "Keep-Alive", rel_none);
     }
 
-    if (opt.method) {
+    if (global_options.method) {
 
-        if (opt.body_data || opt.body_file) {
+        if (global_options.body_data || global_options.body_file) {
             request_set_header(req, "Content-Type",
                                "application/x-www-form-urlencoded", rel_none);
 
-            if (opt.body_data)
-                *body_data_size = strlen(opt.body_data);
+            if (global_options.body_data)
+                *body_data_size = strlen(global_options.body_data);
             else {
-                *body_data_size = file_size(opt.body_file);
+                *body_data_size = file_size(global_options.body_file);
                 if (*body_data_size == -1) {
                     logprintf(LOG_NOTQUIET, _("BODY data file %s missing: %s\n"),
-                              quote(opt.body_file), strerror(errno));
+                              quote(global_options.body_file), strerror(errno));
                     request_free(&req);
                     *ret = FILEBADFILE;
                     return NULL;
                 }
             }
+            fprintf(stdout, _("initialize_request() *body_data_size before: %ld\n"), *body_data_size);
             request_set_header(req, "Content-Length",
                                xstrdup(number_to_static_string(*body_data_size)),
                                rel_value);
-        } else if (c_strcasecmp(opt.method, "post") == 0
-                   || c_strcasecmp(opt.method, "put") == 0
-                   || c_strcasecmp(opt.method, "patch") == 0)
+            fprintf(stdout, _("initialize_request() *body_data_size after: %ld\n"), *body_data_size);
+        } else if (c_strcasecmp(global_options.method, "post") == 0
+                   || c_strcasecmp(global_options.method, "put") == 0
+                   || c_strcasecmp(global_options.method, "patch") == 0)
             request_set_header(req, "Content-Length", "0", rel_none);
     }
     return req;
@@ -1901,9 +1905,9 @@ initialize_proxy_configuration(const struct url *u, struct request *req,
        authentication, it's the reverse, because proxy URLs are
        normally the "permanent" ones, so command-line args
        should take precedence.  */
-    if (opt.proxy_user && opt.proxy_passwd) {
-        proxy_user = opt.proxy_user;
-        proxy_passwd = opt.proxy_passwd;
+    if (global_options.proxy_user && global_options.proxy_passwd) {
+        proxy_user = global_options.proxy_user;
+        proxy_passwd = global_options.proxy_passwd;
     } else {
         proxy_user = proxy->user;
         proxy_passwd = proxy->passwd;
@@ -2088,7 +2092,7 @@ set_file_timestamp(struct http_stat *hs) {
     char *local_filename = NULL;
     struct stat st;
 
-    if (opt.backup_converted)
+    if (global_options.backup_converted)
         /* If -K is specified, we'll act on the assumption that it was specified
             last time these files were downloaded as well, and instead of just
             comparing local file X against server file X, we'll compare local
@@ -2150,7 +2154,7 @@ check_file_output(const struct url *u, struct http_stat *hs,
         char *local_file = NULL;
 
         /* Honor Content-Disposition whether possible. */
-        if (!opt.content_disposition
+        if (!global_options.content_disposition
             || !resp_header_copy(resp, "Content-Disposition",
                                  hdrval, hdrsize)
             || !parse_content_disposition(hdrval, &local_file)) {
@@ -2166,7 +2170,7 @@ check_file_output(const struct url *u, struct http_stat *hs,
         xfree (local_file);
     }
 
-    hs->temporary = opt.delete_after || opt.spider || !acceptable(hs->local_file);
+    hs->temporary = global_options.delete_after || global_options.spider || !acceptable(hs->local_file);
     if (hs->temporary) {
         char *tmp = aprintf("%s.tmp", hs->local_file);
         xfree (hs->local_file);
@@ -2175,10 +2179,10 @@ check_file_output(const struct url *u, struct http_stat *hs,
 
     /* TODO: perform this check only once. */
     if (!hs->existence_checked && file_exists_p(hs->local_file, NULL)) {
-        if (opt.noclobber && !opt.output_document) {
-            /* If opt.noclobber is turned on and file already exists, do not
+        if (global_options.noclobber && !global_options.output_document) {
+            /* If global_options.noclobber is turned on and file already exists, do not
                retrieve the file. But if the output_document was given, then this
-               test was already done and the file didn't exist. Hence the !opt.output_document */
+               test was already done and the file didn't exist. Hence the !global_options.output_document */
             return RETRUNNEEDED;
         } else if (!ALLOW_CLOBBER) {
             char *unique = unique_name(hs->local_file, true);
@@ -2190,7 +2194,7 @@ check_file_output(const struct url *u, struct http_stat *hs,
     hs->existence_checked = true;
 
     /* Support timestamping */
-    if (opt.timestamping && !hs->timestamp_checked) {
+    if (global_options.timestamping && !hs->timestamp_checked) {
         uerr_t timestamp_err = set_file_timestamp(hs);
         if (timestamp_err != RETROK)
             return timestamp_err;
@@ -2331,7 +2335,7 @@ open_output_stream(struct http_stat *hs, int count, FILE **fp) {
     /* Open the local file.  */
     if (!output_stream) {
         mkalldirs(hs->local_file);
-        if (opt.backups)
+        if (global_options.backups)
             rotate_backups(hs->local_file);
         if (hs->restval) {
 #ifdef __VMS
@@ -2343,7 +2347,7 @@ open_output_stream(struct http_stat *hs, int count, FILE **fp) {
             *fp = fopen(hs->local_file, "ab");
 #endif /* def __VMS [else] */
         } else if (ALLOW_CLOBBER || count > 0) {
-            if (opt.unlink_requested && file_exists_p(hs->local_file, NULL)) {
+            if (global_options.unlink_requested && file_exists_p(hs->local_file, NULL)) {
                 if (unlink(hs->local_file) < 0) {
                     logprintf(LOG_NOTQUIET, "%s: %s\n", hs->local_file,
                               strerror(errno));
@@ -2384,7 +2388,7 @@ open_output_stream(struct http_stat *hs, int count, FILE **fp) {
     } else
         *fp = output_stream;
 
-    /* Print fetch message, if opt.verbose.  */
+    /* Print fetch message, if global_options.verbose.  */
     logprintf(LOG_VERBOSE, _("Saving to: %s\n"),
               HYPHENP (hs->local_file) ? quote("STDOUT") : quote(hs->local_file));
 
@@ -2494,7 +2498,7 @@ metalink_from_http (const struct response *resp, const struct http_stat *hs,
       murl.mediatype = typestr;
       typestr = NULL;
 
-      if (opt.content_disposition
+      if (global_options.content_disposition
           && resp_header_locate (resp, "Content-Disposition", 0, &val_beg, &val_end) != -1)
         {
           find_key_value (val_beg, val_end, "filename", &namestr);
@@ -2597,7 +2601,7 @@ skip_content_type:
               struct url *url;
               int url_err;
 
-              set_uri_encoding (iri, opt.locale, true);
+              set_uri_encoding (iri, global_options.locale, true);
               url = url_parse (urlstr, &url_err, iri, false);
 
               if (!url)
@@ -2611,13 +2615,13 @@ skip_content_type:
               else
                 {
                   /* Avoid recursive Metalink from HTTP headers.  */
-                  bool _metalink_http = opt.metalink_over_http;
+                  bool _metalink_http = global_options.metalink_over_http;
                   uerr_t retr_err;
 
-                  opt.metalink_over_http = false;
+                  global_options.metalink_over_http = false;
                   retr_err = retrieve_url (url, urlstr, NULL, NULL,
                                            NULL, NULL, false, iri, false);
-                  opt.metalink_over_http = _metalink_http;
+                  global_options.metalink_over_http = _metalink_http;
 
                   url_free (url);
                   iri_free (iri);
@@ -2972,7 +2976,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
         fprintf(stdout, _("gethttp() proxy is NULL\n"));
     }
 
-    // opt.debug = 1;
+    // global_options.debug = 1;
 
     struct request *local_request = NULL;
 
@@ -3018,9 +3022,11 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
     /* Whether a HEAD request will be issued (as opposed to GET or
        POST). */
     bool head_only = !!(*dt & HEAD_ONLY);
+    fprintf(stdout, _("gethttp() head_only: %d\n"), head_only);
 
     /* Whether conditional get request will be issued.  */
     bool cond_get = !!(*dt & IF_MODIFIED_SINCE);
+    fprintf(stdout, _("gethttp() cond_get: %d\n"), cond_get);
 
 #ifdef HAVE_METALINK
     /* Are we looking for metalink info in HTTP headers?  */
@@ -3033,7 +3039,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
     char *message = NULL;
 
     /* Declare WARC variables. */
-    bool warc_enabled = (opt.warc_filename != NULL);
+    bool warc_enabled = (global_options.warc_filename != NULL);
     fprintf(stdout, _("gethttp() warc_enabled: %d\n"), warc_enabled);// 0
     FILE *warc_tmp = NULL;
     char warc_timestamp_str[21];
@@ -3050,7 +3056,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
     /* Whether keep-alive should be inhibited.  */
     bool inhibit_keep_alive =
-            !opt.http_keep_alive || opt.ignore_length;
+            !global_options.http_keep_alive || global_options.ignore_length;
     fprintf(stdout, _("gethttp() inhibit_keep_alive: %d\n"), inhibit_keep_alive);
 
     /* Headers sent when using POST. */
@@ -3109,8 +3115,8 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
        without authorization header fails.  (Expected to happen at least
        for the Digest authorization scheme.)  */
 
-    fprintf(stdout, _("gethttp() opt.cookies: %d\n"), opt.cookies);// 1
-    if (opt.cookies)
+    fprintf(stdout, _("gethttp() global_options.cookies: %d\n"), global_options.cookies);// 1
+    if (global_options.cookies)
         request_set_header(local_request, "Cookie",
                            cookie_header(wget_cookie_jar,
                                          u->host, u->port, u->path,
@@ -3123,11 +3129,11 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
                            rel_value);
 
     /* Add the user headers. */
-    if (opt.user_headers) {
-        fprintf(stdout, _("gethttp() *opt.user_headers: %s\n"), *opt.user_headers);
+    if (global_options.user_headers) {
+        fprintf(stdout, _("gethttp() *global_options.user_headers: %s\n"), *global_options.user_headers);
         int i;
-        for (i = 0; opt.user_headers[i]; i++)
-            request_set_user_header(local_request, opt.user_headers[i]);
+        for (i = 0; global_options.user_headers[i]; i++)
+            request_set_user_header(local_request, global_options.user_headers[i]);
     }
 
     proxyauth = NULL;
@@ -3170,10 +3176,11 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
     /* Send the request to server.  */
     write_error = request_send(local_request, sock, warc_tmp);
     fprintf(stdout, _("gethttp() write_error: %d\n"), write_error);
+    fprintf(stdout, _("gethttp() body_data_size before: %ld\n"), body_data_size);
     if (write_error >= 0) {
-        if (opt.body_data) {
-            DEBUGP (("[BODY data: %s]\n", opt.body_data));
-            write_error = fd_write(sock, opt.body_data, body_data_size, -1);
+        if (global_options.body_data) {
+            DEBUGP (("[BODY data: %s]\n", global_options.body_data));
+            write_error = fd_write(sock, global_options.body_data, body_data_size, -1);
             if (write_error >= 0 && warc_tmp != NULL) {
                 int warc_tmp_written;
 
@@ -3181,18 +3188,18 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
                 warc_payload_offset = ftello(warc_tmp);
 
                 /* Write a copy of the data to the WARC record. */
-                warc_tmp_written = fwrite(opt.body_data, 1, body_data_size, warc_tmp);
+                warc_tmp_written = fwrite(global_options.body_data, 1, body_data_size, warc_tmp);
                 if (warc_tmp_written != body_data_size) {
                     write_error = -2;
                 }
             }
-        } else if (opt.body_file && body_data_size != 0) {
+        } else if (global_options.body_file && body_data_size != 0) {
             if (warc_tmp != NULL) {
                 /* Remember end of headers / start of payload */
                 warc_payload_offset = ftello(warc_tmp);
             }
 
-            write_error = body_file_send(sock, opt.body_file, body_data_size, warc_tmp);
+            write_error = body_file_send(sock, global_options.body_file, body_data_size, warc_tmp);
         }
     } else {
         CLOSE_INVALIDATE (sock);
@@ -3206,6 +3213,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
             retval = WRITEFAILED;
         goto cleanup;
     }
+    fprintf(stdout, _("gethttp() body_data_size after: %ld\n"), body_data_size);
     // 已发出 HTTP 请求，正在等待回应...
     logprintf(LOG_VERBOSE, _("%s request sent, awaiting response... "),
               proxy ? "Proxy" : "HTTP");
@@ -3288,17 +3296,18 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
     xfree (hstat->message);
     hstat->message = xstrdup(message);
-    fprintf(stdout, _("gethttp() opt.server_response: %d\n"), opt.server_response);
-    if (!opt.server_response) {
+    fprintf(stdout, _("gethttp() global_options.server_response: %d\n"), global_options.server_response);
+    if (!global_options.server_response) {
         // 200 OK
         logprintf(LOG_VERBOSE, "%2d %s\n", statcode,
                   message ? quotearg_style(escape_quoting_style, message) : "");
+        fprintf(stdout, _("gethttp() body_data_size: %ld\n"), body_data_size);
     } else {
         logprintf(LOG_VERBOSE, "\n");
         print_server_response(resp, "  ");
     }
 
-    if (!opt.ignore_length
+    if (!global_options.ignore_length
         && resp_header_copy(resp, "Content-Length", hdrval, sizeof(hdrval))) {
         wgint parsed;
         errno = 0;
@@ -3332,7 +3341,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
         chunked_transfer_encoding = true;
 
     /* Handle (possibly multiple instances of) the Set-Cookie header. */
-    if (opt.cookies) {
+    if (global_options.cookies) {
         int scpos;
         const char *scbeg, *scend;
         /* The jar should have been created by now. */
@@ -3359,7 +3368,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
   if (metalink)
     {
       hstat->metalink = metalink_from_http (resp, hstat, u);
-      /* Bugfix: hstat->local_file is NULL (opt.content_disposition).  */
+      /* Bugfix: hstat->local_file is NULL (global_options.content_disposition).  */
       if (!hstat->local_file && hstat->metalink && hstat->metalink->origin)
         hstat->local_file = xstrdup (hstat->metalink->origin);
       xfree (hstat->message);
@@ -3444,7 +3453,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
         hstat->error = xstrdup(message);
 
 #ifdef HAVE_HSTS
-    if (opt.hsts && hsts_store) {
+    if (global_options.hsts && hsts_store) {
         hsts_params = resp_header_strdup(resp, "Strict-Transport-Security");
         if (parse_strict_transport_security(hsts_params, &max_age, &include_subdomains)) {
             /* process strict transport security */
@@ -3479,7 +3488,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
 #ifdef ENABLE_IRI
             /* Try to get remote encoding if needed */
-          if (opt.enable_iri && !opt.encoding_remote)
+          if (global_options.enable_iri && !global_options.encoding_remote)
             {
               tmp = parse_charset (tmp2);
               if (tmp)
@@ -3549,7 +3558,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
         }
 #ifdef HAVE_LIBZ
         else if (hstat->local_encoding == ENC_GZIP
-                 && opt.compression != compression_none) {
+                 && global_options.compression != compression_none) {
             const char *p;
 
             /* Make sure the Content-Type is not gzip before decompressing */
@@ -3666,13 +3675,13 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
                     retval = NEWLOCATION_KEEP_POST;
                     goto cleanup;
                 case HTTP_STATUS_MOVED_PERMANENTLY:
-                    if (opt.method && c_strcasecmp(opt.method, "post") != 0) {
+                    if (global_options.method && c_strcasecmp(global_options.method, "post") != 0) {
                         retval = NEWLOCATION_KEEP_POST;
                         goto cleanup;
                     }
                     break;
                 case HTTP_STATUS_MOVED_TEMPORARILY:
-                    if (opt.method && c_strcasecmp(opt.method, "post") != 0) {
+                    if (global_options.method && c_strcasecmp(global_options.method, "post") != 0) {
                         retval = NEWLOCATION_KEEP_POST;
                         goto cleanup;
                     }
@@ -3697,7 +3706,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
     set_content_type(dt, type);
 
-    if (opt.adjust_extension) {
+    if (global_options.adjust_extension) {
         const char *encoding_ext = NULL;
         switch (hstat->local_encoding) {
             case ENC_INVALID:
@@ -3772,7 +3781,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
         goto cleanup;
     }
     if (statcode == HTTP_STATUS_RANGE_NOT_SATISFIABLE
-        || (!opt.timestamping && hstat->restval > 0 && statcode == HTTP_STATUS_OK
+        || (!global_options.timestamping && hstat->restval > 0 && statcode == HTTP_STATUS_OK
             && contrange == 0 && contlen >= 0 && hstat->restval >= contlen)) {
         /* If `-c' is in use and the file has been fully downloaded (or
            the remote file has shrunk), Wget effectively requests bytes
@@ -3814,7 +3823,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
     else
         hstat->contlen = contlen + contrange;
 
-    if (opt.verbose) {
+    if (global_options.verbose) {
         if (*dt & RETROKF) {
             /* No need to print this output if the body won't be
                downloaded at all, or if the original server response is
@@ -3836,7 +3845,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
                 }
             } else
                 logputs(LOG_VERBOSE,
-                        opt.ignore_length ? _("ignored") : _("unspecified"));
+                        global_options.ignore_length ? _("ignored") : _("unspecified"));
             if (type)
                 logprintf(LOG_VERBOSE, " [%s]\n", quotearg_style(escape_quoting_style, type));
             else
@@ -3845,7 +3854,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
     }
 
     /* Return if we have no intention of further downloading.  */
-    if ((!(*dt & RETROKF) && !opt.content_on_error) || head_only || (opt.spider && !opt.recursive)) {
+    if ((!(*dt & RETROKF) && !global_options.content_on_error) || head_only || (global_options.spider && !global_options.recursive)) {
         /* In case the caller cares to look...  */
         hstat->len = 0;
         hstat->res = 0;
@@ -3876,7 +3885,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
                    If not, they can be worked around using
                    `--no-http-keep-alive'.  */
                 CLOSE_FINISH (sock);
-            else if (opt.spider && !opt.recursive)
+            else if (global_options.spider && !global_options.recursive)
                 /* we just want to see if the page exists - no downloading required */
                 CLOSE_INVALIDATE (sock);
             else if (keep_alive
@@ -3903,7 +3912,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
     }
 
 #ifdef ENABLE_XATTR
-    if (opt.enable_xattr) {
+    if (global_options.enable_xattr) {
         if (original_url != u)
             set_file_metadata(u->url, original_url->url, fp);
         else
@@ -3943,7 +3952,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
    listed for the --retry-on-http-error option. */
 static bool
 check_retry_on_http_error(const int statcode) {
-    const char *tok = opt.retry_on_http_error;
+    const char *tok = global_options.retry_on_http_error;
     while (tok && *tok) {
         if (atoi(tok) == statcode)
             return true;
@@ -3987,7 +3996,7 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
     bool force_full_retrieve = false;
 
     /* If we are writing to a WARC file: always retrieve the whole file. */
-    if (opt.warc_filename != NULL)
+    if (global_options.warc_filename != NULL)
         force_full_retrieve = true;
 
 
@@ -3995,8 +4004,8 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
     assert (local_file == NULL || *local_file == NULL);
 
     /* Set LOCAL_FILE parameter. */
-    if (local_file && opt.output_document)
-        *local_file = HYPHENP (opt.output_document) ? NULL : xstrdup(opt.output_document);
+    if (local_file && global_options.output_document)
+        *local_file = HYPHENP (global_options.output_document) ? NULL : xstrdup(global_options.output_document);
 
     /* Reset NEWLOC parameter. */
     *newloc = NULL;
@@ -4004,30 +4013,30 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
     /* This used to be done in main, but it's a better idea to do it
        here so that we don't go through the hoops if we're just using
        FTP or whatever. */
-    if (opt.cookies)
+    if (global_options.cookies)
         load_cookies();
 
     /* Warn on (likely bogus) wildcard usage in HTTP. */
-    if (opt.ftp_glob && has_wildcards_p(u->path))
+    if (global_options.ftp_glob && has_wildcards_p(u->path))
         logputs(LOG_VERBOSE, _("Warning: wildcards not supported in HTTP.\n"));
 
     /* Setup hstat struct. */
     xzero (hstat);
     hstat.referer = referer;
 
-    if (opt.output_document) {
-        hstat.local_file = xstrdup(opt.output_document);
+    if (global_options.output_document) {
+        hstat.local_file = xstrdup(global_options.output_document);
         got_name = true;
-    } else if (!opt.content_disposition) {
+    } else if (!global_options.content_disposition) {
         hstat.local_file =
-                url_file_name(opt.trustservernames ? u : original_url, NULL);
+                url_file_name(global_options.trustservernames ? u : original_url, NULL);
         got_name = true;
     }
 
-    if (got_name && file_exists_p(hstat.local_file, NULL) && opt.noclobber && !opt.output_document) {
-        /* If opt.noclobber is turned on and file already exists, do not
+    if (got_name && file_exists_p(hstat.local_file, NULL) && global_options.noclobber && !global_options.output_document) {
+        /* If global_options.noclobber is turned on and file already exists, do not
            retrieve the file. But if the output_document was given, then this
-           test was already done and the file didn't exist. Hence the !opt.output_document */
+           test was already done and the file didn't exist. Hence the !global_options.output_document */
         get_file_flags(hstat.local_file, dt);
         ret = RETROK;
         goto exit;
@@ -4040,26 +4049,26 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
     *dt = 0;
 
     /* Skip preliminary HEAD request if we're not in spider mode.  */
-    if (!opt.spider)
+    if (!global_options.spider)
         send_head_first = false;
 
     /* Send preliminary HEAD request if --content-disposition and -c are used
        together.  */
-    if (opt.content_disposition && opt.always_rest)
+    if (global_options.content_disposition && global_options.always_rest)
         send_head_first = true;
 
 #ifdef HAVE_METALINK
-    if (opt.metalink_over_http)
+    if (global_options.metalink_over_http)
     {
       *dt |= METALINK_METADATA;
       send_head_first = true;
     }
 #endif
 
-    if (opt.timestamping) {
+    if (global_options.timestamping) {
         /* Use conditional get request if requested
          * and if timestamp is known at this moment.  */
-        if (opt.if_modified_since && !send_head_first && got_name && file_exists_p(hstat.local_file, NULL)) {
+        if (global_options.if_modified_since && !send_head_first && got_name && file_exists_p(hstat.local_file, NULL)) {
             *dt |= IF_MODIFIED_SINCE;
             {
                 uerr_t timestamp_err = set_file_timestamp(&hstat);
@@ -4069,7 +4078,7 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
         }
             /* Send preliminary HEAD request if -N is given and we have existing
              * destination file or content disposition is enabled.  */
-        else if (opt.content_disposition || file_exists_p(hstat.local_file, NULL))
+        else if (global_options.content_disposition || file_exists_p(hstat.local_file, NULL))
             send_head_first = true;
     }
 
@@ -4082,12 +4091,12 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
         /* Get the current time string.  */
         tms = datetime_str(time(NULL));
 
-        if (opt.spider && !got_head)
+        if (global_options.spider && !got_head)
             logprintf(LOG_VERBOSE,
                       _("Spider mode enabled. Check if remote file exists.\n"));
 
-        /* Print fetch message, if opt.verbose.  */
-        if (opt.verbose) {
+        /* Print fetch message, if global_options.verbose.  */
+        if (global_options.verbose) {
             char *hurl = url_string(u, URL_AUTH_HIDE_PASSWD);
 
             if (count > 1) {
@@ -4117,9 +4126,9 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
         /* Decide whether or not to restart.  */
         if (force_full_retrieve)
             hstat.restval = hstat.len;
-        else if (opt.start_pos >= 0)
-            hstat.restval = opt.start_pos;
-        else if (opt.always_rest
+        else if (global_options.start_pos >= 0)
+            hstat.restval = global_options.start_pos;
+        else if (global_options.always_rest
                  && got_name
                  && stat(hstat.local_file, &st) == 0
                  && S_ISREG (st.st_mode))
@@ -4140,7 +4149,7 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
                 we require a fresh get.
              b) caching is explicitly inhibited. */
         if ((proxy && count > 1)        /* a */
-            || !opt.allow_cache)        /* b */
+            || !global_options.allow_cache)        /* b */
             *dt |= SEND_NOCACHE;
         else
             *dt &= ~SEND_NOCACHE;
@@ -4171,7 +4180,7 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
                 /* Non-fatal errors continue executing the loop, which will
                    bring them to "while" statement at the end, to judge
                    whether the number of tries was exceeded.  */
-                printwhat(count, opt.ntry);
+                printwhat(count, global_options.ntry);
                 xfree (hstat.message);
                 xfree (hstat.error);
                 continue;
@@ -4277,7 +4286,7 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
 
         if (!(*dt & RETROKF)) {
             char *hurl = NULL;
-            if (!opt.verbose) {
+            if (!global_options.verbose) {
                 /* #### Ugly ugly ugly! */
                 hurl = url_string(u, URL_AUTH_HIDE_PASSWD);
                 logprintf(LOG_NONVERBOSE, "%s:\n", hurl);
@@ -4293,7 +4302,7 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
                  * spider mode.
                  * Don't log error if it was UTF-8 encoded because we will try
                  * once unencoded. */
-            else if (opt.spider && !iri->utf8_encode) {
+            else if (global_options.spider && !iri->utf8_encode) {
                 /* #### Again: ugly ugly ugly! */
                 if (!hurl)
                     hurl = url_string(u, URL_AUTH_HIDE_PASSWD);
@@ -4301,7 +4310,7 @@ http_loop(const struct url *u, struct url *original_url, char **newloc,
                 logprintf(LOG_NOTQUIET, _("\
 Remote file does not exist -- broken link!!!\n"));
             } else if (check_retry_on_http_error(hstat.statcode)) {
-                printwhat(count, opt.ntry);
+                printwhat(count, global_options.ntry);
                 continue;
             } else {
                 logprintf(LOG_NOTQUIET, _("%s ERROR %d: %s.\n"),
@@ -4315,10 +4324,10 @@ Remote file does not exist -- broken link!!!\n"));
         }
 
         /* Did we get the time-stamp? */
-        if (!got_head || (opt.spider && !opt.recursive)) {
+        if (!got_head || (global_options.spider && !global_options.recursive)) {
             got_head = true;    /* no more time-stamping */
 
-            if (opt.timestamping && !hstat.remote_time) {
+            if (global_options.timestamping && !hstat.remote_time) {
                 logputs(LOG_NOTQUIET, _("\
 Last-modified header missing -- time-stamps turned off.\n"));
             } else if (hstat.remote_time) {
@@ -4333,7 +4342,7 @@ Last-modified header invalid -- time-stamp ignored.\n"));
 
             if (send_head_first) {
                 /* The time-stamping section.  */
-                if (opt.timestamping) {
+                if (global_options.timestamping) {
                     if (hstat.orig_file_name) /* Perform the following
                                                checks only if the file
                                                we're supposed to
@@ -4374,9 +4383,9 @@ The sizes do not match (local %s) -- retrieving.\n"),
                     hstat.timestamp_checked = true;
                 }
 
-                if (opt.spider) {
+                if (global_options.spider) {
                     bool finished = true;
-                    if (opt.recursive) {
+                    if (global_options.recursive) {
                         if ((*dt & TEXTHTML) || (*dt & TEXTCSS)) {
                             logputs(LOG_VERBOSE, _("\
 Remote file exists and could contain links to other resources -- retrieving.\n\n"));
@@ -4416,7 +4425,7 @@ Remote file exists.\n\n"));
             } /* send_head_first */
         } /* !got_head */
 
-        if (opt.useservertimestamps
+        if (global_options.useservertimestamps
             && (tmr != (time_t) (-1))
             && ((hstat.len == hstat.contlen) ||
                 ((hstat.res == 0) && (hstat.contlen == -1)))) {
@@ -4440,8 +4449,8 @@ Remote file exists.\n\n"));
         total_download_time += hstat.dltime;
 
         if (hstat.len == hstat.contlen) {
-            if (*dt & RETROKF || opt.content_on_error) {
-                bool write_to_stdout = (opt.output_document && HYPHENP (opt.output_document));
+            if (*dt & RETROKF || global_options.content_on_error) {
+                bool write_to_stdout = (global_options.output_document && HYPHENP (global_options.output_document));
 
                 logprintf(LOG_VERBOSE,
                           write_to_stdout
@@ -4474,8 +4483,8 @@ Remote file exists.\n\n"));
             if (hstat.contlen == -1)  /* We don't know how much we were supposed
                                        to get, so assume we succeeded. */
             {
-                if (*dt & RETROKF || opt.content_on_error) {
-                    bool write_to_stdout = (opt.output_document && HYPHENP (opt.output_document));
+                if (*dt & RETROKF || global_options.content_on_error) {
+                    bool write_to_stdout = (global_options.output_document && HYPHENP (global_options.output_document));
 
                     logprintf(LOG_VERBOSE,
                               write_to_stdout
@@ -4506,7 +4515,7 @@ Remote file exists.\n\n"));
                 logprintf(LOG_VERBOSE,
                           _("%s (%s) - Connection closed at byte %s. "),
                           tms, tmrate, number_to_static_string(hstat.len));
-                printwhat(count, opt.ntry);
+                printwhat(count, global_options.ntry);
                 continue;
             } else if (hstat.len != hstat.restval)
                 /* Getting here would mean reading more data than
@@ -4526,7 +4535,7 @@ Remote file exists.\n\n"));
                           _("%s (%s) - Read error at byte %s (%s)."),
                           tms, tmrate, number_to_static_string(hstat.len),
                           hstat.rderrmsg);
-                printwhat(count, opt.ntry);
+                printwhat(count, global_options.ntry);
                 continue;
             } else /* hstat.res == -1 and contlen is given */
             {
@@ -4536,18 +4545,18 @@ Remote file exists.\n\n"));
                           number_to_static_string(hstat.len),
                           number_to_static_string(hstat.contlen),
                           hstat.rderrmsg);
-                printwhat(count, opt.ntry);
+                printwhat(count, global_options.ntry);
                 continue;
             }
         }
         /* not reached */
-    } while (!opt.ntry || (count < opt.ntry));
+    } while (!global_options.ntry || (count < global_options.ntry));
 
     exit:
-    if ((ret == RETROK || opt.content_on_error) && local_file) {
+    if ((ret == RETROK || global_options.content_on_error) && local_file) {
         xfree (*local_file);
         /* Bugfix: Prevent SIGSEGV when hstat.local_file was left NULL
-           (i.e. due to opt.content_disposition).  */
+           (i.e. due to global_options.content_disposition).  */
         if (hstat.local_file)
             *local_file = xstrdup(hstat.local_file);
     }
@@ -4958,8 +4967,8 @@ static void
 load_cookies(void) {
     if (!wget_cookie_jar)
         wget_cookie_jar = cookie_jar_new();
-    if (opt.cookies_input && !cookies_loaded_p) {
-        cookie_jar_load(wget_cookie_jar, opt.cookies_input);
+    if (global_options.cookies_input && !cookies_loaded_p) {
+        cookie_jar_load(wget_cookie_jar, global_options.cookies_input);
         cookies_loaded_p = true;
     }
 }
@@ -4967,7 +4976,7 @@ load_cookies(void) {
 void
 save_cookies(void) {
     if (wget_cookie_jar)
-        cookie_jar_save(wget_cookie_jar, opt.cookies_output);
+        cookie_jar_save(wget_cookie_jar, global_options.cookies_output);
 }
 
 void

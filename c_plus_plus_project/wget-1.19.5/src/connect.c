@@ -180,7 +180,7 @@ resolve_bind_address (struct sockaddr *sa)
 {
   struct address_list *al;
 
-  /* Make sure this is called only once.  opt.bind_address doesn't
+  /* Make sure this is called only once.  global_options.bind_address doesn't
      change during a Wget run.  */
   static bool called, should_bind;
   static ip_address ip;
@@ -192,13 +192,13 @@ resolve_bind_address (struct sockaddr *sa)
     }
   called = true;
 
-  al = lookup_host (opt.bind_address, LH_BIND | LH_SILENT);
+  al = lookup_host (global_options.bind_address, LH_BIND | LH_SILENT);
   if (!al)
     {
       /* #### We should be able to print the error message here. */
       logprintf (LOG_NOTQUIET,
                  _("%s: unable to resolve bind address %s; disabling bind.\n"),
-                 exec_name, quote (opt.bind_address));
+                 exec_name, quote (global_options.bind_address));
       should_bind = false;
       return false;
     }
@@ -272,7 +272,7 @@ connect_to_ip (const ip_address *ip, int port, const char *print)
         {
           char *str = NULL, *name;
 
-          if (opt.enable_iri && (name = idn_decode ((char *) print)) != NULL)
+          if (global_options.enable_iri && (name = idn_decode ((char *) print)) != NULL)
             {
               str = aprintf ("%s (%s)", name, print);
               xfree (name);
@@ -303,7 +303,7 @@ connect_to_ip (const ip_address *ip, int port, const char *print)
     goto err;
 
 #if defined(ENABLE_IPV6) && defined(IPV6_V6ONLY)
-  if (opt.ipv6_only) {
+  if (global_options.ipv6_only) {
     int on = 1;
     /* In case of error, we will go on anyway... */
     int err = setsockopt (sock, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof (on));
@@ -317,9 +317,9 @@ connect_to_ip (const ip_address *ip, int port, const char *print)
      hopefully, the kernel's TCP window size) to the per-second limit.
      That way we should never have to sleep for more than 1s between
      network reads.  */
-  if (opt.limit_rate && opt.limit_rate < 8192)
+  if (global_options.limit_rate && global_options.limit_rate < 8192)
     {
-      int bufsize = opt.limit_rate;
+      int bufsize = global_options.limit_rate;
       if (bufsize < 512)
         bufsize = 512;          /* avoid pathologically small values */
 #ifdef SO_RCVBUF
@@ -332,7 +332,7 @@ connect_to_ip (const ip_address *ip, int port, const char *print)
          for POST, we should also set SO_SNDBUF here.  */
     }
 
-  if (opt.bind_address)
+  if (global_options.bind_address)
     {
       /* Bind the client side of the socket to the requested
          address.  */
@@ -347,7 +347,7 @@ connect_to_ip (const ip_address *ip, int port, const char *print)
 
   /* Connect the socket to the remote endpoint.  */
   if (connect_with_timeout (sock, sa, sockaddr_size (sa),
-                            opt.connect_timeout) < 0)
+                            global_options.connect_timeout) < 0)
     goto err;
 
   /* Success. */
@@ -511,7 +511,7 @@ bind_local (const ip_address *bind_address, int *port)
    LOCAL_SOCK should have been bound, e.g. using bind_local().
 
    The caller is blocked until a connection is established.  If no
-   connection is established for opt.connect_timeout seconds, the
+   connection is established for global_options.connect_timeout seconds, the
    function exits with an error status.  */
 
 int
@@ -525,9 +525,9 @@ accept_connection (int local_sock)
   struct sockaddr *sa = (struct sockaddr *)&ss;
   socklen_t addrlen = sizeof (ss);
 
-  if (opt.connect_timeout)
+  if (global_options.connect_timeout)
     {
-      int test = select_fd (local_sock, opt.connect_timeout, WAIT_FOR_READ);
+      int test = select_fd (local_sock, global_options.connect_timeout, WAIT_FOR_READ);
       if (test == 0)
         errno = ETIMEDOUT;
       if (test <= 0)
@@ -654,7 +654,7 @@ retryable_socket_connect_error (int err)
       )
     return false;
 
-  if (!opt.retry_connrefused)
+  if (!global_options.retry_connrefused)
     if (err == ECONNREFUSED
 #ifdef ENETUNREACH
         || err == ENETUNREACH   /* network is unreachable */
@@ -895,7 +895,7 @@ static bool
 poll_internal (int fd, struct transport_info *info, int wf, double timeout)
 {
   if (timeout == -1)
-    timeout = opt.read_timeout;
+    timeout = global_options.read_timeout;
   if (timeout)
     {
       int test;
@@ -914,7 +914,7 @@ poll_internal (int fd, struct transport_info *info, int wf, double timeout)
 /* Read no more than BUFSIZE bytes of data from FD, storing them to
    BUF.  If TIMEOUT is non-zero, the operation aborts if no data is
    received after that many seconds.  If TIMEOUT is -1, the value of
-   opt.timeout is used for TIMEOUT.  */
+   global_options.timeout is used for TIMEOUT.  */
 
 int
 fd_read (int fd, char *buf, int bufsize, double timeout)
@@ -956,7 +956,7 @@ fd_peek (int fd, char *buf, int bufsize, double timeout)
 
 /* Write the entire contents of BUF to FD.  If TIMEOUT is non-zero,
    the operation aborts if no data is received after that many
-   seconds.  If TIMEOUT is -1, the value of opt.timeout is used for
+   seconds.  If TIMEOUT is -1, the value of global_options.timeout is used for
    TIMEOUT.  */
 
 int

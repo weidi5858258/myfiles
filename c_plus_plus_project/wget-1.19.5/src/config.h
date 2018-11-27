@@ -885,9 +885,6 @@
 /* Define to 1 if you have the `gnutls_priority_set_direct' function. */
 #define HAVE_GNUTLS_PRIORITY_SET_DIRECT 1
 
-/* Define if GPGME is available. */
-/* #undef HAVE_GPGME */
-
 /* Define if you have the iconv() function and it works. */
 #define HAVE_ICONV 1
 

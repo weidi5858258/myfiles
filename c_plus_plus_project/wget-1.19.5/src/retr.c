@@ -119,7 +119,7 @@ limit_bandwidth(wgint bytes, struct ptimer *timer) {
     /* Calculate the amount of time we expect downloading the chunk
        should take.  If in reality it took less time, sleep to
        compensate for the difference.  */
-    expected = (double) limit_data.chunk_bytes / opt.limit_rate;
+    expected = (double) limit_data.chunk_bytes / global_options.limit_rate;
 
     if (expected > delta_t) {
         double slp = expected - delta_t + limit_data.sleep_adjust;
@@ -214,7 +214,7 @@ write_data(FILE *out, FILE *out2, const char *buf, int bufsize,
 
 /* Read the contents of file descriptor FD until it the connection
    terminates or a read error occurs.  The data is read in portions of
-   up to 16K and written to OUT as it arrives.  If opt.verbose is set,
+   up to 16K and written to OUT as it arrives.  If global_options.verbose is set,
    the progress is shown.
 
    TOREAD is the amount of data expected to arrive, normally only used
@@ -307,27 +307,27 @@ fd_read_body(const char *downloaded_filename, int fd, FILE *out, wgint toread, w
     if (flags & rb_skip_startpos)
         skip = startpos;
 
-    if (opt.show_progress) {
+    if (global_options.show_progress) {
         const char *filename_progress;
         /* If we're skipping STARTPOS bytes, pass 0 as the INITIAL
            argument to progress_create because the indicator doesn't
            (yet) know about "skipping" data.  */
         wgint start = skip ? 0 : startpos;
-        if (opt.dir_prefix)
-            filename_progress = downloaded_filename + strlen(opt.dir_prefix) + 1;
+        if (global_options.dir_prefix)
+            filename_progress = downloaded_filename + strlen(global_options.dir_prefix) + 1;
         else
             filename_progress = downloaded_filename;
         progress = progress_create(filename_progress, start, start + toread);
         progress_interactive = progress_interactive_p(progress);
     }
 
-    if (opt.limit_rate)
+    if (global_options.limit_rate)
         limit_bandwidth_reset();
 
     /* A timer is needed for tracking progress, for throttling, and for
        tracking elapsed time.  If either of these are requested, start
        the timer.  */
-    if (progress || opt.limit_rate || elapsed) {
+    if (progress || global_options.limit_rate || elapsed) {
         timer = ptimer_new();
         last_successful_read_tm = 0;
     }
@@ -336,8 +336,8 @@ fd_read_body(const char *downloaded_filename, int fd, FILE *out, wgint toread, w
        with --limit-rate=2k, it doesn't make sense to slurp in 16K of
        data and then sleep for 8s.  With buffer size equal to the limit,
        we never have to sleep for more than one second.  */
-    if (opt.limit_rate && opt.limit_rate < dlbufsize)
-        dlbufsize = opt.limit_rate;
+    if (global_options.limit_rate && global_options.limit_rate < dlbufsize)
+        dlbufsize = global_options.limit_rate;
 
     /* Read from FD while there is data to read.  Normally toread==0
        means that it is unknown how much data is to arrive.  However, if
@@ -345,7 +345,7 @@ fd_read_body(const char *downloaded_filename, int fd, FILE *out, wgint toread, w
        should be read.  */
     while (!exact || (sum_read < toread)) {
         int rdsize;
-        double tmout = opt.read_timeout;
+        double tmout = global_options.read_timeout;
 
         if (chunked) {
             if (remaining_chunk_size == 0) {
@@ -388,12 +388,12 @@ fd_read_body(const char *downloaded_filename, int fd, FILE *out, wgint toread, w
                timeout, so that the gauge can be updated regularly even
                when the data arrives very slowly or stalls.  */
             tmout = 0.95;
-            if (opt.read_timeout) {
+            if (global_options.read_timeout) {
                 double waittm;
                 waittm = ptimer_read(timer) - last_successful_read_tm;
-                if (waittm + tmout > opt.read_timeout) {
+                if (waittm + tmout > global_options.read_timeout) {
                     /* Don't let total idle time exceed read timeout. */
-                    tmout = opt.read_timeout - waittm;
+                    tmout = global_options.read_timeout - waittm;
                     if (tmout < 0) {
                         /* We've already exceeded the timeout. */
                         ret = -1, errno = ETIMEDOUT;
@@ -409,7 +409,7 @@ fd_read_body(const char *downloaded_filename, int fd, FILE *out, wgint toread, w
         else if (ret <= 0)
             break;                  /* EOF or read error */
 
-        if (progress || opt.limit_rate || elapsed) {
+        if (progress || global_options.limit_rate || elapsed) {
             ptimer_measure(timer);
             if (ret > 0)
                 last_successful_read_tm = ptimer_read(timer);
@@ -485,13 +485,13 @@ fd_read_body(const char *downloaded_filename, int fd, FILE *out, wgint toread, w
             }
         }
 
-        if (opt.limit_rate)
+        if (global_options.limit_rate)
             limit_bandwidth(ret, timer);
 
         if (progress)
             progress_update(progress, ret, ptimer_read(timer));
 #ifdef WINDOWS
-        if (toread > 0 && opt.show_progress)
+        if (toread > 0 && global_options.show_progress)
           ws_percenttitle (100.0 *
                            (startpos + sum_read) / (startpos + toread));
 #endif
@@ -716,7 +716,7 @@ retr_rate(wgint bytes, double secs) {
        e.g. "1022", "247", "12.5", "2.38".  */
     snprintf(res, sizeof(res), "%.*f %s",
              dlrate >= 99.95 ? 0 : dlrate >= 9.995 ? 1 : 2,
-             dlrate, !opt.report_bps ? rate_names[units] : rate_names_bits[units]);
+             dlrate, !global_options.report_bps ? rate_names[units] : rate_names_bits[units]);
 
     return res;
 }
@@ -734,7 +734,7 @@ calc_rate(wgint bytes, double secs, int *units) {
     double dlrate;
     double bibyte = 1000.0;
 
-    if (!opt.report_bps)
+    if (!global_options.report_bps)
         bibyte = 1024.0;
 
 
@@ -766,20 +766,20 @@ calc_rate(wgint bytes, double secs, int *units) {
 
 #define SUSPEND_METHOD do {                     \
   method_suspended = true;                      \
-  saved_body_data = opt.body_data;              \
-  saved_body_file_name = opt.body_file;         \
-  saved_method = opt.method;                    \
-  opt.body_data = NULL;                         \
-  opt.body_file = NULL;                         \
-  opt.method = NULL;                            \
+  saved_body_data = global_options.body_data;              \
+  saved_body_file_name = global_options.body_file;         \
+  saved_method = global_options.method;                    \
+  global_options.body_data = NULL;                         \
+  global_options.body_file = NULL;                         \
+  global_options.method = NULL;                            \
 } while (0)
 
 #define RESTORE_METHOD do {                             \
   if (method_suspended)                                 \
     {                                                   \
-      opt.body_data = saved_body_data;                  \
-      opt.body_file = saved_body_file_name;             \
-      opt.method = saved_method;                        \
+      global_options.body_data = saved_body_data;                  \
+      global_options.body_file = saved_body_file_name;             \
+      global_options.method = saved_method;                        \
       method_suspended = false;                         \
     }                                                   \
 } while (0)
@@ -835,7 +835,7 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
         *file = NULL;
 
     if (!refurl)
-        refurl = opt.referer;
+        refurl = global_options.referer;
 
     redirected:
     /* (also for IRI fallbacking) */
@@ -849,7 +849,7 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
     fprintf(stdout, _("retrieve_url() proxy: %s\n"), proxy);// NULL
     if (proxy) {
         struct iri *pi = iri_new ();
-        set_uri_encoding (pi, opt.locale, true);
+        set_uri_encoding (pi, global_options.locale, true);
         pi->utf8_encode = false;
 
         /* Parse the proxy URL.  */
@@ -898,7 +898,7 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
         extern hsts_store_t hsts_store;
 #endif
 
-        if (opt.hsts && hsts_store) {
+        if (global_options.hsts && hsts_store) {
             if (hsts_match(hsts_store, u))
                 logprintf(LOG_VERBOSE, "URL transformed to HTTPS due to an HSTS policy\n");
         }
@@ -919,10 +919,10 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
                || u->scheme == SCHEME_FTPS
 #endif
             ) {
-        /* If this is a redirection, temporarily turn off opt.ftp_glob
-           and opt.recursive, both being undesirable when following
+        /* If this is a redirection, temporarily turn off global_options.ftp_glob
+           and global_options.recursive, both being undesirable when following
            redirects.  */
-        bool oldrec = recursive, glob = opt.ftp_glob;
+        bool oldrec = recursive, glob = global_options.ftp_glob;
         if (redirection_count)
             oldrec = glob = false;
 
@@ -973,9 +973,9 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
 #ifdef ENABLE_IRI
         /* Reset UTF-8 encoding state, set the URI encoding and reset
            the content encoding. */
-        iri->utf8_encode = opt.enable_iri;
-        if (opt.encoding_remote)
-         set_uri_encoding (iri, opt.encoding_remote, true);
+        iri->utf8_encode = global_options.enable_iri;
+        if (global_options.encoding_remote)
+         set_uri_encoding (iri, global_options.encoding_remote, true);
         set_content_encoding (iri, NULL);
         xfree (iri->orig_url);
 #endif
@@ -1004,11 +1004,11 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
         xfree (mynewloc);
         mynewloc = xstrdup(newloc_parsed->url);
         fprintf(stdout, _("retrieve_url() mynewloc 2: %s\n"), mynewloc);
-        fprintf(stdout, _("retrieve_url() opt.max_redirect: %d\n"), opt.max_redirect);
+        fprintf(stdout, _("retrieve_url() global_options.max_redirect: %d\n"), global_options.max_redirect);
 
         /* Check for max. number of redirections.  */
-        if (++redirection_count > opt.max_redirect) {
-            logprintf(LOG_NOTQUIET, _("%d redirections exceeded.\n"), opt.max_redirect);
+        if (++redirection_count > global_options.max_redirect) {
+            logprintf(LOG_NOTQUIET, _("%d redirections exceeded.\n"), global_options.max_redirect);
             url_free(newloc_parsed);
             if (orig_parsed != u) {
                 url_free(u);
@@ -1067,10 +1067,10 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
             DEBUGP (("[Couldn't fallback to non-utf8 for %s\n", quote(url)));
     }
 
-    if (local_file && u && (*dt & RETROKF || opt.content_on_error)) {
+    if (local_file && u && (*dt & RETROKF || global_options.content_on_error)) {
         register_download(u->url, local_file);
 
-        if (!opt.spider && redirection_count && 0 != strcmp(origurl, u->url))
+        if (!global_options.spider && redirection_count && 0 != strcmp(origurl, u->url))
             register_redirection(origurl, u->url);
 
         if (*dt & TEXTHTML)
@@ -1113,7 +1113,7 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
    If HTML is true, treat the file as HTML, and construct the URLs
    accordingly.
 
-   If opt.recursive is set, call retrieve_tree() for each file.  */
+   If global_options.recursive is set, call retrieve_tree() for each file.  */
 
 uerr_t
 retrieve_from_file(const char *file, bool html, int *count) {
@@ -1128,8 +1128,8 @@ retrieve_from_file(const char *file, bool html, int *count) {
     *count = 0;                  /* Reset the URL count.  */
 
     /* sXXXav : Assume filename and links in the file are in the locale */
-    set_uri_encoding (iri, opt.locale, true);
-    set_content_encoding (iri, opt.locale);
+    set_uri_encoding (iri, global_options.locale, true);
+    set_content_encoding (iri, global_options.locale);
 
     if (url_valid_scheme(url)) {
         int dt, url_err;
@@ -1142,8 +1142,8 @@ retrieve_from_file(const char *file, bool html, int *count) {
             return URLERROR;
         }
 
-        if (!opt.base_href)
-            opt.base_href = xstrdup(url);
+        if (!global_options.base_href)
+            global_options.base_href = xstrdup(url);
         fprintf(stdout, _("retrieve_from_file() retrieve_url() start\n"));
         status = retrieve_url(url_parsed, url, &url_file, NULL, NULL, &dt,
                               false, iri, true);
@@ -1159,12 +1159,12 @@ retrieve_from_file(const char *file, bool html, int *count) {
 #ifdef ENABLE_IRI
         /* If we have a found a content encoding, use it.
          * ( == is okay, because we're checking for identical object) */
-        if (iri->content_encoding != opt.locale)
+        if (iri->content_encoding != global_options.locale)
             set_uri_encoding (iri, iri->content_encoding, false);
 #endif
 
         /* Reset UTF-8 encode status */
-        iri->utf8_encode = opt.enable_iri;
+        iri->utf8_encode = global_options.enable_iri;
         xfree (iri->orig_url);
 
         input_file = url_file;
@@ -1185,7 +1185,7 @@ retrieve_from_file(const char *file, bool html, int *count) {
         if (cur_url->ignore_when_downloading)
             continue;
 
-        if (opt.quota && total_downloaded_bytes > opt.quota) {
+        if (global_options.quota && total_downloaded_bytes > global_options.quota) {
             status = QUOTEXC;
             break;
         }
@@ -1193,31 +1193,31 @@ retrieve_from_file(const char *file, bool html, int *count) {
         parsed_url = url_parse(cur_url->url->url, NULL, tmpiri, true);
 
         proxy = getproxy(cur_url->url);
-        if ((opt.recursive || opt.page_requisites)
+        if ((global_options.recursive || global_options.page_requisites)
             && ((cur_url->url->scheme != SCHEME_FTP
                  #ifdef HAVE_SSL
                  && cur_url->url->scheme != SCHEME_FTPS
 #endif
                 ) || proxy)) {
-            int old_follow_ftp = opt.follow_ftp;
+            int old_follow_ftp = global_options.follow_ftp;
 
-            /* Turn opt.follow_ftp on in case of recursive FTP retrieval */
+            /* Turn global_options.follow_ftp on in case of recursive FTP retrieval */
             if (cur_url->url->scheme == SCHEME_FTP
                 #ifdef HAVE_SSL
                 || cur_url->url->scheme == SCHEME_FTPS
 #endif
                     )
-                opt.follow_ftp = 1;
+                global_options.follow_ftp = 1;
 
             status = retrieve_tree(parsed_url ? parsed_url : cur_url->url,
                                    tmpiri);
 
-            opt.follow_ftp = old_follow_ftp;
+            global_options.follow_ftp = old_follow_ftp;
         } else {
             fprintf(stdout, _("retrieve_from_file() retrieve_url() start 2\n"));
             status = retrieve_url(parsed_url ? parsed_url : cur_url->url,
                                   cur_url->url->url, &filename,
-                                  &new_file, NULL, &dt, opt.recursive, tmpiri,
+                                  &new_file, NULL, &dt, global_options.recursive, tmpiri,
                                   true);
             fprintf(stdout, _("retrieve_from_file() retrieve_url() end 2\n"));
         }
@@ -1226,7 +1226,7 @@ retrieve_from_file(const char *file, bool html, int *count) {
         if (parsed_url)
             url_free(parsed_url);
 
-        if (filename && opt.delete_after && file_exists_p(filename, NULL)) {
+        if (filename && global_options.delete_after && file_exists_p(filename, NULL)) {
             DEBUGP (("\
 Removing file due to --delete-after in retrieve_from_file():\n"));
             logprintf(LOG_VERBOSE, _("Removing %s.\n"), filename);
@@ -1255,7 +1255,7 @@ printwhat(int n1, int n2) {
     logputs(LOG_VERBOSE, (n1 == n2) ? _("Giving up.\n\n") : _("Retrying.\n\n"));
 }
 
-/* If opt.wait or opt.waitretry are specified, and if certain
+/* If global_options.wait or global_options.waitretry are specified, and if certain
    conditions are met, sleep the appropriate number of seconds.  See
    the documentation of --wait and --waitretry for more information.
 
@@ -1271,26 +1271,26 @@ sleep_between_retrievals(int count) {
         return;
     }
 
-    if (opt.waitretry && count > 1) {
-        /* If opt.waitretry is specified and this is a retry, wait for
-           COUNT-1 number of seconds, or for opt.waitretry seconds.  */
-        if (count <= opt.waitretry)
+    if (global_options.waitretry && count > 1) {
+        /* If global_options.waitretry is specified and this is a retry, wait for
+           COUNT-1 number of seconds, or for global_options.waitretry seconds.  */
+        if (count <= global_options.waitretry)
             xsleep(count - 1);
         else
-            xsleep(opt.waitretry);
-    } else if (opt.wait) {
-        if (!opt.random_wait || count > 1)
+            xsleep(global_options.waitretry);
+    } else if (global_options.wait) {
+        if (!global_options.random_wait || count > 1)
             /* If random-wait is not specified, or if we are sleeping
                between retries of the same download, sleep the fixed
                interval.  */
-            xsleep(opt.wait);
+            xsleep(global_options.wait);
         else {
-            /* Sleep a random amount of time averaging in opt.wait
-               seconds.  The sleeping amount ranges from 0.5*opt.wait to
-               1.5*opt.wait.  */
-            double waitsecs = (0.5 + random_float()) * opt.wait;
+            /* Sleep a random amount of time averaging in global_options.wait
+               seconds.  The sleeping amount ranges from 0.5*global_options.wait to
+               1.5*global_options.wait.  */
+            double waitsecs = (0.5 + random_float()) * global_options.wait;
             DEBUGP (("sleep_between_retrievals: avg=%f,sleep=%f\n",
-                    opt.wait, waitsecs));
+                    global_options.wait, waitsecs));
             xsleep(waitsecs);
         }
     }
@@ -1309,7 +1309,7 @@ free_urlpos(struct urlpos *l) {
     }
 }
 
-/* Rotate FNAME opt.backups times */
+/* Rotate FNAME global_options.backups times */
 void
 rotate_backups(const char *fname) {
 #ifdef __VMS
@@ -1321,7 +1321,7 @@ rotate_backups(const char *fname) {
 # define AVSL 0
 #endif
 
-    int maxlen = strlen(fname) + sizeof(SEP) + numdigit(opt.backups) + AVSL;
+    int maxlen = strlen(fname) + sizeof(SEP) + numdigit(global_options.backups) + AVSL;
     char *from = alloca(maxlen);
     char *to = alloca(maxlen);
     struct stat sb;
@@ -1331,14 +1331,14 @@ rotate_backups(const char *fname) {
         if (S_ISREG (sb.st_mode) == 0)
             return;
 
-    for (i = opt.backups; i > 1; i--) {
+    for (i = global_options.backups; i > 1; i--) {
 #ifdef VMS
         /* Delete (all versions of) any existing max-suffix file, to avoid
          * creating multiple versions of it.  (On VMS, rename() will
          * create a new version of an existing destination file, not
          * destroy/overwrite it.)
          */
-        if (i == opt.backups)
+        if (i == global_options.backups)
           {
             snprintf (to, sizeof(to), "%s%s%d%s", fname, SEP, i, AVS);
             delete (to);
@@ -1366,25 +1366,25 @@ getproxy(struct url *u) {
     char *proxy = NULL;
     char *rewritten_url;
 
-    if (!opt.use_proxy)
+    if (!global_options.use_proxy)
         return NULL;
-    if (no_proxy_match(u->host, (const char **) opt.no_proxy))
+    if (no_proxy_match(u->host, (const char **) global_options.no_proxy))
         return NULL;
 
     switch (u->scheme) {
         case SCHEME_HTTP:
-            proxy = opt.http_proxy ? opt.http_proxy : getenv("http_proxy");
+            proxy = global_options.http_proxy ? global_options.http_proxy : getenv("http_proxy");
             break;
 #ifdef HAVE_SSL
         case SCHEME_HTTPS:
-            proxy = opt.https_proxy ? opt.https_proxy : getenv("https_proxy");
+            proxy = global_options.https_proxy ? global_options.https_proxy : getenv("https_proxy");
             break;
         case SCHEME_FTPS:
-            proxy = opt.ftp_proxy ? opt.ftp_proxy : getenv("ftps_proxy");
+            proxy = global_options.ftp_proxy ? global_options.ftp_proxy : getenv("ftps_proxy");
             break;
 #endif
         case SCHEME_FTP:
-            proxy = opt.ftp_proxy ? opt.ftp_proxy : getenv("ftp_proxy");
+            proxy = global_options.ftp_proxy ? global_options.ftp_proxy : getenv("ftp_proxy");
             break;
         case SCHEME_INVALID:
             break;
@@ -1428,9 +1428,9 @@ no_proxy_match(const char *host, const char **no_proxy) {
 /* Set the file parameter to point to the local file string.  */
 void
 set_local_file(const char **file, const char *default_file) {
-    if (opt.output_document) {
+    if (global_options.output_document) {
         if (output_stream_regular)
-            *file = opt.output_document;
+            *file = global_options.output_document;
     } else
         *file = default_file;
 }

@@ -214,21 +214,21 @@ init_interesting (void)
     hash_table_put (interesting_tags, known_tags[i].name, known_tags + i);
 
   /* Then remove the tags ignored through --ignore-tags.  */
-  if (opt.ignore_tags)
+  if (global_options.ignore_tags)
     {
       char **ignored;
-      for (ignored = opt.ignore_tags; *ignored; ignored++)
+      for (ignored = global_options.ignore_tags; *ignored; ignored++)
         hash_table_remove (interesting_tags, *ignored);
     }
 
   /* If --follow-tags is specified, use only those tags.  */
-  if (opt.follow_tags)
+  if (global_options.follow_tags)
     {
       /* Create a new table intersecting --follow-tags and known_tags,
          and use it as interesting_tags.  */
       struct hash_table *intersect = make_nocase_string_hash_table (0);
       char **followed;
-      for (followed = opt.follow_tags; *followed; followed++)
+      for (followed = global_options.follow_tags; *followed; followed++)
         {
           struct known_tag *t = hash_table_get (interesting_tags, *followed);
           if (!t)
@@ -287,7 +287,7 @@ append_url (const char *link_uri, int position, int size,
   struct url *url;
 
   struct iri *iri = iri_new ();
-  set_uri_encoding (iri, opt.locale, true);
+  set_uri_encoding (iri, global_options.locale, true);
   iri->utf8_encode = true;
 
   if (!base)
@@ -806,7 +806,7 @@ get_urls_html_fm (const char *file, const struct file_memory *fm,
   ctx.text = fm->content;
   ctx.head = NULL;
   ctx.base = NULL;
-  ctx.parent_base = url ? url : opt.base_href;
+  ctx.parent_base = url ? url : global_options.base_href;
   ctx.document_file = file;
   ctx.nofollow = false;
 
@@ -821,7 +821,7 @@ get_urls_html_fm (const char *file, const struct file_memory *fm,
      ignored by IE and Mozilla and are presumably introduced by
      writing HTML with editors that force word wrap.  */
   flags = MHT_TRIM_VALUES;
-  if (opt.strict_comments)
+  if (global_options.strict_comments)
     flags |= MHT_STRICT_COMMENTS;
 
   /* the NULL here used to be interesting_tags */
@@ -917,10 +917,10 @@ get_urls_file (const char *file)
          can't use alloca because we're in a loop.  *sigh*.  */
       url_text = strdupdelim (line_beg, line_end);
 
-      if (opt.base_href)
+      if (global_options.base_href)
         {
-          /* Merge opt.base_href with URL. */
-          char *merged = uri_merge (opt.base_href, url_text);
+          /* Merge global_options.base_href with URL. */
+          char *merged = uri_merge (global_options.base_href, url_text);
           xfree (url_text);
           url_text = merged;
         }

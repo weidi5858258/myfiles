@@ -81,7 +81,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	fp = fmemopen((void *) data, size, "r");
 	if (!fp) return 0;
 
-	opt.netrc = 1;
+	global_options.netrc = 1;
 
 	user = NULL; // get first entry
 	search_netrc("x", &user, &pw, 1, fp);

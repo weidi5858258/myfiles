@@ -70,8 +70,8 @@ init_prng (void)
   /* Seed from a file specified by the user.  This will be the file
      specified with --random-file, $RANDFILE, if set, or ~/.rnd, if it
      exists.  */
-  if (opt.random_file)
-    random_file = opt.random_file;
+  if (global_options.random_file)
+    random_file = global_options.random_file;
   else
     {
       /* Get the random file name using RAND_file_name. */
@@ -85,9 +85,9 @@ init_prng (void)
     RAND_load_file (random_file, 16384);
 
 #ifdef HAVE_RAND_EGD
-  /* Get random data from EGD if opt.egd_file was used.  */
-  if (opt.egd_file && *opt.egd_file)
-    RAND_egd (opt.egd_file);
+  /* Get random data from EGD if global_options.egd_file was used.  */
+  if (global_options.egd_file && *global_options.egd_file)
+    RAND_egd (global_options.egd_file);
 #endif
 
 #ifdef WINDOWS
@@ -208,7 +208,7 @@ ssl_init (void)
   SSLeay_add_ssl_algorithms ();
 #endif
 
-  switch (opt.secure_protocol)
+  switch (global_options.secure_protocol)
     {
 #if !defined OPENSSL_NO_SSL2 && OPENSSL_VERSION_NUMBER < 0x10100000L
     case secure_protocol_sslv2:
@@ -276,7 +276,7 @@ ssl_init (void)
 #endif
 
     default:
-      logprintf (LOG_NOTQUIET, _("OpenSSL: unimplemented 'secure-protocol' option value %d\n"), opt.secure_protocol);
+      logprintf (LOG_NOTQUIET, _("OpenSSL: unimplemented 'secure-protocol' option value %d\n"), global_options.secure_protocol);
       logprintf (LOG_NOTQUIET, _("Please report this issue to bug-wget@gnu.org\n"));
       abort ();
     }
@@ -302,16 +302,16 @@ ssl_init (void)
    *  2. We allow RSA key exchange by default (secure_protocol_auto)
    *  3. We disallow RSA key exchange if PFS was requested (secure_protocol_pfs)
    */
-  if (!opt.tls_ciphers_string)
+  if (!global_options.tls_ciphers_string)
     {
-      if (opt.secure_protocol == secure_protocol_auto)
+      if (global_options.secure_protocol == secure_protocol_auto)
 	      ciphers_string = "HIGH:!aNULL:!RC4:!MD5:!SRP:!PSK";
-      else if (opt.secure_protocol == secure_protocol_pfs)
+      else if (global_options.secure_protocol == secure_protocol_pfs)
 	      ciphers_string = "HIGH:!aNULL:!RC4:!MD5:!SRP:!PSK:!kRSA";
     }
   else
     {
-      ciphers_string = opt.tls_ciphers_string;
+      ciphers_string = global_options.tls_ciphers_string;
     }
 
   if (ciphers_string && !SSL_CTX_set_cipher_list(ssl_ctx, ciphers_string))
@@ -321,15 +321,15 @@ ssl_init (void)
     }
 
   SSL_CTX_set_default_verify_paths (ssl_ctx);
-  SSL_CTX_load_verify_locations (ssl_ctx, opt.ca_cert, opt.ca_directory);
+  SSL_CTX_load_verify_locations (ssl_ctx, global_options.ca_cert, global_options.ca_directory);
 
-  if (opt.crl_file)
+  if (global_options.crl_file)
     {
       X509_STORE *store = SSL_CTX_get_cert_store (ssl_ctx);
       X509_LOOKUP *lookup;
 
       if (!(lookup = X509_STORE_add_lookup (store, X509_LOOKUP_file ()))
-          || (!X509_load_crl_file (lookup, opt.crl_file, X509_FILETYPE_PEM)))
+          || (!X509_load_crl_file (lookup, global_options.crl_file, X509_FILETYPE_PEM)))
         goto error;
 
       X509_STORE_set_flags (store, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
@@ -342,27 +342,27 @@ ssl_init (void)
   SSL_CTX_set_verify (ssl_ctx, SSL_VERIFY_NONE, NULL);
 
   /* Use the private key from the cert file unless otherwise specified. */
-  if (opt.cert_file && !opt.private_key)
+  if (global_options.cert_file && !global_options.private_key)
     {
-      opt.private_key = xstrdup (opt.cert_file);
-      opt.private_key_type = opt.cert_type;
+      global_options.private_key = xstrdup (global_options.cert_file);
+      global_options.private_key_type = global_options.cert_type;
     }
 
   /* Use cert from private key file unless otherwise specified. */
-  if (opt.private_key && !opt.cert_file)
+  if (global_options.private_key && !global_options.cert_file)
     {
-      opt.cert_file = xstrdup (opt.private_key);
-      opt.cert_type = opt.private_key_type;
+      global_options.cert_file = xstrdup (global_options.private_key);
+      global_options.cert_type = global_options.private_key_type;
     }
 
-  if (opt.cert_file)
-    if (SSL_CTX_use_certificate_file (ssl_ctx, opt.cert_file,
-                                      key_type_to_ssl_type (opt.cert_type))
+  if (global_options.cert_file)
+    if (SSL_CTX_use_certificate_file (ssl_ctx, global_options.cert_file,
+                                      key_type_to_ssl_type (global_options.cert_type))
         != 1)
       goto error;
-  if (opt.private_key)
-    if (SSL_CTX_use_PrivateKey_file (ssl_ctx, opt.private_key,
-                                     key_type_to_ssl_type (opt.private_key_type))
+  if (global_options.private_key)
+    if (SSL_CTX_use_PrivateKey_file (ssl_ctx, global_options.private_key,
+                                     key_type_to_ssl_type (global_options.private_key_type))
         != 1)
       goto error;
 
@@ -424,7 +424,7 @@ openssl_read (int fd, char *buf, int bufsize, void *arg)
   args.bufsize = bufsize;
   args.ctx = (struct openssl_transport_context*) arg;
 
-  if (run_with_timeout(opt.read_timeout, openssl_read_callback, &args)) {
+  if (run_with_timeout(global_options.read_timeout, openssl_read_callback, &args)) {
     return -1;
   }
   return args.retval;
@@ -638,7 +638,7 @@ ssl_connect_wget (int fd, const char *hostname, int *continue_session)
     }
 
   scwt_ctx.ssl = conn;
-  if (run_with_timeout(opt.read_timeout, ssl_connect_with_timeout_callback,
+  if (run_with_timeout(global_options.read_timeout, ssl_connect_with_timeout_callback,
                        &scwt_ctx)) {
     DEBUGP (("SSL handshake timed out.\n"));
     goto timeout;
@@ -800,8 +800,8 @@ pkp_pin_peer_pubkey (X509* cert, const char *pinnedpubkey)
    the SSL handshake has been performed and that FD is connected to an
    SSL handle.
 
-   If opt.check_cert is true (the default), this returns 1 if the
-   certificate is valid, 0 otherwise.  If opt.check_cert is 0, the
+   If global_options.check_cert is true (the default), this returns 1 if the
+   certificate is valid, 0 otherwise.  If global_options.check_cert is 0, the
    function always returns 1, but should still be called because it
    warns the user about any problems with the certificate.  */
 
@@ -814,18 +814,18 @@ ssl_check_certificate (int fd, const char *host)
   long vresult;
   bool success = true;
   bool alt_name_checked = false;
-  bool pinsuccess = opt.pinnedpubkey == NULL;
+  bool pinsuccess = global_options.pinnedpubkey == NULL;
 
   /* If the user has specified --no-check-cert, we still want to warn
      him about problems with the server's certificate.  */
-  const char *severity = opt.check_cert ? _("ERROR") : _("WARNING");
+  const char *severity = global_options.check_cert ? _("ERROR") : _("WARNING");
 
   struct openssl_transport_context *ctx = fd_transport_context (fd);
   SSL *conn = ctx->conn;
   assert (conn != NULL);
 
   /* The user explicitly said to not check for the certificate.  */
-  if (opt.check_cert == CHECK_CERT_QUIET && pinsuccess)
+  if (global_options.check_cert == CHECK_CERT_QUIET && pinsuccess)
     return success;
 
   cert = SSL_get_peer_certificate (conn);
@@ -1024,7 +1024,7 @@ ssl_check_certificate (int fd, const char *host)
         }
     }
 
-    pinsuccess = pkp_pin_peer_pubkey (cert, opt.pinnedpubkey);
+    pinsuccess = pkp_pin_peer_pubkey (cert, global_options.pinnedpubkey);
     if (!pinsuccess)
       {
         logprintf (LOG_ALWAYS, _("The public key does not match pinned public key!\n"));
@@ -1038,13 +1038,13 @@ ssl_check_certificate (int fd, const char *host)
   X509_free (cert);
 
  no_cert:
-  if (opt.check_cert == CHECK_CERT_ON && !success)
+  if (global_options.check_cert == CHECK_CERT_ON && !success)
     logprintf (LOG_NOTQUIET, _("\
 To connect to %s insecurely, use `--no-check-certificate'.\n"),
                quotearg_style (escape_quoting_style, host));
 
   /* never return true if pinsuccess fails */
-  return !pinsuccess ? false : (opt.check_cert == CHECK_CERT_ON ? success : true);
+  return !pinsuccess ? false : (global_options.check_cert == CHECK_CERT_ON ? success : true);
 }
 
 /*

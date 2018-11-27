@@ -225,8 +225,8 @@ dot_create (const char *f_download _GL_UNUSED, wgint initial, wgint total)
 
   if (dp->initial_length)
     {
-      int dot_bytes = opt.dot_bytes;
-      const wgint ROW_BYTES = opt.dot_bytes * opt.dots_in_line;
+      int dot_bytes = global_options.dot_bytes;
+      const wgint ROW_BYTES = global_options.dot_bytes * global_options.dots_in_line;
 
       int remainder = dp->initial_length % ROW_BYTES;
       wgint skipped = dp->initial_length - remainder;
@@ -250,12 +250,12 @@ dot_create (const char *f_download _GL_UNUSED, wgint initial, wgint total)
                  number_to_static_string (skipped / 1024));
       for (; remainder >= dot_bytes; remainder -= dot_bytes)
         {
-          if (dp->dots % opt.dot_spacing == 0)
+          if (dp->dots % global_options.dot_spacing == 0)
             logputs (LOG_PROGRESS, " ");
           logputs (LOG_PROGRESS, ",");
           ++dp->dots;
         }
-      assert (dp->dots < opt.dots_in_line);
+      assert (dp->dots < global_options.dots_in_line);
 
       dp->accumulated = remainder;
       dp->rows = skipped / ROW_BYTES;
@@ -277,11 +277,11 @@ static const char *eta_to_human_short (int, bool);
 static void
 print_row_stats (struct dot_progress *dp, double dltime, bool last)
 {
-  const wgint ROW_BYTES = opt.dot_bytes * opt.dots_in_line;
+  const wgint ROW_BYTES = global_options.dot_bytes * global_options.dots_in_line;
 
   /* bytes_displayed is the number of bytes indicated to the user by
      dots printed so far, includes the initially "skipped" amount */
-  wgint bytes_displayed = dp->rows * ROW_BYTES + dp->dots * opt.dot_bytes;
+  wgint bytes_displayed = dp->rows * ROW_BYTES + dp->dots * global_options.dot_bytes;
 
   if (last)
     /* For last row also count bytes accumulated after last dot */
@@ -305,7 +305,7 @@ print_row_stats (struct dot_progress *dp, double dltime, bool last)
       bytes_this_row = ROW_BYTES;
     else
       /* For last row also include bytes accumulated after last dot.  */
-      bytes_this_row = dp->dots * opt.dot_bytes + dp->accumulated;
+      bytes_this_row = dp->dots * global_options.dot_bytes + dp->accumulated;
     /* Don't count the portion of the row belonging to initial_length */
     if (dp->rows == dp->initial_length / ROW_BYTES)
       bytes_this_row -= dp->initial_length % ROW_BYTES;
@@ -356,8 +356,8 @@ static void
 dot_draw (void *progress)
 {
   struct dot_progress *dp = progress;
-  int dot_bytes = opt.dot_bytes;
-  wgint ROW_BYTES = opt.dot_bytes * opt.dots_in_line;
+  int dot_bytes = global_options.dot_bytes;
+  wgint ROW_BYTES = global_options.dot_bytes * global_options.dots_in_line;
 
   log_set_flush (false);
 
@@ -367,12 +367,12 @@ dot_draw (void *progress)
         logprintf (LOG_PROGRESS, "\n%6sK",
                    number_to_static_string (dp->rows * ROW_BYTES / 1024));
 
-      if (dp->dots % opt.dot_spacing == 0)
+      if (dp->dots % global_options.dot_spacing == 0)
         logputs (LOG_PROGRESS, " ");
       logputs (LOG_PROGRESS, ".");
 
       ++dp->dots;
-      if (dp->dots >= opt.dots_in_line)
+      if (dp->dots >= global_options.dots_in_line)
         {
           ++dp->rows;
           dp->dots = 0;
@@ -390,7 +390,7 @@ static void
 dot_finish (void *progress, double dltime)
 {
   struct dot_progress *dp = progress;
-  wgint ROW_BYTES = opt.dot_bytes * opt.dots_in_line;
+  wgint ROW_BYTES = global_options.dot_bytes * global_options.dots_in_line;
   int i;
 
   log_set_flush (false);
@@ -398,9 +398,9 @@ dot_finish (void *progress, double dltime)
   if (dp->dots == 0)
     logprintf (LOG_PROGRESS, "\n%6sK",
                number_to_static_string (dp->rows * ROW_BYTES / 1024));
-  for (i = dp->dots; i < opt.dots_in_line; i++)
+  for (i = dp->dots; i < global_options.dots_in_line; i++)
     {
-      if (i % opt.dot_spacing == 0)
+      if (i % global_options.dot_spacing == 0)
         logputs (LOG_PROGRESS, " ");
       logputs (LOG_PROGRESS, " ");
     }
@@ -421,7 +421,7 @@ static void
 dot_set_params (char *params)
 {
   if (!params || !*params)
-    params = opt.dot_style;
+    params = global_options.dot_style;
 
   if (!params)
     return;
@@ -431,34 +431,34 @@ dot_set_params (char *params)
     {
       /* Default style: 1K dots, 10 dots in a cluster, 50 dots in a
          line.  */
-      opt.dot_bytes = 1024;
-      opt.dot_spacing = 10;
-      opt.dots_in_line = 50;
+      global_options.dot_bytes = 1024;
+      global_options.dot_spacing = 10;
+      global_options.dots_in_line = 50;
     }
   else if (!c_strcasecmp (params, "binary"))
     {
       /* "Binary" retrieval: 8K dots, 16 dots in a cluster, 48 dots
          (384K) in a line.  */
-      opt.dot_bytes = 8192;
-      opt.dot_spacing = 16;
-      opt.dots_in_line = 48;
+      global_options.dot_bytes = 8192;
+      global_options.dot_spacing = 16;
+      global_options.dots_in_line = 48;
     }
   else if (!c_strcasecmp (params, "mega"))
     {
       /* "Mega" retrieval, for retrieving very long files; each dot is
          64K, 8 dots in a cluster, 6 clusters (3M) in a line.  */
-      opt.dot_bytes = 65536L;
-      opt.dot_spacing = 8;
-      opt.dots_in_line = 48;
+      global_options.dot_bytes = 65536L;
+      global_options.dot_spacing = 8;
+      global_options.dots_in_line = 48;
     }
   else if (!c_strcasecmp (params, "giga"))
     {
       /* "Giga" retrieval, for retrieving very very *very* long files;
          each dot is 1M, 8 dots in a cluster, 4 clusters (32M) in a
          line.  */
-      opt.dot_bytes = (1L << 20);
-      opt.dot_spacing = 8;
-      opt.dots_in_line = 32;
+      global_options.dot_bytes = (1L << 20);
+      global_options.dot_spacing = 8;
+      global_options.dots_in_line = 32;
     }
   else
     fprintf (stderr,
@@ -964,7 +964,7 @@ create_image (struct bar_progress *bp, double dl_total_time, bool done)
 
 #define MIN_SCROLL_TEXT 5
       if ((orig_filename_cols > MAX_FILENAME_COLS + MIN_SCROLL_TEXT) &&
-          !opt.noscroll &&
+          !global_options.noscroll &&
           !done)
         {
           offset_cols = ((int) bp->tick + orig_filename_cols + MAX_FILENAME_COLS / 2)
@@ -1088,7 +1088,7 @@ create_image (struct bar_progress *bp, double dl_total_time, bool done)
       double dltime = hist->total_time + (dl_total_time - bp->recent_start);
       double dlspeed = calc_rate (dlquant, dltime, &units);
       p += sprintf (p, "  %4.*f%s", dlspeed >= 99.95 ? 0 : dlspeed >= 9.995 ? 1 : 2,
-               dlspeed,  !opt.report_bps ? short_units[units] : short_units_bits[units]);
+               dlspeed,  !global_options.report_bps ? short_units[units] : short_units_bits[units]);
     }
   else
     APPEND_LITERAL ("  --.-KB/s");
@@ -1200,11 +1200,11 @@ bar_set_params (char *params)
           if (0 == strcmp (param, "force"))
             current_impl_locked = 1;
           else if (0 == strcmp (param, "noscroll"))
-            opt.noscroll = true;
+            global_options.noscroll = true;
         } while ((param = strtok (NULL, ":")) != NULL);
     }
 
-  if (((opt.lfilename && opt.show_progress != 1)
+  if (((global_options.lfilename && global_options.show_progress != 1)
 #ifdef HAVE_ISATTY
        /* The progress bar doesn't make sense if the output is not a
           TTY -- when logging to file, it is better to review the
