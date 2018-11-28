@@ -466,8 +466,7 @@ log_vprintf_internal(struct logvprintf_state *state, const char *fmt,
 }
 
 /* Flush LOGFP.  Useful while flushing is disabled.  */
-void
-logflush(void) {
+void logflush(void) {
     FILE *fp = get_log_fp();
     FILE *warcfp = get_warc_log_fp();
     if (fp) {

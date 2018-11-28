@@ -10,5 +10,21 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <unistd.h>
+#include <string.h>
+#include <stdarg.h>
+#include <unistd.h>
+#include <assert.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <openssl/ssl.h>
+#include <openssl/x509.h>
+#include <openssl/conf.h>
+#include <openssl/rand.h>
+#include <openssl/engine.h>
+#include <openssl/err.h>
+#include <wctype.h>
+#include <wchar.h>
+#include <ctype.h>
+#include <stddef.h>
 
 #endif //MYTEST_MY_HEAD_H

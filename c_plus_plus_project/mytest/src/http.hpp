@@ -3,8 +3,242 @@
 
 #include "utils.hpp"
 
+static void init_prng(void) {
+    char namebuf[256];
+    const char *random_file;
+
+    /* Seed from a file specified by the user.  This will be the file
+       specified with --random-file, $RANDFILE, if set, or ~/.rnd, if it
+       exists.  */
+    if (global_options.random_file)
+        random_file = global_options.random_file;
+    else {
+        /* Get the random file name using RAND_file_name. */
+        namebuf[0] = '\0';
+        random_file = RAND_file_name(namebuf, sizeof(namebuf));
+    }
+
+    if (random_file && *random_file)
+        /* Seed at most 16k (apparently arbitrary value borrowed from
+           curl) from random file. */
+        RAND_load_file(random_file, 16384);
+}
+
+bool ssl_init(void) {
+    SSL_METHOD const *meth;
+    long ssl_options = 0;
+    char *ciphers_string = NULL;
+#if !defined(LIBRESSL_VERSION_NUMBER) && (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    int ssl_proto_version = 0;
+#endif
+
+#if OPENSSL_VERSION_NUMBER >= 0x00907000
+    if (ssl_true_initialized == 0) {
+#if OPENSSL_API_COMPAT < 0x10100000L
+        OPENSSL_config(NULL);
+#endif
+        ssl_true_initialized = 1;
+    }
+#endif
+
+    if (ssl_ctx)
+        /* The SSL has already been initialized. */
+        return true;
+
+    /* Init the PRNG.  If that fails, bail out.  */
+    init_prng();
+    if (RAND_status() != 1) {
+        //logprintf(LOG_NOTQUIET, _("Could not seed PRNG; consider using --random-file.\n"));
+        goto error;
+    }
+
+#if OPENSSL_VERSION_NUMBER >= 0x00907000
+    OPENSSL_load_builtin_modules();
+    ENGINE_load_builtin_engines();
+    CONF_modules_load_file(NULL, NULL,
+                           CONF_MFLAGS_DEFAULT_SECTION | CONF_MFLAGS_IGNORE_MISSING_FILE);
+#endif
+#if OPENSSL_API_COMPAT >= 0x10100000L
+    OPENSSL_init_ssl(0, NULL);
+#else
+    SSL_library_init();
+    SSL_load_error_strings();
+#endif
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+    SSLeay_add_all_algorithms ();
+    SSLeay_add_ssl_algorithms ();
+#endif
+
+    switch (global_options.secure_protocol) {
+#if !defined OPENSSL_NO_SSL2 && OPENSSL_VERSION_NUMBER < 0x10100000L
+        case secure_protocol_sslv2:
+      meth = SSLv2_client_method ();
+      break;
+#endif
+
+#ifndef OPENSSL_NO_SSL3_METHOD
+        case secure_protocol_sslv3:
+            meth = SSLv3_client_method();
+            break;
+#endif
+
+        case secure_protocol_auto:
+        case secure_protocol_pfs:
+            meth = SSLv23_client_method();
+            ssl_options |= SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3;
+            break;
+        case secure_protocol_tlsv1:
+#if !defined(LIBRESSL_VERSION_NUMBER) && (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+            meth = TLS_client_method();
+      ssl_proto_version = TLS1_VERSION;
+#else
+            meth = TLSv1_client_method();
+#endif
+            break;
+
+#if OPENSSL_VERSION_NUMBER >= 0x10001000
+        case secure_protocol_tlsv1_1:
+#if !defined(LIBRESSL_VERSION_NUMBER) && (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+            meth = TLS_client_method();
+      ssl_proto_version = TLS1_1_VERSION;
+#else
+            meth = TLSv1_1_client_method();
+#endif
+            break;
+
+        case secure_protocol_tlsv1_2:
+#if !defined(LIBRESSL_VERSION_NUMBER) && (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+            meth = TLS_client_method();
+      ssl_proto_version = TLS1_2_VERSION;
+#else
+            meth = TLSv1_2_client_method();
+#endif
+            break;
+
+        case secure_protocol_tlsv1_3:
+#if !defined(LIBRESSL_VERSION_NUMBER) && (OPENSSL_VERSION_NUMBER >= 0x10100000L) && defined TLS1_3_VERSION
+            meth = TLS_client_method();
+      ssl_proto_version = TLS1_3_VERSION;
+#else
+            logprintf(LOG_NOTQUIET, _("Your OpenSSL version is too old to support TLS 1.3\n"));
+            goto error;
+#endif
+            break;
+#else
+        case secure_protocol_tlsv1_1:
+      logprintf (LOG_NOTQUIET, _("Your OpenSSL version is too old to support TLSv1.1\n"));
+      goto error;
+
+    case secure_protocol_tlsv1_2:
+      logprintf (LOG_NOTQUIET, _("Your OpenSSL version is too old to support TLSv1.2\n"));
+      goto error;
+
+#endif
+
+        default:
+            logprintf(LOG_NOTQUIET, _("OpenSSL: unimplemented 'secure-protocol' option value %d\n"),
+                      global_options.secure_protocol);
+            logprintf(LOG_NOTQUIET, _("Please report this issue to bug-wget@gnu.org\n"));
+            abort();
+    }
+
+    /* The type cast below accommodates older OpenSSL versions (0.9.8)
+       where SSL_CTX_new() is declared without a "const" argument. */
+    ssl_ctx = SSL_CTX_new((SSL_METHOD *) meth);
+    if (!ssl_ctx)
+        goto error;
+
+    if (ssl_options)
+        SSL_CTX_set_options (ssl_ctx, ssl_options);
+
+#if !defined(LIBRESSL_VERSION_NUMBER) && (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    if (ssl_proto_version)
+    SSL_CTX_set_min_proto_version(ssl_ctx, ssl_proto_version);
+#endif
+
+    /* OpenSSL ciphers: https://www.openssl.org/docs/apps/ciphers.html
+     *
+     * Rules:
+     *  1. --ciphers overrides everything
+     *  2. We allow RSA key exchange by default (secure_protocol_auto)
+     *  3. We disallow RSA key exchange if PFS was requested (secure_protocol_pfs)
+     */
+    if (!global_options.tls_ciphers_string) {
+        if (global_options.secure_protocol == secure_protocol_auto)
+            ciphers_string = "HIGH:!aNULL:!RC4:!MD5:!SRP:!PSK";
+        else if (global_options.secure_protocol == secure_protocol_pfs)
+            ciphers_string = "HIGH:!aNULL:!RC4:!MD5:!SRP:!PSK:!kRSA";
+    } else {
+        ciphers_string = global_options.tls_ciphers_string;
+    }
+
+    if (ciphers_string && !SSL_CTX_set_cipher_list(ssl_ctx, ciphers_string)) {
+        logprintf(LOG_NOTQUIET, _("OpenSSL: Invalid cipher list: %s\n"), ciphers_string);
+        goto error;
+    }
+
+    SSL_CTX_set_default_verify_paths(ssl_ctx);
+    SSL_CTX_load_verify_locations(ssl_ctx, global_options.ca_cert, global_options.ca_directory);
+
+    if (global_options.crl_file) {
+        X509_STORE *store = SSL_CTX_get_cert_store(ssl_ctx);
+        X509_LOOKUP *lookup;
+
+        if (!(lookup = X509_STORE_add_lookup(store, X509_LOOKUP_file()))
+            || (!X509_load_crl_file(lookup, global_options.crl_file, X509_FILETYPE_PEM)))
+            goto error;
+
+        X509_STORE_set_flags(store, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
+    }
+
+    /* SSL_VERIFY_NONE instructs OpenSSL not to abort SSL_connect if the
+       certificate is invalid.  We verify the certificate separately in
+       ssl_check_certificate, which provides much better diagnostics
+       than examining the error stack after a failed SSL_connect.  */
+    SSL_CTX_set_verify(ssl_ctx, SSL_VERIFY_NONE, NULL);
+
+    /* Use the private key from the cert file unless otherwise specified. */
+    if (global_options.cert_file && !global_options.private_key) {
+        global_options.private_key = xstrdup(global_options.cert_file);
+        global_options.private_key_type = global_options.cert_type;
+    }
+
+    /* Use cert from private key file unless otherwise specified. */
+    if (global_options.private_key && !global_options.cert_file) {
+        global_options.cert_file = xstrdup(global_options.private_key);
+        global_options.cert_type = global_options.private_key_type;
+    }
+
+    if (global_options.cert_file)
+        if (SSL_CTX_use_certificate_file(ssl_ctx, global_options.cert_file,
+                                         key_type_to_ssl_type(global_options.cert_type))
+            != 1)
+            goto error;
+    if (global_options.private_key)
+        if (SSL_CTX_use_PrivateKey_file(ssl_ctx, global_options.private_key,
+                                        key_type_to_ssl_type(global_options.private_key_type))
+            != 1)
+            goto error;
+
+    /* Since fd_write unconditionally assumes partial writes (and
+       handles them correctly), allow them in OpenSSL.  */
+    SSL_CTX_set_mode (ssl_ctx, SSL_MODE_ENABLE_PARTIAL_WRITE);
+
+    /* The OpenSSL library can handle renegotiations automatically, so
+       tell it to do so.  */
+    SSL_CTX_set_mode (ssl_ctx, SSL_MODE_AUTO_RETRY);
+
+    return true;
+
+    error:
+    if (ssl_ctx)
+        SSL_CTX_free(ssl_ctx);
+    print_errors();
+    return false;
+}
+
 static uerr_t gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
-        int *dt, struct url *proxy, struct iri *iri, int count) {
+                      int *dt, struct url *proxy, struct iri *iri, int count) {
     fprintf(stdout, _("\n"));
     fprintf(stdout, _("gethttp() start\n"));
     if (u) {
@@ -133,10 +367,10 @@ static uerr_t gethttp(const struct url *u, struct url *original_url, struct http
         /* Initialize the SSL context.  After this has once been done,
            it becomes a no-op.  */
         if (!ssl_init()) {
-            scheme_disable(SCHEME_HTTPS);
+            //scheme_disable(SCHEME_HTTPS);
             logprintf(LOG_NOTQUIET, _("Disabling SSL due to encountered errors.\n"));
             retval = SSLINITFAILED;
-            goto cleanup;
+            //goto cleanup;
         }
     }
 #endif /* HAVE_SSL */

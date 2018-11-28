@@ -152,6 +152,22 @@ struct request {
     int hcount, hcapacity;
 };
 
+enum SECURE_PROTOCOL_{
+    secure_protocol_auto,
+    secure_protocol_sslv2,
+    secure_protocol_sslv3,
+    secure_protocol_tlsv1,
+    secure_protocol_tlsv1_1,
+    secure_protocol_tlsv1_2,
+    secure_protocol_tlsv1_3,
+    secure_protocol_pfs
+};            /* type of secure protocol to use. */
+
+enum keyfile_type {
+    keyfile_pem,
+    keyfile_asn1
+};                  /* type of client certificate file */
+
 struct options {
     int verbose;                  /* Are we verbose?  (First set to -1,
                                    hence not boolean.) */
@@ -323,25 +339,9 @@ struct options {
     char *bind_address;           /* What local IP address to bind to. */
 
 #ifdef HAVE_SSL
-    enum {
-        secure_protocol_auto,
-        secure_protocol_sslv2,
-        secure_protocol_sslv3,
-        secure_protocol_tlsv1,
-        secure_protocol_tlsv1_1,
-        secure_protocol_tlsv1_2,
-        secure_protocol_tlsv1_3,
-        secure_protocol_pfs
-    } secure_protocol;            /* type of secure protocol to use. */
     int check_cert;               /* whether to validate the server's cert */
     char *cert_file;              /* external client certificate to use. */
     char *private_key;            /* private key file (if not internal). */
-    enum keyfile_type {
-        keyfile_pem,
-        keyfile_asn1
-    } cert_type;                  /* type of client certificate file */
-    enum keyfile_type
-            private_key_type;           /* type of private key file */
 
     char *ca_directory;           /* CA directory (hash files) */
     char *ca_cert;                /* CA certificate file to use */
@@ -443,9 +443,43 @@ struct options {
 
     const char *homedir;          /* the homedir of the running process */
     const char *wgetrcfile;       /* the wgetrc file to be loaded */
+
+    enum SECURE_PROTOCOL_ secure_protocol;
+    enum keyfile_type cert_type;
+    enum keyfile_type private_key_type;           /* type of private key file */
 };
 
 extern struct options global_options;
+
+enum log_options {
+    LOG_VERBOSE,
+    LOG_NOTQUIET,
+    LOG_NONVERBOSE,
+    LOG_ALWAYS,
+    LOG_PROGRESS
+};
+
+#define CHECK_VERBOSE(x)                        \
+  switch (x)                                    \
+    {                                           \
+    case LOG_PROGRESS:                          \
+      if (!global_options.show_progress)                   \
+        return;                                 \
+      break;                                    \
+    case LOG_ALWAYS:                            \
+      break;                                    \
+    case LOG_NOTQUIET:                          \
+      if (global_options.quiet)                            \
+        return;                                 \
+      break;                                    \
+    case LOG_NONVERBOSE:                        \
+      if (global_options.verbose || global_options.quiet)             \
+        return;                                 \
+      break;                                    \
+    case LOG_VERBOSE:                           \
+      if (!global_options.verbose)                         \
+        return;                                 \
+    }
 
 /* Document type ("dt") flags */
 enum {
@@ -506,14 +540,6 @@ typedef struct {
 #endif
 } ip_address;
 
-enum log_options {
-    LOG_VERBOSE,
-    LOG_NOTQUIET,
-    LOG_NONVERBOSE,
-    LOG_ALWAYS,
-    LOG_PROGRESS
-};
-
 struct logvprintf_state {
     char *bigmsg;
     int expected_size;
@@ -521,7 +547,347 @@ struct logvprintf_state {
 };
 
 static const char *redirect_request_signal_name;
-static int shell_is_interactive;
+
+typedef __loff_t loff_t;
+typedef __ino_t ino_t;
+typedef __dev_t dev_t;
+typedef struct file_stat_s {
+    int access_err;               /* Error in accecssing file : Not present vs permission */
+    ino_t st_ino;                 /* st_ino from stats() on the file before open() */
+    dev_t st_dev;                 /* st_dev from stats() on the file before open() */
+} file_stats_t;
+
+/*struct stat {
+    __dev_t st_dev;        *//* Device.  *//*
+#ifndef __x86_64__
+    unsigned short int __pad1;
+#endif
+#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
+    __ino_t st_ino;        *//* File serial number.	*//*
+#else
+    __ino_t __st_ino;			*//* 32bit file serial number.	*//*
+#endif
+#ifndef __x86_64__
+    __mode_t st_mode;			*//* File mode.  *//*
+    __nlink_t st_nlink;			*//* Link count.  *//*
+#else
+    __nlink_t st_nlink;        *//* Link count.  *//*
+    __mode_t st_mode;        *//* File mode.  *//*
+#endif
+    __uid_t st_uid;        *//* User ID of the file's owner.	*//*
+    __gid_t st_gid;        *//* Group ID of the file's group.*//*
+#ifdef __x86_64__
+    int __pad0;
+#endif
+    __dev_t st_rdev;        *//* Device number, if device.  *//*
+#ifndef __x86_64__
+    unsigned short int __pad2;
+#endif
+#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
+    __off_t st_size;            *//* Size of file, in bytes.  *//*
+#else
+    __off64_t st_size;			*//* Size of file, in bytes.  *//*
+#endif
+    __blksize_t st_blksize;    *//* Optimal block size for I/O.  *//*
+#if defined __x86_64__  || !defined __USE_FILE_OFFSET64
+    __blkcnt_t st_blocks;        *//* Number 512-byte blocks allocated. *//*
+#else
+    __blkcnt64_t st_blocks;		*//* Number 512-byte blocks allocated. *//*
+#endif
+#ifdef __USE_XOPEN2K8
+    *//* Nanosecond resolution timestamps are stored in a format
+       equivalent to 'struct timespec'.  This is the type used
+       whenever possible but the Unix namespace rules do not allow the
+       identifier 'timespec' to appear in the <sys/stat.h> header.
+       Therefore we have to handle the use of this header in strictly
+       standard-compliant sources special.  *//*
+    struct timespec st_atim;        *//* Time of last access.  *//*
+    struct timespec st_mtim;        *//* Time of last modification.  *//*
+    struct timespec st_ctim;        *//* Time of last status change.  *//*
+# define st_atime st_atim.tv_sec    *//* Backward compatibility.  *//*
+# define st_mtime st_mtim.tv_sec
+# define st_ctime st_ctim.tv_sec
+#else
+    __time_t st_atime;			*//* Time of last access.  *//*
+    __syscall_ulong_t st_atimensec;	*//* Nscecs of last access.  *//*
+    __time_t st_mtime;			*//* Time of last modification.  *//*
+    __syscall_ulong_t st_mtimensec;	*//* Nsecs of last modification.  *//*
+    __time_t st_ctime;			*//* Time of last status change.  *//*
+    __syscall_ulong_t st_ctimensec;	*//* Nsecs of last status change.  *//*
+#endif
+#ifdef __x86_64__
+    __syscall_slong_t __glibc_reserved[3];
+#else
+# ifndef __USE_FILE_OFFSET64
+    unsigned long int __glibc_reserved4;
+    unsigned long int __glibc_reserved5;
+# else
+    __ino64_t st_ino;			*//* File serial number.	*//*
+# endif
+#endif
+};*/
+
+enum {
+    HAVE_GNU_CALLOC = 1
+};
+
+enum quoting_style {
+    /* Output names as-is (ls --quoting-style=literal).  Can result in
+       embedded null bytes if QA_ELIDE_NULL_BYTES is not in
+       effect.
+
+       quotearg_buffer:
+       "simple", "\0 \t\n'\"\033??/\\", "a:b"
+       quotearg:
+       "simple", " \t\n'\"\033??/\\", "a:b"
+       quotearg_colon:
+       "simple", " \t\n'\"\033??/\\", "a:b"
+    */
+            literal_quoting_style,
+
+    /* Quote names for the shell if they contain shell metacharacters
+       or would cause ambiguous output (ls --quoting-style=shell).
+       Can result in embedded null bytes if QA_ELIDE_NULL_BYTES is not
+       in effect.
+
+       quotearg_buffer:
+       "simple", "'\0 \t\n'\\''\"\033??/\\'", "a:b"
+       quotearg:
+       "simple", "' \t\n'\\''\"\033??/\\'", "a:b"
+       quotearg_colon:
+       "simple", "' \t\n'\\''\"\033??/\\'", "'a:b'"
+    */
+            shell_quoting_style,
+
+    /* Quote names for the shell, even if they would normally not
+       require quoting (ls --quoting-style=shell-always).  Can result
+       in embedded null bytes if QA_ELIDE_NULL_BYTES is not in effect.
+       Behaves like shell_quoting_style if QA_ELIDE_OUTER_QUOTES is in
+       effect.
+
+       quotearg_buffer:
+       "'simple'", "'\0 \t\n'\\''\"\033??/\\'", "'a:b'"
+       quotearg:
+       "'simple'", "' \t\n'\\''\"\033??/\\'", "'a:b'"
+       quotearg_colon:
+       "'simple'", "' \t\n'\\''\"\033??/\\'", "'a:b'"
+    */
+            shell_always_quoting_style,
+
+    /* Quote names for the shell if they contain shell metacharacters
+       or other problematic characters (ls --quoting-style=shell-escape).
+       Non printable characters are quoted using the $'...' syntax,
+       which originated in ksh93 and is widely supported by most shells,
+       and proposed for inclusion in POSIX.
+
+       quotearg_buffer:
+       "simple", "''$'\\0'' '$'\\t\\n'\\''\"'$'\\033''??/\\'", "a:b"
+       quotearg:
+       "simple", "''$'\\0'' '$'\\t\\n'\\''\"'$'\\033''??/\\'", "a:b"
+       quotearg_colon:
+       "simple", "''$'\\0'' '$'\\t\\n'\\''\"'$'\\033''??/\\'", "'a:b'"
+    */
+            shell_escape_quoting_style,
+
+    /* Quote names for the shell even if they would normally not
+       require quoting (ls --quoting-style=shell-escape).
+       Non printable characters are quoted using the $'...' syntax,
+       which originated in ksh93 and is widely supported by most shells,
+       and proposed for inclusion in POSIX.  Behaves like
+       shell_escape_quoting_style if QA_ELIDE_OUTER_QUOTES is in effect.
+
+       quotearg_buffer:
+       "simple", "''$'\\0'' '$'\\t\\n'\\''\"'$'\\033''??/\'", "a:b"
+       quotearg:
+       "simple", "''$'\\0'' '$'\\t\\n'\\''\"'$'\\033''??/\'", "a:b"
+       quotearg_colon:
+       "simple", "''$'\\0'' '$'\\t\\n'\\''\"'$'\\033''??/\'", "'a:b'"
+    */
+            shell_escape_always_quoting_style,
+
+    /* Quote names as for a C language string (ls --quoting-style=c).
+       Behaves like c_maybe_quoting_style if QA_ELIDE_OUTER_QUOTES is
+       in effect.  Split into consecutive strings if
+       QA_SPLIT_TRIGRAPHS.
+
+       quotearg_buffer:
+       "\"simple\"", "\"\\0 \\t\\n'\\\"\\033??/\\\\\"", "\"a:b\""
+       quotearg:
+       "\"simple\"", "\"\\0 \\t\\n'\\\"\\033??/\\\\\"", "\"a:b\""
+       quotearg_colon:
+       "\"simple\"", "\"\\0 \\t\\n'\\\"\\033??/\\\\\"", "\"a\\:b\""
+    */
+            c_quoting_style,
+
+    /* Like c_quoting_style except omit the surrounding double-quote
+       characters if no quoted characters are encountered.
+
+       quotearg_buffer:
+       "simple", "\"\\0 \\t\\n'\\\"\\033??/\\\\\"", "a:b"
+       quotearg:
+       "simple", "\"\\0 \\t\\n'\\\"\\033??/\\\\\"", "a:b"
+       quotearg_colon:
+       "simple", "\"\\0 \\t\\n'\\\"\\033??/\\\\\"", "\"a:b\""
+    */
+            c_maybe_quoting_style,
+
+    /* Like c_quoting_style except always omit the surrounding
+       double-quote characters and ignore QA_SPLIT_TRIGRAPHS
+       (ls --quoting-style=escape).
+
+       quotearg_buffer:
+       "simple", "\\0 \\t\\n'\"\\033??/\\\\", "a:b"
+       quotearg:
+       "simple", "\\0 \\t\\n'\"\\033??/\\\\", "a:b"
+       quotearg_colon:
+       "simple", "\\0 \\t\\n'\"\\033??/\\\\", "a\\:b"
+    */
+            escape_quoting_style,
+
+    /* Like clocale_quoting_style, but use single quotes in the
+       default C locale or if the program does not use gettext
+       (ls --quoting-style=locale).  For UTF-8 locales, quote
+       characters will use Unicode.
+
+       LC_MESSAGES=C
+       quotearg_buffer:
+       "`simple'", "`\\0 \\t\\n\\'\"\\033??/\\\\'", "`a:b'"
+       quotearg:
+       "`simple'", "`\\0 \\t\\n\\'\"\\033??/\\\\'", "`a:b'"
+       quotearg_colon:
+       "`simple'", "`\\0 \\t\\n\\'\"\\033??/\\\\'", "`a\\:b'"
+
+       LC_MESSAGES=pt_PT.utf8
+       quotearg_buffer:
+       "\302\253simple\302\273",
+       "\302\253\\0 \\t\\n'\"\\033??/\\\\\302\253", "\302\253a:b\302\273"
+       quotearg:
+       "\302\253simple\302\273",
+       "\302\253\\0 \\t\\n'\"\\033??/\\\\\302\253", "\302\253a:b\302\273"
+       quotearg_colon:
+       "\302\253simple\302\273",
+       "\302\253\\0 \\t\\n'\"\\033??/\\\\\302\253", "\302\253a\\:b\302\273"
+    */
+            locale_quoting_style,
+
+    /* Like c_quoting_style except use quotation marks appropriate for
+       the locale and ignore QA_SPLIT_TRIGRAPHS
+       (ls --quoting-style=clocale).
+
+       LC_MESSAGES=C
+       quotearg_buffer:
+       "\"simple\"", "\"\\0 \\t\\n'\\\"\\033??/\\\\\"", "\"a:b\""
+       quotearg:
+       "\"simple\"", "\"\\0 \\t\\n'\\\"\\033??/\\\\\"", "\"a:b\""
+       quotearg_colon:
+       "\"simple\"", "\"\\0 \\t\\n'\\\"\\033??/\\\\\"", "\"a\\:b\""
+
+       LC_MESSAGES=pt_PT.utf8
+       quotearg_buffer:
+       "\302\253simple\302\273",
+       "\302\253\\0 \\t\\n'\"\\033??/\\\\\302\253", "\302\253a:b\302\273"
+       quotearg:
+       "\302\253simple\302\273",
+       "\302\253\\0 \\t\\n'\"\\033??/\\\\\302\253", "\302\253a:b\302\273"
+       quotearg_colon:
+       "\302\253simple\302\273",
+       "\302\253\\0 \\t\\n'\"\\033??/\\\\\302\253", "\302\253a\\:b\302\273"
+    */
+            clocale_quoting_style,
+
+    /* Like clocale_quoting_style except use the custom quotation marks
+       set by set_custom_quoting.  If custom quotation marks are not
+       set, the behavior is undefined.
+
+       left_quote = right_quote = "'"
+       quotearg_buffer:
+       "'simple'", "'\\0 \\t\\n\\'\"\\033??/\\\\'", "'a:b'"
+       quotearg:
+       "'simple'", "'\\0 \\t\\n\\'\"\\033??/\\\\'", "'a:b'"
+       quotearg_colon:
+       "'simple'", "'\\0 \\t\\n\\'\"\\033??/\\\\'", "'a\\:b'"
+
+       left_quote = "(" and right_quote = ")"
+       quotearg_buffer:
+       "(simple)", "(\\0 \\t\\n'\"\\033??/\\\\)", "(a:b)"
+       quotearg:
+       "(simple)", "(\\0 \\t\\n'\"\\033??/\\\\)", "(a:b)"
+       quotearg_colon:
+       "(simple)", "(\\0 \\t\\n'\"\\033??/\\\\)", "(a\\:b)"
+
+       left_quote = ":" and right_quote = " "
+       quotearg_buffer:
+       ":simple ", ":\\0\\ \\t\\n'\"\\033??/\\\\ ", ":a:b "
+       quotearg:
+       ":simple ", ":\\0\\ \\t\\n'\"\\033??/\\\\ ", ":a:b "
+       quotearg_colon:
+       ":simple ", ":\\0\\ \\t\\n'\"\\033??/\\\\ ", ":a\\:b "
+
+       left_quote = "\"'" and right_quote = "'\""
+       Notice that this is treated as a single level of quotes or two
+       levels where the outer quote need not be escaped within the inner
+       quotes.  For two levels where the outer quote must be escaped
+       within the inner quotes, you must use separate quotearg
+       invocations.
+       quotearg_buffer:
+       "\"'simple'\"", "\"'\\0 \\t\\n\\'\"\\033??/\\\\'\"", "\"'a:b'\""
+       quotearg:
+       "\"'simple'\"", "\"'\\0 \\t\\n\\'\"\\033??/\\\\'\"", "\"'a:b'\""
+       quotearg_colon:
+       "\"'simple'\"", "\"'\\0 \\t\\n\\'\"\\033??/\\\\'\"", "\"'a\\:b'\""
+    */
+            custom_quoting_style
+};
+
+struct quoting_options {
+    /* Basic quoting style.  */
+    enum quoting_style style;
+
+    /* Additional flags.  Bitwise combination of enum quoting_flags.  */
+    int flags;
+
+    /* Quote the characters indicated by this bit vector even if the
+       quoting style would not normally require them to be quoted.  */
+    unsigned int quote_these_too[(UCHAR_MAX / INT_BITS) + 1];
+
+    /* The left quote for custom_quoting_style.  */
+    char const *left_quote;
+
+    /* The right quote for custom_quoting_style.  */
+    char const *right_quote;
+};
+
+enum {
+    WGET_EXIT_SUCCESS = 0,
+    WGET_EXIT_GENERIC_ERROR = 1,
+    WGET_EXIT_PARSE_ERROR = 2,
+    WGET_EXIT_IO_FAIL = 3,
+    WGET_EXIT_NETWORK_FAIL = 4,
+    WGET_EXIT_SSL_AUTH_FAIL = 5,
+    WGET_EXIT_SERVER_AUTH_FAIL = 6,
+    WGET_EXIT_PROTOCOL_ERROR = 7,
+    WGET_EXIT_SERVER_ERROR = 8,
+
+    WGET_EXIT_UNKNOWN
+};
+
+enum quoting_flags {
+    /* Always elide null bytes from styles that do not quote them,
+       even when the length of the result is available to the
+       caller.  */
+            QA_ELIDE_NULL_BYTES = 0x01,
+
+    /* Omit the surrounding quote characters if no escaped characters
+       are encountered.  Note that if no other character needs
+       escaping, then neither does the escape character.  */
+            QA_ELIDE_OUTER_QUOTES = 0x02,
+
+    /* In the c_quoting_style and c_maybe_quoting_style, split ANSI
+       trigraph sequences into concatenated strings (for example,
+       "?""?/" rather than "??/", which could be confused with
+       "\\").  */
+            QA_SPLIT_TRIGRAPHS = 0x04
+};
 
 
 #endif //MYTEST_MY_STRUCT_H
