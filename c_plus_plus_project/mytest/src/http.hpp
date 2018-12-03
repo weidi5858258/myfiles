@@ -40,7 +40,7 @@ bool ssl_init(void) {
         ssl_true_initialized = 1;
     }
 #endif
-
+    //logprintf(LOG_VERBOSE, "ssl_init() ssl_ctx: %p\n", ssl_ctx);
     if (ssl_ctx)
         /* The SSL has already been initialized. */
         return true;
@@ -51,22 +51,30 @@ bool ssl_init(void) {
         //logprintf(LOG_NOTQUIET, _("Could not seed PRNG; consider using --random-file.\n"));
         goto error;
     }
+    logprintf(LOG_VERBOSE, "ssl_init() init_prng()\n");
 
 #if OPENSSL_VERSION_NUMBER >= 0x00907000
     OPENSSL_load_builtin_modules();
+    //logprintf(LOG_VERBOSE, "ssl_init() OPENSSL_load_builtin_modules()\n");
     ENGINE_load_builtin_engines();
+    //logprintf(LOG_VERBOSE, "ssl_init() ENGINE_load_builtin_engines()\n");
     CONF_modules_load_file(NULL, NULL,
                            CONF_MFLAGS_DEFAULT_SECTION | CONF_MFLAGS_IGNORE_MISSING_FILE);
+    //logprintf(LOG_VERBOSE, "ssl_init() CONF_modules_load_file()\n");
 #endif
 #if OPENSSL_API_COMPAT >= 0x10100000L
     OPENSSL_init_ssl(0, NULL);
 #else
     SSL_library_init();
+    //logprintf(LOG_VERBOSE, "ssl_init() SSL_library_init()\n");
     SSL_load_error_strings();
+    //logprintf(LOG_VERBOSE, "ssl_init() SSL_load_error_strings()\n");
 #endif
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
     SSLeay_add_all_algorithms ();
+    //logprintf(LOG_VERBOSE, "ssl_init() SSLeay_add_all_algorithms()\n");
     SSLeay_add_ssl_algorithms ();
+    //logprintf(LOG_VERBOSE, "ssl_init() SSLeay_add_ssl_algorithms()\n");
 #endif
 
     switch (global_options.secure_protocol) {
@@ -120,7 +128,7 @@ bool ssl_init(void) {
             meth = TLS_client_method();
       ssl_proto_version = TLS1_3_VERSION;
 #else
-            logprintf(LOG_NOTQUIET, _("Your OpenSSL version is too old to support TLS 1.3\n"));
+            //logprintf(LOG_NOTQUIET, _("Your OpenSSL version is too old to support TLS 1.3\n"));
             goto error;
 #endif
             break;
@@ -136,9 +144,9 @@ bool ssl_init(void) {
 #endif
 
         default:
-            logprintf(LOG_NOTQUIET, _("OpenSSL: unimplemented 'secure-protocol' option value %d\n"),
-                      global_options.secure_protocol);
-            logprintf(LOG_NOTQUIET, _("Please report this issue to bug-wget@gnu.org\n"));
+            //logprintf(LOG_NOTQUIET, _("OpenSSL: unimplemented 'secure-protocol' option value %d\n"),
+                    //global_options.secure_protocol);
+            //logprintf(LOG_NOTQUIET, _("Please report this issue to bug-wget@gnu.org\n"));
             abort();
     }
 
@@ -173,7 +181,7 @@ bool ssl_init(void) {
     }
 
     if (ciphers_string && !SSL_CTX_set_cipher_list(ssl_ctx, ciphers_string)) {
-        logprintf(LOG_NOTQUIET, _("OpenSSL: Invalid cipher list: %s\n"), ciphers_string);
+        //logprintf(LOG_NOTQUIET, _("OpenSSL: Invalid cipher list: %s\n"), ciphers_string);
         goto error;
     }
 
@@ -364,11 +372,12 @@ static uerr_t gethttp(const struct url *u, struct url *original_url, struct http
 
 #ifdef HAVE_SSL
     if (u->scheme == SCHEME_HTTPS) {
+        fprintf(stdout, _("gethttp() ssl_init() start\n"));
         /* Initialize the SSL context.  After this has once been done,
            it becomes a no-op.  */
         if (!ssl_init()) {
             //scheme_disable(SCHEME_HTTPS);
-            logprintf(LOG_NOTQUIET, _("Disabling SSL due to encountered errors.\n"));
+            //logprintf(LOG_NOTQUIET, _("Disabling SSL due to encountered errors.\n"));
             retval = SSLINITFAILED;
             //goto cleanup;
         }
