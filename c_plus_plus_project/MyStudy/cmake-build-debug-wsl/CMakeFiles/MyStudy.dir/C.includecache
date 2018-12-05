@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/thread_pool_simple.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+pthread.h
+-
+

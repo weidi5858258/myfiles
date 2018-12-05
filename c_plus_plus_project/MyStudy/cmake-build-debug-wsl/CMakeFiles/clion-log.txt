@@ -1,0 +1,65 @@
+/usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-wsl
+
+Cannot get compiler information:
+	Compiler exited with error code 1: \usr\bin\c++ -xc++ -I/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include -I/root/mydev/tools/ffmpeg/include -I/usr/include/SDL2 -I/usr/local/include/lame -g -std=c++11 -std=gnu++11 -fpch-preprocess -v -dD -E
+	Using built-in specs.
+	COLLECT_GCC=/usr/bin/c++
+	OFFLOAD_TARGET_NAMES=nvptx-none
+	OFFLOAD_TARGET_DEFAULT=1
+	Target: x86_64-linux-gnu
+	Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.3.0-27ubuntu1~18.04' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+	Thread model: posix
+	gcc version 7.3.0 (Ubuntu 7.3.0-27ubuntu1~18.04) 
+	COLLECT_GCC_OPTIONS='-I' '/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include' '-I' '/root/mydev/tools/ffmpeg/include' '-I' '/usr/include/SDL2' '-I' '/usr/local/include/lame' '-g' '-std=c++11' '-std=gnu++11' '-fpch-preprocess' '-v' '-dD' '-E' '-D' '___CIDR_DEFINITIONS_END' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+	 /usr/lib/gcc/x86_64-linux-gnu/7/cc1plus -E -quiet -v -I /mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include -I /root/mydev/tools/ffmpeg/include -I /usr/include/SDL2 -I /usr/local/include/lame -imultiarch x86_64-linux-gnu -D_GNU_SOURCE -D ___CIDR_DEFINITIONS_END /mnt/c/Users/weidi5858258/AppData/Local/Temp/compiler-file8912898154465297263 -mtune=generic -march=x86-64 -std=c++11 -std=gnu++11 -fpch-preprocess -g -fworking-directory -fstack-protector-strong -Wformat -Wformat-security -dD
+	ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/7"
+	ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+	ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/7/../../../../x86_64-linux-gnu/include"
+	cc1plus: error: /root/mydev/tools/ffmpeg/include: Permission denied
+	ignoring nonexistent directory "/usr/include/SDL2"
+	ignoring nonexistent directory "/usr/local/include/lame"
+	#include "..." search starts here:
+	#include <...> search starts here:
+	 /mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include
+	 /usr/include/c++/7
+	 /usr/include/x86_64-linux-gnu/c++/7
+	 /usr/include/c++/7/backward
+	 /usr/lib/gcc/x86_64-linux-gnu/7/include
+	 /usr/local/include
+	 /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed
+	 /usr/include/x86_64-linux-gnu
+	 /usr/include
+	End of search list.
+	
+	
+	Compiler exited with error code 1: \usr\bin\cc -xc -I/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include -I/root/mydev/tools/ffmpeg/include -I/usr/include/SDL2 -I/usr/local/include/lame -g -std=c++11 -fpch-preprocess -v -dD -E
+	Using built-in specs.
+	COLLECT_GCC=/usr/bin/cc
+	OFFLOAD_TARGET_NAMES=nvptx-none
+	OFFLOAD_TARGET_DEFAULT=1
+	Target: x86_64-linux-gnu
+	Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.3.0-27ubuntu1~18.04' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+	Thread model: posix
+	gcc version 7.3.0 (Ubuntu 7.3.0-27ubuntu1~18.04) 
+	COLLECT_GCC_OPTIONS='-I' '/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include' '-I' '/root/mydev/tools/ffmpeg/include' '-I' '/usr/include/SDL2' '-I' '/usr/local/include/lame' '-g' '-std=c++11' '-fpch-preprocess' '-v' '-dD' '-E' '-D' '___CIDR_DEFINITIONS_END' '-mtune=generic' '-march=x86-64'
+	 /usr/lib/gcc/x86_64-linux-gnu/7/cc1 -E -quiet -v -I /mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include -I /root/mydev/tools/ffmpeg/include -I /usr/include/SDL2 -I /usr/local/include/lame -imultiarch x86_64-linux-gnu -D ___CIDR_DEFINITIONS_END /mnt/c/Users/weidi5858258/AppData/Local/Temp/compiler-file2848313971815294512 -mtune=generic -march=x86-64 -std=c++11 -fpch-preprocess -g -fworking-directory -fstack-protector-strong -Wformat -Wformat-security -dD
+	cc1: warning: command line option '-std=c++11' is valid for C++/ObjC++ but not for C
+	ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+	ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/7/../../../../x86_64-linux-gnu/include"
+	cc1: error: /root/mydev/tools/ffmpeg/include: Permission denied
+	ignoring nonexistent directory "/usr/include/SDL2"
+	ignoring nonexistent directory "/usr/local/include/lame"
+	#include "..." search starts here:
+	#include <...> search starts here:
+	 /mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include
+	 /usr/lib/gcc/x86_64-linux-gnu/7/include
+	 /usr/local/include
+	 /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed
+	 /usr/include/x86_64-linux-gnu
+	 /usr/include
+	End of search list.
+	
+	

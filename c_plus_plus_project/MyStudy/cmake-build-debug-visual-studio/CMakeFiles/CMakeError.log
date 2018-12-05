@@ -1,0 +1,1032 @@
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°-Aa¡±
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°-Aa¡±
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Checking whether the C compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Checking whether the C compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--c++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--ec++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--c++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--ec++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Checking whether the CXX compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Checking whether the CXX compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Determining if the C compiler works failed with the following output:
+Change Dir: D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-visual-studio/CMakeFiles/CMakeTmp
+
+Run Build Command:"nmake" "/nologo" "cmTC_484b9\fast"
+NMAKE : fatal error U1073: ä¸çŸ¥é“å¦‚ä½•ç”Ÿæˆâ€œcmTC_484b9\fastâ€
+Stop.
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°-Aa¡±
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°-Aa¡±
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Checking whether the C compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Checking whether the C compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--c++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--ec++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--c++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--ec++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Checking whether the CXX compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Checking whether the CXX compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Determining if the C compiler works failed with the following output:
+Change Dir: D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-visual-studio/CMakeFiles/CMakeTmp
+
+Run Build Command:"nmake" "/nologo" "cmTC_3e390\fast"
+NMAKE : fatal error U1073: ä¸çŸ¥é“å¦‚ä½•ç”Ÿæˆâ€œcmTC_3e390\fastâ€
+Stop.
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°-Aa¡±
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°-Aa¡±
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Checking whether the C compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Checking whether the C compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--c++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--ec++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--c++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--ec++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Checking whether the CXX compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Checking whether the CXX compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Determining if the C compiler works failed with the following output:
+Change Dir: D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-visual-studio/CMakeFiles/CMakeTmp
+
+Run Build Command:"nmake" "/nologo" "cmTC_50a97\fast"
+NMAKE : fatal error U1073: ä¸çŸ¥é“å¦‚ä½•ç”Ÿæˆâ€œcmTC_50a97\fastâ€
+Stop.
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°-Aa¡±
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°-Aa¡±
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCCompilerId.c
+c1: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCCompilerId.c¡±: No such file or directory
+
+
+Checking whether the C compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Checking whether the C compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--c++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--ec++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--c++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+2
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+cl: ÃüÁîĞĞ warning D9002 :ºöÂÔÎ´ÖªÑ¡Ïî¡°--ec++¡±
+CMakeCXXCompilerId.cpp
+c1xx: fatal error C1083: ÎŞ·¨´ò¿ªÔ´ÎÄ¼ş: ¡°CMakeCXXCompilerId.cpp¡±: No such file or directory
+
+
+Checking whether the CXX compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Checking whether the CXX compiler is IAR using "" did not match "IAR .+ Compiler":
+ÓÃÓÚ x86 µÄ Microsoft (R) C/C++ ÓÅ»¯±àÒëÆ÷ 19.15.26732.1 °æ
+°æÈ¨ËùÓĞ(C) Microsoft Corporation¡£±£ÁôËùÓĞÈ¨Àû¡£
+
+ÓÃ·¨: cl [ Ñ¡Ïî... ] ÎÄ¼şÃû... [ /link Á´½ÓÑ¡Ïî... ]
+Determining if the C compiler works failed with the following output:
+Change Dir: D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-visual-studio/CMakeFiles/CMakeTmp
+
+Run Build Command:"nmake" "/nologo" "cmTC_8031b\fast"
+NMAKE : fatal error U1073: ä¸çŸ¥é“å¦‚ä½•ç”Ÿæˆâ€œcmTC_8031b\fastâ€
+Stop.
+
+
