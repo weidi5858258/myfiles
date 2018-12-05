@@ -3,6 +3,10 @@
 # cd /etc/apt
 # /etc/hosts
 
+# ntfsfix /dev/sda4
+# display gnome-terminal &
+# unity-control-center
+
 # sudo mv /var/lib/dpkg/info/ /var/lib/dpkg/info_old/
 # sudo mkdir /var/lib/dpkg/info/
 
@@ -268,10 +272,6 @@ echo "y" | sudo apt-get install zlib1g-dev:i386
 echo "y" | sudo apt-get install libx11-dev:i386
 echo "y" | sudo apt-get install libncurses5-dev:i386
 echo "y" | sudo apt-get install libreadline6-dev:i386
-
-# ntfsfix /dev/sda4
-# display gnome-terminal
-# unity-control-center
 
 # echo "y" | sudo add-apt-repository ppa:openjdk-r/ppa
 # echo "y" | sudo apt-get update

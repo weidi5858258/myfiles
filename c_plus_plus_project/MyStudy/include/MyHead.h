@@ -28,7 +28,7 @@
 #include <unordered_set>
 #include <pthread.h>
 #include <time.h>
-#include <netdb.h>
+
 
 
 
@@ -54,17 +54,6 @@
 #include <queue>
 ////////////////////////////////STL end////////////////////////////////
 
-////////////////////////////////boost start////////////////////////////////
-#include <boost/bind.hpp>
-#include <boost/thread.hpp>
-#include <boost/timer.hpp>
-#include <boost/random.hpp>
-#include <boost/range.hpp>
-#include <boost/limits.hpp>
-#include <boost/iterator.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
-////////////////////////////////boost end////////////////////////////////
 
 //windows头文件
 #ifdef WIN32
@@ -77,6 +66,19 @@
 //ubuntu头文件
 #else
 
+////////////////////////////////boost start////////////////////////////////
+#include <boost/bind.hpp>
+#include <boost/thread.hpp>
+#include <boost/timer.hpp>
+#include <boost/random.hpp>
+#include <boost/range.hpp>
+#include <boost/limits.hpp>
+#include <boost/iterator.hpp>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
+////////////////////////////////boost end////////////////////////////////
+
+#include <netdb.h>
 #include <sys/mman.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
@@ -100,10 +102,9 @@ using namespace std;
 ////////////////////////////////end////////////////////////////////
 
 #ifdef WIN32
-#endif
-#ifdef linux
-#endif
-
-#ifdef WIN32
 #else
 #endif
+
+//if (WIN32)
+//#do something
+//endif (WIN32)
