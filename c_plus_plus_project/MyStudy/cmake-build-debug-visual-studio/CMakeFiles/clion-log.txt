@@ -1,31 +1,4 @@
-"C:\Program Files\JetBrains\CLion 2018.3\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - NMake Makefiles" D:\workspace_github\myfiles\c_plus_plus_project\MyStudy
--- The C compiler identification is unknown
--- The CXX compiler identification is unknown
--- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe
--- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe -- broken
-CMake Error at C:/Program Files/JetBrains/CLion 2018.3/bin/cmake/win/share/cmake-3.12/Modules/CMakeTestCCompiler.cmake:52 (message):
-  The C compiler
 
-    "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.15.26726/bin/Hostx86/x86/cl.exe"
-
-  is not able to compile a simple test program.
-
-  It fails with the following output:
-
-    Change Dir: D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-visual-studio/CMakeFiles/CMakeTmp
-    
-    Run Build Command:"nmake" "/nologo" "cmTC_8031b\fast"
-    NMAKE : fatal error U1073: 涓嶇煡閬撳浣曠敓鎴愨�渃mTC_8031b\fast鈥�
-    Stop.
-    
-
-  
-
-  CMake will not be able to correctly generate this project.
-Call Stack (most recent call first):
-  CMakeLists.txt:2 (project)
-
-
--- Configuring incomplete, errors occurred!
-See also "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-visual-studio/CMakeFiles/CMakeOutput.log".
-See also "D:/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-visual-studio/CMakeFiles/CMakeError.log".
+Cannot get compiler information:
+	SSH_MSG_DISCONNECT: 2 Too many authentication failures 
+	SSH_MSG_DISCONNECT: 2 Too many authentication failures 

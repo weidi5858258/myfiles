@@ -35,9 +35,6 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add directory="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include"/>
-					<Add directory="/root/mydev/tools/ffmpeg/include"/>
-					<Add directory="/usr/include/SDL2"/>
-					<Add directory="/usr/local/include/lame"/>
 					<Add directory="/usr/include/c++/7"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>
@@ -62,9 +59,6 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add directory="/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/include"/>
-					<Add directory="/root/mydev/tools/ffmpeg/include"/>
-					<Add directory="/usr/include/SDL2"/>
-					<Add directory="/usr/local/include/lame"/>
 					<Add directory="/usr/include/c++/7"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>

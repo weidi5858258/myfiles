@@ -86,7 +86,21 @@ n	不打印。相应的参数必须是指向带符号整形的指针，到目前
 
 
 
-
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+SHA256:cNjKthrfKoZcezU/vdermNGD0FEnTjECB0VuyGMFsgs.
+Please contact your system administrator.
+Add correct host key in /root/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /root/.ssh/known_hosts:1
+  remove with:
+  ssh-keygen -f "/root/.ssh/known_hosts" -R "[localhost]:2222"
+ECDSA host key for [localhost]:2222 has changed and you have requested strict checking.
+Host key verification failed.
 */
 
 /***

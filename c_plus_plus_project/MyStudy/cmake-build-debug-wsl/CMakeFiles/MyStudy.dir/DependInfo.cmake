@@ -12,9 +12,6 @@ set(CMAKE_C_COMPILER_ID "GNU")
 # The include file search paths:
 set(CMAKE_C_TARGET_INCLUDE_PATH
   "../include"
-  "/root/mydev/tools/ffmpeg/include"
-  "/usr/include/SDL2"
-  "/usr/local/include/lame"
   )
 set(CMAKE_DEPENDS_CHECK_CXX
   "/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/main.cpp" "/mnt/d/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-wsl/CMakeFiles/MyStudy.dir/main.cpp.o"
@@ -32,9 +29,6 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../include"
-  "/root/mydev/tools/ffmpeg/include"
-  "/usr/include/SDL2"
-  "/usr/local/include/lame"
   )
 
 # Targets to which this target links.

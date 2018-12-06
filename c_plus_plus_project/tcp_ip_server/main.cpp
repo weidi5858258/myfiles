@@ -35,8 +35,6 @@ int main(int argc, char *argv[]) {
 
 int test() {
 
-
-
 }
 // http://pic104.nipic.com/file/20160715/6171480_185807154956_2.jpg
 
