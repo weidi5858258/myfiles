@@ -375,12 +375,12 @@ static uerr_t gethttp(const struct url *u, struct url *original_url, struct http
         fprintf(stdout, _("gethttp() ssl_init() start\n"));
         /* Initialize the SSL context.  After this has once been done,
            it becomes a no-op.  */
-        if (!ssl_init()) {
+        /*if (!ssl_init()) {
             //scheme_disable(SCHEME_HTTPS);
             //logprintf(LOG_NOTQUIET, _("Disabling SSL due to encountered errors.\n"));
             retval = SSLINITFAILED;
             //goto cleanup;
-        }
+        }*/
     }
 #endif /* HAVE_SSL */
 

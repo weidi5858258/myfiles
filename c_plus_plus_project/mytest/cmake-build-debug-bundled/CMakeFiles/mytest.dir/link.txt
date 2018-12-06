@@ -1,0 +1,1 @@
+/usr/bin/c++  -std=c++11 -g   CMakeFiles/mytest.dir/main.cpp.o  -o mytest -lssl -lcrypto -lboost_system -lboost_filesystem -lboost_thread 

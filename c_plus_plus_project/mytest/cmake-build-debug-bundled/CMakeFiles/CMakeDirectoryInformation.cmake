@@ -3,7 +3,7 @@
 
 # Relative path conversion top directories.
 set(CMAKE_RELATIVE_PATH_TOP_SOURCE "/root/mydev/workspace_github/myfiles/c_plus_plus_project/mytest")
-set(CMAKE_RELATIVE_PATH_TOP_BINARY "/root/mydev/workspace_github/myfiles/c_plus_plus_project/mytest/cmake-build-debug")
+set(CMAKE_RELATIVE_PATH_TOP_BINARY "/root/mydev/workspace_github/myfiles/c_plus_plus_project/mytest/cmake-build-debug-bundled")
 
 # Force unix paths in dependencies.
 set(CMAKE_FORCE_UNIX_PATHS 1)
