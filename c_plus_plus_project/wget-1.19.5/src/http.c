@@ -152,18 +152,21 @@ static struct cookie_jar *wget_cookie_jar;
 #define HTTP_STATUS_GATEWAY_TIMEOUT       504
 
 enum rp {
-    rel_none, rel_name, rel_value, rel_both
+    rel_none,
+    rel_name,
+    rel_value,
+    rel_both
 };
 
 struct request {
     const char *method;
     char *arg;
+    int hcount, hcapacity;
 
     struct request_header {
         char *name, *value;
         enum rp release_policy;
     } *headers;
-    int hcount, hcapacity;
 };
 
 
@@ -1737,7 +1740,8 @@ initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct ur
     fprintf(stdout, _("initialize_request() *body_data_size: %ld\n"), *body_data_size);
 
     bool head_only = !!(*dt & HEAD_ONLY);
-    struct request *req;
+    fprintf(stdout, _("initialize_request() head_only: %d\n"), head_only);
+    struct request *local_request;
 
     /* Prepare the request to send. */
     {
@@ -1761,16 +1765,16 @@ initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct ur
             meth_arg = xstrdup(u->url);
         else
             meth_arg = url_full_path(u);
-        req = request_new(meth, meth_arg);
+        local_request = request_new(meth, meth_arg);
     }
 
-    request_set_header(req, "Referer", (char *) hs->referer, rel_none);
+    request_set_header(local_request, "Referer", (char *) hs->referer, rel_none);
     if (*dt & SEND_NOCACHE) {
         /* Cache-Control MUST be obeyed by all HTTP/1.1 caching mechanisms...  */
-        request_set_header(req, "Cache-Control", "no-cache", rel_none);
+        request_set_header(local_request, "Cache-Control", "no-cache", rel_none);
 
         /* ... but some HTTP/1.0 caches doesn't implement Cache-Control.  */
-        request_set_header(req, "Pragma", "no-cache", rel_none);
+        request_set_header(local_request, "Pragma", "no-cache", rel_none);
     }
     if (*dt & IF_MODIFIED_SINCE) {
         char strtime[32];
@@ -1782,21 +1786,21 @@ initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct ur
                                    "time.\n"));
             strcpy(strtime, "Thu, 01 Jan 1970 00:00:00 GMT");
         }
-        request_set_header(req, "If-Modified-Since", xstrdup(strtime), rel_value);
+        request_set_header(local_request, "If-Modified-Since", xstrdup(strtime), rel_value);
     }
     if (hs->restval)
-        request_set_header(req, "Range",
+        request_set_header(local_request, "Range",
                            aprintf("bytes=%s-",
                                    number_to_static_string(hs->restval)),
                            rel_value);
-    SET_USER_AGENT (req);
-    request_set_header(req, "Accept", "*/*", rel_none);
+    SET_USER_AGENT (local_request);
+    request_set_header(local_request, "Accept", "*/*", rel_none);
 #ifdef HAVE_LIBZ
     if (global_options.compression != compression_none)
-        request_set_header(req, "Accept-Encoding", "gzip", rel_none);
+        request_set_header(local_request, "Accept-Encoding", "gzip", rel_none);
     else
 #endif
-        request_set_header(req, "Accept-Encoding", "identity", rel_none);
+        request_set_header(local_request, "Accept-Encoding", "identity", rel_none);
 
     /* Find the username with priority */
     if (u->user)
@@ -1832,7 +1836,7 @@ initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct ur
     if (*user && *passwd && (!u->user || global_options.auth_without_challenge)) {
         /* If this is a host for which we've already received a Basic
          * challenge, we'll go ahead and send Basic authentication creds. */
-        *basic_auth_finished = maybe_send_basic_creds(u->host, *user, *passwd, req);
+        *basic_auth_finished = maybe_send_basic_creds(u->host, *user, *passwd, local_request);
     }
 
     /* Generate the Host header, HOST:PORT.  Take into account that:
@@ -1852,23 +1856,23 @@ initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct ur
         };
         int add_port = u->port != scheme_default_port(u->scheme);
         int add_squares = strchr(u->host, ':') != NULL;
-        request_set_header(req, "Host",
+        request_set_header(local_request, "Host",
                            aprintf(hfmt[add_port][add_squares], u->host, u->port),
                            rel_value);
     }
 
     if (inhibit_keep_alive)
-        request_set_header(req, "Connection", "Close", rel_none);
+        request_set_header(local_request, "Connection", "Close", rel_none);
     else {
-        request_set_header(req, "Connection", "Keep-Alive", rel_none);
+        request_set_header(local_request, "Connection", "Keep-Alive", rel_none);
         if (proxy)
-            request_set_header(req, "Proxy-Connection", "Keep-Alive", rel_none);
+            request_set_header(local_request, "Proxy-Connection", "Keep-Alive", rel_none);
     }
 
     if (global_options.method) {
 
         if (global_options.body_data || global_options.body_file) {
-            request_set_header(req, "Content-Type",
+            request_set_header(local_request, "Content-Type",
                                "application/x-www-form-urlencoded", rel_none);
 
             if (global_options.body_data)
@@ -1878,22 +1882,22 @@ initialize_request(const struct url *u, struct http_stat *hs, int *dt, struct ur
                 if (*body_data_size == -1) {
                     logprintf(LOG_NOTQUIET, _("BODY data file %s missing: %s\n"),
                               quote(global_options.body_file), strerror(errno));
-                    request_free(&req);
+                    request_free(&local_request);
                     *ret = FILEBADFILE;
                     return NULL;
                 }
             }
             fprintf(stdout, _("initialize_request() *body_data_size before: %ld\n"), *body_data_size);
-            request_set_header(req, "Content-Length",
+            request_set_header(local_request, "Content-Length",
                                xstrdup(number_to_static_string(*body_data_size)),
                                rel_value);
             fprintf(stdout, _("initialize_request() *body_data_size after: %ld\n"), *body_data_size);
         } else if (c_strcasecmp(global_options.method, "post") == 0
                    || c_strcasecmp(global_options.method, "put") == 0
                    || c_strcasecmp(global_options.method, "patch") == 0)
-            request_set_header(req, "Content-Length", "0", rel_none);
+            request_set_header(local_request, "Content-Length", "0", rel_none);
     }
-    return req;
+    return local_request;
 }
 
 static void
@@ -2978,8 +2982,6 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
     // global_options.debug = 1;
 
-    struct request *local_request = NULL;
-
     char *type = NULL;
     char *user, *passwd;
     char *proxyauth;
@@ -3066,12 +3068,14 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
     if (u->scheme == SCHEME_HTTPS) {
         /* Initialize the SSL context.  After this has once been done,
            it becomes a no-op.  */
+        fprintf(stdout, _("gethttp() ssl_init() start\n"));
         if (!ssl_init()) {
             scheme_disable(SCHEME_HTTPS);
             logprintf(LOG_NOTQUIET, _("Disabling SSL due to encountered errors.\n"));
             retval = SSLINITFAILED;
             goto cleanup;
         }
+        fprintf(stdout, _("gethttp() ssl_init() end\n"));
     }
 #endif /* HAVE_SSL */
 
@@ -3089,6 +3093,7 @@ gethttp(const struct url *u, struct url *original_url, struct http_stat *hstat,
 
     conn = u;
 
+    struct request *local_request = NULL;
     {
         uerr_t ret;
         local_request = initialize_request(u, hstat, dt, proxy, inhibit_keep_alive,
