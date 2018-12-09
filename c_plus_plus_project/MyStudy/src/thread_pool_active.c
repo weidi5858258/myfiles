@@ -36,7 +36,7 @@ typedef struct NTHREADPOOL {
 	struct NTHREADPOOL *back;
 
 	pthread_mutex_t mtx;
-	
+
 	pthread_cond_t busycv;
 	pthread_cond_t workcv;
 	pthread_cond_t waitcv;
@@ -46,7 +46,7 @@ typedef struct NTHREADPOOL {
 	nJob *tail;
 
 	pthread_attr_t attr;
-	
+
 	int flags;
 	unsigned int linger;
 
@@ -54,7 +54,7 @@ typedef struct NTHREADPOOL {
 	int maximum;
 	int nthreads;
 	int idle;
-	
+
 } nThreadPool;
 
 static void* ntyWorkerThread(void *arg);
@@ -93,12 +93,12 @@ static void ntyWorkerCleanup(nThreadPool * pool) {
 		pool->nthreads ++;
 	}
 	pthread_mutex_unlock(&pool->mtx);
-	
+
 }
 
 
 static void ntyNotifyWaiters(nThreadPool *pool) {
-	
+
 	if (pool->head == NULL && pool->active == NULL) {
 		pool->flags &= ~NTY_POOL_WAIT;
 		pthread_cond_broadcast(&pool->waitcv);
@@ -107,11 +107,11 @@ static void ntyNotifyWaiters(nThreadPool *pool) {
 
 
 static void ntyJobCleanup(nThreadPool *pool) {
-	
+
 	pthread_t tid = pthread_self();
 	nWorker *activep;
 	nWorker **activepp;
-	
+
 	pthread_mutex_lock(&pool->mtx);
 
 	for (activepp = &pool->active;(activep = *activepp) != NULL;activepp = &activep->active_next) {
@@ -120,14 +120,14 @@ static void ntyJobCleanup(nThreadPool *pool) {
 	}
 
 	if (pool->flags & NTY_POOL_WAIT) ntyNotifyWaiters(pool);
-	
+
 }
 
 static void* ntyWorkerThread(void *arg) {
 
 	nThreadPool *pool = (nThreadPool*)arg;
 	nWorker active;
-	
+
 	int timeout;
 	struct timespec ts;
 	JOB_CALLBACK func;
@@ -135,76 +135,76 @@ static void* ntyWorkerThread(void *arg) {
 	pthread_mutex_lock(&pool->mtx);
 	pthread_cleanup_push(ntyWorkerCleanup, pool);
 
-	active.active_tid = pthread_self();
-	
-	while (1) {
+			active.active_tid = pthread_self();
 
-		pthread_sigmask(SIG_SETMASK, &fillset, NULL);
-		pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
-		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+			while (1) {
 
-		timeout = 0;
-		pool->idle ++;
+				pthread_sigmask(SIG_SETMASK, &fillset, NULL);
+				pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
+				pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 
-		if (pool->flags & NTY_POOL_WAIT) {
-			ntyNotifyWaiters(pool);
-		}
+				timeout = 0;
+				pool->idle ++;
 
-		while (pool->head == NULL && !(pool->flags & NTY_POOL_DESTROY)) {
+				if (pool->flags & NTY_POOL_WAIT) {
+					ntyNotifyWaiters(pool);
+				}
 
-			if (pool->nthreads <= pool->minimum) {
-				
-				pthread_cond_wait(&pool->workcv, &pool->mtx);
-				
-			} else {
-			
-				clock_gettime(CLOCK_REALTIME, &ts);
-				ts.tv_sec += pool->linger;
+				while (pool->head == NULL && !(pool->flags & NTY_POOL_DESTROY)) {
 
-				if (pool->linger == 0 || pthread_cond_timedwait(&pool->workcv, &pool->mtx, &ts) == ETIMEDOUT) {
-					timeout = 1;
+					if (pool->nthreads <= pool->minimum) {
+
+						pthread_cond_wait(&pool->workcv, &pool->mtx);
+
+					} else {
+
+						clock_gettime(CLOCK_REALTIME, &ts);
+						ts.tv_sec += pool->linger;
+
+						if (pool->linger == 0 || pthread_cond_timedwait(&pool->workcv, &pool->mtx, &ts) == ETIMEDOUT) {
+							timeout = 1;
+							break;
+						}
+					}
+				}
+
+				pool->idle --;
+				if (pool->flags & NTY_POOL_DESTROY) break;
+
+				nJob *job = pool->head;
+				if (job != NULL) {
+					timeout = 0;
+					func = job->func;
+
+					void *job_arg = job->arg;
+					pool->head = job->next;
+
+					if (job == pool->tail) {
+						pool->tail == NULL;
+					}
+					active.active_next = pool->active;
+					pool->active = &active;
+
+					pthread_mutex_unlock(&pool->mtx);
+
+					pthread_cleanup_push(ntyJobCleanup, pool);
+
+							free(job);
+							func(job_arg);
+
+					pthread_cleanup_pop(1);
+				}
+
+				if (timeout && (pool->nthreads > pool->minimum)) {
 					break;
 				}
+
 			}
-		}
-
-		pool->idle --;
-		if (pool->flags & NTY_POOL_DESTROY) break;
-
-		nJob *job = pool->head;		
-		if (job != NULL) {
-			timeout = 0;
-			func = job->func;
-			
-			void *job_arg = job->arg;
-			pool->head = job->next;
-
-			if (job == pool->tail) {
-				pool->tail == NULL;
-			}
-			active.active_next = pool->active;
-			pool->active = &active;
-
-			pthread_mutex_unlock(&pool->mtx);
-
-			pthread_cleanup_push(ntyJobCleanup, pool);
-
-			free(job);
-			func(job_arg);
-			
-			pthread_cleanup_pop(1);
-		}
-
-		if (timeout && (pool->nthreads > pool->minimum)) {
-			break;
-		}
-
-	}
 
 	pthread_cleanup_pop(1);
-	
+
 	return NULL;
-	
+
 }
 
 
@@ -216,7 +216,7 @@ static void ntyCloneAttributes(pthread_attr_t *new_attr, pthread_attr_t *old_att
 	int value;
 
 	pthread_attr_init(new_attr);
-	
+
 	if (old_attr != NULL) {
 		pthread_attr_getstack(old_attr, &addr, &size);
 		pthread_attr_setstack(new_attr, NULL, size);
@@ -238,7 +238,7 @@ static void ntyCloneAttributes(pthread_attr_t *new_attr, pthread_attr_t *old_att
 	}
 
 	pthread_attr_setdetachstate(new_attr, PTHREAD_CREATE_DETACHED);
-	
+
 }
 
 
@@ -256,7 +256,7 @@ nThreadPool *ntyThreadPoolCreate(int min_threads, int max_threads, int linger, p
 		errno = ENOMEM;
 		return NULL;
 	}
-	
+
 	pthread_mutex_init(&pool->mtx, NULL);
 
 	pthread_cond_init(&pool->busycv, NULL);
@@ -276,27 +276,27 @@ nThreadPool *ntyThreadPoolCreate(int min_threads, int max_threads, int linger, p
 	ntyCloneAttributes(&pool->attr, attr);
 
 	pthread_mutex_lock(&nty_pool_lock);
-	
+
 	if (thread_pool == NULL) {
 
 		pool->forw = pool;
 		pool->back = pool;
-		
+
 		thread_pool = pool;
-		
+
 	} else {
 
 		thread_pool->back->forw = pool;
 		pool->forw = thread_pool;
 		pool->back = thread_pool->back;
 		thread_pool->back = pool;
-		
+
 	}
 
 	pthread_mutex_unlock(&nty_pool_lock);
 
 	return pool;
-	
+
 }
 
 
@@ -339,11 +339,11 @@ void nThreadPoolWait(nThreadPool *pool) {
 
 	pthread_cleanup_push(pthread_mutex_unlock, &pool->mtx);
 
-	while (pool->head != NULL || pool->active != NULL) {
-		pool->flags |= NTY_POOL_WAIT;
-		pthread_cond_wait(&pool->waitcv, &pool->mtx);
-	}
-	
+			while (pool->head != NULL || pool->active != NULL) {
+				pool->flags |= NTY_POOL_WAIT;
+				pthread_cond_wait(&pool->waitcv, &pool->mtx);
+			}
+
 	pthread_cleanup_pop(1);
 }
 
@@ -356,16 +356,16 @@ void nThreadPoolDestroy(nThreadPool *pool) {
 	pthread_mutex_lock(&pool->mtx);
 	pthread_cleanup_push(pthread_mutex_unlock, &pool->mtx);
 
-	pool->flags |= NTY_POOL_DESTROY;
-	pthread_cond_broadcast(&pool->workcv);
+			pool->flags |= NTY_POOL_DESTROY;
+			pthread_cond_broadcast(&pool->workcv);
 
-	for (activep = pool->active;activep != NULL;activep = activep->active_next) {
-		pthread_cancel(activep->active_tid);
-	}
+			for (activep = pool->active;activep != NULL;activep = activep->active_next) {
+				pthread_cancel(activep->active_tid);
+			}
 
-	while (pool->nthreads != 0) {
-		pthread_cond_wait(&pool->busycv, &pool->mtx);
-	}
+			while (pool->nthreads != 0) {
+				pthread_cond_wait(&pool->busycv, &pool->mtx);
+			}
 
 	pthread_cleanup_pop(1);
 
@@ -373,7 +373,7 @@ void nThreadPoolDestroy(nThreadPool *pool) {
 
 	if (thread_pool == pool) {
 		thread_pool = pool->forw;
-	} 
+	}
 
 	if (thread_pool == pool) {
 		thread_pool = NULL;
@@ -383,7 +383,7 @@ void nThreadPoolDestroy(nThreadPool *pool) {
 	}
 
 	pthread_mutex_unlock(&nty_pool_lock);
-	
+
 	for (job = pool->head;job != NULL;job = pool->head) {
 		pool->head = job->next;
 		free(job);
@@ -403,7 +403,7 @@ void king_counter(void *arg) {
 	int index = *(int*)arg;
 
 	printf("index : %d, selfid : %lu\n", index, pthread_self());
-	
+
 	free(arg);
 	usleep(1);
 }
@@ -411,19 +411,19 @@ void king_counter(void *arg) {
 
 #define KING_COUNTER_SIZE 1000
 
-int main2(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 
 	nThreadPool *pool = ntyThreadPoolCreate(10, 20, 15, NULL);
 
 	int i = 0;
 	for (i = 0;i < KING_COUNTER_SIZE;i ++) {
 		int *index = (int*)malloc(sizeof(int));
-		
+
 		memset(index, 0, sizeof(int));
 		memcpy(index, &i, sizeof(int));
-		
+
 		ntyThreadPoolQueue(pool, king_counter, index);
-		
+
 	}
 
 	getchar();

@@ -39,10 +39,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /root/mydev/tools/clion_2018/bin/cmake/linux/bin/cmake
+CMAKE_COMMAND = /root/mydev/tools/clion-2018.3/bin/cmake/linux/bin/cmake
 
 # The command to remove a file.
-RM = /root/mydev/tools/clion_2018/bin/cmake/linux/bin/cmake -E remove -f
+RM = /root/mydev/tools/clion-2018.3/bin/cmake/linux/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /root/mydev/workspace_github/myfiles/c_plus_plus_project/MySt
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/root/mydev/tools/clion_2018/bin/cmake/linux/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/root/mydev/tools/clion-2018.3/bin/cmake/linux/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -70,7 +70,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/root/mydev/tools/clion_2018/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	/root/mydev/tools/clion-2018.3/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -366,33 +366,6 @@ src/function_study.cpp.s:
 	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/src/function_study.cpp.s
 .PHONY : src/function_study.cpp.s
 
-src/thread_pool_simple.o: src/thread_pool_simple.c.o
-
-.PHONY : src/thread_pool_simple.o
-
-# target to build an object file
-src/thread_pool_simple.c.o:
-	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.o
-.PHONY : src/thread_pool_simple.c.o
-
-src/thread_pool_simple.i: src/thread_pool_simple.c.i
-
-.PHONY : src/thread_pool_simple.i
-
-# target to preprocess a source file
-src/thread_pool_simple.c.i:
-	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.i
-.PHONY : src/thread_pool_simple.c.i
-
-src/thread_pool_simple.s: src/thread_pool_simple.c.s
-
-.PHONY : src/thread_pool_simple.s
-
-# target to generate assembly for a file
-src/thread_pool_simple.c.s:
-	$(MAKE) -f CMakeFiles/MyStudy.dir/build.make CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.s
-.PHONY : src/thread_pool_simple.c.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -429,9 +402,6 @@ help:
 	@echo "... src/function_study.o"
 	@echo "... src/function_study.i"
 	@echo "... src/function_study.s"
-	@echo "... src/thread_pool_simple.o"
-	@echo "... src/thread_pool_simple.i"
-	@echo "... src/thread_pool_simple.s"
 .PHONY : help
 
 

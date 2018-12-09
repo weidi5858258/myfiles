@@ -14,6 +14,7 @@ add_executable(
         include/HandleAndroidString.h
         include/DownloadFile.hpp
         include/leak_detector_c.hpp
+#        include/thread_pool_active.hpp
 
         src/B0.cpp
         src/Test.cpp
@@ -23,9 +24,10 @@ add_executable(
         src/function_study.cpp
         src/GuessNumber.cpp
         src/HandleAndroidString.cpp
-        #        src/thread_pool_active.c
-        src/thread_pool_simple.c
-        main.cpp)
+#       src/thread_pool_active.c
+#       src/thread_pool_simple.c
+        main.cpp
+)
 
 #                   下面是加载一些头文件及库文件
 ################################################################
@@ -119,8 +121,7 @@ else ()
             #            -lX11
             #            -lxcb
             -lsqlite3
-            -lz -lrt -lm -lpthread
-            -ldl
+            -ldl -lz -lrt -lm -lpthread
             #            -lglut -lGL -lGLU
             #录音
             #            -lasound

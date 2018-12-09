@@ -1,5 +1,4 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/MyStudy.dir/main.cpp.o"
   "CMakeFiles/MyStudy.dir/src/B0.cpp.o"
   "CMakeFiles/MyStudy.dir/src/Test.cpp.o"
   "CMakeFiles/MyStudy.dir/src/Pointer.cpp.o"
@@ -8,12 +7,12 @@ file(REMOVE_RECURSE
   "CMakeFiles/MyStudy.dir/src/function_study.cpp.o"
   "CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.o"
   "CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.o"
-  "CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.o"
+  "CMakeFiles/MyStudy.dir/main.cpp.o"
   "MyStudy.pdb"
   "MyStudy"
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang C CXX)
+foreach(lang CXX)
   include(CMakeFiles/MyStudy.dir/cmake_clean_${lang}.cmake OPTIONAL)
 endforeach()

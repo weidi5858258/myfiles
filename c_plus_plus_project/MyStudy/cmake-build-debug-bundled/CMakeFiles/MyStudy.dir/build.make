@@ -34,10 +34,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /root/mydev/tools/clion_2018/bin/cmake/linux/bin/cmake
+CMAKE_COMMAND = /root/mydev/tools/clion-2018.3/bin/cmake/linux/bin/cmake
 
 # The command to remove a file.
-RM = /root/mydev/tools/clion_2018/bin/cmake/linux/bin/cmake -E remove -f
+RM = /root/mydev/tools/clion-2018.3/bin/cmake/linux/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -57,22 +57,9 @@ include CMakeFiles/MyStudy.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/MyStudy.dir/flags.make
 
-CMakeFiles/MyStudy.dir/main.cpp.o: CMakeFiles/MyStudy.dir/flags.make
-CMakeFiles/MyStudy.dir/main.cpp.o: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/MyStudy.dir/main.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MyStudy.dir/main.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/main.cpp
-
-CMakeFiles/MyStudy.dir/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/MyStudy.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/main.cpp > CMakeFiles/MyStudy.dir/main.cpp.i
-
-CMakeFiles/MyStudy.dir/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/MyStudy.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/main.cpp -o CMakeFiles/MyStudy.dir/main.cpp.s
-
 CMakeFiles/MyStudy.dir/src/B0.cpp.o: CMakeFiles/MyStudy.dir/flags.make
 CMakeFiles/MyStudy.dir/src/B0.cpp.o: ../src/B0.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/MyStudy.dir/src/B0.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/MyStudy.dir/src/B0.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MyStudy.dir/src/B0.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/B0.cpp
 
 CMakeFiles/MyStudy.dir/src/B0.cpp.i: cmake_force
@@ -85,7 +72,7 @@ CMakeFiles/MyStudy.dir/src/B0.cpp.s: cmake_force
 
 CMakeFiles/MyStudy.dir/src/Test.cpp.o: CMakeFiles/MyStudy.dir/flags.make
 CMakeFiles/MyStudy.dir/src/Test.cpp.o: ../src/Test.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/MyStudy.dir/src/Test.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/MyStudy.dir/src/Test.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MyStudy.dir/src/Test.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Test.cpp
 
 CMakeFiles/MyStudy.dir/src/Test.cpp.i: cmake_force
@@ -98,7 +85,7 @@ CMakeFiles/MyStudy.dir/src/Test.cpp.s: cmake_force
 
 CMakeFiles/MyStudy.dir/src/Pointer.cpp.o: CMakeFiles/MyStudy.dir/flags.make
 CMakeFiles/MyStudy.dir/src/Pointer.cpp.o: ../src/Pointer.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/MyStudy.dir/src/Pointer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/MyStudy.dir/src/Pointer.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MyStudy.dir/src/Pointer.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Pointer.cpp
 
 CMakeFiles/MyStudy.dir/src/Pointer.cpp.i: cmake_force
@@ -111,7 +98,7 @@ CMakeFiles/MyStudy.dir/src/Pointer.cpp.s: cmake_force
 
 CMakeFiles/MyStudy.dir/src/Study.cpp.o: CMakeFiles/MyStudy.dir/flags.make
 CMakeFiles/MyStudy.dir/src/Study.cpp.o: ../src/Study.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/MyStudy.dir/src/Study.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/MyStudy.dir/src/Study.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MyStudy.dir/src/Study.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Study.cpp
 
 CMakeFiles/MyStudy.dir/src/Study.cpp.i: cmake_force
@@ -124,7 +111,7 @@ CMakeFiles/MyStudy.dir/src/Study.cpp.s: cmake_force
 
 CMakeFiles/MyStudy.dir/src/Method.cpp.o: CMakeFiles/MyStudy.dir/flags.make
 CMakeFiles/MyStudy.dir/src/Method.cpp.o: ../src/Method.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/MyStudy.dir/src/Method.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/MyStudy.dir/src/Method.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MyStudy.dir/src/Method.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/Method.cpp
 
 CMakeFiles/MyStudy.dir/src/Method.cpp.i: cmake_force
@@ -137,7 +124,7 @@ CMakeFiles/MyStudy.dir/src/Method.cpp.s: cmake_force
 
 CMakeFiles/MyStudy.dir/src/function_study.cpp.o: CMakeFiles/MyStudy.dir/flags.make
 CMakeFiles/MyStudy.dir/src/function_study.cpp.o: ../src/function_study.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/MyStudy.dir/src/function_study.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/MyStudy.dir/src/function_study.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MyStudy.dir/src/function_study.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/function_study.cpp
 
 CMakeFiles/MyStudy.dir/src/function_study.cpp.i: cmake_force
@@ -150,7 +137,7 @@ CMakeFiles/MyStudy.dir/src/function_study.cpp.s: cmake_force
 
 CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.o: CMakeFiles/MyStudy.dir/flags.make
 CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.o: ../src/GuessNumber.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/GuessNumber.cpp
 
 CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.i: cmake_force
@@ -163,7 +150,7 @@ CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.s: cmake_force
 
 CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.o: CMakeFiles/MyStudy.dir/flags.make
 CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.o: ../src/HandleAndroidString.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/HandleAndroidString.cpp
 
 CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.i: cmake_force
@@ -174,22 +161,21 @@ CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/HandleAndroidString.cpp -o CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.s
 
-CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.o: CMakeFiles/MyStudy.dir/flags.make
-CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.o: ../src/thread_pool_simple.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.o   -c /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/thread_pool_simple.c
+CMakeFiles/MyStudy.dir/main.cpp.o: CMakeFiles/MyStudy.dir/flags.make
+CMakeFiles/MyStudy.dir/main.cpp.o: ../main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/MyStudy.dir/main.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/MyStudy.dir/main.cpp.o -c /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/main.cpp
 
-CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/thread_pool_simple.c > CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.i
+CMakeFiles/MyStudy.dir/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/MyStudy.dir/main.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/main.cpp > CMakeFiles/MyStudy.dir/main.cpp.i
 
-CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/thread_pool_simple.c -o CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.s
+CMakeFiles/MyStudy.dir/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/MyStudy.dir/main.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/main.cpp -o CMakeFiles/MyStudy.dir/main.cpp.s
 
 # Object files for target MyStudy
 MyStudy_OBJECTS = \
-"CMakeFiles/MyStudy.dir/main.cpp.o" \
 "CMakeFiles/MyStudy.dir/src/B0.cpp.o" \
 "CMakeFiles/MyStudy.dir/src/Test.cpp.o" \
 "CMakeFiles/MyStudy.dir/src/Pointer.cpp.o" \
@@ -198,12 +184,11 @@ MyStudy_OBJECTS = \
 "CMakeFiles/MyStudy.dir/src/function_study.cpp.o" \
 "CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.o" \
 "CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.o" \
-"CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.o"
+"CMakeFiles/MyStudy.dir/main.cpp.o"
 
 # External object files for target MyStudy
 MyStudy_EXTERNAL_OBJECTS =
 
-MyStudy: CMakeFiles/MyStudy.dir/main.cpp.o
 MyStudy: CMakeFiles/MyStudy.dir/src/B0.cpp.o
 MyStudy: CMakeFiles/MyStudy.dir/src/Test.cpp.o
 MyStudy: CMakeFiles/MyStudy.dir/src/Pointer.cpp.o
@@ -212,10 +197,10 @@ MyStudy: CMakeFiles/MyStudy.dir/src/Method.cpp.o
 MyStudy: CMakeFiles/MyStudy.dir/src/function_study.cpp.o
 MyStudy: CMakeFiles/MyStudy.dir/src/GuessNumber.cpp.o
 MyStudy: CMakeFiles/MyStudy.dir/src/HandleAndroidString.cpp.o
-MyStudy: CMakeFiles/MyStudy.dir/src/thread_pool_simple.c.o
+MyStudy: CMakeFiles/MyStudy.dir/main.cpp.o
 MyStudy: CMakeFiles/MyStudy.dir/build.make
 MyStudy: CMakeFiles/MyStudy.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable MyStudy"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable MyStudy"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/MyStudy.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

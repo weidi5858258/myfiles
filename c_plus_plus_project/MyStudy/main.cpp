@@ -10,8 +10,9 @@
 #include "./include/MyHead.h"
 #include "./include/Test.h"
 #include "./include/Method.h"
-#include "HandleAndroidString.h"
+#include "./include/HandleAndroidString.h"
 #include "./include/leak_detector_c.hpp"
+//#include "./include/thread_pool_active.hpp"
 //#include "./include/leak_detector_c.h"
 
 #endif
@@ -105,22 +106,31 @@ ECDSA host key for [localhost]:2222 has changed and you have requested strict ch
 Host key verification failed.
 */
 
-/***
- 1.
- 创建文件夹(picture,audio,video)
- 2.
- 开始抓取
- */
+/*void king_counter(void *arg) {
+    int index = *(int*)arg;
+    printf("index : %d, selfid : %lu\n", index, pthread_self());
+    free(arg);
+    usleep(1);
+}
+ nThreadPool *pool = ntyThreadPoolCreate(10, 20, 15, NULL);
+
+    int i = 0;
+    for (i = 0;i < KING_COUNTER_SIZE;i ++) {
+        int *index = (int*)malloc(sizeof(int));
+
+        memset(index, 0, sizeof(int));
+        memcpy(index, &i, sizeof(int));
+
+        ntyThreadPoolQueue(pool, king_counter, index);
+
+    }
+
+    getchar();
+    printf("You are very good !!!!\n");
+#define KING_COUNTER_SIZE 1000*/
 
 int test(int argc, char **argv) {
-    char *ptr1 = (char *) new_malloc(ptr1, 10);
-    int *ptr2 = (int *) new_calloc(ptr2, 10, sizeof(int));
-    float *ptr3 = (float *) new_calloc(ptr3, 15, sizeof(float));
-    ptr1 = (char *) new_malloc(ptr1, 10);
-//    new_free(ptr1);
-//    new_free(ptr2);
-    new_free(ptr3);
-    atexit(report_mem_leak);
+
 
     return 0;
 }
