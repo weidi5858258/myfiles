@@ -147,7 +147,18 @@ Android系统源代码中有用的知识点：
 面向对象Fragment通信框架设计
 1.
 
-
+<activity
+    android:name=".example.WindowPlayActivity"
+    // activity生命周期不重建
+    android:configChanges="orientation|keyboardHidden|screenSize|screenLayout|smallestScreenSize"
+    android:label="可使用小窗口模式播放"
+    // PIP模式
+    android:resizeableActivity="true"
+    android:supportsPictureInPicture="true"
+    android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+    // 横屏
+    android:screenOrientation="landscape"><!--portrait-->
+</activity>
 
 
 */
