@@ -1287,7 +1287,414 @@ mediaExtractor.advance();
 
 
 
+Android音视频开发(一): 通过三种方式绘制图片
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+在Android平台绘制一张图片，使用至少3种不同的API，ImageView，SurfaceView，自定义View。
+1. ImageView绘制图片
+Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getPath() + File.separator + "11.jpg");
+imageView.setImageBitmap(bitmap);
+2. SurfaceView绘制图片
+SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface);
+surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+    @Override
+    public void surfaceCreated(SurfaceHolder surfaceHolder) {
+        if (surfaceHolder == null) {
+            return;
+        }
 
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+
+        // 获取bitmap
+        Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getPath() + File.separator + "11.jpg"); 
+        // 先锁定当前surfaceView的画布
+        Canvas canvas = surfaceHolder.lockCanvas();  
+        //执行绘制操作
+        canvas.drawBitmap(bitmap, 0, 0, paint); 
+        // 解除锁定并显示在界面上
+        surfaceHolder.unlockCanvasAndPost(canvas); 
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+
+    }
+});
+3. 自定义View绘制图片
+public class CustomView extends View {
+
+    Paint paint = new Paint();
+    Bitmap bitmap;
+
+    public CustomView(Context context) {
+        super(context);
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        // 获取bitmap
+        bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getPath() + File.separator + "11.jpg");  
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        // 不建议在onDraw做任何分配内存的操作
+        if (bitmap != null) {
+            canvas.drawBitmap(bitmap, 0, 0, paint);
+        }
+    }
+
+}
+
+Android音视频开发(二)：使用AudioRecord采集音频PCM并保存到文件
+<uses-permission android:name="android.permission.RECORD_AUDIO"/>
+https://github.com/renhui/AndroidRecorder.git
+https://github.com/renhui/OpenGLVideoRecord.git
+https://github.com/renhui/AudioDemo.git
+
+使用AudioRecord实现录音，并生成wav
+2.1  创建一个AudioRecord对象
+首先要声明一些全局的变量参数：
+// 声明 AudioRecord 对象
+private AudioRecord audioRecord = null;  
+// 声明recoordBufffer的大小字段
+private int recordBufSize = 0; 
+获取buffer的大小并创建AudioRecord：
+public void createAudioRecord() {
+	// audioRecord能接受的最小的buffer大小
+　　	recordBufSize = AudioRecord.getMinBufferSize(
+					frequency, channelConfiguration, EncodingBitRate);  
+   	audioRecord = new AudioRecord(
+   					MediaRecorder.AudioSource.MIC, frequency, 
+   					channelConfiguration, EncodingBitRate, recordBufSize);
+}
+2.2  初始化一个buffer
+byte data[] = new byte[recordBufSize]; 
+2.3  开始录音
+audioRecord.startRecording();
+isRecording = true;
+2.4  创建一个数据流，
+		一边从AudioRecord中读取声音数据到初始化的buffer，
+		一边将buffer中数据导入数据流。
+FileOutputStream os = null;
+try {
+    os = new FileOutputStream(filename);
+} catch (FileNotFoundException e) {
+    e.printStackTrace();
+}
+if (null != os) {
+    while (isRecording) {
+        read = audioRecord.read(data, 0, recordBufSize);
+　　　　  // 如果读取音频数据没有出现错误，就将数据写入到文件
+        if (AudioRecord.ERROR_INVALID_OPERATION != read) {
+            try {
+                os.write(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    try {
+        os.close();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+2.5  关闭数据流
+修改标志位：
+isRecording为false，
+上面的while循环就自动停止了，
+数据流也就停止流动了，Stream也就被关闭了。
+isRecording = false;
+2.6  停止录音
+停止录音之后，注意要释放资源。
+if (null != audioRecord) {
+	audioRecord.stop();
+	audioRecord.release();
+	audioRecord = null;
+   	recordingThread = null;
+}
+权限需求：WRITE_EXTERNAL_STORAGE、RECORD_AUDIO
+1)、
+我按照流程，把音频数据都输出到文件里面了，
+停止录音后，打开此文件，发现不能播放，到底是为什么呢？
+答：
+按照流程走完了，数据是进去了，但是现在的文件里面的内容
+仅仅是最原始的音频数据，术语称为raw（中文解释是“原材料”或“未经处理的东西”），
+这时候，你让播放器去打开，它既不知道保存的格式是什么，
+又不知道如何进行解码操作。当然播放不了。
+2)、
+那如何才能在播放器中播放我录制的内容呢？
+答： 
+在文件的数据开头加入WAVE HEAD数据即可，也就是文件头。
+只有加上文件头部的数据，播放器才能正确的知道里面的内容
+到底是什么，进而能够正常的解析并播放里面的内容。
+附言
+Android SDK提供了两套音频采集的API，
+分别是：MediaRecorder和AudioRecord，
+前者是一个更加上层一点的API，
+它可以直接把手机麦克风录入的音频数据
+进行编码压缩（如AMR、MP3等）并存成文件，
+而后者则更接近底层，能够更加自由灵活地控制，
+可以得到原始的一帧帧PCM音频数据。
+如果想简单地做一个录音机，录制成音频文件，
+则推荐使用MediaRecorder，
+而如果需要对音频做进一步的算法处理、
+或者采用第三方的编码库进行压缩、
+以及网络传输等应用，则建议使用AudioRecord，
+其实MediaRecorder底层也是调用了
+AudioRecord与Android Framework层的AudioFlinger进行交互的。
+直播中实时采集音频自然是要用AudioRecord了。
+
+
+
+
+Android音视频开发(三)：使用AudioTrack播放PCM音频
+一、AudioTrack基本使用
+AudioTrack类可以完成Android平台上音频数据的输出任务。
+AudioTrack有两种数据加载模式（MODE_STREAM和MODE_STATIC），
+对应的是数据加载模式和音频流类型，对应着两种完全不同的使用场景。
+MODE_STREAM：
+在这种模式下，通过write一次次把音频数据写到AudioTrack中。
+这和平时通过write系统调用往文件中写数据类似，
+但这种工作方式每次都需要把数据从用户提供的
+Buffer中拷贝到AudioTrack内部的Buffer中，
+这在一定程度上会使引入延时。
+为解决这一问题，AudioTrack就引入了第二种模式。
+MODE_STATIC：
+这种模式下，在play之前只需要把所有数据通过一次write调用
+传递到AudioTrack中的内部缓冲区，后续就不必再传递数据了。
+这种模式适用于像铃声这种内存占用量较小，延时要求较高的文件。
+但它也有一个缺点，就是一次write的数据不能太多，
+否则系统无法分配足够的内存来存储全部数据。
+1.1 MODE_STATIC模式
+MODE_STATIC模式输出音频的方式如下
+（注意：如果采用STATIC模式，须先调用write写数据，然后再调用play。）
+1.2 MODE_STREAM模式
+MODE_STREAM模式输出音频的方式如下:
+int readCount = 0;
+byte[] tempBuffer = new byte[bufferSize];
+while (dis.available() > 0) {
+    readCount = dis.read(tempBuffer);
+    if (readCount == AudioTrack.ERROR_INVALID_OPERATION 
+    	|| readCount == AudioTrack.ERROR_BAD_VALUE) {
+        continue;
+    }
+    if (readCount != 0 && readCount != -1) {
+        audioTrack.play();
+        audioTrack.write(tempBuffer, 0, readCount);
+    }
+}
+二、AudioTrack详解
+2.1 音频流的类型
+在AudioTrack构造函数中，
+会接触到AudioManager.STREAM_MUSIC这个参数。
+它的含义与Android系统对音频流的管理和分类有关。
+Android将系统的声音分为好几种流类型，下面是几个常见的：
+·  STREAM_ALARM：		警告声
+·  STREAM_MUSIC：		音乐声，例如music等
+·  STREAM_RING：			铃声
+·  STREAM_SYSTEM：		系统声音，例如低电提示音，锁屏音等
+·  STREAM_VOCIE_CALL：	通话声
+注意：
+上面这些类型的划分和音频数据本身并没有关系。
+例如MUSIC和RING类型都可以是某首MP3歌曲。
+另外，声音流类型的选择没有固定的标准，
+例如，铃声预览中的铃声可以设置为MUSIC类型。
+音频流类型的划分和Audio系统对音频的管理策略有关。
+2.2 Buffer分配和Frame的概念
+在计算Buffer分配的大小的时候，
+我们经常用到的一个方法就是：getMinBufferSize。
+这个函数决定了应用层分配多大的数据Buffer。
+AudioTrack.getMinBufferSize(8000,// 每秒8K个采样点                              
+　　      AudioFormat.CHANNEL_CONFIGURATION_STEREO,// 双声道                  
+        AudioFormat.ENCODING_PCM_16BIT);
+从AudioTrack.getMinBufferSize开始追溯代码，
+可以发现在底层的代码中有一个很重要的概念：Frame（帧）。
+Frame是一个单位，用来描述数据量的多少。
+1单位的Frame等于1个采样点的字节数×声道数
+（比如PCM16，双声道的1个Frame等于2×2=4字节）。
+1个采样点只针对一个声道，而实际上可能会有一或多个声道。
+由于不能用一个独立的单位来表示全部声道一次采样的数据量，
+也就引出了Frame的概念。Frame的大小，就是一个采样点的字节数×声道数。
+另外，在目前的声卡驱动程序中，其内部缓冲区也是
+采用Frame作为单位来分配和管理的。
+getMinBufSize会综合考虑硬件的情况
+（诸如是否支持采样率，硬件本身的延迟情况等）后，
+得出一个最小缓冲区的大小。一般我们分配的缓冲大小会是它的整数倍。
+2.3 AudioTrack构造过程
+每一个音频流对应着一个AudioTrack类的一个实例，
+每个AudioTrack会在创建时注册到 AudioFlinger中，
+由AudioFlinger把所有的AudioTrack进行混合（Mixer），
+然后输送到AudioHardware中进行播放，
+目前Android同时最多可以创建32个音频流，也就是说，
+Mixer最多会同时处理32个AudioTrack的数据流。
+三、 AudioTrack与MediaPlayer的对比
+播放声音可以用MediaPlayer和AudioTrack，
+两者都提供了Java API供应用开发者使用。
+虽然都可以播放声音，但两者还是有很大的区别的。
+3.1 区别
+其中最大的区别是MediaPlayer可以播放多种格式的声音文件，
+例如MP3，AAC，WAV，OGG，MIDI等。
+MediaPlayer会在framework层创建对应的音频解码器。
+而AudioTrack只能播放已经解码的PCM流，
+如果对比支持的文件格式的话则是AudioTrack只支持wav格式的音频文件，
+因为wav格式的音频文件大部分都是PCM流。
+AudioTrack不创建解码器，所以只能播放不需要解码的wav文件。
+3.2 联系
+MediaPlayer在framework层还是会创建AudioTrack，
+把解码后的PCM数据流传递给AudioTrack，
+AudioTrack再传递给AudioFlinger进行混音，
+然后才传递给硬件播放,所以是MediaPlayer包含了AudioTrack。
+3.3 SoundPool
+在接触Android音频播放API的时候，
+发现SoundPool也可以用于播放音频。
+下面是三者的使用场景：
+MediaPlayer更加适合在后台长时间播放本地音乐文件或者在线的流式资源; 
+SoundPool则适合播放比较短的音频片段，
+比如游戏声音、按键声、铃声片段等等，它可以同时播放多个音频; 
+而AudioTrack则更接近底层，提供了非常强大的控制能力，
+支持低延迟播放，适合流媒体和VoIP语音电话等场景。
+
+
+
+
+Android音视频开发(四)：使用Camera API采集视频数据
+使用Camera API采集视频数据并保存到文件，
+分别使用SurfaceView、TextureView来预览Camera数据，取到NV21的数据回调。
+注：需要权限：<uses-permission android:name="android.permission.CAMERA" />
+一、预览Camera数据
+二、取到NV21的数据回调
+Android中Google支持的Camera Preview Callback的YUV常用格式有两种：
+一个是NV21，
+一个是YV12。
+Android一般默认使用YCbCr_420_SP的格式（NV21）。
+可以配置数据回调的格式：
+Camera.Parameters parameters = camera.getParameters();
+parameters.setPreviewFormat(ImageFormat.NV21);
+camera.setParameters(parameters);
+// 打开摄像头并将展示方向旋转90度
+camera = Camera.open();
+camera.setDisplayOrientation(90);
+通过setPreviewCallback方法监听预览的回调：
+camera.setPreviewCallback(
+	new Camera.PreviewCallback() {
+    @Override
+    public void onPreviewFrame(byte[] bytes, Camera camera) {
+    	// 这里面的bytes的数据就是NV21格式的数据
+    }
+});
+
+
+
+
+Android音视频开发(五)：使用MediaExtractor和MediaMuxer API解析和封装mp4文件
+一个音视频文件是由音频和视频组成的，
+我们可以通过MediaExtractor、MediaMuxer把音频或视频给单独抽取出来，
+抽取出来的音频和视频能单独播放.
+一、MediaExtractor API介绍
+MediaExtractor的作用是把音频和视频的数据进行分离。
+主要API介绍：
+	// 即可以设置本地文件又可以设置网络文件
+	setDataSource(String path)：
+	// 得到源文件通道数 
+	getTrackCount()：
+	// 获取指定（index）的通道格式
+	getTrackFormat(int index)：
+	// 返回当前的时间戳 
+	getSampleTime()：
+	// 把指定通道中的数据按偏移量读取到ByteBuffer中；
+	readSampleData(ByteBuffer byteBuf, int offset)：
+	// 读取下一帧数据
+	advance()：
+	// 读取结束后释放资源
+	release(): 
+示例:
+MediaExtractor extractor = new MediaExtractor();
+extractor.setDataSource(...);
+int numTracks = extractor.getTrackCount();
+for (int i = 0; i < numTracks; ++i) {
+	MediaFormat format = extractor.getTrackFormat(i);
+	String mime = format.getString(MediaFormat.KEY_MIME);
+	if (weAreInterestedInThisTrack) {
+		extractor.selectTrack(i);
+	}
+}
+ByteBuffer inputBuffer = ByteBuffer.allocate(...)
+while (extractor.readSampleData(inputBuffer, ...) >= 0) {
+	int trackIndex = extractor.getSampleTrackIndex();
+	long presentationTimeUs = extractor.getSampleTime();
+	...
+	extractor.advance();
+}
+extractor.release();
+extractor = null;
+二、MediaMuxer API介绍
+MediaMuxer的作用是生成音频或视频文件；
+还可以把音频与视频混合成一个音视频文件。
+相关API介绍：
+	// path:输出文件的名称  format:输出文件的格式；当前只支持MP4格式；
+	MediaMuxer(String path, int format)
+	// 添加通道；我们更多的是使用
+	// MediaCodec.getOutpurForma()
+	// Extractor.getTrackFormat(int index)
+	// 来获取MediaFormat;也可以自己创建；
+	addTrack(MediaFormat format)
+	// 开始合成文件
+	start()
+	// 把ByteBuffer中的数据写入到在构造器设置的文件中；
+	writeSampleData(int trackIndex, ByteBuffer byteBuf, 
+					MediaCodec.BufferInfo bufferInfo)
+	// 停止合成文件
+	stop()
+	// 释放资源
+	release()
+示例:
+MediaMuxer muxer = new MediaMuxer("temp.mp4", OutputFormat.MUXER_OUTPUT_MPEG_4);
+// More often, the MediaFormat will be retrieved from MediaCodec.getOutputFormat()
+// or MediaExtractor.getTrackFormat().
+MediaFormat audioFormat = new MediaFormat(...);
+MediaFormat videoFormat = new MediaFormat(...);
+int audioTrackIndex = muxer.addTrack(audioFormat);
+int videoTrackIndex = muxer.addTrack(videoFormat);
+ByteBuffer inputBuffer = ByteBuffer.allocate(bufferSize);
+boolean finished = false;
+BufferInfo bufferInfo = new BufferInfo();
+muxer.start();
+while(!finished) {
+	// getInputBuffer() will fill the inputBuffer with one frame of encoded
+	// sample from either MediaCodec or MediaExtractor, set isAudioSample to
+	// true when the sample is audio data, set up all the fields of bufferInfo,
+	// and return true if there are no more samples.
+	finished = getInputBuffer(inputBuffer, isAudioSample, bufferInfo);
+	if (!finished) {
+		int currentTrackIndex = isAudioSample ? audioTrackIndex : videoTrackIndex;
+		muxer.writeSampleData(currentTrackIndex, inputBuffer, bufferInfo);
+	}
+}
+muxer.stop();
+muxer.release();
+
+
+
+
+Android音视频开发(六)： MediaCodec API详解
+下面开始接触一个Android音视频中相当重要的一个API： MediaCodec。
+通过这个API，我们能够做很多Android音视频方面的工作，
+下面是我们学习这个API的时候，主要的方向：
+学习 MediaCodec API，完成音频 AAC   硬编、硬解
+学习 MediaCodec API，完成视频 H.264 硬编、硬解
+一、MediaCodec介绍
+MediaCodec类可以用于使用一些基本的多媒体编解码器（音视频编解码组件），
+它是Android基本的多媒体支持基础架构的一部分.
+通常和MediaExtractor, MediaSync, MediaMuxer, 
+MediaCrypto, MediaDrm, Image, Surface, AudioTrack一起使用。
 
 
 

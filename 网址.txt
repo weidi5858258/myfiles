@@ -116,6 +116,7 @@ http://www.360doc.com/content/16/0531/11/8780958_563761675.shtml Link2SD无法�
 http://www.runoob.com/cprogramming/c-function-memmove.html C 库函数
 https://www.cnblogs.com/afei-qwerty/p/6710235.html sublime-text-3设置输入中文方法
 https://blog.csdn.net/aqi00/article/details/50012511 Android开发笔记（序）写在前面的目录
+https://www.cnblogs.com/renhui/p/7456956.html Android 音视频开发
 
 
 
