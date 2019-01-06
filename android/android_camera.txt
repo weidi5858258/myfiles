@@ -222,8 +222,7 @@ CameraManager mCameraManager = (CameraManager) context.getSystemService(
 3.
 获取Camera设备的摄像头列表
 CameraManager中能够获取CameraID的列表，一般都是前置相机和后置相机。
-String[] cameraList = mCameraManager.getCameraIdList();
-getCameraCharacteristics(String cameraId)获取摄像头的详细参数和支持的功能
+String[] cameraIdList = mCameraManager.getCameraIdList();
 4.
 获取Camera设备属性
 拿到对应的CameraID后，可以通过CameraManager查询到该相机的属性信息，包括：
@@ -233,10 +232,11 @@ getCameraCharacteristics(String cameraId)获取摄像头的详细参数和支持
     FPS Range
     Frame Size
     Frame Format
-mCameraCharacteristics = mCameraManager.getCameraCharacteristics(
-																										currentCameraId);
+//获取摄像头的详细参数和支持的功能
+CameraCharacteristics mCameraCharacteristics = 
+mCameraManager.getCameraCharacteristics(cameraId);
 //Device Level
-int deviceLevel = c.get(
+int deviceLevel = mCameraCharacteristics.get(
 				CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL); 
 //旋转角度
 mCameraRotate = mCameraCharacteristics.get(
@@ -245,11 +245,10 @@ StreamConfigurationMap streamConfigurationMap =
 					mCameraCharacteristics.get(
 								CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP); 
 //支持的分辨率
-mOutputSizes = streamConfigurationMap.getOutputSizes(
-																				SurfaceTexture.class);
+mOutputSizes = streamConfigurationMap.getOutputSizes(SurfaceTexture.class);
 //FPS
 Range<Integer>[] fpsRanges = 
-cameraCharacteristics.get(
+mCameraCharacteristics.get(
 				CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
 //选择合适分辨率
 5.
@@ -329,6 +328,8 @@ try {
     e.printStackTrace();
 }
 CameraCaptureSession.CaptureCallback：捕获的结果，比如是否对焦成功等
+
+看androidCamera这个项目
 
 
 
