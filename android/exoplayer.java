@@ -47,6 +47,31 @@ com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 	public long open(DataSpec dataSpec):
 调用open方法之后,返回的值是还剩下多少视频内容的长度没有播放(不是指时间)
 
+com.google.android.exoplayer2.source.chunk.ContainerMediaChunk
+	extractorWrapper: com.google.android.exoplayer2.source.chunk.ChunkExtractorWrapper
+	dataSource: com.google.android.exoplayer2.upstream.StatsDataSource
+	extractorWrapper.extractor: com.google.android.exoplayer2.extractor.mp4.FragmentedMp4Extractor
+
+com.google.android.exoplayer2.extractor.DefaultExtractorInput
+	dataSource: com.google.android.exoplayer2.upstream.StatsDataSource
+com.google.android.exoplayer2.upstream.StatsDataSource
+	dataSource: com.google.android.exoplayer2.upstream.cache.CacheDataSource
+com.google.android.exoplayer2.upstream.cache.CacheDataSource
+	currentDataSource: com.google.android.exoplayer2.upstream.DefaultDataSource
+com.google.android.exoplayer2.upstream.DefaultDataSource
+	dataSource: com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
