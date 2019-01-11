@@ -13,7 +13,8 @@ git恢复被修改的文件
 git clean -f
 # 连 untracked 的目录也一起删掉
 git clean -fd
-# 连 gitignore 的untrack 文件/目录也一起删掉 （慎用，一般这个是用来删掉编译出来的 .o之类的文件用的）
+# 连 gitignore 的untrack 文件/目录也一起删掉 
+（慎用，一般这个是用来删掉编译出来的 .o之类的文件用的）
 git clean -xfd
 # 在用上述 git clean 前，强烈建议加上 -n 参数来先看看会删掉哪些文件，防止重要文件被误删
 git clean -nxfd
@@ -41,7 +42,28 @@ find -name build.prop
 2，如果未编译过，在源码目录下的build/core/version_defaults.mk文件中也有版本信息
 
 
+新建远程分支
+$ git checkout -b dbg_lichen_star
+把新建的本地分支push到远程服务器，远程分支与本地分支同名（当然可以随意起名）：
+$ git push origin dbg_lichen_star:dbg_lichen_star
+使用git branch -a查看所有分支，会看到remotes/origin/dbg_lichen_star这个远程分支，说明新建远程分支成功。
+删除远程分支
+$ git push origin --delete dbg_lichen_star
 
+
+# git pull
+当前分支没有跟踪信息。
+请指定您要变基到哪一个分支。
+详见 git-pull(1)。
+
+    git pull <remote> <branch>
+
+如果您想要为此分支创建跟踪信息，您可以执行：
+
+    git branch --set-upstream-to=origin/<branch> feature-focuspreview-textureview
+
+如果您想要为此分支创建跟踪信息,您可以执行:
+$ git branch --set-upstream-to=origin/master
 
 
 
