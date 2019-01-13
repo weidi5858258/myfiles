@@ -118,6 +118,7 @@ https://www.cnblogs.com/afei-qwerty/p/6710235.html sublime-text-3设置输入中
 https://blog.csdn.net/aqi00/article/details/50012511 Android开发笔记（序）写在前面的目录
 https://www.cnblogs.com/renhui/p/7456956.html Android 音视频开发
 https://blog.csdn.net/fan_2017/article/details/79046127 android 7.1 游戏应用内悬浮窗 无视权限的终极方法
+https://hencoder.com/tag/hui-zhi/ HenCoder Android 自定义 View
 
 
 
