@@ -77,6 +77,33 @@ com.google.android.exoplayer2.source.chunk.ChunkSampleStream
             loadable, this, 
             loadErrorHandlingPolicy.getMinimumLoadableRetryCount(loadable.type));
 
+com.google.android.exoplayer2.ExoPlayerImplInternal
+	this.renderers:
+		class com.google.android.exoplayer2.video.MediaCodecVideoRenderer
+		class com.google.android.exoplayer2.audio.MediaCodecAudioRenderer
+		class com.google.android.exoplayer2.text.TextRenderer
+		class com.google.android.exoplayer2.metadata.MetadataRenderer
+		class com.google.android.exoplayer2.video.spherical.CameraMotionRenderer
+	this.trackSelector:
+		class com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+
+
+
+	播放SmoothStreaming视频的流程:
+	setPlayWhenReadyInternal(msg.arg1 != 0); msg.arg1: 1
+	sendMessageInternal((PlayerMessage) msg.obj);
+	prepareInternal(
+              (MediaSource) msg.obj,
+              msg.arg1 != 0,
+              msg.arg2 != 0); msg.arg1: 1 msg.arg2: 0 msg.obj: com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
+    sendMessageInternal((PlayerMessage) msg.obj);
+    handleSourceInfoRefreshed((MediaSourceRefreshInfo) msg.obj);
+    handlePeriodPrepared((MediaPeriod) msg.obj);
+    不断地执行
+    handleContinueLoadingRequested((MediaPeriod) msg.obj);
+
+    sendMessageInternal((PlayerMessage) msg.obj);
+    releaseInternal();
 
 
 
@@ -92,6 +119,10 @@ com.google.android.exoplayer2.source.chunk.ChunkSampleStream
 
 
 
-
+https://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism
 https://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism/QualityLevels(230000)/Fragments(video=0)
+
+
+
+
 */

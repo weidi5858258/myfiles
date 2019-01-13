@@ -326,8 +326,24 @@ animationDrawable = (AnimationDrawable) imgPic.getDrawable();
 animationDrawable.start();//开始
 animationDrawable.stop(); //停止
 
+Paint paint = new Paint();
+paint.setStyle(Style style); // 设置绘制模式
+paint.setColor(int color); // 设置颜色
+paint.setStrokeWidth(float width); // 设置线条宽度
+paint.setTextSize(float textSize); // 设置文字大小
+paint.setAntiAlias(boolean aa); // 设置抗锯齿开关
 
-
+drawColor(@ColorInt int color)  // 颜色填充 -- 在整个绘制区域统一涂上指定的颜色。
+drawCircle(float centerX, float centerY, float radius, Paint paint) // 画圆 -- 可以通过修改Paint的参数来画不同类型的圆形。
+drawRect(float left, float top, float right, float bottom, Paint paint) // 画矩形
+drawPoint(float x, float y, Paint paint)  // 画点 -- setStrokeCap() 可以设置点的形状（矩形／圆形）
+drawPoints(float[] pts, int offset, int count, Paint paint)  // drawPoints(float[] pts, Paint paint) 画点（多个）
+drawOval(float left, float top, float right, float bottom, Paint paint)  // 画椭圆
+drawLine(float startX, float startY, float stopX, float stopY, Paint paint) // 画线
+drawLines(float[] pts, int offset, int count, Paint paint) / drawLines(float[] pts, Paint paint)  // 画线（多个）
+drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint)  // 画圆角矩形
+drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean useCenter, Paint paint)  //绘制弧形或扇形
+drawPath(Path path, Paint paint)  // 画自定义图形
 
 
 
