@@ -345,9 +345,14 @@ drawRoundRect(float left, float top, float right, float bottom, float rx, float 
 drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean useCenter, Paint paint)  //绘制弧形或扇形
 drawPath(Path path, Paint paint)  // 画自定义图形
 
+自定义绘制知识的四个级别
+1.Canvas 的 drawXXX() 系列方法及 Paint 最常见的使用
+2.Paint 的完全攻略
+3.Canvas 对绘制的辅助——范围裁切和几何变换
+4.使用不同的绘制方法来控制绘制顺序
 
-
-
+在 Android 里，每个 View 都有一个自己的坐标系，彼此之间是不影响的。这个坐标系的原点是 View 左上角的那个点；水平方向是 x 轴，右正左负；竖直方向是 y 轴，下正上负.
+在绘制的时候，往往需要开启抗锯齿来让图形和文字的边缘更加平滑。开启抗锯齿很简单，只要在  new Paint() 的时候加上一个 ANTI_ALIAS_FLAG 参数就行
 
 
 
