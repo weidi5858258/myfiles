@@ -50,6 +50,9 @@ $ git push origin dbg_lichen_star:dbg_lichen_star
 删除远程分支
 $ git push origin --delete dbg_lichen_star
 
+删除本地分支 
+命令行 : $ git branch -D <BranchName>
+
 
 # git pull
 当前分支没有跟踪信息。
