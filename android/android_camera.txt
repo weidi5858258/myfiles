@@ -331,13 +331,55 @@ CameraCaptureSession.CaptureCallback：捕获的结果，比如是否对焦成�
 
 看androidCamera这个项目
 
+有关摄像方面定义的常量:
+private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+static {
+    ORIENTATIONS.append(Surface.ROTATION_0, 90);
+    ORIENTATIONS.append(Surface.ROTATION_90, 0);
+    ORIENTATIONS.append(Surface.ROTATION_180, 270);
+    ORIENTATIONS.append(Surface.ROTATION_270, 180);
+}
+
+在进行capture的时候有这样一段代码：
+// ①
+int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation(rotation));
+
+// ②
+private int getOrientation(int rotation) {
+    // Sensor orientation is 90 for most devices, or 270 for some devices (eg. Nexus 5X)
+    // We have to take that into account and rotate JPEG properly.
+    // For devices with orientation of 90, we simply return our mapping from ORIENTATIONS.
+    // For devices with orientation of 270, we need to rotate the JPEG 180 degrees.
+    return (ORIENTATIONS.get(rotation) + mSensorOrientation + 270) % 360;
+}
+
+// ③
+mSensorOrientation = characteristics.get(
+    CameraCharacteristics.SENSOR_ORIENTATION);
+
+// ②
+该方法返回的是当前屏幕相对于“自然方向的旋转角度”，
+所谓的自然方向就是：手机竖屏，平板横屏。
+返回值是上面列举的四种。
+例如，如果一个设备自然方向是竖屏，
+当将其横向放置的时候，
+返回值要么是Surface.ROTATION_90，
+或者Surface.ROTATION_270，取决于顺逆时针的转动。
+
+屏幕上绘图的角度旋转与物理设备的旋转方向正好相反，
+例如，如果设备相对于自然方向逆时针旋转90度，
+那么绘图需要顺时针旋转90度才能保证弥补渲染的改变，
+即返回值是Surface.ROTATION_90。
+
+拍照方向依然为Sensor的方向，也就是横屏方向
+CaptureRequest.JPEG_ORIENTATION的值是针对顺时针旋转而言的
 
 
 
 
 
-
-
+OrientationEventListener
 
 
 
