@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)#3.10.2
+cmake_minimum_required(VERSION 3.9.6)#3.10 3.10.2
 project(MyStudy)
 
 set(CMAKE_CXX_STANDARD 11)

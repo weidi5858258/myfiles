@@ -13,7 +13,7 @@ C++基础知识
 无符号短整型	unsigned short int  ---> unsigned short
 无符号长整型	unsigned long int   ---> unsigned long
 有符号整型    signed int          ---> int
-无符号整型		 unsigned int        ---> unsigned
+无符号整型		unsigned int        ---> unsigned
 
 C++语言的基本数据类型
 1)布尔型:

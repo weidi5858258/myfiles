@@ -119,6 +119,7 @@ https://blog.csdn.net/aqi00/article/details/50012511 Android开发笔记（序�
 https://www.cnblogs.com/renhui/p/7456956.html Android 音视频开发
 https://blog.csdn.net/fan_2017/article/details/79046127 android 7.1 游戏应用内悬浮窗 无视权限的终极方法
 https://hencoder.com/tag/hui-zhi/ HenCoder Android 自定义 View
+http://www.52im.net/thread-228-1-1.html 即时通讯音视频开发
 
 
 
