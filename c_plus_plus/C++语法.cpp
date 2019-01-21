@@ -175,6 +175,20 @@ cout << "b = " << b << endl;
 指针保存的地址:       指针保存的地址.
 指针地址的值:         指针保存的地址处的值.
 
+#define alloca __builtin_alloca
+#define alloca_array(type, size) ((type *) alloca ((size) * sizeof (type)))
+char **url, **t;
+// 申请存储两个字符串的空间,由二级指针保存这个空间首地址
+url = alloca_array (char *, 2);
+url[0] = "https://";
+// 最后一个元素弄一个标记,这样在for循环中可以起到判断作用
+url[1] = NULL;
+// *t不为NULL就循环
+for (t = url; *t; t++) {
+    // 打印字符串
+    fprintf(stdout, "test() url: %s\n", *t);
+}
+
 char *p1 = "Hello World";
 char **p2 = &p1;
 /***

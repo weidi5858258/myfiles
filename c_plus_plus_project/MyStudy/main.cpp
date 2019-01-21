@@ -130,7 +130,18 @@ Host key verification failed.
 #define KING_COUNTER_SIZE 1000*/
 
 int test(int argc, char **argv) {
-
+#define alloca __builtin_alloca
+#define alloca_array(type, size) ((type *) alloca ((size) * sizeof (type)))
+    char **url, **t;
+    // 申请存储两个字符串的空间,由二级指针保存这个空间首地址
+    url = alloca_array (char *, 2);
+    url[0] = "https://";
+    // 最后一个元素弄一个标记,这样在for循环中可以起到判断作用
+    url[1] = NULL;
+    // *t不为NULL就循环
+    for (t = url; *t; t++) {
+        fprintf(stdout, "test() url: %s\n", *t);
+    }
 
     return 0;
 }

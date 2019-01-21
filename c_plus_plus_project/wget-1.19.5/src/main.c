@@ -1314,12 +1314,12 @@ struct ptimer *timer;
 int cleaned_up;
 
 int main(int argc, char **argv) {
-    fprintf(stdout, "wget start ......\n");
+    fprintf(stdout, "main() wget start ......\n");
     printf("\n");
     printf("argc = %d\n", argc);
     int k = 0;
     for (k = 0; k < argc; k++) {
-        printf("At %d parameter: %s\n", (k + 1), argv[k]);
+        printf("At %d parameter: %s\n", k, argv[k]);
     }
     printf("\n");
 
@@ -1336,6 +1336,7 @@ int main(int argc, char **argv) {
 
     timer = ptimer_new();
     double start_time = ptimer_measure(timer);
+    fprintf(stdout, "main() start_time: %lf\n", start_time);
 
     total_downloaded_bytes = 0;
     // 如果没有参数,那么就是文件下载地址
@@ -1839,20 +1840,27 @@ for details.\n\n"));
     if (global_options.show_progress)
         set_progress_implementation(global_options.progress_type);
 
+    fprintf(stdout, _("main() nurl: %d\n"), nurl);
     /* Fill in the arguments.  */
     url = alloca_array (char *, nurl + 1);
-    if (url == NULL) {
+    // if (url == NULL) {
+    if (!url) {
         fprintf(stderr, _("Memory allocation problem\n"));
         exit(WGET_EXIT_PARSE_ERROR);
     }
     for (i = 0; i < nurl; i++, optind++) {
         char *rewritten = rewrite_shorthand_url(argv[optind]);
+        fprintf(stdout, _("main() argv[%d]: %s\n"), optind, argv[optind]);
+        fprintf(stdout, _("main() rewritten: %s\n"), rewritten);
         if (rewritten)
             url[i] = rewritten;
         else
             url[i] = xstrdup(argv[optind]);
+        fprintf(stdout, _("main() url[%d]: %s\n"), i, url[i]);
     }
     url[i] = NULL;
+    // url[0]: https://goss.vcg.com/creative/vcg/800/version23/VCG21gic19458848.jpg
+    // url[1]: NULL
 
     /* Open WARC file. */
     if (global_options.warc_filename != 0)
@@ -2008,8 +2016,10 @@ only if outputting to a regular file.\n"));
         load_hsts();
 #endif
 
+    // 在这块代码中做的事
     /* Retrieve the URLs from argument list.  */
     for (t = url; *t; t++) {
+        fprintf(stdout, _("main() *t: %s\n"), *t);
         char *filename = NULL, *redirected_URL = NULL;
         int dt, url_err;
         /* Need to do a new struct iri every time, because
@@ -2036,8 +2046,7 @@ only if outputting to a regular file.\n"));
                      #ifdef HAVE_SSL
                      && url_scheme(*t) != SCHEME_FTPS
 #endif
-                    )
-                    || url_uses_proxy(url_parsed))) {
+                    ) || url_uses_proxy(url_parsed))) {
                 int old_follow_ftp = global_options.follow_ftp;
 
                 /* Turn global_options.follow_ftp on in case of recursive FTP retrieval */
@@ -2054,8 +2063,15 @@ only if outputting to a regular file.\n"));
             } else {
                 fprintf(stdout, _("main() retrieve_url() start\n"));
                 // dosomething
-                retrieve_url(url_parsed, *t, &filename, &redirected_URL, NULL,
-                             &dt, global_options.recursive, iri, true);
+                retrieve_url(url_parsed,
+                             *t,
+                             &filename,
+                             &redirected_URL,
+                             NULL,
+                             &dt,
+                             global_options.recursive,
+                             iri,
+                             true);
                 fprintf(stdout, _("main() retrieve_url() end\n"));
             }
 
@@ -2185,6 +2201,19 @@ only if outputting to a regular file.\n"));
 
     exit(get_exit_status());
 }
+
+/***
+ 大概过程:
+ main() retrieve_url() start
+ retrieve_url() origurl: https://goss.vcg.com/creative/vcg/800/version23/VCG21gic19458848.jpg
+ http_loop() start
+ gethttp() start
+ gethttp() message: OK
+ gethttp() statcode: 200
+ gethttp() end
+ http_loop() end
+ main() retrieve_url() end
+ */
 
 /*
  * vim: et ts=2 sw=2

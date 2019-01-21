@@ -793,11 +793,17 @@ static char *getproxy(struct url *);
    multiple points. */
 
 uerr_t
-retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
-             char **newloc, const char *refurl, int *dt, bool recursive,
-             struct iri *iri, bool register_status) {
+retrieve_url(struct url *orig_parsed,
+             const char *origurl,
+             char **file,// filename
+             char **newloc,// redirected_URL
+             const char *refurl,
+             int *dt,
+             bool recursive,
+             struct iri *iri,
+             bool register_status) {
     // https://services.gradle.org/distributions/gradle-2.14.1-all.zip
-    fprintf(stdout, _("retrieve_url() origurl: %s\n"), origurl);
+    fprintf(stdout, _("retrieve_url() origurl: %s\n"), origurl);// 文件下载地址
     fprintf(stdout, _("retrieve_url() *file: %s\n"), *file);// NULL
     fprintf(stdout, _("retrieve_url() *newloc: %s\n"), *newloc);// NULL
     fprintf(stdout, _("retrieve_url() refurl: %s\n"), refurl);// NULL
@@ -828,7 +834,7 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
     }
     url = xstrdup(origurl);
     // https://services.gradle.org/distributions/gradle-2.14.1-all.zip
-    fprintf(stdout, _("retrieve_url() url: %s\n"), url);
+    fprintf(stdout, _("retrieve_url() url: %s\n"), url);// 文件下载地址
     if (newloc)
         *newloc = NULL;
     if (file)
@@ -880,7 +886,7 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
         xfree (proxy);
     }
 
-    fprintf(stdout, _("retrieve_url() u->scheme: %d\n"), u->scheme);
+    fprintf(stdout, _("retrieve_url() u->scheme: %d\n"), u->scheme);// 1 表示 SCHEME_HTTPS
     fprintf(stdout, _("retrieve_url() proxy_url: %p\n"), proxy_url);
     if (proxy_url) {
         fprintf(stdout, _("retrieve_url() proxy_url->scheme: %d\n"), proxy_url->scheme);
@@ -903,16 +909,31 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
                 logprintf(LOG_VERBOSE, "URL transformed to HTTPS due to an HSTS policy\n");
         }
 #endif
+        // 443
         fprintf(stdout, _("retrieve_url() orig_parsed->port: %d\n"), orig_parsed->port);
+        // https://services.gradle.org/distributions/gradle-2.14.1-all.zip
         fprintf(stdout, _("retrieve_url() orig_parsed->url: %s\n"), orig_parsed->url);
+        // services.gradle.org
         fprintf(stdout, _("retrieve_url() orig_parsed->host: %s\n"), orig_parsed->host);
+        // distributions/gradle-2.14.1-all.zip
         fprintf(stdout, _("retrieve_url() orig_parsed->path: %s\n"), orig_parsed->path);
 
-        fprintf(stdout, _("retrieve_url() mynewloc: %s\n"), mynewloc);// NULL
-        fprintf(stdout, _("retrieve_url() local_file: %s\n"), local_file);// NULL
-        fprintf(stdout, _("retrieve_url() refurl: %s\n"), refurl);// NULL
+        // NULL
+        fprintf(stdout, _("retrieve_url() mynewloc: %s\n"), mynewloc);
+        // NULL
+        fprintf(stdout, _("retrieve_url() local_file: %s\n"), local_file);
+        // NULL
+        fprintf(stdout, _("retrieve_url() refurl: %s\n"), refurl);
+        // 0
         fprintf(stdout, _("retrieve_url() *dt: %d\n"), *dt);
-        result = http_loop(u, orig_parsed, &mynewloc, &local_file, refurl, dt, proxy_url, iri);
+        result = http_loop(u,
+                           orig_parsed,
+                           &mynewloc,
+                           &local_file,
+                           refurl,
+                           dt,
+                           proxy_url,
+                           iri);
         fprintf(stdout, _("retrieve_url() result: %d\n"), result);
     } else if (u->scheme == SCHEME_FTP
                #ifdef HAVE_SSL
@@ -949,6 +970,7 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
         proxy_url = NULL;
     }
 
+    // result返回6时表示地址改变过了,重新发起请求
     location_changed = (result == NEWLOCATION || result == NEWLOCATION_KEEP_POST);
     fprintf(stdout, _("retrieve_url() location_changed: %d\n"), location_changed);
     if (location_changed) {
@@ -956,6 +978,7 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
         struct url *newloc_parsed;
 
         assert (mynewloc != NULL);
+        // 新地址
         // https://downloads.gradle.org/distributions/gradle-2.14.1-all.zip
         fprintf(stdout, _("retrieve_url() mynewloc 1: %s\n"), mynewloc);
 
@@ -982,7 +1005,7 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
 
         /* Now, see if this new location makes sense. */
         newloc_parsed = url_parse(mynewloc, &up_error_code, iri, true);
-        if(newloc_parsed){
+        if (newloc_parsed) {
             fprintf(stdout, _("retrieve_url() newloc_parsed->url: %s\n"), newloc_parsed->url);
         }
         if (!newloc_parsed) {
@@ -1040,6 +1063,7 @@ retrieve_url(struct url *orig_parsed, const char *origurl, char **file,
         if (result != NEWLOCATION_KEEP_POST && !method_suspended) {
             SUSPEND_METHOD;
         }
+        // 重新发起请求
         fprintf(stdout, _("retrieve_url() goto redirected 1\n"));
         goto redirected;
     } else {

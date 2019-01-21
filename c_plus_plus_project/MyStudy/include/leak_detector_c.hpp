@@ -61,7 +61,7 @@ static MEM_LEAK *ptr_start = NULL;
 static MEM_LEAK *ptr_next = NULL;
 
 /***
- 如何使用:
+如何使用:
 char *ptr1 = (char *) new_malloc(ptr1, 10);
 int *ptr2 = (int *) new_calloc(ptr2, 10, sizeof(int));
 float *ptr3 = (float *) new_calloc(ptr3, 15, sizeof(float));
@@ -124,7 +124,7 @@ void xfree(void *mem_ref) {
  *
  */
 void add_mem_info(void *mem_ref, size_t size, const char *file, size_t line) {
-    if(!mem_ref){
+    if (!mem_ref) {
         return;
     }
 
