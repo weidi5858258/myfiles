@@ -121,6 +121,7 @@ https://blog.csdn.net/fan_2017/article/details/79046127 android 7.1 游戏应用
 https://hencoder.com/tag/hui-zhi/ HenCoder Android 自定义 View
 http://www.52im.net/thread-228-1-1.html 即时通讯音视频开发
 https://wiki.postmarketos.org/wiki/Galaxy_Note_II_(samsung-n7100) 
+https://blog.csdn.net/guolin_blog/article/details/51763825 Android状态栏微技巧，带你真正理解沉浸式模式
 
 
 

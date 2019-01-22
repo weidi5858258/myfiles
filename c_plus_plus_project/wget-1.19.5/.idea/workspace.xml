@@ -11,19 +11,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e31a637b-4815-461a-912d-8bdc71827a30" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../c_plus_plus/C++语法.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../c_plus_plus/C++语法.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MyStudy/include/leak_detector_c.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../MyStudy/include/leak_detector_c.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MyStudy/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../MyStudy/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.log" beforeDir="false" afterPath="$PROJECT_DIR$/config.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/http.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/http.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/retr.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/retr.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wget" beforeDir="false" afterPath="$PROJECT_DIR$/src/wget" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../网址.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../网址.txt" afterDir="false" />
-    </list>
+    <list default="true" id="e31a637b-4815-461a-912d-8bdc71827a30" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -193,7 +181,7 @@
     </option>
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="1366" />
     <option name="y" value="26" />
     <option name="width" value="1920" />
@@ -283,16 +271,15 @@
       <workItem from="1544190682865" duration="115000" />
       <workItem from="1548036403821" duration="2000" />
       <workItem from="1548036527561" duration="147000" />
-      <workItem from="1548037281470" duration="13704000" />
+      <workItem from="1548037281470" duration="14304000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="79710000" />
+    <option name="totallyTimeSpent" value="80310000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1366" y="26" width="1920" height="1021" extended-state="7" />
-    <editor active="true" />
+    <frame x="1366" y="26" width="1920" height="1021" extended-state="6" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49885583" visible="true" weight="0.1799787" />
       <window_info id="Favorites" order="1" side_tool="true" />
