@@ -25,7 +25,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/wget.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1462">
+            <state relative-caret-position="13788">
               <caret line="383" column="13" selection-start-line="383" selection-start-column="13" selection-end-line="383" selection-end-column="13" />
               <folding>
                 <element signature="e#1628#1644#0" expanded="true" />
@@ -39,7 +39,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1048">
+            <state relative-caret-position="72828">
               <caret line="2023" column="14" selection-start-line="2023" selection-start-column="12" selection-end-line="2023" selection-end-column="14" />
             </state>
           </provider>
@@ -48,8 +48,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/retr.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="157">
-              <caret line="928" column="23" lean-forward="true" selection-start-line="928" selection-start-column="23" selection-end-line="928" selection-end-column="23" />
+            <state relative-caret-position="33408">
+              <caret line="928" column="23" selection-start-line="928" selection-start-column="23" selection-end-line="928" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -57,8 +57,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/http.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-17231">
-              <caret line="3452" column="23" lean-forward="true" selection-start-line="3452" selection-start-column="23" selection-end-line="3452" selection-end-column="23" />
+            <state relative-caret-position="36">
+              <caret line="3452" column="23" selection-start-line="3452" selection-start-column="23" selection-end-line="3452" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -66,7 +66,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/url.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="382">
+            <state relative-caret-position="2448">
               <caret line="68" column="14" selection-start-line="68" selection-start-column="2" selection-end-line="68" selection-end-column="14" />
             </state>
           </provider>
@@ -75,7 +75,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="274">
+            <state relative-caret-position="1872">
               <caret line="52" selection-start-line="52" selection-end-line="52" selection-end-column="75" />
               <folding>
                 <element signature="e#1311#1330#0" expanded="true" />
@@ -87,7 +87,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/alloca.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="354">
+            <state relative-caret-position="1404">
               <caret line="39" selection-start-line="39" selection-end-line="39" selection-end-column="33" />
             </state>
           </provider>
@@ -96,7 +96,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/retr.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="274">
+            <state relative-caret-position="2196">
               <caret line="61" column="10" selection-start-line="61" selection-start-column="10" selection-end-line="61" selection-end-column="10" />
             </state>
           </provider>
@@ -105,7 +105,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/url.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2318">
+            <state relative-caret-position="71784">
               <caret line="1994" selection-start-line="1994" selection-end-line="1994" />
             </state>
           </provider>
@@ -114,7 +114,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/xmalloc.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="486">
+            <state relative-caret-position="4248">
               <caret line="118" selection-start-line="118" selection-end-line="118" />
             </state>
           </provider>
@@ -193,6 +193,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -204,7 +205,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -272,16 +272,17 @@
       <workItem from="1548036403821" duration="2000" />
       <workItem from="1548036527561" duration="147000" />
       <workItem from="1548037281470" duration="14304000" />
+      <workItem from="1548225294197" duration="149000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="80310000" />
+    <option name="totallyTimeSpent" value="80459000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1366" y="26" width="1920" height="1021" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49885583" visible="true" weight="0.1799787" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49885583" visible="true" weight="0.18157615" />
       <window_info id="Favorites" order="1" side_tool="true" />
       <window_info id="Structure" order="2" sideWeight="0.5011442" weight="0.1564734" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -610,54 +611,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/xmalloc.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="118" selection-start-line="118" selection-end-line="118" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/alloca.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="39" selection-start-line="39" selection-end-line="39" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="52" selection-start-line="52" selection-end-line="52" selection-end-column="75" />
-          <folding>
-            <element signature="e#1311#1330#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/retr.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="61" column="10" selection-start-line="61" selection-start-column="10" selection-end-line="61" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1048">
-          <caret line="2023" column="14" selection-start-line="2023" selection-start-column="12" selection-end-line="2023" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/url.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="382">
-          <caret line="68" column="14" selection-start-line="68" selection-start-column="2" selection-end-line="68" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/wget.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1462">
+        <state relative-caret-position="13788">
           <caret line="383" column="13" selection-start-line="383" selection-start-column="13" selection-end-line="383" selection-end-column="13" />
           <folding>
             <element signature="e#1628#1644#0" expanded="true" />
@@ -667,24 +623,69 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/url.c">
+    <entry file="file://$PROJECT_DIR$/src/main.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2318">
-          <caret line="1994" selection-start-line="1994" selection-end-line="1994" />
+        <state relative-caret-position="72828">
+          <caret line="2023" column="14" selection-start-line="2023" selection-start-column="12" selection-end-line="2023" selection-end-column="14" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/retr.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="157">
-          <caret line="928" column="23" lean-forward="true" selection-start-line="928" selection-start-column="23" selection-end-line="928" selection-end-column="23" />
+        <state relative-caret-position="33408">
+          <caret line="928" column="23" selection-start-line="928" selection-start-column="23" selection-end-line="928" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/url.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2448">
+          <caret line="68" column="14" selection-start-line="68" selection-start-column="2" selection-end-line="68" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1872">
+          <caret line="52" selection-start-line="52" selection-end-line="52" selection-end-column="75" />
+          <folding>
+            <element signature="e#1311#1330#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/alloca.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1404">
+          <caret line="39" selection-start-line="39" selection-end-line="39" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/retr.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2196">
+          <caret line="61" column="10" selection-start-line="61" selection-start-column="10" selection-end-line="61" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/url.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="71784">
+          <caret line="1994" selection-start-line="1994" selection-end-line="1994" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/xmalloc.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4248">
+          <caret line="118" selection-start-line="118" selection-end-line="118" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/http.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-17231">
-          <caret line="3452" column="23" lean-forward="true" selection-start-line="3452" selection-start-column="23" selection-end-line="3452" selection-end-column="23" />
+        <state relative-caret-position="36">
+          <caret line="3452" column="23" selection-start-line="3452" selection-start-column="23" selection-end-line="3452" selection-end-column="23" />
         </state>
       </provider>
     </entry>

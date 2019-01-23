@@ -163,6 +163,12 @@ sem_post(&mController);
 回收资源
 sem_destroy(&mController);
 
+java            jni
+Object          jobject
+int             jint
+long            jlong
+int[]           jintArray
+
 
 struct fields_t {
     jfieldID context;
@@ -200,6 +206,10 @@ sp<JMediaExtractor> extractor = new JMediaExtractor(env, thiz);
 if (extractor != NULL) {
     extractor->incStrong(thiz);
 }
+
+在jni中
+JNIEnv *env, jobject thiz
+这两个参数是系统给的,在java端不需要传递.
 
 
 status_t
