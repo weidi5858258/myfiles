@@ -1224,9 +1224,9 @@ Linux网络服务与Shell脚本攻略
 MediaCodec.INFO_TRY_AGAIN_LATER = -1
 MediaCodec.INFO_OUTPUT_FORMAT_CHANGED = -2
 MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED = -3
+int index = mediaEncode.dequeueOutputBuffer(MediaCodec.BufferInfo info, long timeoutUs);
 1.
 MediaCodec.INFO_TRY_AGAIN_LATER
-int index = mediaEncode.dequeueOutputBuffer(MediaCodec.BufferInfo info, long timeoutUs);
 如果调用上面的代码时,timeoutUs为一个正整数(表示超时)时,
 在运行过程中发生超时情况,那么得到的index就为-1.
 发生这种情况时可以这样处理:
