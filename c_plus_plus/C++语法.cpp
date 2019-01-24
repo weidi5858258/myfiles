@@ -164,9 +164,18 @@ b = *(int *) p;
 b = *((int *) p);
 cout << "b = " << b << endl;
 
+#define AUDIO_ATTRIBUTES_TAGS_MAX_SIZE 256
+typedef struct {
+    audio_content_type_t content_type;
+    audio_usage_t        usage;
+    audio_source_t       source;
+    audio_flags_mask_t   flags;
+    char                 tags[AUDIO_ATTRIBUTES_TAGS_MAX_SIZE]; /* UTF8 */
+} audio_attributes_t;
 
-
-
+audio_attributes_t mAttributes;
+// 结构体初始化
+memset(&mAttributes, 0, sizeof(audio_attributes_t));
 
 
 运算符*被称为间接引用运算符,当使用*时,就读取它后面变量中所保存的地址处的值.
