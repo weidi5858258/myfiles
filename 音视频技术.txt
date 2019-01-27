@@ -1260,7 +1260,7 @@ ByteBuffer[] decodeInputBuffers = mediaDecode.getInputBuffers();
 // MediaCodec将解码后的数据放到此ByteBuffer[]中 我们可以直接在这里面得到PCM数据
 ByteBuffer[] decodeOutputBuffers = mediaDecode.getOutputBuffers();
 // 用于描述解码得到的byte[]数据的相关信息
-decodeBufferInfo = new MediaCodec.BufferInfo();
+MediaCodec.BufferInfo decodeBufferInfo = new MediaCodec.BufferInfo();
 
 int inputIndex = mediaDecode.dequeueInputBuffer(-1);
 把inputIndex想像成房间号,如果这个房间号小于0,就表示
