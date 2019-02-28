@@ -27,16 +27,6 @@
 					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="edit_cache">
-				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
 			<Target title="MyStudy">
 				<Option output="/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/MyStudy" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled"/>
@@ -80,6 +70,16 @@
 				</Compiler>
 				<MakeCommands>
 					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 MyStudy/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 edit_cache"/>
 					<CompileFile command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j8 -f &quot;/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/Makefile&quot;  VERBOSE=1 clean"/>
