@@ -143,5 +143,11 @@ int test(int argc, char **argv) {
         fprintf(stdout, "test() url: %s\n", *t);
     }
 
+#ifdef WIN32
+    fprintf(stdout, "WIN32\n");
+#else
+    fprintf(stdout, "! WIN32\n");
+#endif
+
     return 0;
 }
