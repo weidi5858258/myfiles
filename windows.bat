@@ -50,7 +50,7 @@ set language_file_path=/data/autotest/capture_pkg/language_info.xml
 ::给变量设置有空格的字符串
 set "no_such_file=No such file or directory"
 
-
+tracert ip地址(用于判断ip地址是公网还是内网,结果返回一条数据的是公网)
 
 
 
