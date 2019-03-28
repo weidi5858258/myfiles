@@ -1,0 +1,3 @@
+Key store password: android
+Key alias:          weidi
+Key password:       android
