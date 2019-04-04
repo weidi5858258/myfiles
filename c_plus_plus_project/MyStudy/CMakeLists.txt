@@ -76,7 +76,9 @@ if (WIN32)
             -L${FFMPEG_LIB_PATH} -lpostproc
             -L${SDL2_LIB_PATH} -lSDL2
             -L${SDL2_LIB_PATH} -lSDL2main
-            -lz -lm -lpthread
+            -lz
+            -lm
+            -lpthread
             #            -L${GLUTDLLS37BETA_LIB_PATH} -lglut32
             #            -L"C:/MinGW/lib" -lmingw32
     )

@@ -1,3 +1,0 @@
-/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles/rebuild_cache.dir
-/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles/MyStudy.dir
-/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-debug-bundled/CMakeFiles/edit_cache.dir
