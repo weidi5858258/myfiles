@@ -46,7 +46,7 @@ OBJECTS_DIR   = debug
 SOURCES       = ..\MyStudy\main.cpp 
 OBJECTS       = debug/main.o
 
-DIST          =   ..\MyStudy\main.cpp
+DIST          = readme.txt  ..\MyStudy\main.cpp
 QMAKE_TARGET  = MyStudy
 DESTDIR        = debug\ #avoid trailing-slash linebreak
 TARGET         = MyStudy.exe
