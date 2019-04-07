@@ -1,0 +1,12 @@
+INPUT(
+./release\main.o
+./release\firstwidget.o
+./release\twinswidgetboss.o
+./release\twinswidgetpenis.o
+./release\mainwindow.o
+./release\moc_firstwidget.o
+./release\moc_twinswidgetboss.o
+./release\moc_twinswidgetpenis.o
+./release\moc_twinswidgetmother.o
+./release\moc_mainwindow.o
+);
