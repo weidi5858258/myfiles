@@ -19,6 +19,8 @@
 
 int test(int argc, char **argv);
 
+int basicKnowledge(int argc, char **argv);
+
 /***
 @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
 @param argv
@@ -60,6 +62,7 @@ int main(int argc, char **argv) {
 //    handleAndroidString.doSomething("/root/temp_dir/merge_string/temp_cache");
 
     test(argc, argv);
+    basicKnowledge(argc, argv);
 
     printf("------------------------------------------\n");
     printf("\n");
@@ -150,4 +153,28 @@ int test(int argc, char **argv) {
 #endif
 
     return 0;
+}
+
+int basicKnowledge(int argc, char **argv) {
+    char *p1 = "Hello World";
+    char **p2 = &p1;
+
+    fprintf(stdout, "basicKnowledge() p1    %%s: %s\n", p1);// 指向字符串内容(使用的时候不要带上*)
+    fprintf(stdout, "basicKnowledge() p1    %%p: %p\n", p1);// 指向字符串内容的地址
+    fprintf(stdout, "basicKnowledge() *p2   %%s: %s\n", *p2);// 指向字符串内容
+    fprintf(stdout, "basicKnowledge() *p2   %%p: %p\n", *p2);// 指向字符串内容的地址,也就是指向p1地址处的值
+
+    fprintf(stdout, "basicKnowledge() &p1   %%p: %p\n", &p1);// 指向p1自身的地址,被保存到p2中了
+    fprintf(stdout, "basicKnowledge() p2    %%p: %p\n", p2);// 指向p1自身的地址
+    fprintf(stdout, "basicKnowledge() &p2   %%p: %p\n", &p2);// 指向p2自身的地址
+
+    fprintf(stdout, "basicKnowledge() p1[0] %%p: %p\n", p1[0]);
+    fprintf(stdout, "basicKnowledge() *p1   %%p: %p\n", *p1);
+    fprintf(stdout, "basicKnowledge() **p2  %%p: %p\n", **p2);
+
+    int a = 100;
+    int *p3 = &a;
+    int **p4 = &p3;
+    fprintf(stdout, "basicKnowledge() *p1   %%d: %d\n", *p3);// 指向int内容
+    fprintf(stdout, "basicKnowledge() **p2  %%d: %d\n", **p4);// 指向int内容
 }

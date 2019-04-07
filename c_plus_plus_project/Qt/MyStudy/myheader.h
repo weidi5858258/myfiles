@@ -32,6 +32,12 @@
 #include <QException>
 #include <QCompleter>
 #include <QStringList>
+// 值选择器
+#include <QSpinBox>
+// 进度条
+#include <QSlider>
+// 水平布局
+#include <QHBoxLayout>
 // 动画
 #include <QMovie>
 #include <QPainter>

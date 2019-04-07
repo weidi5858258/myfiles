@@ -13,11 +13,14 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QSplitter>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -36,6 +39,10 @@ public:
     QAction *actionFileDialog;
     QAction *actionExit;
     QWidget *centralwidget;
+    QGridLayout *gridLayout;
+    QSplitter *splitter;
+    QTextEdit *textEdit;
+    QTextEdit *textEdit_2;
     QMenuBar *menubar;
     QMenu *menuFile;
     QMenu *menuNew;
@@ -87,6 +94,20 @@ public:
         actionExit->setObjectName(QStringLiteral("actionExit"));
         centralwidget = new QWidget(UiMainWindow);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
+        gridLayout = new QGridLayout(centralwidget);
+        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        splitter = new QSplitter(centralwidget);
+        splitter->setObjectName(QStringLiteral("splitter"));
+        splitter->setOrientation(Qt::Horizontal);
+        textEdit = new QTextEdit(splitter);
+        textEdit->setObjectName(QStringLiteral("textEdit"));
+        splitter->addWidget(textEdit);
+        textEdit_2 = new QTextEdit(splitter);
+        textEdit_2->setObjectName(QStringLiteral("textEdit_2"));
+        splitter->addWidget(textEdit_2);
+
+        gridLayout->addWidget(splitter, 0, 0, 1, 1);
+
         UiMainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(UiMainWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
@@ -155,6 +176,7 @@ public:
         menuNew->addAction(actionImportProject);
 
         retranslateUi(UiMainWindow);
+        QObject::connect(actionExit, SIGNAL(triggered(bool)), UiMainWindow, SLOT(close()));
 
         QMetaObject::connectSlotsByName(UiMainWindow);
     } // setupUi
