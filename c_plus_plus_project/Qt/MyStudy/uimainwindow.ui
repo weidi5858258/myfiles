@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UiMainWindow</class>
+ <widget class="QMainWindow" name="UiMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1241</width>
+    <height>698</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1241</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="minimumSize">
+     <size>
+      <width>250</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="title">
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="menuNew">
+     <property name="minimumSize">
+      <size>
+       <width>250</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>New</string>
+     </property>
+     <addaction name="actionNewProject"/>
+     <addaction name="actionImportProject"/>
+    </widget>
+    <addaction name="menuNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="separator"/>
+    <addaction name="actionSetting"/>
+    <addaction name="separator"/>
+    <addaction name="actionModalityDialog"/>
+    <addaction name="actionModelessDialog"/>
+    <addaction name="actionAboutDialog"/>
+    <addaction name="actionConfirmDialog"/>
+    <addaction name="actionFileDialog"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuNavigate">
+    <property name="title">
+     <string>Navigate</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuCode">
+    <property name="title">
+     <string>Code</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuAnalyze">
+    <property name="title">
+     <string>Analyze</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuRefactor">
+    <property name="title">
+     <string>Refactor</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuBuild">
+    <property name="title">
+     <string>Build</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuRun">
+    <property name="title">
+     <string>Run</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuVcs">
+    <property name="title">
+     <string>Vcs</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuNavigate"/>
+   <addaction name="menuCode"/>
+   <addaction name="menuAnalyze"/>
+   <addaction name="menuRefactor"/>
+   <addaction name="menuBuild"/>
+   <addaction name="menuRun"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuVcs"/>
+   <addaction name="menuWindow"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset theme=":/image/v001_24.png"/>
+   </property>
+   <property name="text">
+    <string>Open...</string>
+   </property>
+  </action>
+  <action name="actionSetting">
+   <property name="icon">
+    <iconset theme=":/image/v016_24.png"/>
+   </property>
+   <property name="text">
+    <string>Setting...</string>
+   </property>
+   <property name="font">
+    <font>
+     <underline>false</underline>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
+   </property>
+  </action>
+  <action name="actionNewProject">
+   <property name="text">
+    <string>New Project...</string>
+   </property>
+  </action>
+  <action name="actionImportProject">
+   <property name="text">
+    <string>Import Project...</string>
+   </property>
+  </action>
+  <action name="actionModalityDialog">
+   <property name="text">
+    <string>模态对话框</string>
+   </property>
+  </action>
+  <action name="actionModelessDialog">
+   <property name="text">
+    <string>非模态对话框</string>
+   </property>
+  </action>
+  <action name="actionAboutDialog">
+   <property name="text">
+    <string>关于对话框</string>
+   </property>
+  </action>
+  <action name="actionConfirmDialog">
+   <property name="text">
+    <string>确认对话框</string>
+   </property>
+  </action>
+  <action name="actionFileDialog">
+   <property name="text">
+    <string>文件对话框</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

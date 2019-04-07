@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/v001_24.png</file>
+        <file>image/v002_24.png</file>
+        <file>image/v003_24.png</file>
+        <file>image/v005_24.png</file>
+        <file>image/v007_24.png</file>
+        <file>image/v008_24.png</file>
+        <file>image/v009_24.png</file>
+        <file>image/v010_24.png</file>
+        <file>image/v012_24.png</file>
+        <file>image/v014_24.png</file>
+        <file>image/v015_24.png</file>
+        <file>image/v016_24.png</file>
+        <file>image/v017_24.png</file>
+        <file>image/v018_24.png</file>
+        <file>image/v020_24.png</file>
+    </qresource>
+</RCC>

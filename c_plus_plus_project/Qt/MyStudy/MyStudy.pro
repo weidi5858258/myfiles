@@ -27,7 +27,8 @@ HEADERS += \
     twinswidgetboss.h \
     twinswidgetpenis.h \
     twinswidgetmother.h \
-    mainwindow.h
+    mainwindow.h \
+    uimainwindow.h
 
 # 源文件
 SOURCES += \
@@ -35,7 +36,8 @@ SOURCES += \
     firstwidget.cpp \
     twinswidgetboss.cpp \
     twinswidgetpenis.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    uimainwindow.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -53,3 +55,9 @@ DISTFILES += \
     readme.txt
 
 #FORMS    += dialog.ui
+
+RESOURCES += \
+    image.qrc
+
+FORMS += \
+    uimainwindow.ui

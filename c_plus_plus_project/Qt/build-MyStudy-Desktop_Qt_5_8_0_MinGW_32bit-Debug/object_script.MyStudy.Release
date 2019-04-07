@@ -4,9 +4,12 @@ INPUT(
 ./release\twinswidgetboss.o
 ./release\twinswidgetpenis.o
 ./release\mainwindow.o
+./release\uimainwindow.o
+./release\qrc_image.o
 ./release\moc_firstwidget.o
 ./release\moc_twinswidgetboss.o
 ./release\moc_twinswidgetpenis.o
 ./release\moc_twinswidgetmother.o
 ./release\moc_mainwindow.o
+./release\moc_uimainwindow.o
 );

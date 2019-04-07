@@ -4,9 +4,12 @@ INPUT(
 ./debug\twinswidgetboss.o
 ./debug\twinswidgetpenis.o
 ./debug\mainwindow.o
+./debug\uimainwindow.o
+./debug\qrc_image.o
 ./debug\moc_firstwidget.o
 ./debug\moc_twinswidgetboss.o
 ./debug\moc_twinswidgetpenis.o
 ./debug\moc_twinswidgetmother.o
 ./debug\moc_mainwindow.o
+./debug\moc_uimainwindow.o
 );
