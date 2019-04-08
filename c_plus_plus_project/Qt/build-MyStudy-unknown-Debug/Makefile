@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_CORE_LIB
+DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -m64 -pipe -g -std=c++0x -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../MyStudy -I. -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
+INCPATH       = -I../MyStudy -I. -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -36,7 +36,7 @@ DISTNAME      = MyStudy1.0.0
 DISTDIR = /root/mydev/workspace_github/myfiles/c_plus_plus_project/Qt/build-MyStudy-unknown-Debug/.tmp/MyStudy1.0.0
 LINK          = g++
 LFLAGS        = -m64
-LIBS          = $(SUBLIBS) -lQt5Core -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -48,9 +48,33 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../MyStudy/main.cpp 
-OBJECTS       = main.o
-DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
+SOURCES       = ../MyStudy/main.cpp \
+		../MyStudy/firstwidget.cpp \
+		../MyStudy/twinswidgetboss.cpp \
+		../MyStudy/twinswidgetpenis.cpp \
+		../MyStudy/mainwindow.cpp \
+		../MyStudy/uimainwindow.cpp qrc_image.cpp \
+		moc_firstwidget.cpp \
+		moc_twinswidgetboss.cpp \
+		moc_twinswidgetpenis.cpp \
+		moc_twinswidgetmother.cpp \
+		moc_mainwindow.cpp \
+		moc_uimainwindow.cpp
+OBJECTS       = main.o \
+		firstwidget.o \
+		twinswidgetboss.o \
+		twinswidgetpenis.o \
+		mainwindow.o \
+		uimainwindow.o \
+		qrc_image.o \
+		moc_firstwidget.o \
+		moc_twinswidgetboss.o \
+		moc_twinswidgetpenis.o \
+		moc_twinswidgetmother.o \
+		moc_mainwindow.o \
+		moc_uimainwindow.o
+DIST          = ../MyStudy/readme.txt \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/sanitize.conf \
@@ -100,12 +124,25 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/moc.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/opengl.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/uic.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/thread.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/testcase_targets.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		../MyStudy/MyStudy.pro  ../MyStudy/main.cpp
+		../MyStudy/MyStudy.pro ../MyStudy/firstwidget.h \
+		../MyStudy/myheader.h \
+		../MyStudy/twinswidgetboss.h \
+		../MyStudy/twinswidgetpenis.h \
+		../MyStudy/twinswidgetmother.h \
+		../MyStudy/mainwindow.h \
+		../MyStudy/uimainwindow.h ../MyStudy/main.cpp \
+		../MyStudy/firstwidget.cpp \
+		../MyStudy/twinswidgetboss.cpp \
+		../MyStudy/twinswidgetpenis.cpp \
+		../MyStudy/mainwindow.cpp \
+		../MyStudy/uimainwindow.cpp
 QMAKE_TARGET  = MyStudy
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = MyStudy
@@ -133,7 +170,7 @@ first: all
 
 ####### Build rules
 
-$(TARGET):  $(OBJECTS)  
+$(TARGET): ui_uimainwindow.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: ../MyStudy/MyStudy.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -186,12 +223,17 @@ Makefile: ../MyStudy/MyStudy.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/moc.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/opengl.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/uic.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/thread.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/testcase_targets.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../MyStudy/MyStudy.pro \
+		../MyStudy/image.qrc \
+		/usr/lib/x86_64-linux-gnu/libQt5Widgets.prl \
+		/usr/lib/x86_64-linux-gnu/libQt5Gui.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Core.prl
 	$(QMAKE) -spec linux-g++-64 CONFIG+=debug -o Makefile ../MyStudy/MyStudy.pro
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf:
@@ -244,12 +286,17 @@ Makefile: ../MyStudy/MyStudy.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/moc.prf:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/opengl.prf:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/uic.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/thread.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/testcase_targets.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf:
 ../MyStudy/MyStudy.pro:
+../MyStudy/image.qrc:
+/usr/lib/x86_64-linux-gnu/libQt5Widgets.prl:
+/usr/lib/x86_64-linux-gnu/libQt5Gui.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -spec linux-g++-64 CONFIG+=debug -o Makefile ../MyStudy/MyStudy.pro
@@ -265,7 +312,10 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../MyStudy/main.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../MyStudy/image.qrc $(DISTDIR)/
+	$(COPY_FILE) --parents ../MyStudy/firstwidget.h ../MyStudy/myheader.h ../MyStudy/twinswidgetboss.h ../MyStudy/twinswidgetpenis.h ../MyStudy/twinswidgetmother.h ../MyStudy/mainwindow.h ../MyStudy/uimainwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../MyStudy/main.cpp ../MyStudy/firstwidget.cpp ../MyStudy/twinswidgetboss.cpp ../MyStudy/twinswidgetpenis.cpp ../MyStudy/mainwindow.cpp ../MyStudy/uimainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../MyStudy/uimainwindow.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -286,24 +336,132 @@ mocables: compiler_moc_header_make_all compiler_moc_source_make_all
 
 check: first
 
-compiler_rcc_make_all:
+compiler_rcc_make_all: qrc_image.cpp
 compiler_rcc_clean:
-compiler_moc_header_make_all:
+	-$(DEL_FILE) qrc_image.cpp
+qrc_image.cpp: ../MyStudy/image.qrc \
+		../MyStudy/image/v017_24.png \
+		../MyStudy/image/v018_24.png \
+		../MyStudy/image/v015_24.png \
+		../MyStudy/image/v016_24.png \
+		../MyStudy/image/v012_24.png \
+		../MyStudy/image/v014_24.png \
+		../MyStudy/image/v010_24.png \
+		../MyStudy/image/v020_24.png \
+		../MyStudy/image/v009_24.png \
+		../MyStudy/image/v007_24.png \
+		../MyStudy/image/v008_24.png \
+		../MyStudy/image/v005_24.png \
+		../MyStudy/image/v001_24.png \
+		../MyStudy/image/v002_24.png \
+		../MyStudy/image/v003_24.png
+	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name image ../MyStudy/image.qrc -o qrc_image.cpp
+
+compiler_moc_header_make_all: moc_firstwidget.cpp moc_twinswidgetboss.cpp moc_twinswidgetpenis.cpp moc_twinswidgetmother.cpp moc_mainwindow.cpp moc_uimainwindow.cpp
 compiler_moc_header_clean:
+	-$(DEL_FILE) moc_firstwidget.cpp moc_twinswidgetboss.cpp moc_twinswidgetpenis.cpp moc_twinswidgetmother.cpp moc_mainwindow.cpp moc_uimainwindow.cpp
+moc_firstwidget.cpp: ../MyStudy/twinswidgetmother.h \
+		../MyStudy/myheader.h \
+		../MyStudy/firstwidget.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/root/mydev/workspace_github/myfiles/c_plus_plus_project/Qt/MyStudy -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../MyStudy/firstwidget.h -o moc_firstwidget.cpp
+
+moc_twinswidgetboss.cpp: ../MyStudy/twinswidgetmother.h \
+		../MyStudy/myheader.h \
+		../MyStudy/twinswidgetboss.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/root/mydev/workspace_github/myfiles/c_plus_plus_project/Qt/MyStudy -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../MyStudy/twinswidgetboss.h -o moc_twinswidgetboss.cpp
+
+moc_twinswidgetpenis.cpp: ../MyStudy/twinswidgetmother.h \
+		../MyStudy/myheader.h \
+		../MyStudy/twinswidgetpenis.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/root/mydev/workspace_github/myfiles/c_plus_plus_project/Qt/MyStudy -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../MyStudy/twinswidgetpenis.h -o moc_twinswidgetpenis.cpp
+
+moc_twinswidgetmother.cpp: ../MyStudy/myheader.h \
+		../MyStudy/twinswidgetmother.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/root/mydev/workspace_github/myfiles/c_plus_plus_project/Qt/MyStudy -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../MyStudy/twinswidgetmother.h -o moc_twinswidgetmother.cpp
+
+moc_mainwindow.cpp: ../MyStudy/twinswidgetmother.h \
+		../MyStudy/myheader.h \
+		../MyStudy/mainwindow.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/root/mydev/workspace_github/myfiles/c_plus_plus_project/Qt/MyStudy -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../MyStudy/mainwindow.h -o moc_mainwindow.cpp
+
+moc_uimainwindow.cpp: ../MyStudy/twinswidgetmother.h \
+		../MyStudy/myheader.h \
+		../MyStudy/uimainwindow.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/root/mydev/workspace_github/myfiles/c_plus_plus_project/Qt/MyStudy -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../MyStudy/uimainwindow.h -o moc_uimainwindow.cpp
+
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
+compiler_uic_make_all: ui_uimainwindow.h
+compiler_uic_clean:
+	-$(DEL_FILE) ui_uimainwindow.h
+ui_uimainwindow.h: ../MyStudy/uimainwindow.ui
+	/usr/lib/x86_64-linux-gnu/qt5/bin/uic ../MyStudy/uimainwindow.ui -o ui_uimainwindow.h
+
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
 compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: 
+compiler_clean: compiler_rcc_clean compiler_moc_header_clean compiler_uic_clean 
 
 ####### Compile
 
-main.o: ../MyStudy/main.cpp 
+main.o: ../MyStudy/main.cpp ../MyStudy/firstwidget.h \
+		../MyStudy/twinswidgetmother.h \
+		../MyStudy/myheader.h \
+		../MyStudy/twinswidgetboss.h \
+		../MyStudy/twinswidgetpenis.h \
+		../MyStudy/mainwindow.h \
+		../MyStudy/uimainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../MyStudy/main.cpp
+
+firstwidget.o: ../MyStudy/firstwidget.cpp ../MyStudy/firstwidget.h \
+		../MyStudy/twinswidgetmother.h \
+		../MyStudy/myheader.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o firstwidget.o ../MyStudy/firstwidget.cpp
+
+twinswidgetboss.o: ../MyStudy/twinswidgetboss.cpp ../MyStudy/twinswidgetboss.h \
+		../MyStudy/twinswidgetmother.h \
+		../MyStudy/myheader.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o twinswidgetboss.o ../MyStudy/twinswidgetboss.cpp
+
+twinswidgetpenis.o: ../MyStudy/twinswidgetpenis.cpp ../MyStudy/twinswidgetpenis.h \
+		../MyStudy/twinswidgetmother.h \
+		../MyStudy/myheader.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o twinswidgetpenis.o ../MyStudy/twinswidgetpenis.cpp
+
+mainwindow.o: ../MyStudy/mainwindow.cpp ../MyStudy/mainwindow.h \
+		../MyStudy/twinswidgetmother.h \
+		../MyStudy/myheader.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../MyStudy/mainwindow.cpp
+
+uimainwindow.o: ../MyStudy/uimainwindow.cpp ../MyStudy/uimainwindow.h \
+		../MyStudy/twinswidgetmother.h \
+		../MyStudy/myheader.h \
+		ui_uimainwindow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uimainwindow.o ../MyStudy/uimainwindow.cpp
+
+qrc_image.o: qrc_image.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_image.o qrc_image.cpp
+
+moc_firstwidget.o: moc_firstwidget.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_firstwidget.o moc_firstwidget.cpp
+
+moc_twinswidgetboss.o: moc_twinswidgetboss.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_twinswidgetboss.o moc_twinswidgetboss.cpp
+
+moc_twinswidgetpenis.o: moc_twinswidgetpenis.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_twinswidgetpenis.o moc_twinswidgetpenis.cpp
+
+moc_twinswidgetmother.o: moc_twinswidgetmother.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_twinswidgetmother.o moc_twinswidgetmother.cpp
+
+moc_mainwindow.o: moc_mainwindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
+
+moc_uimainwindow.o: moc_uimainwindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_uimainwindow.o moc_uimainwindow.cpp
 
 ####### Install
 

@@ -11,7 +11,6 @@ int main(int argc, char * argv[]) {
     // *INDENT-OFF*
         QApplication a(argc, argv);
     // *INDENT-ON*
-
     // 创建构造函数时,肯定是先创建父类构造函数,再创建自己的(先有父母亲才会有孩子)
     FirstWidget firstWidget;
     firstWidget.setWindowTitle(QString("我的第一个窗口应用"));
@@ -21,20 +20,16 @@ int main(int argc, char * argv[]) {
     button.move(100, 100);
     // 放在最后show时button才会显示
     // firstWidget.show();
-
     TwinsWidgetMother mother;
     TwinsWidgetBoss boss;
     TwinsWidgetPenis penis;
     boss.setMother( & mother);
     penis.setMother( & mother);
     // boss.show();
-
     //MainWindow mainWindow;
     //mainWindow.show();
-
     UiMainWindow uiMainWindow;
     uiMainWindow.show();
-
     // 让程序一直执行,等待用户操作
     // 等待事件发生
     return a.exec();
