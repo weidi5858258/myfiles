@@ -18,6 +18,7 @@ int main(int argc, char * argv[]) {
     button.setText("^_^");
     button.setParent(&firstWidget);// *NOPAD*
     button.move(100, 100);
+
     // 放在最后show时button才会显示
     // firstWidget.show();
     TwinsWidgetMother mother;
@@ -26,10 +27,13 @@ int main(int argc, char * argv[]) {
     boss.setMother( & mother);
     penis.setMother( & mother);
     // boss.show();
+
     //MainWindow mainWindow;
     //mainWindow.show();
+
     UiMainWindow uiMainWindow;
     uiMainWindow.show();
+
     // 让程序一直执行,等待用户操作
     // 等待事件发生
     return a.exec();
