@@ -39,6 +39,9 @@ SOURCES += \
     mainwindow.cpp \
     uimainwindow.cpp
 
+FORMS += \
+    uimainwindow.ui
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -54,10 +57,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 DISTFILES += \
     readme.txt
 
-#FORMS    += dialog.ui
-
 RESOURCES += \
     image.qrc
 
-FORMS += \
-    uimainwindow.ui
+

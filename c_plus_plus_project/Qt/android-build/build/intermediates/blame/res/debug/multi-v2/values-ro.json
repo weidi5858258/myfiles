@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "/root/mydev/workspace_github/myfiles/c_plus_plus_project/Qt/android-build/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ro/values-ro.xml",
+            "map": [
+                {
+                    "source": "/opt/Qt5.12.2/5.12.2/android_armv7/src/android/java/res/values-ro/strings.xml",
+                    "from": {
+                        "startLines": "4,3,2,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "290,171,55,409",
+                        "endColumns": "118,118,115,85",
+                        "endOffsets": "404,285,166,490"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,174,293,409",
+                        "endColumns": "118,118,115,85",
+                        "endOffsets": "169,288,404,490"
+                    }
+                }
+            ]
+        }
+    ]
+}

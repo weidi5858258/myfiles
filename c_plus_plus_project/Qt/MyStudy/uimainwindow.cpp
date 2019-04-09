@@ -15,6 +15,5 @@ UiMainWindow::~UiMainWindow() {
 }
 
 void UiMainWindow::init() {
-    resize(800, 800);
-
+    resize(800, 500);
 }

@@ -26,7 +26,7 @@ int main(int argc, char * argv[]) {
     TwinsWidgetPenis penis;
     boss.setMother( & mother);
     penis.setMother( & mother);
-    // boss.show();
+    //boss.show();
 
     //MainWindow mainWindow;
     //mainWindow.show();

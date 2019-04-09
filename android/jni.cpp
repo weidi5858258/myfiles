@@ -1,25 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-Error:Execution failed for task ':app:transformNativeLibsWithStripDebugSymbolForDebug'.
-> java.lang.NullPointerException (no error message)
-
-Error:Execution failed for task ':app:compileDebugNdk'.
-> com.android.ide.common.process.ProcessException: Error while executing process D:\Tools\AndroidSDK\windows\AndroidSDK\ndk-bundle\ndk-build.cmd with arguments {NDK_PROJECT_PATH=null APP_BUILD_SCRIPT=D:\workspace\jni\app\build\intermediates\ndk\debug\Android.mk APP_PLATFORM=android-25 NDK_OUT=D:\workspace\jni\app\build\intermediates\ndk\debug\obj NDK_LIBS_OUT=D:\workspace\jni\app\build\intermediates\ndk\debug\lib APP_ABI=all}
-
+/***
 用ndk-build命令编译时遇到的问题
 Android NDK: WARNING: APP_PLATFORM android-17 is higher than android:minSdkVersion 1 in D:/workspace/jni/app/src/main/AndroidManifest.xml. NDK binaries will *not* be comptible with devices older than android-17. See https://android.googlesource.com/platform/ndk/+/master/docs/user/common_problems.md for more information.
 解决方法：
 在AndroidManifest.xml中指定<uses-sdk android:minSdkVersion="17"/>
 最小版本
-
-make: *** No rule to make target `D:/Tools/AndroidSDK/windows/AndroidSDK/ndk-bundle/build//../build/core/com_weidi_jni_JniUtils.c', needed by `D:/workspace/jni/app/src/main/obj/local/arm64-v8a/objs/test_exe/com_weidi_jni_JniUtils.o'.  Stop.
-
-
-ndk-build NDK_PROJECT_PATH=./ APP_BUILD_SCRIPT=./Android.mk NDK_APPLICATION_MK=./Application.mk
-
-Error:Execution failed for task ':app:clean'.
-> Unable to delete directory: D:\workspace\jni\app\build\intermediates\classes\debug
+*/
 
 
 
@@ -164,10 +152,13 @@ sem_post(&mController);
 sem_destroy(&mController);
 
 java            jni
+--------------------------------
 Object          jobject
 int             jint
 long            jlong
 int[]           jintArray
+--------------------------------
+
 
 
 struct fields_t {
@@ -222,7 +213,7 @@ BnInterface<IPlayer>
 
 
 
-
+/***
 # our headers include libnativewindow's public headers
 LOCAL_EXPORT_SHARED_LIBRARY_HEADERS := \
     libnativewindow \
@@ -689,6 +680,7 @@ include $(BUILD_HOST_EXECUTABLE)
 include $(call all-makefiles-under, $(LOCAL_PATH))
 #编译libvulkan nulldrv tools这三个文件夹下面的Android.mk文件
 include $(call all-named-subdir-makefiles, libvulkan nulldrv tools)
+*/
 
 ////////////////////////////////////////////////////////////////
 
@@ -696,10 +688,13 @@ include $(call all-named-subdir-makefiles, libvulkan nulldrv tools)
 
 
 
-
-android 第一次启动时， 会读取 apk 的信息， 保存到 /data/system/packages.xml, 从此以后每次启动就通过读这个 xml 来判断走 32bit 加载还是 64bit 加载；
-如果不想重烧 image， 就只能手动的 mkdir /system/app/lib/arm/ 目录， 然后删除 /data/system/packages.xml 再重启.
-
+/***
+android 第一次启动时，会读取apk的信息， 
+保存到/data/system/packages.xml, 
+从此以后每次启动就通过读这个xml来判断走32bit加载还是64bit加载；
+如果不想重烧image，就只能手动的"mkdir /system/app/lib/arm/"目录， 
+然后删除/data/system/packages.xml再重启.
+*/
 
 底层进程间通信方式:
 1.
