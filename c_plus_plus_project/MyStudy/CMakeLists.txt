@@ -14,7 +14,8 @@ add_executable(
         include/HandleAndroidString.h
         include/DownloadFile.hpp
         include/leak_detector_c.hpp
-#        include/thread_pool_active.hpp
+        include/FormatCode.hpp
+        #        include/thread_pool_active.hpp
 
         src/B0.cpp
         src/Test.cpp
@@ -24,8 +25,8 @@ add_executable(
         src/function_study.cpp
         src/GuessNumber.cpp
         src/HandleAndroidString.cpp
-#       src/thread_pool_active.c
-#       src/thread_pool_simple.c
+        #       src/thread_pool_active.c
+        #       src/thread_pool_simple.c
         main.cpp
 )
 
