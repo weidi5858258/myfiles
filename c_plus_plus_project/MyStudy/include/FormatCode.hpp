@@ -11,7 +11,7 @@ class FormatCode {
 private:
     string srcFilePath;
     string desFilePath;
-    string *blankSpace;
+    string blankSpace;
     vector<string> *contents;
 public:
 
@@ -23,21 +23,23 @@ public:
     void start(int argc, char **argv);
 
 private:
-    string *printBlankSpace(int blankSpaceCount);
+    string printBlankSpace(int blankSpaceCount);
 
     void qDebug(int argc, char **argv);
 };
 
 FormatCode::FormatCode() {
-    std::cout << "Create FormatCode() Object: " << this << std::endl;
-    blankSpace = new string;
+    std::cout << "start Create FormatCode() Object: " << this << std::endl;
     contents = new vector<string>;
+    std::cout << "end   Create FormatCode() Object: " << this << std::endl;
 }
 
 FormatCode::~FormatCode() {
-    std::cout << "Destroy FormatCode  Object: " << this << std::endl;
-    delete blankSpace;
-    delete contents;
+    std::cout << "start Destroy FormatCode  Object: " << this << std::endl;
+    if (contents) {
+        delete contents;
+    }
+    std::cout << "end   Destroy FormatCode  Object: " << this << std::endl;
 }
 
 void FormatCode::start(int argc, char **argv) {
@@ -66,22 +68,22 @@ void FormatCode::start(int argc, char **argv) {
     fclose(fp);
 
 
-    std::cout << "start() Object: " << this << "@" << *printBlankSpace(1) << "@" << std::endl;
+    std::cout << "start() Object: " << this << "@" << printBlankSpace(1) << "@" << std::endl;
     char **msg;
     msg[0] = "start()";
-//    msg[1] = "#";
-//    msg[2] = "   ";
-//    msg[3] = "#";
-    qDebug(1, msg);
+    msg[1] = "#";
+    msg[2] = const_cast<char *>(printBlankSpace(5).c_str());
+    msg[3] = "#";
+    qDebug(4, msg);
 }
 
-string *FormatCode::printBlankSpace(int blankSpaceCount) {
+string FormatCode::printBlankSpace(int blankSpaceCount) {
     if (blankSpaceCount < 0) {
         blankSpaceCount = 1;
     }
-    blankSpace->clear();
+    blankSpace.clear();
     for (int i = 0; i < blankSpaceCount; i++) {
-        blankSpace->append(" ");
+        blankSpace.append(" ");
     }
     return blankSpace;
 }
