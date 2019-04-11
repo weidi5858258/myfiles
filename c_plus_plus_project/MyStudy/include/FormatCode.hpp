@@ -11,7 +11,8 @@ class FormatCode {
 private:
     string srcFilePath;
     string desFilePath;
-    string blankSpace;
+    string *blankSpace;
+    vector<string> *contents;
 public:
 
 public:
@@ -22,15 +23,21 @@ public:
     void start(int argc, char **argv);
 
 private:
-    string printBlankSpace(int blankSpaceCount);
+    string *printBlankSpace(int blankSpaceCount);
+
+    void qDebug(int argc, char **argv);
 };
 
 FormatCode::FormatCode() {
     std::cout << "Create FormatCode() Object: " << this << std::endl;
+    blankSpace = new string;
+    contents = new vector<string>;
 }
 
 FormatCode::~FormatCode() {
     std::cout << "Destroy FormatCode  Object: " << this << std::endl;
+    delete blankSpace;
+    delete contents;
 }
 
 void FormatCode::start(int argc, char **argv) {
@@ -58,18 +65,40 @@ void FormatCode::start(int argc, char **argv) {
     FILE *fp = fopen(desFilePath.c_str(), "wt");
     fclose(fp);
 
-    std::cout << "start() Object: " << this << "@" << printBlankSpace(1) << "@" << std::endl;
+
+    std::cout << "start() Object: " << this << "@" << *printBlankSpace(1) << "@" << std::endl;
+    char **msg;
+    msg[0] = "start()";
+//    msg[1] = "#";
+//    msg[2] = "   ";
+//    msg[3] = "#";
+    qDebug(1, msg);
 }
 
-string FormatCode::printBlankSpace(int blankSpaceCount) {
+string *FormatCode::printBlankSpace(int blankSpaceCount) {
     if (blankSpaceCount < 0) {
         blankSpaceCount = 1;
     }
-    blankSpace.clear();
+    blankSpace->clear();
     for (int i = 0; i < blankSpaceCount; i++) {
-        blankSpace.append(" ");
+        blankSpace->append(" ");
     }
     return blankSpace;
+}
+
+void FormatCode::qDebug(int argc, char **argv) {
+    if (argc < 0) {
+        return;
+    }
+    if (argc == 1) {
+        std::cout << argv[0] << " Object: " << this << std::endl;
+    } else {
+        string msg;
+        for (int i = 1; i < argc; i++) {
+            msg.append(argv[i]);
+        }
+        std::cout << argv[0] << " Object: " << this << msg << std::endl;
+    }
 }
 
 /*void CombineSpace(UINT8 *pszOldStr, UINT8 *pszNewStr) {
