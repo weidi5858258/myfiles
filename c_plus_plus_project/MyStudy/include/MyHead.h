@@ -29,6 +29,8 @@
 #include <pthread.h>
 #include <time.h>
 #include <malloc.h>
+#include <stdarg.h>
+#include <cctype>
 
 
 
@@ -95,6 +97,7 @@
 
 
 #define PI 3.14159265
+#define null NULL
 
 using namespace std;
 

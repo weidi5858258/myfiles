@@ -67,6 +67,7 @@ int main(int argc, char **argv) {
     argv[2] = "/root/temp_dir/format_code/main_temp.cpp";
     FormatCode *formatCode = new FormatCode;
     formatCode->start(argc, argv);
+    formatCode->release();
     delete formatCode;
 
     //test(argc, argv);

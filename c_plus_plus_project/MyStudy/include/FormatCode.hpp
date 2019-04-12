@@ -12,7 +12,7 @@ private:
     string srcFilePath;
     string desFilePath;
     string blankSpace;
-    vector<string> *contents;
+    vector<string> contents;
 public:
 
 public:
@@ -22,59 +22,86 @@ public:
 
     void start(int argc, char **argv);
 
+    void release();
+
 private:
     string printBlankSpace(int blankSpaceCount);
 
-    void qDebug(int argc, char **argv);
+    /***
+     输出不确定个数的字符串内容
+     现在不好的地方:
+     最后必须再加上""(没有没有空格),不然程序要崩
+     */
+    void qDebug(string msg, ...);
 };
 
 FormatCode::FormatCode() {
-    std::cout << "start Create FormatCode() Object: " << this << std::endl;
-    contents = new vector<string>;
-    std::cout << "end   Create FormatCode() Object: " << this << std::endl;
+    qDebug("start Create FormatCode() Object", "");
+    qDebug("end   Create FormatCode() Object", "");
 }
 
 FormatCode::~FormatCode() {
-    std::cout << "start Destroy FormatCode  Object: " << this << std::endl;
-    if (contents) {
-        delete contents;
-    }
-    std::cout << "end   Destroy FormatCode  Object: " << this << std::endl;
+    qDebug("start Destroy FormatCode  Object", "");
+    qDebug("end   Destroy FormatCode  Object", "");
 }
 
 void FormatCode::start(int argc, char **argv) {
-    std::cout << "start() Object: " << this << std::endl;
+    qDebug("start()", "");
     srcFilePath = argv[1];
     desFilePath = argv[2];
-    std::cout << "start() Object: " << this <<
-              " srcFilePath: " << srcFilePath <<
-              " desFilePath: " << desFilePath << std::endl;
+    qDebug("start()",
+           "srcFilePath:",
+           srcFilePath.c_str(),
+           "desFilePath:",
+           desFilePath.c_str(),
+           "");
+    // 为0时存在
     int result = access(srcFilePath.c_str(), F_OK);
     if (result == -1) {
-        fprintf(stdout, "return: %d %s文件不存在\n", result, srcFilePath.c_str());
+        qDebug("start()",
+               "result:",
+               std::to_string(result).c_str(),
+               srcFilePath.c_str(),
+               "文件不存在",
+               "");
         return;
     } else {
-        fprintf(stdout, "return: %d %s文件存在\n", result, srcFilePath.c_str());
+        qDebug("start()",
+               "result:",
+               std::to_string(result).c_str(),
+               srcFilePath.c_str(),
+               "文件存在",
+               "");
     }
     result = access(desFilePath.c_str(), F_OK);
     if (result == -1) {
-        fprintf(stdout, "return: %d %s文件不存在\n", result, desFilePath.c_str());
+        qDebug("start()",
+               "result:",
+               std::to_string(result).c_str(),
+               desFilePath.c_str(),
+               "文件不存在",
+               "");
     } else {
-        fprintf(stdout, "return: %d %s文件存在\n", result, desFilePath.c_str());
+        qDebug("start()",
+               "result:",
+               std::to_string(result).c_str(),
+               desFilePath.c_str(),
+               "文件存在",
+               "");
     }
 
     // 文件不存在就创建,存在就清空
     FILE *fp = fopen(desFilePath.c_str(), "wt");
     fclose(fp);
 
+    qDebug("start()", "hello", "world", "");
+}
 
-    std::cout << "start() Object: " << this << "@" << printBlankSpace(1) << "@" << std::endl;
-    char **msg;
-    msg[0] = "start()";
-    msg[1] = "#";
-    msg[2] = const_cast<char *>(printBlankSpace(5).c_str());
-    msg[3] = "#";
-    qDebug(4, msg);
+void FormatCode::release() {
+//    srcFilePath.clear();
+//    desFilePath.clear();
+//    blankSpace.clear();
+//    contents.clear();
 }
 
 string FormatCode::printBlankSpace(int blankSpaceCount) {
@@ -88,19 +115,21 @@ string FormatCode::printBlankSpace(int blankSpaceCount) {
     return blankSpace;
 }
 
-void FormatCode::qDebug(int argc, char **argv) {
-    if (argc < 0) {
-        return;
-    }
-    if (argc == 1) {
-        std::cout << argv[0] << " Object: " << this << std::endl;
-    } else {
-        string msg;
-        for (int i = 1; i < argc; i++) {
-            msg.append(argv[i]);
+void FormatCode::qDebug(string msg, ...) {
+    string tempMsg;
+    va_list msgPtr;
+    va_start(msgPtr, msg);
+    while (true) {
+        tempMsg = va_arg(msgPtr, char*);
+        if (tempMsg.empty()) {
+            break;
         }
-        std::cout << argv[0] << " Object: " << this << msg << std::endl;
+        msg.append(" ");
+        msg.append(tempMsg);
     }
+    va_end(msgPtr);
+    std::cout << "qDebug() Object: " << this << " " << msg << std::endl;
+    //fprintf(stdout, "return: %d %s文件不存在\n", result, srcFilePath.c_str());
 }
 
 /*void CombineSpace(UINT8 *pszOldStr, UINT8 *pszNewStr) {
