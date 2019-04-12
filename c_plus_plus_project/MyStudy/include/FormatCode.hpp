@@ -33,6 +33,13 @@ private:
      最后必须再加上""(没有没有空格),不然程序要崩
      */
     void qDebug(string msg, ...);
+
+    void handleAlineContent(string alineContent);
+
+    /***
+     去掉字符串首尾的空格
+     */
+    string trim(std::string &str);
 };
 
 FormatCode::FormatCode() {
@@ -94,7 +101,17 @@ void FormatCode::start(int argc, char **argv) {
     FILE *fp = fopen(desFilePath.c_str(), "wt");
     fclose(fp);
 
-    qDebug("start()", "hello", "world", "");
+    fstream file;
+    file.open(srcFilePath);
+    string alineContent;
+    alineContent.clear();
+    while (getline(file, alineContent)) {
+        handleAlineContent(alineContent);
+        alineContent.clear();
+    }
+    file.close();
+
+    //qDebug("start()", "hello", "world", "");
 }
 
 void FormatCode::release() {
@@ -130,6 +147,24 @@ void FormatCode::qDebug(string msg, ...) {
     va_end(msgPtr);
     std::cout << "qDebug() Object: " << this << " " << msg << std::endl;
     //fprintf(stdout, "return: %d %s文件不存在\n", result, srcFilePath.c_str());
+}
+
+string FormatCode::trim(std::string &alineContent) {
+    if (alineContent.empty()) {
+        return alineContent;
+    }
+    alineContent.erase(0, alineContent.find_first_not_of(" "));
+    alineContent.erase(alineContent.find_last_not_of(" ") + 1);
+    return alineContent;
+}
+
+void FormatCode::handleAlineContent(string alineContent) {
+    if (alineContent.empty()) {
+        return;
+    }
+    trim(alineContent);
+    qDebug("handleAlineContent()", alineContent.c_str(), "");
+    
 }
 
 /*void CombineSpace(UINT8 *pszOldStr, UINT8 *pszNewStr) {
