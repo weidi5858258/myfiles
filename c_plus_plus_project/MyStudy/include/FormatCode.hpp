@@ -101,15 +101,24 @@ void FormatCode::start(int argc, char **argv) {
     FILE *fp = fopen(desFilePath.c_str(), "wt");
     fclose(fp);
 
-    fstream file;
-    file.open(srcFilePath);
-    string alineContent;
-    alineContent.clear();
-    while (getline(file, alineContent)) {
-        handleAlineContent(alineContent);
-        alineContent.clear();
+    // 从srcFilePath中读出每一行内容
+//    fstream file;
+//    file.open(srcFilePath);
+//    string alineContent;
+//    alineContent.clear();
+//    while (getline(file, alineContent)) {
+//        handleAlineContent(alineContent);
+//        alineContent.clear();
+//    }
+//    file.close();
+
+    for (vector<string>::iterator iter = contents.begin();
+         iter != contents.end();
+         ++iter) {
+        qDebug("start()", (*iter).c_str(), "");
     }
-    file.close();
+
+
 
     //qDebug("start()", "hello", "world", "");
 }
@@ -163,8 +172,31 @@ void FormatCode::handleAlineContent(string alineContent) {
         return;
     }
     trim(alineContent);
-    qDebug("handleAlineContent()", alineContent.c_str(), "");
-    
+    if (alineContent.find("/*") != string::npos
+        && alineContent.find("*/") == string::npos) {
+        // 形如: /* ...
+        int position = alineContent.rfind("*");
+        alineContent = alineContent.substr(position + 1,
+                                           alineContent.length() - position);
+        trim(alineContent);
+        contents.push_back("/***");
+        if (!alineContent.empty()) {
+            contents.push_back(printBlankSpace(1).append(alineContent));
+        }
+
+        //qDebug("handleAlineContent()", alineContent.c_str(), "");
+    } else if (alineContent.find("/*") != string::npos
+               && alineContent.find("*/") != string::npos) {
+        // 形如: /* ... */
+    } else if (alineContent.find("#if")) {
+
+    } else if (alineContent.find("#ifndef")) {
+
+    } else if (alineContent.find("#ifdef")) {
+
+    }
+
+
 }
 
 /*void CombineSpace(UINT8 *pszOldStr, UINT8 *pszNewStr) {

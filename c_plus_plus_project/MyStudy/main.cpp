@@ -12,6 +12,7 @@
 #include "./include/Method.h"
 #include "./include/HandleAndroidString.h"
 #include "./include/FormatCode.hpp"
+#include "./include/TestRegularExpression.hpp"
 #include "./include/leak_detector_c.hpp"
 //#include "./include/thread_pool_active.hpp"
 //#include "./include/leak_detector_c.h"
@@ -62,13 +63,16 @@ int main(int argc, char **argv) {
 //    handleAndroidString.doSomething("/root/temp_dir/merge_string");
 //    handleAndroidString.doSomething("/root/temp_dir/merge_string/temp_cache");
 
-    argc = 3;
-    argv[1] = "/root/temp_dir/format_code/main.cpp";
-    argv[2] = "/root/temp_dir/format_code/main_temp.cpp";
-    FormatCode *formatCode = new FormatCode;
-    formatCode->start(argc, argv);
-    formatCode->release();
-    delete formatCode;
+//    argc = 3;
+//    argv[1] = "/root/temp_dir/format_code/main.cpp";
+//    argv[2] = "/root/temp_dir/format_code/main_temp.cpp";
+//    FormatCode *formatCode = new FormatCode;
+//    formatCode->start(argc, argv);
+//    formatCode->release();
+//    delete formatCode;
+
+    TestRegularExpression testRegularExpression;
+    testRegularExpression.test();
 
     //test(argc, argv);
     //basicKnowledge(argc, argv);

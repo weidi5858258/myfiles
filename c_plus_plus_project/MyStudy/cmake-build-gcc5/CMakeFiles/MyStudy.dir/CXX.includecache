@@ -278,6 +278,10 @@ GL/glut.h
 MyHead.h
 /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/./include/MyHead.h
 
+/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/./include/TestRegularExpression.hpp
+MyHead.h
+/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/./include/MyHead.h
+
 /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/./include/leak_detector_c.hpp
 stdio.h
 -
@@ -305,6 +309,8 @@ HandleAndroidString.h
 /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/./include/HandleAndroidString.h
 ./include/FormatCode.hpp
 /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/./include/FormatCode.hpp
+./include/TestRegularExpression.hpp
+/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/./include/TestRegularExpression.hpp
 ./include/leak_detector_c.hpp
 /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/./include/leak_detector_c.hpp
 

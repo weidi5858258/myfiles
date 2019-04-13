@@ -1,0 +1,4 @@
+/root/mydev/tools/clion-2018.3/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc-5 -DCMAKE_CXX_COMPILER=/usr/bin/g++-5 -G "CodeBlocks - Unix Makefiles" /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-gcc5
