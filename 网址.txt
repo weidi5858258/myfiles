@@ -124,6 +124,8 @@ https://wiki.postmarketos.org/wiki/Galaxy_Note_II_(samsung-n7100)
 https://blog.csdn.net/guolin_blog/article/details/51763825 Android状态栏微技巧，带你真正理解沉浸式模式
 https://source.android.com/source/build-numbers.html#source-code-tags-and-builds 代号、标记和细分版本号
 https://www.kancloud.cn/nikola0618/astyle/830857 Artistic Style 3.1
+http://tool.oschina.net/regex/ 在线正则表达式测试(C++)
+https://blog.csdn.net/haohao1945/article/details/51375609 c++11 正则表达式匹配
 
 
 
