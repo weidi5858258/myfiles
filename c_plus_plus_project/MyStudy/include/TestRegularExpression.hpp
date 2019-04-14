@@ -48,6 +48,7 @@
  std::regex("(do(es)?)")等价于std::regex("(do(es){0,1})"): do does
  std::regex("(o{2})"): food
  std::regex("([1-9][0-9]*)"):匹配的字符串是否是任意的两位数,三位数,四位数...
+ std::regex("((\s)*)"): 匹配的字符串是否是一个或者多个空格
 
 */
 class TestRegularExpression {
@@ -73,6 +74,10 @@ TestRegularExpression::~TestRegularExpression() {
 }
 
 void TestRegularExpression::test() {
+    cout << std::regex_match(" ", std::regex("((\\s)*)")) << endl;
+    cout << std::regex_search("a b", std::regex("(^a[:blank:]b$)")) << endl;
+
+
     string str = "Hello_2018";
     smatch result;
     regex pattern("(.{5})_(\\d{4})");    //匹配5个任意单字符 + 下划线 + 4个数字

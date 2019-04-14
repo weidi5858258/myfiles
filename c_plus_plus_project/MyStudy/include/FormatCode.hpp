@@ -13,6 +13,21 @@ private:
     string desFilePath;
     string blankSpace;
     vector<string> contents;
+
+    // 匹配注释
+    // 形如:/*
+    std::regex notes1Regex;
+    // 形如:/* ...
+    std::regex notes2Regex;
+    // 形如:/* ... */
+    std::regex notes3Regex;
+    // 形如://
+    std::regex notes4Regex;
+    // 匹配include
+    // #include 形如:<...>
+    std::regex include1Regex;
+    // #include 形如:"..."
+    std::regex include2Regex;
 public:
 
 public:
