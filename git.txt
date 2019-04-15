@@ -26,6 +26,7 @@ git stash
 git pull
 git stash pop stash@{0}
 
+git rebase --abort
 
 把branchA merge to branchB上
 git checkout branchB

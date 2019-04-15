@@ -7,6 +7,10 @@ Android NDK: WARNING: APP_PLATFORM android-17 is higher than android:minSdkVersi
 解决方法：
 在AndroidManifest.xml中指定<uses-sdk android:minSdkVersion="17"/>
 最小版本
+
+assert()
+如果断言断的对,那么就不报错;
+如果断言断的不对,那么就报错.
 */
 
 
@@ -161,13 +165,48 @@ int[]           jintArray
 
 
 
+/***
+在jni中
+JNIEnv *env, jobject thiz
+这两个参数是系统给的,在java端不需要传递.
+jobject obj的解释:
+如果native方法不是static的话，这个obj就代表这个native方法的类实例
+如果native方法  是static的话，这个obj就代表这个native方法的类的
+class对象实例(static方法不需要类实例的，所以就代表这个类的class对象)
+*/
+
+status_t
+uint32_t
+uid_t
+Parcel
+sp <VolumeShaper::Configuration>
+BnInterface<IPlayer>
+
+// jing -> uint32_t
+jint channelMask;
+uint32_t localChanMask = (audio_channel_mask_t)channelMask;
+
+// jintArray
+jintArray jSession;
+if (jSession == NULL) {
+}
+// jintArray -> jint *
+jint *nSession = (jint *) env->GetPrimitiveArrayCritical(jSession, NULL);
+if (nSession == NULL) {
+}
+// audio_session_t is enum
+audio_session_t sessionId = (audio_session_t) nSession[0];
+env->ReleasePrimitiveArrayCritical(jSession, nSession, 0);
+nSession = NULL;
+
+static const char *const kClassPathName = "android/media/AudioRecord";
+
 struct fields_t {
     jfieldID context;
 
     jmethodID cryptoInfoSetID;
 };
 static fields_t gFields;
-
 // FindClass
 jclass clazz = env->FindClass("android/media/MediaExtractor");
 CHECK(clazz != NULL);
@@ -179,9 +218,6 @@ CHECK(clazz != NULL);
 // GetMethodID
 gFields.cryptoInfoSetID = env->GetMethodID(clazz, "set", "(I[I[I[B[BI)V");
 
-jobject obj的解释:
-如果native方法不是static的话，这个obj就代表这个native方法的类实例
-如果native方法是static的话，这个obj就代表这个native方法的类的class对象实例(static方法不需要类实例的，所以就代表这个类的class对象)
 // 使用"jobject thiz"这个参数得到java端的Class对象
 jclass clazz = env->GetObjectClass(thiz);
 CHECK(clazz != NULL);
@@ -197,21 +233,6 @@ sp<JMediaExtractor> extractor = new JMediaExtractor(env, thiz);
 if (extractor != NULL) {
     extractor->incStrong(thiz);
 }
-
-在jni中
-JNIEnv *env, jobject thiz
-这两个参数是系统给的,在java端不需要传递.
-
-
-status_t
-uint32_t
-uid_t
-Parcel
-sp <VolumeShaper::Configuration>
-BnInterface<IPlayer>
-
-
-
 
 /***
 # our headers include libnativewindow's public headers
@@ -696,6 +717,7 @@ android 第一次启动时，会读取apk的信息，
 然后删除/data/system/packages.xml再重启.
 */
 
+/***
 底层进程间通信方式:
 1.
 先定义一个Bp和Bn公同的基类
@@ -853,15 +875,13 @@ LOCAL_SRC_FILES:= \
 
 通过上面的步骤就能够在其他地方先调用到Bp的代码,然后通过Bp中的代码调用
 到Bn中的代码.这样就实现了跨进程调用了.
-
-
-assert()
-如果断言断的对,那么就不报错;
-如果断言断的不对,那么就报错.
+*/
 
 
 
 
+
+/***
 Android 7.1.1源码下载
 1、下载安装repo 工具
 mkdir ~/bin
@@ -883,7 +903,6 @@ repo sync packages/providers/ContactsProvider
 repo sync命令后接的path，在执行repo init目录下（此处即android _sourcecode）有个.repo文件夹，可以通过
 .repo/manifest.xml 查看各个模块的路径，然后通过repo sycn path来下载学习最新的android源码，查看googel大神们写的代码
 如果以后android源码更新了，只需改变步骤4中－b后指定的路径，Android所有版本列表
-
 
 ============================================
 PLATFORM_VERSION_CODENAME=REL
@@ -917,7 +936,7 @@ root@WEIDI5858258:/mnt/d/android_source/android_n# make -j4
 21:21:50 Please move your source tree to a case-sensitive filesystem.
 21:21:50 ************************************************************
 21:21:50 Case-insensitive filesystems not supported
-
+*/
 
 
 
