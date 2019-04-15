@@ -186,7 +186,9 @@ BnInterface<IPlayer>
 jint channelMask;
 uint32_t localChanMask = (audio_channel_mask_t)channelMask;
 
-// jintArray
+
+// jobject  需要判NULL
+// jintArray需要判NULL
 jintArray jSession;
 if (jSession == NULL) {
 }
@@ -199,7 +201,124 @@ audio_session_t sessionId = (audio_session_t) nSession[0];
 env->ReleasePrimitiveArrayCritical(jSession, nSession, 0);
 nSession = NULL;
 
+AudioRecord::AudioRecord(const String16 &opPackageName){...}
+new AudioRecord(String16(opPackageNameStr.c_str()));
+
+// 表示AudioTrack类
+android::sp<android::AudioTrack>
+
+/***
+下面以android.media.AudioRecord为例
+来说明libandroid_runtime.so
+call到libmedia.so(名字随着android版本的不同而可能不同)
+的过程(主要是得到另一个so库里的类的对象的过程).
+libandroid_runtime.so中的代码:
+首先宏定义
+#define JAVA_POSTEVENT_CALLBACK_NAME                  "postEventFromNative"
+#define JAVA_NATIVERECORDERINJAVAOBJ_FIELD_NAME  "mNativeRecorderInJavaObj"
+#define JAVA_NATIVECALLBACKINFO_FIELD_NAME          "mNativeCallbackCookie"
+#define JAVA_NATIVEDEVICECALLBACK_FIELD_NAME        "mNativeDeviceCallback"
+"postEventFromNative"是java代码中定义的类的属性.
+再定义一个结构体
+struct audio_record_fields_t {
+    jmethodID postNativeEventInJava;
+    jfieldID  nativeRecorderInJavaObj;
+    jfieldID  nativeCallbackCookie;
+    jfieldID  nativeDeviceCallback;
+};
+定义静态变量
+static audio_record_fields_t javaAudioRecordFields;
+然后把上面的代码联系起来
+// 初始化
+javaAudioRecordFields.postNativeEventInJava = NULL;
+javaAudioRecordFields.nativeRecorderInJavaObj = NULL;
+javaAudioRecordFields.nativeCallbackCookie = NULL;
+javaAudioRecordFields.nativeDeviceCallback = NULL;
 static const char *const kClassPathName = "android/media/AudioRecord";
+jclass audioRecordClass = env->FindClass(kClassPathName);
+javaAudioRecordFields.postNativeEventInJava = GetStaticMethodIDOrDie(env,
+            audioRecordClass, 
+            JAVA_POSTEVENT_CALLBACK_NAME,
+            "(Ljava/lang/Object;IIILjava/lang/Object;)V");
+javaAudioRecordFields.nativeRecorderInJavaObj = GetFieldIDOrDie(env,
+            audioRecordClass, 
+            JAVA_NATIVERECORDERINJAVAOBJ_FIELD_NAME, 
+            "J");
+javaAudioRecordFields.nativeCallbackCookie = GetFieldIDOrDie(env,
+            audioRecordClass, 
+            JAVA_NATIVECALLBACKINFO_FIELD_NAME, 
+            "J");
+javaAudioRecordFields.nativeDeviceCallback = GetFieldIDOrDie(env,
+            audioRecordClass, 
+            JAVA_NATIVEDEVICECALLBACK_FIELD_NAME, 
+            "J");
+// 在libandroid_runtime.so中得到libmedia.so中的AudioRecord对象
+#include <ScopedUtfChars.h>
+// 包名
+jstring opPackageName;
+ScopedUtfChars opPackageNameStr(env, opPackageName);
+sp<AudioRecord> lpRecorder = NULL;
+lpRecorder = new AudioRecord(String16(opPackageNameStr.c_str()));
+setAudioRecord(env, thiz, lpRecorder);
+// 下面两个方法好像是固定写法
+static sp<AudioRecord> setAudioRecord(JNIEnv *env, jobject thiz, const sp<AudioRecord> &ar) {
+    Mutex::Autolock l(sLock);
+    sp<AudioRecord> old =
+            (AudioRecord *) env->GetLongField(thiz, javaAudioRecordFields.nativeRecorderInJavaObj);
+    if (ar.get()) {
+        ar->incStrong((void *) setAudioRecord);
+    }
+    if (old != 0) {
+        old->decStrong((void *) setAudioRecord);
+    }
+    env->SetLongField(thiz, javaAudioRecordFields.nativeRecorderInJavaObj, (jlong) ar.get());
+    return old;
+}
+static sp<AudioRecord> getAudioRecord(JNIEnv *env, jobject thiz) {
+    Mutex::Autolock l(sLock);
+    AudioRecord *const ar =
+            (AudioRecord *) env->GetLongField(thiz, javaAudioRecordFields.nativeRecorderInJavaObj);
+    return sp<AudioRecord>(ar);
+}
+
+可以参考的代码
+enum {
+    AUDIO_JAVA_SUCCESS            = 0,
+    AUDIO_JAVA_ERROR              = -1,
+    AUDIO_JAVA_BAD_VALUE          = -2,
+    AUDIO_JAVA_INVALID_OPERATION  = -3,
+    AUDIO_JAVA_PERMISSION_DENIED  = -4,
+    AUDIO_JAVA_NO_INIT            = -5,
+    AUDIO_JAVA_DEAD_OBJECT        = -6,
+    AUDIO_JAVA_WOULD_BLOCK        = -7,
+};
+static inline jint nativeToJavaStatus(status_t status) {
+    switch (status) {
+        case NO_ERROR:
+            return AUDIO_JAVA_SUCCESS;
+        case BAD_VALUE:
+            return AUDIO_JAVA_BAD_VALUE;
+        case INVALID_OPERATION:
+            return AUDIO_JAVA_INVALID_OPERATION;
+        case PERMISSION_DENIED:
+            return AUDIO_JAVA_PERMISSION_DENIED;
+        case NO_INIT:
+            return AUDIO_JAVA_NO_INIT;
+        case WOULD_BLOCK:
+            return AUDIO_JAVA_WOULD_BLOCK;
+        case DEAD_OBJECT:
+            return AUDIO_JAVA_DEAD_OBJECT;
+        default:
+            return AUDIO_JAVA_ERROR;
+    }
+}
+底层一般的方法返回status_t,
+从底层返回给java层一般用jini.
+
+
+
+*/
+
 
 struct fields_t {
     jfieldID context;
