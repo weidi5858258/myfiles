@@ -11,6 +11,13 @@ Android NDK: WARNING: APP_PLATFORM android-17 is higher than android:minSdkVersi
 assert()
 如果断言断的对,那么就不报错;
 如果断言断的不对,那么就报错.
+
+System.loadLibrary(“android_runtime”);
+要求libandroid_runtime.so是在
+/数据/数据​​/应用程序{}/lib目录，
+System.load(“/系统/lib目录/libandroid_runtime.so”); 
+要求的是完整路径.
+
 */
 
 
