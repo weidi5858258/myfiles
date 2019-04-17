@@ -1554,7 +1554,12 @@ adb shell pm path com.miui.fm
 adb shell ls -alh /storage/3D5F-08A6/SonyTVCamera_photo
 ./system/vendor/bin/camera_recognition_daemon &
 
+mount
+# mount: '/system/' not in /proc/mounts
 mount -o remount,rw /dev/block/mmcblk0p13 /system
+mount -o remount,rw /dev/block/sde21 /system
+# 这个命令有效
+mount -o rw,remount -t auto /system
 
 # 停用应用
 adb shell pm hide   com.ss.android.article.video
