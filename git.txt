@@ -50,6 +50,8 @@ $ git push origin dbg_lichen_star:dbg_lichen_star
 使用git branch -a查看所有分支，会看到remotes/origin/dbg_lichen_star这个远程分支，说明新建远程分支成功。
 删除远程分支
 $ git push origin --delete dbg_lichen_star
+如果您想要为此分支创建跟踪信息，您可以执行：
+$ git branch --set-upstream-to=origin/dbg_lichen_star
 
 删除本地分支 
 命令行 : $ git branch -D <BranchName>
