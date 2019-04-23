@@ -1,3 +1,7 @@
+git commit 编辑器
+git commit -m 默认使用nano，觉得不爽，改成vim吧。
+在 .gitconfig (在根目录下)的 [core] 段中加上 editor=vim
+
 git恢复被修改的文件
 恢复到最后一次提交的改动
 	git checkout -- + 需要恢复的文件名
