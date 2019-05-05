@@ -71,10 +71,10 @@ int main(int argc, char **argv) {
 //    formatCode->release();
 //    delete formatCode;
 
-    TestRegularExpression testRegularExpression;
-    testRegularExpression.test();
+//    TestRegularExpression testRegularExpression;
+//    testRegularExpression.test();
 
-    //test(argc, argv);
+    test(argc, argv);
     //basicKnowledge(argc, argv);
 
     printf("------------------------------------------\n");
@@ -160,7 +160,9 @@ int test(int argc, char **argv) {
     }
 
 #ifdef WIN32
-    fprintf(stdout, "WIN32\n");
+    fprintf(stdout, "  WIN32\n");
+#elif BOOST_OS_LINUX
+    fprintf(stdout, "  BOOST_OS_LINUX\n");
 #else
     fprintf(stdout, "! WIN32\n");
 #endif

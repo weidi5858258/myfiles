@@ -1,8 +1,18 @@
 # The set of languages for which implicit dependencies are needed:
 set(CMAKE_DEPENDS_LANGUAGES
+  "C"
   "CXX"
   )
 # The set of files for implicit dependencies of each language:
+set(CMAKE_DEPENDS_CHECK_C
+  "/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/thread_pool_active.c" "/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-gcc5/CMakeFiles/MyStudy.dir/src/thread_pool_active.c.o"
+  )
+set(CMAKE_C_COMPILER_ID "GNU")
+
+# The include file search paths:
+set(CMAKE_C_TARGET_INCLUDE_PATH
+  "../include"
+  )
 set(CMAKE_DEPENDS_CHECK_CXX
   "/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/main.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-gcc5/CMakeFiles/MyStudy.dir/main.cpp.o"
   "/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/B0.cpp" "/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/cmake-build-gcc5/CMakeFiles/MyStudy.dir/src/B0.cpp.o"

@@ -140,6 +140,9 @@
 		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/function_study.cpp">
 			<Option target="MyStudy"/>
 		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/src/thread_pool_active.c">
+			<Option target="MyStudy"/>
+		</Unit>
 		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

@@ -25,7 +25,7 @@ add_executable(
         src/function_study.cpp
         src/GuessNumber.cpp
         src/HandleAndroidString.cpp
-        #       src/thread_pool_active.c
+        src/thread_pool_active.c
         #       src/thread_pool_simple.c
         main.cpp
         include/TestRegularExpression.hpp)
