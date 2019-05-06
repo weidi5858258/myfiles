@@ -220,6 +220,7 @@ android::sp<android::AudioTrack>
 call到libmedia.so(名字随着android版本的不同而可能不同)
 的过程(主要是得到另一个so库里的类的对象的过程).
 libandroid_runtime.so中的代码:
+#include "core_jni_helpers.h"
 首先宏定义
 #define JAVA_POSTEVENT_CALLBACK_NAME                  "postEventFromNative"
 #define JAVA_NATIVERECORDERINJAVAOBJ_FIELD_NAME  "mNativeRecorderInJavaObj"
@@ -236,21 +237,32 @@ struct audio_record_fields_t {
 定义静态变量
 static audio_record_fields_t javaAudioRecordFields;
 然后把上面的代码联系起来
-// 初始化
+// 先对结构体成员进行初始化
 javaAudioRecordFields.postNativeEventInJava = NULL;
 javaAudioRecordFields.nativeRecorderInJavaObj = NULL;
 javaAudioRecordFields.nativeCallbackCookie = NULL;
 javaAudioRecordFields.nativeDeviceCallback = NULL;
 static const char *const kClassPathName = "android/media/AudioRecord";
+// 找到java类
+jclass audioRecordClass = FindClassOrDie(env, kClassPathName);
 jclass audioRecordClass = env->FindClass(kClassPathName);
+// 实际是这样调用的
+FindClassOrDie(...) -> env->FindClass(...)
 javaAudioRecordFields.postNativeEventInJava = GetStaticMethodIDOrDie(env,
             audioRecordClass, 
+            // java中的方法名
             JAVA_POSTEVENT_CALLBACK_NAME,
+            // java中的方法参数签名
             "(Ljava/lang/Object;IIILjava/lang/Object;)V");
+// 实际是这样调用的
+GetStaticMethodIDOrDie(...) -> env->GetStaticMethodID(...)
 javaAudioRecordFields.nativeRecorderInJavaObj = GetFieldIDOrDie(env,
             audioRecordClass, 
+            // java中的属性名
             JAVA_NATIVERECORDERINJAVAOBJ_FIELD_NAME, 
             "J");
+// 实际是这样调用的
+GetFieldIDOrDie(...) -> env->GetFieldID(...)
 javaAudioRecordFields.nativeCallbackCookie = GetFieldIDOrDie(env,
             audioRecordClass, 
             JAVA_NATIVECALLBACKINFO_FIELD_NAME, 
@@ -259,6 +271,7 @@ javaAudioRecordFields.nativeDeviceCallback = GetFieldIDOrDie(env,
             audioRecordClass, 
             JAVA_NATIVEDEVICECALLBACK_FIELD_NAME, 
             "J");
+
 // 在libandroid_runtime.so中得到libmedia.so中的AudioRecord对象
 #include <ScopedUtfChars.h>
 // 包名
@@ -290,7 +303,7 @@ static sp<AudioRecord> getAudioRecord(JNIEnv *env, jobject thiz) {
 
 可以参考的代码
 enum {
-    AUDIO_JAVA_SUCCESS            = 0,
+    AUDIO_JAVA_SUCCESS            =  0,
     AUDIO_JAVA_ERROR              = -1,
     AUDIO_JAVA_BAD_VALUE          = -2,
     AUDIO_JAVA_INVALID_OPERATION  = -3,
