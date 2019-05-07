@@ -215,12 +215,32 @@ new AudioRecord(String16(opPackageNameStr.c_str()));
 android::sp<android::AudioTrack>
 
 /***
+在native层得到java层的类,属性,方法
+#include "core_jni_helpers.h"
+jclass    FindClassOrDie(        JNIEnv* env,               const char* class_name)
+jfieldID  GetFieldIDOrDie(       JNIEnv* env, jclass clazz, const char* field_name,  const char* field_signature)
+jmethodID GetMethodIDOrDie(      JNIEnv* env, jclass clazz, const char* method_name, const char* method_signature)
+jfieldID  GetStaticFieldIDOrDie( JNIEnv* env, jclass clazz, const char* field_name,  const char* field_signature)
+jmethodID GetStaticMethodIDOrDie(JNIEnv* env, jclass clazz, const char* method_name, const char* method_signature)
+T         MakeGlobalRefOrDie(    JNIEnv* env, T in)
+int       RegisterMethodsOrDie(  JNIEnv* env, const char* className, const JNINativeMethod* gMethods, int numMethods)
+field_name和method_name是java层类的属性名称和方法名称.
+难点是写field_signature和method_signature.
+
+native层调用java层的静态方法
+env->CallStaticVoidMethod(
+                // 通过FindClassOrDie(...)得到
+                callbackInfo->audioRecord_class,
+                // 通过GetStaticMethodIDOrDie(...)得到
+                javaAudioRecordFields.postNativeEventInJava,
+                // 其他的参数跟java层调用时一样
+                callbackInfo->audioRecord_ref, event, 0,0, NULL);
+
 下面以android.media.AudioRecord为例
 来说明libandroid_runtime.so
 call到libmedia.so(名字随着android版本的不同而可能不同)
 的过程(主要是得到另一个so库里的类的对象的过程).
 libandroid_runtime.so中的代码:
-#include "core_jni_helpers.h"
 首先宏定义
 #define JAVA_POSTEVENT_CALLBACK_NAME                  "postEventFromNative"
 #define JAVA_NATIVERECORDERINJAVAOBJ_FIELD_NAME  "mNativeRecorderInJavaObj"
