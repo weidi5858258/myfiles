@@ -129,6 +129,7 @@ https://blog.csdn.net/haohao1945/article/details/51375609 c++11 正则表达式�
 https://www.jianshu.com/p/3c94ae673e2a Android：这是一份全面 & 详细的Webview使用攻略
 https://blog.51cto.com/ticktick/1748506 Android音频开发
 http://bbs.cnmo.com/thread-16205338-1-1.html 隐藏安卓手机虚拟按键和状态栏，完美全面屏
+https://blog.csdn.net/sy373466062/article/details/61192272/# LineageOS 14.1(CM14.1)的快速下载与编译
 
 
 

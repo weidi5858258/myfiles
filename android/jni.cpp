@@ -2,6 +2,77 @@
 #include <stdio.h>
 
 /***
+什么样的进程能够调用libandroid_runtime.so库
+
+typedef union jvalue {
+    jboolean    z;
+    jbyte       b;
+    jchar       c;
+    jshort      s;
+    jint        i;
+    jlong       j;
+    jfloat      f;
+    jdouble     d;
+    jobject     l;
+} jvalue;
+
+// 下面这些类型因为是指针,所以需要判NULL
+typedef _jthrowable*    jthrowable;
+typedef _jobject*       jobject;
+typedef _jobject*       jweak;
+typedef _jclass*        jclass;
+typedef _jstring*       jstring;
+typedef _jarray*        jarray;
+typedef _jobjectArray*  jobjectArray;
+typedef _jbooleanArray* jbooleanArray;
+typedef _jbyteArray*    jbyteArray;
+typedef _jcharArray*    jcharArray;
+typedef _jshortArray*   jshortArray;
+typedef _jintArray*     jintArray;
+typedef _jlongArray*    jlongArray;
+typedef _jfloatArray*   jfloatArray;
+typedef _jdoubleArray*  jdoubleArray;
+
+jintArray jSession;
+if (jSession == NULL) {
+    ALOGE("Error creating AudioRecord: invalid session ID pointer");
+    return (jint) AUDIO_JAVA_ERROR;
+}
+jint *nSession = (jint *) env->GetPrimitiveArrayCritical(jSession, NULL);
+if (nSession == NULL) {
+    ALOGE("Error creating AudioRecord: Error retrieving session id pointer");
+    return (jint) AUDIO_JAVA_ERROR;
+}
+audio_session_t sessionId = (audio_session_t) nSession[0];
+ALOGI("android_media_AudioRecord_setup() sessionId: %d", sessionId);
+env->ReleasePrimitiveArrayCritical(jSession, nSession, 0);
+nSession = NULL;
+
+jintArray jSampleRate;
+if (jSampleRate == NULL) {
+    ALOGE("Error creating AudioRecord: invalid sample rates");
+    return (jint) AUDIO_JAVA_ERROR;
+}
+jint elements[1];
+env->GetIntArrayRegion(jSampleRate, 0, 1, elements);
+int sampleRateInHertz = elements[0];
+
+jstring opPackageName;
+ScopedUtfChars opPackageNameStr(env, opPackageName);
+new AudioRecord(String16(opPackageNameStr.c_str()));
+
+// 系统给的参数, native方法在java层的哪个类中,thiz就指向这个类
+JNIEnv *env, jobject thiz;
+jclass clazz = env->GetObjectClass(thiz);
+if (clazz == NULL) {
+    ALOGE("Can't find %s when setting up callback.", kClassPathName);
+    return (jint) AUDIORECORD_ERROR_SETUP_NATIVEINITFAILED;
+}
+// audioRecord_class这个有什么用呢?
+// 在native层调用java层的static方法时需要用到
+jclass audioRecord_class = (jclass) env->NewGlobalRef(clazz);
+env->DeleteGlobalRef(lpCookie->audioRecord_class);
+
 用ndk-build命令编译时遇到的问题
 Android NDK: WARNING: APP_PLATFORM android-17 is higher than android:minSdkVersion 1 in D:/workspace/jni/app/src/main/AndroidManifest.xml. NDK binaries will *not* be comptible with devices older than android-17. See https://android.googlesource.com/platform/ndk/+/master/docs/user/common_problems.md for more information.
 解决方法：
@@ -17,6 +88,70 @@ System.loadLibrary(“android_runtime”);
 /数据/数据​​/应用程序{}/lib目录，
 System.load(“/系统/lib目录/libandroid_runtime.so”); 
 要求的是完整路径.
+
+frameworks/base/core/jni
+frameworks/base/media/jni
+frameworks/av/media/libmedia
+frameworks/av/services/audioflinger
+
+#define LOG_TAG "alexander"
+pid_t pid = getpid();
+LOGI("BpDaemon::BpDaemon()  created   %p PID: %d\n", this, pid);
+pid_t pid = getpid();
+LOGI("BpDaemon::~BpDaemon() destroyed %p PID: %d\n", this, pid);
+
+打印String16的字符串
+const String16 &opPackageName
+ALOGI("opPackageName: %s", String8(mOpPackageName).string());
+
+%s : String8(mOpPackageName).string()
+%d : enum
+%u : uint32_t
+%#x: enum
+%zu: size_t
+%zd: ssize_t
+
+// 定义类型的同时定义了一个变量
+static struct audio_record_fields_t {
+    jmethodID postNativeEventInJava;
+    jfieldID nativeRecorderInJavaObj;
+    jfieldID nativeCallbackCookie;
+    jfieldID nativeDeviceCallback;
+} javaAudioRecordFields;
+static struct {
+    jfieldID fieldFramePosition;
+    jfieldID fieldNanoTime;
+} javaAudioTimestampFields;
+
+struct audiorecord_callback_cookie {
+    jclass audioRecord_class;
+    jobject audioRecord_ref;
+    bool busy;
+    Condition cond;
+};
+audiorecord_callback_cookie *lpCallbackData = NULL;
+// new结构体对象时不要有括号
+lpCallbackData = new audiorecord_callback_cookie;
+delete lpCallbackData;
+
+static Mutex sLock;
+// 哪段代码需要lock就用大括号括起来
+{
+    Mutex::Autolock l(sLock);
+    if (sAudioRecordCallBackCookies.indexOf(callbackInfo) < 0) {
+        return;
+    }
+    callbackInfo->busy = true;
+}
+
+static jint
+android_media_AudioRecord_setup(JNIEnv *env, jobject thiz,
+                                jobject weak_this, jobject jaa, jintArray jSampleRate,
+                                jint channelMask, jint channelIndexMask, jint audioFormat,
+                                jint buffSizeInBytes, jintArray jSession, jstring opPackageName,
+                                jlong nativeRecordInJavaObj)
+JNIEnv *env和jobject thiz这两个参数是不能传的,系统会给的.
+
 
 */
 
