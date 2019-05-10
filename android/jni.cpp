@@ -96,6 +96,7 @@ frameworks/av/services/audioflinger
 
 #define LOG_TAG "alexander"
 pid_t pid = getpid();
+pid_t callingPid = IPCThreadState::self()->getCallingPid();
 LOGI("BpDaemon::BpDaemon()  created   %p PID: %d\n", this, pid);
 pid_t pid = getpid();
 LOGI("BpDaemon::~BpDaemon() destroyed %p PID: %d\n", this, pid);
@@ -105,11 +106,15 @@ const String16 &opPackageName
 ALOGI("opPackageName: %s", String8(mOpPackageName).string());
 
 %s : String8(mOpPackageName).string()
-%d : enum
+%d : enum bool
 %u : uint32_t
 %#x: enum
 %zu: size_t
 %zd: ssize_t
+status_t
+nsecs_t
+uid_t
+pid_t
 
 // 定义类型的同时定义了一个变量
 static struct audio_record_fields_t {
@@ -155,7 +160,43 @@ JNIEnv *env和jobject thiz这两个参数是不能传的,系统会给的.
 
 */
 
+/***
+frameworks/av/media/libaudioclient
+frameworks/av/media/libaudioclient/include/media/IAudioRecord.h
+class IAudioRecord : public IInterface {
+public:
+    DECLARE_META_INTERFACE(AudioRecord);
+    virtual status_t start(int  event, audio_session_t triggerSession) = 0;
+    virtual void stop() = 0;
+};
+class BnAudioRecord : public BnInterface<IAudioRecord> {
+public:
+    virtual status_t onTransact(uint32_t code,
+                                const Parcel &data,
+                                Parcel *reply,
+                                uint32_t flags = 0);
+};
+frameworks/av/media/libaudioclient/IAudioRecord.cpp
+IMPLEMENT_META_INTERFACE(AudioRecord, "android.media.IAudioRecord");
+class BpAudioRecord : public BpInterface<IAudioRecord> {
+    explicit BpAudioRecord(const sp<IBinder> &impl)
+            : BpInterface<IAudioRecord>(impl) {
+    }
+    virtual status_t start(int event, audio_session_t triggerSession) {
+        
+    }
+    virtual void stop() {
+        
+    }
+};
 
+
+
+
+
+
+
+*/
 
 
 
