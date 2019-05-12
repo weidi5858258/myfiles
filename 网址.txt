@@ -132,6 +132,7 @@ http://bbs.cnmo.com/thread-16205338-1-1.html 隐藏安卓手机虚拟按键和�
 https://blog.csdn.net/sy373466062/article/details/61192272/# LineageOS 14.1(CM14.1)的快速下载与编译
 https://github.com/googlesamples Google Samples
 https://www.androidos.net.cn/sourcecode Android源代码
+https://blog.csdn.net/wang_hufeng/article/details/80774634 AOSP(Android) 镜像使用帮助
 
 
 
