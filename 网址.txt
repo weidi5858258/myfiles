@@ -133,7 +133,8 @@ https://blog.csdn.net/sy373466062/article/details/61192272/# LineageOS 14.1(CM14
 https://github.com/googlesamples Google Samples
 https://www.androidos.net.cn/sourcecode Android源代码
 https://blog.csdn.net/wang_hufeng/article/details/80774634 AOSP(Android) 镜像使用帮助
-
+https://blog.csdn.net/bluewhalerobot/article/details/80429652 hikey 970 开发板刷基础固件和Android系统
+https://releases.linaro.org/components/toolchain/binaries/7.1-2017.08/aarch64-linux-gnu/gcc-linaro-7.1.1-2017.08-x86_64_aarch64-linux-gnu.tar.xz gcc-linaro-7.1.1-2017.08.x86_64_aarch64-linux-gnu
 
 
 
@@ -169,7 +170,30 @@ http://edu.51cto.com/center/orders/order/get-order-list
 
 
 
-
+https://blog.csdn.net/bluewhalerobot/article/details/80429652
+hikey 970开发板刷官方的基础固件和Android系统
+一.首先下载下面两个文件
+git clone https://github.com/96boards-hikey/tools-images-hikey970
+(其实是个zip文件,不是rar文件)
+wget http://hihope.org/hihope/downLoadCenter/testDownFile?filename=20190403/hikey970_android_8_images.rar
+hikey970_android_8_images.rar这个文件解压后有3个文件,为buildinfo.txt文件,image目录和log目录.
+二.把image里的所有文件复制到tools-images-hikey970文件夹中
+三.烧写分两种情况(开关不要弄错):
+1.烧基础固件
+烧好基础固件后也有了android系统,因此不需要再额外烧android系统.
+可能这个操作只需要做一次,以后只要单纯烧android系统就行了.
+	开关: On On On Off
+	进行tools-images-hikey970目录
+	修改recovery-flash.sh脚本:
+	UEFI_BUILD_PATH=/home/qubo/tools-images-hikey970 ---> UEFI_BUILD_PATH=${PWD}
+	运行recovery-flash.sh脚本
+2.单纯烧android系统
+	开关: On Off On Off
+	进行tools-images-hikey970目录
+	fastboot flash boot boot.img
+	fastboot flash cache cache.img
+	fastboot flash system system.img
+	fastboot flash userdata  userdata.img
 
 
 
