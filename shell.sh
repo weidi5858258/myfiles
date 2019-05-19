@@ -2245,7 +2245,10 @@ done
 
 tar -jxvf xx.tar.bz2
 
-
+echo -e "\033[31m $1 build fail! \033[0m"
+echo -e "\033[32m $1 build success! \033[0m"
+echo -e "\033[33m $RAMDISK is not exist! please build ramdisk first. \033[0m"
+echo -e "\033[36m build boot.img complete! \033[0m"
 
 
 

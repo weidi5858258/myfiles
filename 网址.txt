@@ -139,6 +139,9 @@ http://www.lemaker.org/product-hikey970-resource.html HiKey 970
 http://smartfire.cn/portal.php 风火轮主页
 http://smartfire.cn/thread-794-1-3.html hikey970使用摄像头USB camera
 http://iso.mirrors.ustc.edu.cn/aosp-monthly/aosp-latest.tar
+https://source.android.google.cn/source/devices?hl=zh-cn#neonkey 使用参考开发板
+https://www.96boards.org/documentation/consumer/hikey/hikey970/build/aosp.md.html Build AOSP on HiKey970
+
 
 
 
@@ -199,7 +202,40 @@ hikey970_android_8_images.rar这个文件解压后有3个文件,为buildinfo.txt
 	fastboot flash system system.img
 	fastboot flash userdata  userdata.img
 
+编译AOSP源码时先需要作下面的操作
+复制文件
+cp /media/root/alexander/android_source/kernel/linux/arch/arm64/boot/dts/hisilicon/kirin970-hikey970.dtb /media/root/alexander/android_source/aosp/device/linaro/hikey-kernel/kirin970-hikey970.dtb-4.9
+cp /media/root/alexander/android_source/kernel/linux/arch/arm64/boot/Image.gz-dtb /media/root/alexander/android_source/aosp/device/linaro/hikey-kernel/Image.gz-hikey970-4.9
+修改文件
+1.
+subl device/linaro/hikey/wpan/uim/Android.mk
+LOCAL_MODULE_TAGS := optional
+2.
+subl out/build-hikey970.ninja
+--all-partitions
+3.
+rm -rf /media/root/alexander/android_source/aosp/device/linaro/hikey/sepolicy/hostapd.te
 
-
+局部编译时有下面的错误
+build/make/core/main.mk:758: error: CtsMediaStressTestCases.LOCAL_HOST_REQUIRED_MODULES : illegal value cts-dynamic-config : not a host module. If you want to specify target modules to be required to be installed along with your target module, add those module names to LOCAL_REQUIRED_MODULES instead.
+因此作了下面的修改
+LOCAL_HOST_REQUIRED_MODULES:
+下面2个文件是修改操作
+cts/tests/tests/media/Android.mk
+cts/tests/signature/intent-check/Android.mk
+把原来的
+LOCAL_HOST_REQUIRED_MODULES := cts-dynamic-config
+修改为
+LOCAL_REQUIRED_MODULES := cts-dynamic-config
+下面3个文件都是删除操作
+build/soong/androidmk/cmd/androidmk/android.go
+(delete:129)
+"LOCAL_HOST_REQUIRED_MODULES":         "host_required",
+build/soong/android/androidmk.go
+(delete:180)
+a.AddStrings("LOCAL_HOST_REQUIRED_MODULES", a.Host_required...)
+build/soong/android/prebuilt_etc_test.go
+(delete:158)
+"LOCAL_HOST_REQUIRED_MODULES":   {"hostModA", "hostModB"},
 
 
