@@ -177,65 +177,6 @@ http://edu.51cto.com/center/orders/order/get-order-list
 
 
 
-https://blog.csdn.net/bluewhalerobot/article/details/80429652
-hikey 970开发板刷官方的基础固件和Android系统
-一.首先下载下面两个文件
-git clone https://github.com/96boards-hikey/tools-images-hikey970
-(其实是个zip文件,不是rar文件)
-wget http://hihope.org/hihope/downLoadCenter/testDownFile?filename=20190403/hikey970_android_8_images.rar
-hikey970_android_8_images.rar这个文件解压后有3个文件,为buildinfo.txt文件,image目录和log目录.
-二.把image里的所有文件复制到tools-images-hikey970文件夹中
-三.烧写分两种情况(开关不要弄错):
-1.烧基础固件
-烧好基础固件后也有了android系统,因此不需要再额外烧android系统.
-可能这个操作只需要做一次,以后只要单纯烧android系统就行了.
-	开关: On On On Off
-	进行tools-images-hikey970目录
-	修改recovery-flash.sh脚本:
-	UEFI_BUILD_PATH=/home/qubo/tools-images-hikey970 ---> UEFI_BUILD_PATH=${PWD}
-	运行recovery-flash.sh脚本
-2.单纯烧android系统
-	开关: On Off On Off
-	进行tools-images-hikey970目录
-	fastboot flash boot boot.img
-	fastboot flash cache cache.img
-	fastboot flash system system.img
-	fastboot flash userdata  userdata.img
 
-编译AOSP源码时先需要作下面的操作
-复制文件
-cp /media/root/alexander/android_source/kernel/linux/arch/arm64/boot/dts/hisilicon/kirin970-hikey970.dtb /media/root/alexander/android_source/aosp/device/linaro/hikey-kernel/kirin970-hikey970.dtb-4.9
-cp /media/root/alexander/android_source/kernel/linux/arch/arm64/boot/Image.gz-dtb /media/root/alexander/android_source/aosp/device/linaro/hikey-kernel/Image.gz-hikey970-4.9
-修改文件
-1.
-subl device/linaro/hikey/wpan/uim/Android.mk
-LOCAL_MODULE_TAGS := optional
-2.
-subl out/build-hikey970.ninja
---all-partitions
-3.
-rm -rf /media/root/alexander/android_source/aosp/device/linaro/hikey/sepolicy/hostapd.te
-
-局部编译时有下面的错误
-build/make/core/main.mk:758: error: CtsMediaStressTestCases.LOCAL_HOST_REQUIRED_MODULES : illegal value cts-dynamic-config : not a host module. If you want to specify target modules to be required to be installed along with your target module, add those module names to LOCAL_REQUIRED_MODULES instead.
-因此作了下面的修改
-LOCAL_HOST_REQUIRED_MODULES:
-下面2个文件是修改操作
-cts/tests/tests/media/Android.mk
-cts/tests/signature/intent-check/Android.mk
-把原来的
-LOCAL_HOST_REQUIRED_MODULES := cts-dynamic-config
-修改为
-LOCAL_REQUIRED_MODULES := cts-dynamic-config
-下面3个文件都是删除操作
-build/soong/androidmk/cmd/androidmk/android.go
-(delete:129)
-"LOCAL_HOST_REQUIRED_MODULES":         "host_required",
-build/soong/android/androidmk.go
-(delete:180)
-a.AddStrings("LOCAL_HOST_REQUIRED_MODULES", a.Host_required...)
-build/soong/android/prebuilt_etc_test.go
-(delete:158)
-"LOCAL_HOST_REQUIRED_MODULES":   {"hostModA", "hostModB"},
 
 

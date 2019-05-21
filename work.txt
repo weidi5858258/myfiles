@@ -1,0 +1,70 @@
+在2017年，Linux内核代码，谷歌贡献度是3%，而华为占1.5%。
+Android其实是具备公有性质，只要遵循Android的开源协议与开源机制，其他厂商完全可以在已经开源的 Android 之上发展自己的 Android 系统——只要遵循已经开源的 Android 的许可证约束即可。Android 系统主要使用的开源软件许可证有 GPL（Linux 内核）、LGPL（各种运行时函数库）、Apache（Dalvik 虚拟机及 Java 类库）。如果限制某些厂商不能用Andriod，显然也难以避免让其他OMD厂商、芯片厂商甚至软件开发商的利益以及上下游企业的利益受损，基于各自未来前景与利益考量，上下游参与开源联盟的企业也会抵制谷歌破坏开源协议的行为并作出一定的反制措施。
+Google移动服务（GMS）是由谷歌提供的一系列应用和服务，包括Gmail，Chrome，Google地图等，为非开源，获得授权需经过谷歌测试。
+
+
+
+https://blog.csdn.net/bluewhalerobot/article/details/80429652
+hikey 970开发板刷官方的基础固件和Android系统
+一.首先下载下面两个文件
+git clone https://github.com/96boards-hikey/tools-images-hikey970
+(其实是个zip文件,不是rar文件)
+wget http://hihope.org/hihope/downLoadCenter/testDownFile?filename=20190403/hikey970_android_8_images.rar
+hikey970_android_8_images.rar这个文件解压后有3个文件,为buildinfo.txt文件,image目录和log目录.
+二.把image里的所有文件复制到tools-images-hikey970文件夹中
+三.烧写分两种情况(开关不要弄错):
+1.烧基础固件
+烧好基础固件后也有了android系统,因此不需要再额外烧android系统.
+可能这个操作只需要做一次,以后只要单纯烧android系统就行了.
+	开关: On On On Off
+	进行tools-images-hikey970目录
+	修改recovery-flash.sh脚本:
+	UEFI_BUILD_PATH=/home/qubo/tools-images-hikey970 ---> UEFI_BUILD_PATH=${PWD}
+	运行recovery-flash.sh脚本
+2.单纯烧android系统
+	开关: On Off On Off
+	进行tools-images-hikey970目录
+	fastboot flash boot boot.img
+	fastboot flash cache cache.img
+	fastboot flash system system.img
+	fastboot flash userdata  userdata.img
+
+编译AOSP源码时先需要作下面的操作
+复制文件
+cp /media/root/alexander/android_source/kernel/linux/arch/arm64/boot/dts/hisilicon/kirin970-hikey970.dtb /media/root/alexander/android_source/aosp/device/linaro/hikey-kernel/kirin970-hikey970.dtb-4.9
+cp /media/root/alexander/android_source/kernel/linux/arch/arm64/boot/Image.gz-dtb /media/root/alexander/android_source/aosp/device/linaro/hikey-kernel/Image.gz-hikey970-4.9
+修改文件
+1.
+subl device/linaro/hikey/wpan/uim/Android.mk
+LOCAL_MODULE_TAGS := optional
+2.
+subl out/build-hikey970.ninja
+--all-partitions
+3.
+rm -rf /media/root/alexander/android_source/aosp/device/linaro/hikey/sepolicy/hostapd.te
+
+局部编译时有下面的错误
+build/make/core/main.mk:758: error: CtsMediaStressTestCases.LOCAL_HOST_REQUIRED_MODULES : illegal value cts-dynamic-config : not a host module. If you want to specify target modules to be required to be installed along with your target module, add those module names to LOCAL_REQUIRED_MODULES instead.
+因此作了下面的修改
+---------->1
+下面2个文件是修改操作
+cts/tests/tests/media/Android.mk
+cts/tests/signature/intent-check/Android.mk
+把原来的
+LOCAL_HOST_REQUIRED_MODULES := cts-dynamic-config
+修改为
+LOCAL_REQUIRED_MODULES := cts-dynamic-config
+---------->2
+下面3个文件都是删除操作
+build/soong/androidmk/cmd/androidmk/android.go
+(delete:129)
+"LOCAL_HOST_REQUIRED_MODULES":         "host_required",
+build/soong/android/androidmk.go
+(delete:180)
+a.AddStrings("LOCAL_HOST_REQUIRED_MODULES", a.Host_required...)
+build/soong/android/prebuilt_etc_test.go
+(delete:158)
+"LOCAL_HOST_REQUIRED_MODULES":   {"hostModA", "hostModB"},
+
+
+
