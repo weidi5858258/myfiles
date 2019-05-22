@@ -1370,6 +1370,7 @@ Android中利用AudioRecord可以录制声音，
 在计算机中采样位数一般有8位和16位之分，8位不是说把纵坐标分成8份，而是分成2的8次方即256份； 同理16位是把纵坐标分成2的16次方65536份。
 采样率和采样大小的值越大，记录的波形更接近原始信号。
 3、声道数
+声道数一般表示声音录制时的音源数量或回放时相应的扬声器数量
 很好理解，有单声道和立体声之分，单声道的声音只能使用一个喇叭发声（有的也处理成两个喇叭输出同一个声道的声音），立体声的pcm可以使两个喇叭都发声（一般左右声道有分工） ，更能感受到空间效果。
 那么，现在我们就可以得到pcm文件所占容量的公式：
 存储量 = (采样频率 · 采样位数 · 声道 · 时间)／8 (单位：字节数)
@@ -1504,5 +1505,36 @@ audioManager.setSpeakerphoneOn(true);
 当声音模式为MODE_NORMAL，没有插耳机的时候声音自动外放，
 插上耳机声音从耳机出声，不需要进行相应的设置。
 
+wav 格式，与 bitmap 一样，都是微软开发的一种文件格式规范，
+它们都有一个相似之处，就是整个文件分为两部分，
+第一部分是“文件头”，记录重要的参数信息，
+对于音频而言，就包括：采样率、通道数、位宽等等，
+对于图像而言，就包括：图像的宽高、色彩位数等等；
+第二部分是“数据块”，即一帧一帧的二进制数据，
+对于音频而言，就是原始的 PCM 数据；
+对于图像而言，就是 RGB 数据。
 
+// 一般不会选择这种方式进行录音的
+通过Intent调用系统的录音机进行录音
+private final static int REQUEST_RECORDER = 1;
+private Uri uri;
+public void startRecorder(){
+  Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+  startActivityForResult(intent,REQUEST_RECORDER);
+}
+@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {     super.onActivityResult(requestCode, resultCode, data);
+    if (resultCode == RESULT_OK && REQUEST_RECORDER == requestCode){
+        uri = data.getData();
+    }
+} 
 
+背景知识
+每一个usb设备都有自己固定的VID和PID地址，根据这个地址可以寻找到指定的usb设备。
+usb有config，然后下面有多个interface，interface下面有多个endpoint。根据interface的class和subclass值可以区分interface类型，比如video的class值是14，audio的class值是1等，根据这个可以识别复合设备的interface。然后每个interface下面有多个endpoint，endpoint存在address，这个是数据传输的通道。每个endpoint存在不同的数据格式，比如我手上的这个usb麦克风，每个endpoint对应一种格式，比如双通道/16位/48K。但也有一个endpoint对应多种格式的。
+usb的传输类型有四种，分别是控制传输(Control Transfer)、中断传输(Interrupt Transfer)、批量传输(Bulk Transfer)、同步传输(Isochronous Transfer)。音频设备只用到控制传输和同步传输。
+
+为了实现192K的立体声录音，直接使用一个USB声卡来获取其中的音频数据。
+通过USB读取声卡的音频数据。
+使用SDK通过的API操作USB很简单，主要的类是UsbManager、UsbEndpoint、UsbInterface、UsbDeviceConnection、UsbDevice。
+为了获取USB声卡数据，在网上进行了大量的文章搜索，发现USB的库都是使用C语言写的，使用比较多的应属libusb了。
+参考https://github.com/shenki/usbaudio-android-demo.git

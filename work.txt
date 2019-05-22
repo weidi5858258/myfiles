@@ -67,4 +67,174 @@ build/soong/android/prebuilt_etc_test.go
 "LOCAL_HOST_REQUIRED_MODULES":   {"hostModA", "hostModB"},
 
 
+第一步: 关于bootloader
+# mkdir bootloader
+# cd bootloader
+下载下面的文件:
+	arm-trusted-firmware
+	edk2
+	l-loader
+	OpenPlatformPkg
+	tools-images-hikey970
+	uefi-tools
+
+# cd edk2
+# ln -sf ../OpenPlatformPkg
+# cd ..
+修改l-loader/build_uefi.sh这个文件的某个bin路径
+我的改成了:
+"LINARO_GCC_7_1")
+	# AARCH64_GCC_7_1=/opt/toolchain/gcc-linaro-7.1.1-2017.08-x86_64_aarch64-linux-gnu/bin/
+	AARCH64_GCC_7_1=/root/mydev/android_source/hikey970/tools/gcc-linaro-7.1.1-2017.08-x86_64_aarch64-linux-gnu/bin/
+# l-loader/build_uefi.sh hikey970
+编译后产生如下文件:
+l-loader/ptable-aosp-64g.img(有些文档上说是ptable-aosp-32g.img)
+l-loader/fip.bin
+l-loader/l-loader.bin
+把这三个文件复制到某个tools路径下(/root/mydev/android_source/hikey970/kernel/tools/)
+这个路径下还有kernel的编译产物.
+
+第二步: 关于kernel
+# mkdir kernel
+# cd kernel
+# git clone https://github.com/96boards-hikey/linux.git -b hikey970-v4.9
+# cd linux
+# AARCH64_PATH="/root/mydev/android_source/hikey970/tools/aarch64-linux-android-4.9"
+# TOOLS_PATH="/root/mydev/android_source/hikey970/kernel/tools/"
+# export ARCH=arm64
+# export CROSS_COMPILE=${AARCH64_PATH}/bin/aarch64-linux-android-
+# make hikey970_defconfig
+# make -j8
+# make hisilicon/kirin970-hikey970.dtb
+# cp -a arch/arm64/boot/Image ${TOOLS_PATH}
+# cp -a arch/arm64/boot/dts/hisilicon/kirin970-hikey970.dtb ${TOOLS_PATH}
+
+第三步: 关于AOSP
+首先复制两个文件(kernel的编译产物)到AOSP的源码中,没有这两个文件是编译不成功的(官方文档中没有说明这点).
+# cp /root/mydev/android_source/hikey970/kernel/linux/arch/arm64/boot/dts/hisilicon/kirin970-hikey970.dtb /root/mydev/android_source/hikey970/aosp/device/linaro/hikey-kernel/kirin970-hikey970.dtb-4.9
+# cp /root/mydev/android_source/hikey970/kernel/linux/arch/arm64/boot/Image.gz /root/mydev/android_source/hikey970/aosp/device/linaro/hikey-kernel/Image.gz-hikey970-4.9
+# source ./build/envsetup.sh
+# lunch hikey970-userdebug
+# make -j16
+想要编译成功,还需要修改三个地方:
+1.
+# gedit /media/root/alexander/android_source/aosp/device/linaro/hikey/wpan/uim/Android.mk
+改为: LOCAL_MODULE_TAGS := optional
+2.
+# gedit /media/root/alexander/android_source/aosp/out/build-hikey970.ninja
+改为: --all-partitions '' (修改两个地方)
+3.
+# rm -rf /media/root/alexander/android_source/aosp/device/linaro/hikey/sepolicy/hostapd.te
+编译成功后在/root/mydev/android_source/hikey970/aosp/out/target/product/hikey970目录下会生成
+cache.img
+system.img
+userdata.img
+
+第四步: 关于boot.img
+# cd /root/mydev/android_source/hikey970/kernel/tools(此路径上面有提到)
+# cp /root/mydev/android_source/hikey970/aosp/out/target/product/hikey970/ramdisk.img /root/mydev/android_source/hikey970/kernel/tools
+在/root/mydev/android_source/hikey970/kernel/tools此路径下有下面文件:
+fip.bin
+Image
+kirin970-hikey970.dtb
+l-loader.bin
+ptable-aosp-64g.img
+ramdisk.img
+build_kernel.sh这个脚本我是从下面这个网页里复制下来进行路径的修改后编译出boot.img文件.
+https://blog.csdn.net/rushdj/article/details/84329639
+
+从https://www.96boards.org/documentation/consumer/hikey/hikey970/build/linux-kernel.md.html
+这个网页中得到的build_kernel.sh脚本我也试了,同样需要修改有关的路径,然后生成boot.img文件.
+
+经过上面的操作,就得到了下面有关文件:
+boot.img
+cache.img
+system.img
+userdata.img
+然后使用下面命令烧进去
+fastboot flash boot boot.img
+fastboot flash cache cache.img
+fastboot flash system system.img
+fastboot flash userdata  userdata.img
+结果就是启动不了.
+
+
+
+先把刚刚下载的压缩包解压出来，hikey970-aosp9
+
+步骤1:)
+
+$ mkdir android
+$ cd    android
+
+然后拉aosp源码:
+
+$ repo init -u https://android.googlesource.com/platform/manifest -b android-9.0.0_r34
+$ git clone https://github.com/96boards-hikey/android-manifest.git -b hikey970_v1.0 .repo/local_manifests
+$ repo sync -j8 -c
+$ source build/envsetup.sh
+$ lunch hikey970-userdebug
+
+步骤2:)
+编译kernel根据这个链接: https://www.96boards.org/documentation/consumer/hikey/hikey970/build/linux-kernel.md.html
+
+不同点在于执行./build_kernel.sh 这个命令前，从/system/core/mkbootimg/目录拷贝mkbootimg文件到kernel文件夹, 
+执行完./build_kernel.sh这条命令后,执行make Image.gz-dtb
+
+把生成的boot.img拷贝到之前解压的hikey970-aosp9这个文件里，替换掉
+
+
+步骤3:)
+
+    Copy kirin970-hikey970.dtb.dtb (kernel/hikey-linaro/arch/arm64/boot/dts/hisilicon/ kirin970-hikey970.dtb) to the device/linaro/hikey-kernel directory as file: kirin970-hikey970.dtb-4.9
+
+    Copy the Image file (kernel/hikey-linaro/arch/arm64/boot/Image.gz-dtb) to the device/linaro/hikey-kernel directory as file: Image.gz-hikey970-4.9
+
+步骤4:)
+编译aosp，在android根目录下执行：
+
+$ make -j8
+
+步骤5:)
+生成的cache.img、system.img和userdata.img拷贝到之前解压的hikey970-aosp9这个文件里，替换掉
+
+步骤6:)
+清除已经存在的模块
+
+确认Hikey970的switches为以下模式
+Switch 1 = ON
+Switch 2 = OFF
+Switch 3 = ON
+Switch 4 = OFF
+
+Hikey970上电，然后执行下面的命令
+$ sudo fastboot devices
+
+连接成功的话现象一般如下：
+jerome@lemaker:~$ sudo fastboot devices
+72CA418D028CEFA9     fastboot
+
+然后执行下面的命令
+$ hikey970-aosp9
+$ sudo fastboot flash ptable prm_ptable.img
+$ sudo fastboot flash xloader sec_xloader.img
+$ sudo fastboot flash fastboot l-loader.bin
+$ sudo fastboot flash fip fip.bin
+$ sudo fastboot flash boot boot.img
+$ sudo fastboot flash cache cache.img
+$ sudo fastboot flash system system.img
+$ sudo fastboot flash userdata userdata.img
+
+烧录完成后，拔掉电源线，然后执行下面的步骤
+
+步骤7:) 
+
+把Hikey970的switches切换成下面的模式
+Switch 1 = ON
+Switch 2 = OFF
+Switch 3 = OFF
+Switch 4 = OFF
+
+连接电源线上电
+
 
