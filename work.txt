@@ -238,3 +238,91 @@ Switch 4 = OFF
 连接电源线上电
 
 
+USB OTG:USB On-The-Go 通常缩写为 USB OTG，是 USB2.0 规格的补充标准。它可使 USB 设备，例如播放器或手机，从 USB 周边设备变为 USB 主机，与其他 USB 设备连接通信。在 正常情况下，这些支持 OTG 的 USB 设备和 USB 主机(如台式机或者手提电脑)，仍然作为 USB 周边设备使用。 
+Android 平台下 USB 开发有以下两种模式：
+USB Host Mode:
+顾名思义，Android 设备作为主机，需要安卓设备支持 OTG 接头。常见应用场景诸如连接数码相机、键盘、鼠标、游戏手柄等硬件。
+USB Accessory Mode:
+这种模式下Android设备承担外设的角色。
+应用场景诸如连接机器人控制器、音响、医疗器材等，
+当然前提是这些设备支持与Android设备连接并且遵守
+Android accessory communication protocol。
+这种模式可以让不具有host能力的Android设备与其他硬件交互。
+
+通用串行总线（USB）目前已经成为了最标准的接口，用于提供系统一个可靠且低成本的数字连接，目前在使用方面已经超越了电脑的范畴，并已广泛应用在工业、医疗、消费电子、通信网络等等。
+RS232接口长期广泛存在于在各种应用领域，随着安卓手机平板的大量上市，安卓系统下通过USB转RS232接口接入外设的应用需求也开始变得强烈起来。
+1.手机USB接口通信特点
+1.1 使用方便
+即插即用，可热插拔，具有自动配置能力，用户只要简单地将外设插人到手机就能自动识别和配置uSB设备。
+1.2 通用性强
+目前安卓手机、平板都具备USB接口，连 接灵活，易扩展。
+1.3 速度快
+USB2.0 ：理论速度是每秒480Mbps（约每秒60MB） 
+USB3.0 ：理论速度能够达到每秒5Gbps（约为每秒625MB）
+1.4 可采用总线供电
+USB2.0总线提供最大达5v电压、500mA电流，USB3.0 可达1A。大部分USB外设无需单独的供电系统。 
+由于 USB 的诸多特点，在PC的外围设备中，取代了大部分传统的接口。但在智能仪器仪表中，还大量地使用RS一232C接口。随着智能仪器仪表控制系统的日益复杂，数据采集量的增大，迫切需要寻求一种更高速、安全、方便的通信形式。USB接口的特点，恰好满足这种应用要求，USB产品进人智能仪器仪表和工业控制领域将是必然的。
+Micro USB接口是USB 2.0标准的一个便携版本，支持OTG，目前除苹果公司产品之外，先进市面上几乎所有的移动设备都采用了Micro-USB接口。
+USB通信过程 
+一般的USB主机和设备之间遵循主从通信的原理，每一次的数据传输都是又主机发起。如果主机要输出数据，则先发一个握手包，通知设备。然后发送数据，设备接收到数据后，再发送一个确认包。如果主机要输入数据，也是先发一个握手包，通知设备。设备然后将准备好的数据发送给主机。主机再给设备一个确认包。
+体系架构
+从物理结构上，USB系统是一个星形结构。其包含三类硬件设备: USB主机(USB HOST)、 USB设备(USB DEVICE)和USB集线器(USB HUB)。 
+USB总线上的物理连接是一个分层的星形拓扑，处于每个星形拓扑中央的是HUB集线器，在主机与HUB之间，HUB与HUB之间，HUB与设备之间都是点对点的连接。
+USB HOST对USB系统进行管理、每毫秒产生一帧数据、发送配置请求对USB设备进行配置、管理和恢复总线上的错误。 
+USB HUB用于设备扩展连接，所有USB DEVICE都连接在USB HUB的端口上。 
+USB DEVICE接收USB总线上的所有数据包，通过数据包的地址域来判断是不是发给自己的数据包：若地址不符，则简单地丢弃该数据包；若地址相符，则通过响应USB HOST的数据包与USB HOST进行数据传输。
+从逻辑结构上看，每个USB逻辑设备都直接与USB HOST进行数据传输。与传统接口以硬件手段实现握手的方法不同，USB接口使用“软握手”方法。
+USB的软握手机制是透过三个层次的驱动程序实现的，在这中间起到关键作用的是设备驱动程序，该程序在主机与设备之间建立起至少一个管道。管道有两种类型：流管道和消息管道。其中有一个最重要的消息管道是“缺省控制管道”，这个管道在设备一加电的时候就存在了，它提供设备的配置和状态等信息。主机与设备之间的联络就是通过消息管道实现的。
+USB协议栈驱动程序的主要作用是将设备与相应的设备驱动程序连接起来。因为USB支持的设备很多，而每个具体的设备都有自己对应的设备驱动程序。对于某一具体设备来说，使用哪个驱动来管理，就要由协议栈驱动程序通过读取设备描述符进行挑选。选择好驱动程序之后，协议栈驱动程序还要给USB设备分配地址。
+管道建立起来之后，数据的传输控制则由USB接口驱动程序负责完成了。在这里，主机占有绝对主导权。设备发生事件时通过消息管道报告给主机，主机伺机向设备发送命令，开通流管道，发送或接收数据包。主机与设备之间以数据数据包的形式进行传送，显然这与网络上数据传输的方式相同，是一种异步数据传输模式。
+USB Host简述
+USB Host,中文意思是USB主模式，是相对于USB Accessory(USB副模式)来说的。如果Android工作在USB Host模式下，则连接到Android上的USB设备把Android类似的看作是一台主机，例如将鼠标、键盘插入则可以使用键盘、鼠标来操作Android系统。
+而USB Accessory模式表示将Android设备类似当作一个USB的键盘、鼠标、U盘插入到电脑主机上一样使用，这两种模式在Android API level-12以上才支持，即Android3.1及更高的版本支持这两种模式。
+USB（手机）<–>UART（外设）
+即手机与外设之间利用USB-UART转接器，实现手机与外设的串口通信。 
+USB-UART转换器是实现USB与RS-232/RS-485/RS-422等串口设备相互通讯的一种协议转换装置（USB协议-串行通信协议）。在通信主机(USB)和RS-232/RS-485/RS-422串口设备之间可以实现数据的双向传输。
+ USB host：USB主设备，可以从另外一个USB 从设备中取得数据，包括USB host控制器和USB host协议。有主就有从，host设备与USB device或USB slave从设备相对应。
+       USB OTG：On The Go，正在进行中的意思，直接传输，就是可以从一个机器直接传到另一个机器中。直接的意思为用户不需要其他的辅助，比如软件驱动，硬件接口转换等。
+       USB HUB：USB扩展/集线器，一种可以将一个USB接口扩展为多个（通常为4个），可以使这些接口同时使用的仪器。Android4.4系统的平板电脑如NEXUS 7不支持USB HUB。
+     USB-HID：全称为Human Interface Device，能直接与人交互的设备，例如键盘、鼠标与游戏杆等，操作系统会自带HID设备的驱动程序。
+由于USB host开发主要用到的包有
+android.hardware.usb.UsbConstants;
+android.hardware.usb.UsbDevice;
+android.hardware.usb.UsbDeviceConnection;
+android.hardware.usb.UsbEndpoint;
+android.hardware.usb.UsbInterface;
+android.hardware.usb.UsbManager;
+android.hardware.usb.UsbRequest;
+所以需要确认Android系统根目录下的权限文件有没有android.hardware.usb.host.xml文件和tablet_core_hardware.xml或者handheld_core_hardware.xml。如果是平板就是tablet配置文件，手机就是handheld配置文件。具体操作打开ES或RE文件浏览器、根目录、/system/etc/permissions。查看这两个文件。
+UsbDevice
+代表一个USB设备的类，每个设备都包含了一个或多个接口，每个接口又包含一个或多个节点用来与此设备传输数据。
+UsbInterface
+代表USB设备的一个接口，注意：UsbInterface本身是一个类，并不是一个接口。
+UsbEndpoint
+代表一个接口的某个节点的类。
+UsbDeviceConnection
+代表USB连接的一个类。用此连接可以想USB设备发送和接收数据，可以通过调用该方法openDevice(UsbDevice) 来得到该类的一个实例。
+1)bulkTransfer(UsbEndpoint endpoint, byte[] buffer, int length, int timeout)
+通过给定的endpoint来进行大量的数据传输，传输的方向取决于该节点的方向，buffer是要发送或接收的字节数组，length是该字节数组的长度。传输成功则返回所传输的字节数组的长度，失败则返回负数。
+2)controlTransfer(int requestType, int request, int value, int index, byte[] buffer, int length, int timeout)
+该方法通过0节点向此设备传输数据，传输的方向取决于请求的类别，如果requestType为USB_DIR_OUT则为写数据，USB_DIR_IN, 则为读数据。
+第一：USB（手机）<--->USB（外设），就是手机与外设直接通过USB线进行通讯。
+第二：USB（手机）<--->UART（外设），即手机与外设通过USB转接成串口，再与外设通信。
+
+USB转串口模块
+带供电功能的OTG线
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

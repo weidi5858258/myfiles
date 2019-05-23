@@ -145,6 +145,11 @@ https://blog.51cto.com/ticktick Jhuster的专栏
 https://blog.csdn.net/linzekai100/article/details/81516981 Android从USB声卡录制高质量音频-----USB API测试
 https://blog.csdn.net/linzekai100/article/details/84334621 Android从USB声卡录制高质量音频-----使用libusb读取USB声卡数据
 https://blog.csdn.net/a791404623/article/details/76577129 【Android】Audio音频输出通道切换 - 蓝牙、外放
+https://blog.csdn.net/HowieXue/article/details/79167618 一篇读懂：Android手机如何通过USB接口与外设通信（附原理分析及方案选型）
+https://blog.csdn.net/howiexue/article/details/79145048 一篇读懂：Android/iOS手机如何通过音频接口（耳机孔）与外设通信
+https://blog.csdn.net/true100/article/details/51791929 Android开发之USB数据通信
+https://blog.csdn.net/u013057253/article/details/82725585 Android硬件控制之USB连接
+https://blog.csdn.net/aa425705261/article/details/86288880 Android 通过USB与PLC设备通信(USB转串口)
 
 
 
