@@ -150,6 +150,7 @@ https://blog.csdn.net/howiexue/article/details/79145048 一篇读懂：Android/i
 https://blog.csdn.net/true100/article/details/51791929 Android开发之USB数据通信
 https://blog.csdn.net/u013057253/article/details/82725585 Android硬件控制之USB连接
 https://blog.csdn.net/aa425705261/article/details/86288880 Android 通过USB与PLC设备通信(USB转串口)
+https://blog.csdn.net/leixiaohua1020/article/category/1360795/3 雷霄骅(leixiaohua1020)的专栏
 
 
 
