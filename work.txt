@@ -312,7 +312,8 @@ UsbDeviceConnection
 USB转串口模块
 带供电功能的OTG线
 
-
+gnome-tweak-tool(优化工具)
+扩展--->Window list
 
 
 
