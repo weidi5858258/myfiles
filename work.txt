@@ -158,7 +158,13 @@ fastboot flash system system.img
 fastboot flash userdata  userdata.img
 结果就是启动不了.
 
+/root/mydev/android_source/hikey970/aosp/device/linaro/hikey/hikey970/BoardConfig.mk
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 25769803776  # 24.0GB
 
+/root/mydev/android_source/hikey970/aosp/kernel/hikey-linaro/arch/arm64/configs/hikey970_defconfig
+CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE=y
+CONFIG_BUILD_ARM64_APPENDED_KERNEL_IMAGE_NAME=Image.gz-dtb
+CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE_NAMES=“hisilicon/kirin970-hikey970”
 
 先把刚刚下载的压缩包解压出来，hikey970-aosp9
 
@@ -175,6 +181,11 @@ $ repo sync -j8 -c
 $ source build/envsetup.sh
 $ lunch hikey970-userdebug
 
+make -j$(nproc) ramdisk
+cd kernel
+mkdir tools
+cp ../out/target/product/hikey970/ramdisk.img tools/
+
 步骤2:)
 编译kernel根据这个链接: https://www.96boards.org/documentation/consumer/hikey/hikey970/build/linux-kernel.md.html
 
@@ -189,6 +200,10 @@ $ lunch hikey970-userdebug
     Copy kirin970-hikey970.dtb.dtb (kernel/hikey-linaro/arch/arm64/boot/dts/hisilicon/ kirin970-hikey970.dtb) to the device/linaro/hikey-kernel directory as file: kirin970-hikey970.dtb-4.9
 
     Copy the Image file (kernel/hikey-linaro/arch/arm64/boot/Image.gz-dtb) to the device/linaro/hikey-kernel directory as file: Image.gz-hikey970-4.9
+
+    cp kernel/hikey-linaro/arch/arm64/boot/dts/hisilicon/kirin970-hikey970.dtb device/linaro/hikey-kernel/kirin970-hikey970.dtb-4.9
+
+    cp kernel/hikey-linaro/arch/arm64/boot/Image.gz-dtb device/linaro/hikey-kernel/kirin970-hikey970.dtb-4.9
 
 步骤4:)
 编译aosp，在android根目录下执行：
@@ -216,14 +231,14 @@ jerome@lemaker:~$ sudo fastboot devices
 
 然后执行下面的命令
 $ hikey970-aosp9
-$ sudo fastboot flash ptable prm_ptable.img
-$ sudo fastboot flash xloader sec_xloader.img
-$ sudo fastboot flash fastboot l-loader.bin
-$ sudo fastboot flash fip fip.bin
-$ sudo fastboot flash boot boot.img
-$ sudo fastboot flash cache cache.img
-$ sudo fastboot flash system system.img
-$ sudo fastboot flash userdata userdata.img
+fastboot flash ptable prm_ptable.img && 
+fastboot flash xloader sec_xloader.img && 
+fastboot flash fastboot l-loader.bin && 
+fastboot flash fip fip.bin && 
+fastboot flash boot boot.img && 
+fastboot flash cache cache.img && 
+fastboot flash system system.img && 
+fastboot flash userdata userdata.img
 
 烧录完成后，拔掉电源线，然后执行下面的步骤
 
