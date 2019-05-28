@@ -176,8 +176,10 @@ $ cd    android
 然后拉aosp源码:
 
 $ repo init -u https://android.googlesource.com/platform/manifest -b android-9.0.0_r34
+  repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest -b android-8.1.0_r63
 $ git clone https://github.com/96boards-hikey/android-manifest.git -b hikey970_v1.0 .repo/local_manifests
 $ repo sync -j8 -c
+  repo sync -j8 -f --force-sync
 $ source build/envsetup.sh
 $ lunch hikey970-userdebug
 
@@ -203,7 +205,7 @@ cp ../out/target/product/hikey970/ramdisk.img tools/
 
     cp kernel/hikey-linaro/arch/arm64/boot/dts/hisilicon/kirin970-hikey970.dtb device/linaro/hikey-kernel/kirin970-hikey970.dtb-4.9
 
-    cp kernel/hikey-linaro/arch/arm64/boot/Image.gz-dtb device/linaro/hikey-kernel/kirin970-hikey970.dtb-4.9
+    cp kernel/hikey-linaro/arch/arm64/boot/Image.gz-dtb device/linaro/hikey-kernel/Image.gz-hikey970-4.9
 
 步骤4:)
 编译aosp，在android根目录下执行：
