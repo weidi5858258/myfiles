@@ -177,6 +177,7 @@ $ cd    android
 
 $ repo init -u https://android.googlesource.com/platform/manifest -b android-9.0.0_r34
   repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest -b android-8.1.0_r63
+  repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest -b master
 $ git clone https://github.com/96boards-hikey/android-manifest.git -b hikey970_v1.0 .repo/local_manifests
 $ repo sync -j8 -c
   repo sync -j8 -f --force-sync
@@ -184,6 +185,7 @@ $ source build/envsetup.sh
 $ lunch hikey970-userdebug
 
 make -j$(nproc) ramdisk
+make -j8 ramdisk
 cd kernel
 mkdir tools
 cp ../out/target/product/hikey970/ramdisk.img tools/
