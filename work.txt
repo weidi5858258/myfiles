@@ -179,6 +179,9 @@ $ repo init -u https://android.googlesource.com/platform/manifest -b android-9.0
   repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest -b android-9.0.0_r39
   repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest -b android-8.1.0_r63
   repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest -b master
+
+  cd .repo/manifests
+  git reset --hard remotes/origin/android-9.0.0_r39
 $ git clone https://github.com/96boards-hikey/android-manifest.git -b hikey970_v1.0 .repo/local_manifests
 $ repo sync -j8 -c
   repo sync -j8 -f --force-sync
