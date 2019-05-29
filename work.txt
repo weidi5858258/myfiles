@@ -176,6 +176,7 @@ $ cd    android
 然后拉aosp源码:
 
 $ repo init -u https://android.googlesource.com/platform/manifest -b android-9.0.0_r34
+  repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest -b android-9.0.0_r39
   repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest -b android-8.1.0_r63
   repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest -b master
 $ git clone https://github.com/96boards-hikey/android-manifest.git -b hikey970_v1.0 .repo/local_manifests
