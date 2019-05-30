@@ -224,6 +224,9 @@ $ make -j8
 步骤6:)
 清除已经存在的模块
 
+cutecom &
+/dev/ttyXRUSB0
+
 确认Hikey970的switches为以下模式
 Switch 1 = ON
 Switch 2 = OFF
