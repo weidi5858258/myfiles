@@ -164,7 +164,7 @@ int test(int argc, char **argv) {
 #elif BOOST_OS_LINUX
     fprintf(stdout, "  BOOST_OS_LINUX\n");
 #else
-    fprintf(stdout, "! WIN32\n");
+    fprintf(stdout, "  UNKNOW\n");
 #endif
 
     return 0;
