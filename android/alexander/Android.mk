@@ -4,18 +4,23 @@ include $(CLEAR_VARS)
 
 #指定头文件的目录
 LOCAL_C_INCLUDES := \
-    $(LOCAL_PATH)/include \
+    $(LOCAL_PATH)/src/include \
+    audio_utils \
+    private/media \
+    include/media \
+    media \
 #     $(TOP)/frameworks/av/media/libstagefright \
 #     $(TOP)/frameworks/native/include/media/openmax \
 #     $(LOCAL_PATH)/../services/include\
 #     $(LOCAL_PATH)/../cmds/include
 
 #源文件(不包括头文件)
+#在Android P上编译时，src，src/main/java目录必须要有
 LOCAL_SRC_FILES := \
-	main.cpp \
+	src/cpp/main.cpp \
     $(call all-subdir-java-files) \
-    $(call all-proto-files-under, src) \
-    $(call all-java-files-under, src/main/java)
+    $(call all-proto-files-under, src/cpp) \
+#     $(call all-java-files-under, src/main/java)
 # LOCAL_SRC_FILES +:= \
 #     $(call all-subdir-java-files)
 
@@ -24,6 +29,7 @@ LOCAL_SRC_FILES := \
 #     core-libart \
 
 #引用动态库
+#     libskia \
 LOCAL_SHARED_LIBRARIES := \
     libandroid_runtime \
     libnativehelper \
@@ -33,35 +39,24 @@ LOCAL_SHARED_LIBRARIES := \
     libmediametrics \
     libmediadrm \
     libmidi \
-    libskia \
-    libui \
     liblog \
     libcutils \
-    libgui \
     libstagefright \
     libstagefright_foundation \
-    libcamera_client \
     libmtp \
     libexif \
     libpiex \
-    libandroidfw \
     libmemtrack \
     libandroidfw \
     libappfuse \
     libbase \
-    libnativehelper \
-    liblog \
-    libcutils \
     libdebuggerd_client \
-    libutils \
-    libbinder \
     libui \
     libgui \
     libsensor \
     libinput \
     libcamera_client \
     libcamera_metadata \
-    libskia \
     libsqlite \
     libEGL \
     libGLESv1_CM \
@@ -97,6 +92,11 @@ LOCAL_SHARED_LIBRARIES := \
     libnativewindow \
     libhwui \
     libdl \
+    libaudiohal \
+    libaudioutils \
+    libnbaio \
+    libnblog \
+    libsonic \
 
 #引用静态库
 # LOCAL_STATIC_LIBRARIES := \
@@ -113,7 +113,6 @@ LOCAL_SHARED_LIBRARIES := \
 
 #libs/libABC.a
 # LOCAL_LDLIBS := \
-#     -ldl \
 #     -lpthread \
 #     -L$(LOCAL_PATH)/libs/ -lABC \
 
@@ -123,8 +122,19 @@ LOCAL_JNI_SHARED_LIBRARIES := \
     libc++ \
     libpmtest64 \
 
+#位置很重要，移动上面就编译不成功
+LOCAL_LDLIBS := \
+    -ldl \
+    -llog \
+    -landroid \
+    -ljnigraphics \
+
+#error: 'LOG_TAG' macro redefined [-Werror,-Wmacro-redefined]
+# LOCAL_CFLAGS := -Werror -Wall
+
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_EXECUTABLES)
 LOCAL_MODULE := alexander
+LOCAL_MODULE_TAGS := optional
 
 # include $(BUILD_JAVA_LIBRARY)
 # include $(BUILD_STATIC_JAVA_LIBRARY)

@@ -1,36 +1,22 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <binder/IPCThreadState.h>
-#include <binder/ProcessState.h>
-#include <binder/IServiceManager.h>
-
-#include "../include/LogDebug.h"
+#include "../include/MyHead.h"
 
 #define LOG_TAG "alexander"
 
-using namespace android;
-
 /***
- * 首先要启动这个Daemon服务,然后客户端才能连接上
- *
  * @param argc
  * @param argv
  * @return
  */
 int main(int argc, char *argv[]) {
-
-    LOGD("-------------------- server main start --------------------\n");
+    ALOGD("-------------------- main start --------------------");
 
     pid_t pid = getpid();
-    LOGD("Daemon main() PID: %d\n", pid);
+    ALOGD("Daemon main() PID: %d", pid);
     uid_t uid = getuid();
-    LOGD("Daemon main() UID: %d\n", uid);
+    ALOGD("Daemon main() UID: %d", uid);
 
-    sp<ProcessState> proc(ProcessState::self());
-    sp<IServiceManager> sm = defaultServiceManager();
+    // sp<ProcessState> proc(ProcessState::self());
+    // sp<IServiceManager> sm = defaultServiceManager();
 
     /***
      在android启动的时候,由系统启动时的init进程启动其他服务,
@@ -45,10 +31,9 @@ int main(int argc, char *argv[]) {
     // addService inside in BinderService
     // BnDaemon::instantiate();
 
-    ProcessState::self()->startThreadPool();
-    IPCThreadState::self()->joinThreadPool();
+    // ProcessState::self()->startThreadPool();
+    // IPCThreadState::self()->joinThreadPool();
 
-    LOGD("-------------------- server main end   --------------------\n");
-
+    ALOGD("-------------------- main end   --------------------");
     return 0;
 }
