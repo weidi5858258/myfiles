@@ -102,8 +102,8 @@ pid_t pid = getpid();
 LOGI("BpDaemon::~BpDaemon() destroyed %p PID: %d\n", this, pid);
 
 打印String16的字符串
-const String16 &opPackageName
-ALOGI("opPackageName: %s", String8(mOpPackageName).string());
+const String16 &mOpPackageName
+ALOGI("mOpPackageName: %s", String8(mOpPackageName).string());
 
 %s : String8(mOpPackageName).string()
 %d : enum bool

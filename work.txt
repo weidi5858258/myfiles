@@ -197,6 +197,10 @@ cp ../out/target/product/hikey970/ramdisk.img tools/
 步骤2:)
 编译kernel根据这个链接: https://www.96boards.org/documentation/consumer/hikey/hikey970/build/linux-kernel.md.html
 
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-android-
+./build_kernel.sh
+
 不同点在于执行./build_kernel.sh 这个命令前，从/system/core/mkbootimg/目录拷贝mkbootimg文件到kernel文件夹, 
 执行完./build_kernel.sh这条命令后,执行make Image.gz-dtb
 
@@ -226,6 +230,11 @@ $ make -j8
 
 cutecom &
 /dev/ttyXRUSB0
+
+adb root && adb remount && 
+adb push /media/root/alexander/android_source/aosp/out/target/product/hikey970/system/lib/libaudioclient.so /system/lib/ && 
+adb push /media/root/alexander/android_source/aosp/out/target/product/hikey970/system/lib64/libaudioclient.so /system/lib64/ && 
+adb reboot
 
 确认Hikey970的switches为以下模式
 Switch 1 = ON
