@@ -1271,6 +1271,8 @@ root@WEIDI5858258:/mnt/d/android_source/android_n# make -j4
 21:21:50 Please move your source tree to a case-sensitive filesystem.
 21:21:50 ************************************************************
 21:21:50 Case-insensitive filesystems not supported
+
+
 */
 
 
