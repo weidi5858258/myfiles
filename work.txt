@@ -233,7 +233,9 @@ cutecom &
 
 adb root && adb remount && 
 adb push /media/root/alexander/android_source/aosp/out/target/product/hikey970/system/lib/libaudioclient.so /system/lib/ && 
+adb push /media/root/alexander/android_source/aosp/out/target/product/hikey970/system/lib/libaudioflinger.so /system/lib/ && 
 adb push /media/root/alexander/android_source/aosp/out/target/product/hikey970/system/lib64/libaudioclient.so /system/lib64/ && 
+adb push /media/root/alexander/android_source/aosp/out/target/product/hikey970/system/lib64/libaudioflinger.so /system/lib64/ && 
 adb reboot
 
 确认Hikey970的switches为以下模式
