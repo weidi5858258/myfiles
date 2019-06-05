@@ -1,5 +1,70 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <binder/IPCThreadState.h>
+#include "core_jni_helpers.h"
+
+/***
+在Android底层打印日志时的输出格式有：
+%s   : String8(mOpPackageName).string()
+%d   : enum(这样定义时AUDIO_SOURCE_DEFAULT = 0 1 2 3 4)
+       bool
+       int
+%f   : float
+%u   : uint32_t
+%p   : void*
+%#x  : enum(这样定义时AUDIO_FORMAT_PCM_SUB_16_BIT = 0x1u 0x2u 0x3u 0x4000001u 0x1e000001u)
+       uint32_t
+#%x  : enum(这样定义时AUDIO_OUTPUT_FLAG_NONE = 0x0 0x10 0x100 0x2000 0x10000)
+%zu  : size_t
+%zd  : ssize_t
+0x%x : uint32_t
+status_t
+nsecs_t
+pid_t
+uid_t
+int64_t
+*/
+
+/***
+在Android底层中常用的代码有：
+#define LOG_TAG "alexander"
+pid_t pid_ = getpid();
+uid_t uid_ = getuid();
+ALOGD("AudioTrack::set() PID: %d UID: %d", pid_, uid_);
+pid_t callingPid = IPCThreadState::self()->getCallingPid();
+pid_t callingPid = IPCThreadState::self()->getCallingPid();
+pid_t pid = getpid();
+ALOGD("BpDaemon::BpDaemon()  created   %p PID: %d", this, pid);
+pid_t pid = getpid();
+ALOGD("BpDaemon::~BpDaemon() destroyed %p PID: %d", this, pid);
+
+// 主要代码
+sp<IServiceManager> sm = defaultServiceManager();
+sp<IBinder> binder;
+do {
+    // 主要代码
+    binder = sm->getService(String16("media.audio_flinger"));
+    if (binder != 0) {
+        break;
+    }
+    ALOGW("AudioFlinger not published, waiting...");
+    usleep(500000); // 0.5 s
+} while (true);
+gAudioFlingerClient = new AudioFlingerClient();
+binder->linkToDeath(gAudioFlingerClient);
+// 主要代码
+sp<IAudioFlinger> gAudioFlinger = interface_cast<IAudioFlinger>(binder);
+ProcessState::self()->startThreadPool();
+
+int64_t token = IPCThreadState::self()->clearCallingIdentity();
+// ......
+IPCThreadState::self()->restoreCallingIdentity(token);
+
+void *user;
+const audio_offload_info_t *offloadInfo;
+const sp<IMemory> &sharedBuffer;
+uint32_t(streamType)
+*/
 
 /***
 什么样的进程能够调用libandroid_runtime.so库
@@ -94,27 +159,9 @@ frameworks/base/media/jni
 frameworks/av/media/libmedia
 frameworks/av/services/audioflinger
 
-#define LOG_TAG "alexander"
-pid_t pid = getpid();
-pid_t callingPid = IPCThreadState::self()->getCallingPid();
-LOGI("BpDaemon::BpDaemon()  created   %p PID: %d\n", this, pid);
-pid_t pid = getpid();
-LOGI("BpDaemon::~BpDaemon() destroyed %p PID: %d\n", this, pid);
-
 打印String16的字符串
 const String16 &mOpPackageName
-ALOGI("mOpPackageName: %s", String8(mOpPackageName).string());
-
-%s : String8(mOpPackageName).string()
-%d : enum bool
-%u : uint32_t
-%#x: enum
-%zu: size_t
-%zd: ssize_t
-status_t
-nsecs_t
-uid_t
-pid_t
+ALOGD("mOpPackageName: %s", String8(mOpPackageName).string());
 
 // 定义类型的同时定义了一个变量
 static struct audio_record_fields_t {
