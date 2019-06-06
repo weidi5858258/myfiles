@@ -238,6 +238,13 @@ adb push /media/root/alexander/android_source/aosp/out/target/product/hikey970/s
 adb push /media/root/alexander/android_source/aosp/out/target/product/hikey970/system/lib64/libaudioflinger.so /system/lib64/ && 
 adb reboot
 
+adb root && adb remount && 
+adb push /root/mydev/android_source/hikey970/aosp/out/target/product/hikey970/system/lib/libaudioclient.so /system/lib/ && 
+adb push /root/mydev/android_source/hikey970/aosp/out/target/product/hikey970/system/lib/libaudioflinger.so /system/lib/ && 
+adb push /root/mydev/android_source/hikey970/aosp/out/target/product/hikey970/system/lib64/libaudioclient.so /system/lib64/ && 
+adb push /root/mydev/android_source/hikey970/aosp/out/target/product/hikey970/system/lib64/libaudioflinger.so /system/lib64/ && 
+adb reboot
+
 确认Hikey970的switches为以下模式
 Switch 1 = ON
 Switch 2 = OFF

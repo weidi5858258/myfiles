@@ -5,6 +5,7 @@
 
 /***
 在Android底层打印日志时的输出格式有：
+打印以0x开关的enum常量时使用%#x，不要使用#%x(可能是写错的)
 %s   : String8(mOpPackageName).string()
 %d   : enum(这样定义时AUDIO_SOURCE_DEFAULT = 0 1 2 3 4)
        bool

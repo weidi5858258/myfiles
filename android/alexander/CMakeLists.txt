@@ -9,29 +9,39 @@ add_executable(alexander
         src/include/MyHead.h
         src/cpp/main.cpp)
 
-set(ANDROID_INCLUDE_PATH
-        /root/mydev/android_source/hikey970/aosp/)
+##################################################################
+
+set(ANDROID_INCLUDE_PATH /root/mydev/android_source/hikey970/aosp)
+#set(ANDROID_INCLUDE_PATH /media/root/alexander/android_source/aosp)
 
 include_directories(
+        ${ANDROID_INCLUDE_PATH}/bionic/libc/include
 
         ${ANDROID_INCLUDE_PATH}/external/curl/include
         ${ANDROID_INCLUDE_PATH}/external/expat/lib
-        ${ANDROID_INCLUDE_PATH}/external/skia/include/core
-        ${ANDROID_INCLUDE_PATH}/libnativehelper/include
-        ${ANDROID_INCLUDE_PATH}/prebuilts/ndk/current/platforms/android-24/arch-arm/usr/include/asm-generic
-        ${ANDROID_INCLUDE_PATH}/external/libselinux/include
-        ${ANDROID_INCLUDE_PATH}/bionic/libc/include
         ${ANDROID_INCLUDE_PATH}/external/gtest/include
-        ${ANDROID_INCLUDE_PATH}/libnativehelper/include/nativehelper
-        ${ANDROID_INCLUDE_PATH}/external/libchrome
+        ${ANDROID_INCLUDE_PATH}/external/libselinux/include
         ${ANDROID_INCLUDE_PATH}/external/libbrillo
+        ${ANDROID_INCLUDE_PATH}/external/libchrome
+        ${ANDROID_INCLUDE_PATH}/external/kernel-headers/original/uapi
+        ${ANDROID_INCLUDE_PATH}/external/skia/include/core
+        ${ANDROID_INCLUDE_PATH}/external/skia/src/core
+
+        ${ANDROID_INCLUDE_PATH}/frameworks/av/include
+        ${ANDROID_INCLUDE_PATH}/frameworks/base/core/jni
+        ${ANDROID_INCLUDE_PATH}/frameworks/base/include
+        ${ANDROID_INCLUDE_PATH}/frameworks/native/include
+
         ${ANDROID_INCLUDE_PATH}/hardware/libhardware/include
+        
+        ${ANDROID_INCLUDE_PATH}/libnativehelper/include
+        ${ANDROID_INCLUDE_PATH}/libnativehelper/include/nativehelper
+        ${ANDROID_INCLUDE_PATH}/libnativehelper/include_jni
 
-        frameworks/av/include
-        frameworks/base/core/jni
-        frameworks/base/include
-        frameworks/native/include
+        ${ANDROID_INCLUDE_PATH}/prebuilts/ndk/current/platforms/android-24/arch-arm/usr/include/asm-generic
 
+        ${ANDROID_INCLUDE_PATH}/system/core/libcutils/include/cutils
+        ${ANDROID_INCLUDE_PATH}/system/core/libutils/include/utils
         ${ANDROID_INCLUDE_PATH}/system/extras/perfprofd/quipper
         ${ANDROID_INCLUDE_PATH}/system/bt/include
         ${ANDROID_INCLUDE_PATH}/system/bt/bta/include
