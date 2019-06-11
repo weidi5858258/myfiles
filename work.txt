@@ -284,6 +284,9 @@ Switch 4 = OFF
 
 连接电源线上电
 
+adb root
+adb remount
+adb shell mount -o rw,remount /
 
 USB OTG:USB On-The-Go 通常缩写为 USB OTG，是 USB2.0 规格的补充标准。它可使 USB 设备，例如播放器或手机，从 USB 周边设备变为 USB 主机，与其他 USB 设备连接通信。在 正常情况下，这些支持 OTG 的 USB 设备和 USB 主机(如台式机或者手提电脑)，仍然作为 USB 周边设备使用。 
 Android 平台下 USB 开发有以下两种模式：
