@@ -16,7 +16,7 @@
 %#x  : enum(这样定义时AUDIO_FORMAT_PCM_SUB_16_BIT = 0x1u 0x2u 0x3u 0x4000001u 0x1e000001u)
        uint32_t
 #%x  : enum(这样定义时AUDIO_OUTPUT_FLAG_NONE = 0x0 0x10 0x100 0x2000 0x10000)
-%zu  : size_t
+%zu  : size_t(不能使用%d)
 %zd  : ssize_t
 0x%x : uint32_t
 status_t

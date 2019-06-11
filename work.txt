@@ -245,6 +245,9 @@ adb push /root/mydev/android_source/hikey970/aosp/out/target/product/hikey970/sy
 adb push /root/mydev/android_source/hikey970/aosp/out/target/product/hikey970/system/lib64/libaudioflinger.so /system/lib64/ && 
 adb reboot
 
+      out/target/product/hikey970/system/priv-app/Settings/Settings.apk
+Copy: out/target/product/hikey970/system/priv-app/Settings/oat/arm64/Settings.vdex
+
 确认Hikey970的switches为以下模式
 Switch 1 = ON
 Switch 2 = OFF
@@ -359,10 +362,18 @@ USB转串口模块
 gnome-tweak-tool(优化工具)
 扩展--->Window list
 
+1. UART Debug无法进行console，只能看到输出
+     HiKey970自带了一个UART Debug串口，但只能看到串口的输出信息，而无法进入console，经过查看HiKey970的硬件文档，发现如果需要进入console,则需用转接板接PIN11和PIN13，而不要用UART Debug，这样调试信息既可以输出，也可以进入console了
+2. 使用adb connect 出现device offline
+   首先执行一下adb tcpip 5555  然后再执行adb connect ipaddress即可
+3. 烧写编译后的固件打不开WiFi,原因为wpa_supplicant无法启动
+    修改device/linaro/hikey/init.common.rc的98行-c/data/misc/wifi/wpa_supplicant.conf为-c/etc/wifi/wpa_supplicant.conf
 
-
-
-
+wifi问题的解决方法
+修改device/linaro/hikey/init.common.rc的98行-c/data/misc/wifi/wpa_supplicant.conf为-c/etc/wifi/wpa_supplicant.conf
+把/etc/wifi/wpa_supplicant.conf复制到/data/misc/wifi/中去，
+然后把/data/misc/wifi/wpa_supplicant.conf的权限改为777,
+每次重启后setenforce 0
 
 
 
