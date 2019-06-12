@@ -373,7 +373,8 @@ gnome-tweak-tool(优化工具)
     修改device/linaro/hikey/init.common.rc的98行-c/data/misc/wifi/wpa_supplicant.conf为-c/etc/wifi/wpa_supplicant.conf
 
 wifi问题的解决方法
-修改device/linaro/hikey/init.common.rc的98行-c/data/misc/wifi/wpa_supplicant.conf为-c/etc/wifi/wpa_supplicant.conf
+修改device/linaro/hikey/init.common.rc的98行
+-c/data/misc/wifi/wpa_supplicant.conf为-c/etc/wifi/wpa_supplicant.conf(可能不需要做)
 把/etc/wifi/wpa_supplicant.conf复制到/data/misc/wifi/中去，
 然后把/data/misc/wifi/wpa_supplicant.conf的权限改为777,
 每次重启后setenforce 0

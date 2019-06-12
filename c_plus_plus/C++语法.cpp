@@ -2570,11 +2570,42 @@ build/core/config.mk
 build/core/main.mk
 build/core/clear_vars.mk
 
+/***
+C标准库
+*/
+#include <stdio.h>
+/***
+库变量
+size_t 无符号整数类型，它是sizeof关键字的结果
+FILE   存储文件流信息的对象类型
+fpos_t 存储文件中任何位置的对象类型
+库宏
+NULL
+空指针
+EOF
+到达文件结束的负整数
+stderr、stdin 和 stdout
+指向 FILE 类型的指针，分别对应于标准错误、标准输入和标准输出流
+BUFSIZ
+一个整数，该整数代表了 setbuf 函数使用的缓冲区大小
+_IOFBF、_IOLBF 和 _IONBF
+扩展了带有特定值的整型常量表达式，
+并适用于 setvbuf 函数的第三个参数
+FOPEN_MAX
+一个整数，该整数代表了系统可以同时打开的文件数量
+FILENAME_MAX
+一个整数，该整数代表了字符数组可以存储的文件名的最大长度。
+如果实现没有任何限制，则该值应为推荐的最大值
+TMP_MAX
+tmpnam 函数可生成的独特文件名的最大数量
+SEEK_CUR、SEEK_END 和 SEEK_SET
+在 fseek 函数中使用，用于在一个文件中定位不同的位置
+L_tmpnam
+一个整数，该整数代表了字符数组可以存储的由
+tmpnam函数创建的临时文件名的最大长度
 
 
-
-
-
+*/
 
 
 
