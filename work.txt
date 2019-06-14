@@ -231,6 +231,8 @@ $ make -j8
 cutecom &
 /dev/ttyXRUSB0
 
+adb root && adb remount && adb shell mount -o rw,remount / && adb shell chmod 777 /data/misc/wifi/wpa_supplicant.conf && adb shell setenforce 0
+
 adb root && adb remount && 
 adb push /media/root/alexander/android_source/aosp/out/target/product/hikey970/system/lib/libaudioclient.so /system/lib/ && 
 adb push /media/root/alexander/android_source/aosp/out/target/product/hikey970/system/lib/libaudioflinger.so /system/lib/ && 
@@ -247,6 +249,8 @@ adb reboot
 
       out/target/product/hikey970/system/priv-app/Settings/Settings.apk
 Copy: out/target/product/hikey970/system/priv-app/Settings/oat/arm64/Settings.vdex
+adb root && adb remount && 
+adb push /root/mydev/android_source/hikey970/aosp/out/target/product/hikey970/system/priv-app/Settings/Settings.apk /system/priv-app/Settings/Settings.apk && adb push /root/mydev/android_source/hikey970/aosp/out/target/product/hikey970/system/priv-app/Settings/oat/arm64/Settings.odex /system/priv-app/Settings/oat/arm64/Settings.odex && adb push /root/mydev/android_source/hikey970/aosp/out/target/product/hikey970/system/priv-app/Settings/oat/arm64/Settings.vdex /system/priv-app/Settings/oat/arm64/Settings.vdex
 
 确认Hikey970的switches为以下模式
 Switch 1 = ON
@@ -284,9 +288,11 @@ Switch 4 = OFF
 
 连接电源线上电
 
-adb root
-adb remount
-adb shell mount -o rw,remount /
+adb root && 
+adb remount && 
+adb shell mount -o rw,remount / && 
+adb shell chmod 777 /data/misc/wifi/wpa_supplicant.conf && 
+adb shell setenforce 0
 
 USB OTG:USB On-The-Go 通常缩写为 USB OTG，是 USB2.0 规格的补充标准。它可使 USB 设备，例如播放器或手机，从 USB 周边设备变为 USB 主机，与其他 USB 设备连接通信。在 正常情况下，这些支持 OTG 的 USB 设备和 USB 主机(如台式机或者手提电脑)，仍然作为 USB 周边设备使用。 
 Android 平台下 USB 开发有以下两种模式：
