@@ -1538,3 +1538,19 @@ usb的传输类型有四种，分别是控制传输(Control Transfer)、中断�
 使用SDK通过的API操作USB很简单，主要的类是UsbManager、UsbEndpoint、UsbInterface、UsbDeviceConnection、UsbDevice。
 为了获取USB声卡数据，在网上进行了大量的文章搜索，发现USB的库都是使用C语言写的，使用比较多的应属libusb了。
 参考https://github.com/shenki/usbaudio-android-demo.git
+
+视频进行h.264编码
+音频进行aac编码
+x264进行H264编码，libfaac进行aac编码
+对视频来讲，有H264, MPEG-4, WebM/VP8, Theora等，音频有Speex, AAC, Ogg/Vorbis等
+WebM，Google牵头的项目，完全开放和自由，使用VP8和Vorbis编码，webm(mkv)封装
+RTSP、RTMP、HTTP等流式协议输出
+不论向 RTMP 服务器推送音频还是视频，都需要按照 FLV 的格式进行封包。因此，在我们向服务器推送第一个 AAC 或 H264 数据包之前，需要首先推送一个音频 Tag [AAC Sequence Header] 以下简称“音频同步包”，或者视频 Tag [AVC Sequence Header] 以下简称“视频同步包”。
+
+yuv420_to_rgb32
+nv12_to_rgb32
+
+关于视频的实时性归纳为三个等级：
+伪实时：视频消费延迟超过 3 秒，单向观看实时，通用架构是 CDN + RTMP + HLS，现在基本上所有的直播都是这类技术。
+准实时： 视频消费延迟 1 ~ 3 秒，能进行双方互动但互动有障碍。有些直播网站通过 TCP/UDP + FLV 已经实现了这类技术，YY 直播属于这类技术。
+真实时：视频消费延迟 < 1秒，平均 500 毫秒。这类技术是真正的实时技术，人和人交谈没有明显延迟感。QQ、微信、Skype 和 WebRTC 等都已经实现了这类技术。
