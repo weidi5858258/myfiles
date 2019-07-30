@@ -272,6 +272,7 @@ data[i+3] = (char)((sample_buffer_R[j]>>8) & 0xff);;//右声道高8位
 
 //use it
 ./configure \
+--enable-shared \
 --enable-gpl \
 --enable-openssl \
 --enable-decoder=h264 \
@@ -284,7 +285,7 @@ data[i+3] = (char)((sample_buffer_R[j]>>8) & 0xff);;//右声道高8位
 --enable-libvpx \
 --enable-libx264 \
 --disable-yasm \
---prefix=/root/mydev/tools/ffmpeg
+--prefix=/root/mydev/tools/ffmpeg/ffmpeg_ubuntu
 
 --enable-decoder=h265 \
 --enable-encoder=libx265 \
