@@ -15,7 +15,8 @@
 #include <iostream>
 #include <string>
 #include <string.h>
-#include <limits.h>// 定义了一些常用类型的最小值,最大值
+// 定义了一些常用类型的最小值,最大值
+#include <limits.h>
 #include <unistd.h>
 #include <errno.h>
 #include <setjmp.h>
@@ -31,6 +32,7 @@
 #include <string.h>
 #include <time.h>
 //#include <opencv2/opencv.hpp>
+
 // STL
 #include <vector>
 #include <iterator>
@@ -88,7 +90,7 @@ extern "C" {// 不能少
 //    #include <jpeglib.h>
 //    #include <turbojpeg.h>
 
-};
+};// extern "C" end
 
 #define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
 #define AUDIO_INBUF_SIZE 20480

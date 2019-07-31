@@ -72,13 +72,13 @@ else ()
 
     include_directories(
             include
-            /root/mydev/tools/ffmpeg/include
+            /root/mydev/tools/ffmpeg/ffmpeg_ubuntu/include
             /usr/include/SDL2
             /usr/local/include/lame
     )
 
     set(FFMPEG_LIB_PATH
-            /root/mydev/tools/ffmpeg/lib)
+            /root/mydev/tools/ffmpeg/ffmpeg_ubuntu/lib)
 
     set(SDL2_LIB_PATH
             /usr/include/SDL2)
@@ -95,9 +95,10 @@ else ()
             -L${FFMPEG_LIB_PATH} -lpostproc
             -L${SDL2_LIB_PATH} -lSDL2
             -L${SDL2_LIB_PATH} -lSDL2main
+            # 音频编码成mp3文件时要用到
             -lmp3lame
             -lx264
-            #-lx265
+            -lx265
             -llzma
             -lasound
             -lsndio
@@ -115,6 +116,9 @@ else ()
             -lcrypto
             -lssl
             -lvpx
+            # lib/libavformat.a(matroskadec.o)：在函数‘matroska_decode_buffer’中：
+            # libavformat/matroskadec.c:1435：对‘BZ2_bzDecompressInit’未定义的引用
+            -L/usr/lib -lbz2
     )
 
 endif ()
