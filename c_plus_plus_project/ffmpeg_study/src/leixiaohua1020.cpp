@@ -62,7 +62,7 @@ int audio_stream_index = -1;
 int thread_pause_flag = 0;
 int thread_exit_flag = 0;
 
-char *in_file_path = "/root/视频/tomcat_video/shape_of_my_heart.mp4";
+char *in_file_path = "/root/视频/tomcat_video/Escape.Plan.2.mp4";
 //char *in_file_path = "/root/视频/tomcat_video/yuv/256_256_yuv420p_y.y";
 //char *in_file_path = "/root/视频/yuv/240_240_rgb24_haoke.yuv";
 //char *out_file_path = "/root/视频/rgb/720_480_rgb24.rgb";

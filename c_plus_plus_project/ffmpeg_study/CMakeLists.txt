@@ -72,13 +72,15 @@ else ()
 
     include_directories(
             include
-            /root/mydev/tools/ffmpeg/ffmpeg_ubuntu/include
+            /root/mydev/tools/ffmpeg/ffmpeg/include
+#            /root/mydev/tools/ffmpeg/ffmpeg_ubuntu/include
             /usr/include/SDL2
             /usr/local/include/lame
     )
 
     set(FFMPEG_LIB_PATH
-            /root/mydev/tools/ffmpeg/ffmpeg_ubuntu/lib)
+            /root/mydev/tools/ffmpeg/ffmpeg/lib)
+#            /root/mydev/tools/ffmpeg/ffmpeg_ubuntu/lib)
 
     set(SDL2_LIB_PATH
             /usr/include/SDL2)
