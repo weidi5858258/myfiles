@@ -42,8 +42,18 @@
 
 ///////////////////////////公共变量///////////////////////////
 
+/***
+ 有关Context的指针可以理解成"管家","秘书".
+ 如AVFormatContext就好比音视频Format的管家.其保存着有关音视频的Format信息.
+ Format管家:        AVFormatContext
+ Codec管家:         AVCodecContext
+ Codec分析器管家:    AVCodecParserContext
+ 对于视频有个Sws管家: SwsContext
+ 对于音视有个Swr管家: SwrContext
+ */
 enum AVCodecID avcodec_id = AV_CODEC_ID_NONE;
 //格式上下结构体，,可以理解为存储数据流的文件，伴随整个生命周期
+// AVFormatContext相当于Android的MediaExtractor,保存了音视频的Format信息(MediaFormat)
 AVFormatContext *src_avformat_context = NULL;
 AVFormatContext *dst_avformat_context = NULL;
 
@@ -62,7 +72,7 @@ int audio_stream_index = -1;
 int thread_pause_flag = 0;
 int thread_exit_flag = 0;
 
-char *in_file_path = "/root/视频/tomcat_video/Escape.Plan.2.mp4";
+char *in_file_path = "/root/视频/tomcat_video/game_of_thrones_5_01.mp4";
 //char *in_file_path = "/root/视频/tomcat_video/yuv/256_256_yuv420p_y.y";
 //char *in_file_path = "/root/视频/yuv/240_240_rgb24_haoke.yuv";
 //char *out_file_path = "/root/视频/rgb/720_480_rgb24.rgb";
@@ -83,11 +93,12 @@ size_t src_video_area = 0;
 int dst_video_width = 0, dst_video_height = 0;
 size_t dst_video_area = 0;
 int playback_window_w = 0, playback_window_h = 0;
+// 编解码器的管家(通过这个管家才能找到编解码器,而且本身也保存了好多的信息)
 AVCodecContext *video_avcodec_context = NULL;
 AVCodecParameters *video_avcodec_parameters = NULL;
-//Decoder Encoder
+// Decoder解码器 Encoder编码器
 AVCodec *video_avcodec_decoder = NULL, *video_avcodec_encoder = NULL;
-//src_avframe保存原始帧 dst_avframe转换成yuv后的帧保存在此处
+// src_avframe保存原始帧 dst_avframe转换成yuv后的帧保存在此处
 AVFrame *src_video_avframe = NULL, *dst_video_avframe = NULL;
 //先自己申请空间,然后为初始化video_dst_avframe而服务
 unsigned char *video_out_buffer = NULL;
@@ -117,7 +128,9 @@ int audio_frame_count = 0;
 //
 uint8_t *src_audio_data[4] = {NULL}, *dst_audio_data[4] = {NULL};
 int src_audio_linesize[4] = {0}, dst_audio_linesize[4] = {0};
+
 ///////////////////////////音频重采样使用///////////////////////////
+
 //声道布局
 uint64_t src_ch_layout = AV_CH_LAYOUT_STEREO, dst_ch_layout = AV_CH_LAYOUT_STEREO;
 //采样率
@@ -153,6 +166,7 @@ void init_av() {
     // 注册设备的函数，如用获取摄像头数据或音频等，需要此函数先注册
     // avdevice_register_all();
     // AVFormatContext初始化，里面设置结构体的一些默认信息
+    // 相当于Java中创建对象
     src_avformat_context = avformat_alloc_context();
 }
 
@@ -322,6 +336,9 @@ void close() {
     }
 }
 
+/***
+ src_avformat_context相当于初始化操作
+ */
 int avformat_open_and_find() {
     if (avformat_open_input(&src_avformat_context, in_file_path, NULL, NULL) != 0) {
         printf("Couldn't open input stream.\n");
@@ -333,13 +350,17 @@ int avformat_open_and_find() {
     }
 }
 
+/***
+ 找到音视频流的轨道
+ */
 void find_stream_index() {
     int i;
     int nb_streams = src_avformat_context->nb_streams;
     for (i = 0; i < nb_streams; i++) {
-        if (src_avformat_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
+        AVMediaType codec_type = src_avformat_context->streams[i]->codec->codec_type;
+        if (codec_type == AVMEDIA_TYPE_VIDEO) {
             video_stream_index = i;
-        } else if (src_avformat_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+        } else if (codec_type == AVMEDIA_TYPE_AUDIO) {
             audio_stream_index = i;
         }
     }
@@ -358,12 +379,14 @@ void find_stream_index() {
 int open_video_avcodec_decoder() {
     if (video_stream_index != -1) {
         video_avcodec_context = src_avformat_context->streams[video_stream_index]->codec;
+        // 找到编码器
         video_avcodec_decoder = avcodec_find_decoder(video_avcodec_context->codec_id);
     }
     if (video_avcodec_decoder == NULL) {
         printf("Codec not found.\n");
         return -1;
     }
+    // 打开编码器
     if (avcodec_open2(video_avcodec_context, video_avcodec_decoder, NULL) < 0) {
         printf("Could not open codec.\n");
         return -1;
@@ -390,6 +413,7 @@ int create_video_sws_context() {
     src_video_height = video_avcodec_context->height;
     src_video_area = src_video_width * src_video_height;
     src_avpixel_format = video_avcodec_context->pix_fmt;
+    // 为要操作的视频帧先申请空间
     src_video_avframe = av_frame_alloc();
     dst_video_avframe = av_frame_alloc();
     avpacket = (AVPacket *) av_malloc(sizeof(AVPacket));
@@ -410,7 +434,7 @@ int create_video_sws_context() {
                                        SWS_BICUBIC,//flags
                                        NULL, NULL, NULL);
     if (video_sws_context == NULL) {
-        printf("%s\n", "");
+        printf("%s\n", "video_sws_context is NULL");
         return -1;
     }
 
@@ -511,6 +535,12 @@ int alexander_refresh_video_thread(void *opaque) {
 /***
  播放流畅,代码比较好
  无声电影
+
+ 流程:
+ 1.注册跟编解码器相关的东西
+ 2.对AVFormatContext指针进行初始化操作
+ 3.找到音视频流的轨道
+ 4.找到并打开视频解码器
  */
 int alexander_video_player_sdl2() {
     init_av();
@@ -580,7 +610,7 @@ int alexander_video_player_sdl2() {
         } else if (sdl_event.type == BREAK_EVENT) {
             break;
         }
-    }
+    }// for(;;) end
 
     close();
 
