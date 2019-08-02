@@ -235,7 +235,7 @@ int audio_decode_frame(AudioState *audio_state) {
                 if (audio_state->audio_swr_context) {
                     swr_free(&audio_state->audio_swr_context);
                 }
-                fprintf(stdout, "audio_state->audio_swr_context swr_alloc_set_opts.\n");
+                fprintf(stdout, "audio_state->audioSwrContext swr_alloc_set_opts.\n");
                 audio_state->audio_swr_context = swr_alloc_set_opts(NULL,
                                                                     audio_state->dst_ch_layout,
                                                                     audio_state->dst_avsample_format,
@@ -248,7 +248,7 @@ int audio_decode_frame(AudioState *audio_state) {
                     fprintf(stderr, "swr_init() failed\n");
                     break;
                 } else {
-                    fprintf(stdout, "audio_state->audio_swr_context is created.\n");
+                    fprintf(stdout, "audio_state->audioSwrContext is created.\n");
                 }
                 audio_state->src_ch_layout = get_ch_layout_from_decoded_avframe;
                 audio_state->src_nb_channels = audio_state->audio_avstream->codec->channels;
@@ -257,7 +257,7 @@ int audio_decode_frame(AudioState *audio_state) {
             }
 
             if (audio_state->audio_swr_context) {
-                //fprintf(stdout, "audio_state->audio_swr_context is not NULL.\n");
+                //fprintf(stdout, "audio_state->audioSwrContext is not NULL.\n");
 
                 //if条件永不满足
                 if (get_nb_samples_from_decoded_avframe != audio_state->audio_avframe->nb_samples) {
@@ -469,7 +469,7 @@ int stream_component_open(AudioState *audio_state, int audio_stream_index) {
     audio_avcodec_decoder = avcodec_find_decoder(audio_avcodec_context->codec_id);
     if (!audio_avcodec_decoder
         || (avcodec_open2(audio_avcodec_context, audio_avcodec_decoder, NULL) < 0)) {
-        fprintf(stderr, "Unsupported audio_avcodec_decoder!\n");
+        fprintf(stderr, "Unsupported audioAVCodecDecoder!\n");
         return -1;
     }
 
@@ -517,7 +517,7 @@ static int decode_thread(void *arg) {
         return -1;
     }
     audio_state->avformat_context = avformat_context;
-    //av_dump_format(avformat_context, 0, audio_state->in_file_path, 0);
+    //av_dump_format(avformat_context, 0, audio_state->inFilePath, 0);
     for (i = 0; i < avformat_context->nb_streams; i++) {
         if (avformat_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO
             && audio_stream_index < 0) {

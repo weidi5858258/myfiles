@@ -63,7 +63,7 @@ int bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure(char *in_file_path) {
         return -1;
     }
 
-    printf("in_file_path: %s\n", in_file_path);
+    printf("inFilePath: %s\n", in_file_path);
     FILE *in_file = fopen(in_file_path, "rb+");
     if (in_file == NULL) {
         printf("cannot open this file\n");

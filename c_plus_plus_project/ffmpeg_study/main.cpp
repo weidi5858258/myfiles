@@ -203,6 +203,32 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+/***
+ 注:本文中像素的采样位数一律为8bit.由于1Byte=8bit,所以一个像素的一个分量的采样值占用1Byte.
+ 注：本文中声音样值的采样频率一律是44100Hz,采样格式一律为16LE.
+ “16”代表采样位数是16bit.由于1Byte=8bit,所以一个声道的一个采样值占用2Byte.
+ “LE”代表Little Endian,代表2 Byte采样值的存储方式为高位存在高地址中.
+
+ unsigned char相当于byte(标准C中没有byte)
+                  char                           -128~127
+ typedef unsigned char		uint8_t;  1个字节 8位  0~255(ffmpeg中常用到)
+                  short int                      -32768~32767
+ typedef unsigned short int	uint16_t; 2个字节16位  0~65535
+                  int                            -2147483648~2147483647
+ typedef unsigned int		uint32_t; 4个字节32位  0~4294967295
+ typedef unsigned long int	uint64_t; 8个字节64位
+
+ 在ffmpeg中常用的代码:
+ FILE *fp=fopen(url,"rb+");
+ FILE *fp1=fopen("output_420_y.y","wb+");
+ unsigned char *pic=(unsigned char *)malloc(w*h*3/2);
+ fread(pic,1,w*h*3/2,fp);
+ //Y
+ fwrite(pic,1,w*h,fp1);
+ free(pic);
+ fclose(fp);
+ fclose(fp1);
+ */
 
 
 

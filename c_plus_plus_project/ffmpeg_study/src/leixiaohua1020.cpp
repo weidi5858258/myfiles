@@ -37,8 +37,38 @@
  判断是否是planar类型:
  av_sample_fmt_is_planar(sample_fmt)
 
+ YUV420P
+ fread(pic,1,w*h*3/2,fp);
+ //Y
+ fwrite(pic,1,w*h,fp1);
+ //U
+ fwrite(pic+w*h,1,w*h/4,fp2);
+ //V
+ fwrite(pic+w*h*5/4,1,w*h/4,fp3);
 
+ YUV444P
+ fread(pic,1,w*h*3,fp);
+ //Y
+ fwrite(pic,1,w*h,fp1);
+ //U
+ fwrite(pic+w*h,1,w*h,fp2);
+ //V
+ fwrite(pic+w*h*2,1,w*h,fp3);
  */
+
+struct Wrapper {
+    AVCodecContext *avCodecContext = NULL;
+    // 解码器
+    AVCodec *decoderAVCodec = NULL;
+    // 编码器
+    AVCodec *encoderAVCodec = NULL;
+    AVFrame *srcAVFrame = NULL;
+    AVFrame *dstAVFrame = NULL;
+    AVCodecParameters *avCodecParameters = NULL;
+    unsigned char *outBuffer = NULL;
+    size_t outBufferSize = 0;
+    int frameCount = 0;
+};
 
 ///////////////////////////公共变量///////////////////////////
 
@@ -50,43 +80,45 @@
  Codec分析器管家:    AVCodecParserContext
  对于视频有个Sws管家: SwsContext
  对于音视有个Swr管家: SwrContext
+ 视频像素数据        AVPixelFormat
+ 音频采样数据        AVSampleFormat
  */
-enum AVCodecID avcodec_id = AV_CODEC_ID_NONE;
+enum AVCodecID avCodecId = AV_CODEC_ID_NONE;
 //格式上下结构体，,可以理解为存储数据流的文件，伴随整个生命周期
 // AVFormatContext相当于Android的MediaExtractor,保存了音视频的Format信息(MediaFormat)
-AVFormatContext *src_avformat_context = NULL;
-AVFormatContext *dst_avformat_context = NULL;
+AVFormatContext *srcAVFormatContext = NULL;
+AVFormatContext *dstAVFormatContext = NULL;
 
 //AVPacket结构体的作用是从内存中获取一个视频压缩帧,
 //对于音频可能获取一个或者多个压缩帧.
-AVPacket *avpacket = NULL;
+AVPacket *avPacket = NULL;
 //用于解析输入的数据流并把它分成一帧一帧的压缩编码数据。
-AVFrame *avframe = NULL;
+AVFrame *avFrame = NULL;
 //比较形象的说法就是把长长的一段连续的数据“切割”成一段段的数据。
 //他的核心函数是av_parser_parse2()。
-AVCodecParserContext *avcodec_parser_context = NULL;
+AVCodecParserContext *avCodecParserContext = NULL;
 
-int video_stream_index = -1;
-int audio_stream_index = -1;
+int videoStreamIndex = -1;
+int audioStreamIndex = -1;
 //用于线程
 int thread_pause_flag = 0;
 int thread_exit_flag = 0;
 
-char *in_file_path = "/root/视频/tomcat_video/game_of_thrones_5_01.mp4";
-//char *in_file_path = "/root/视频/tomcat_video/yuv/256_256_yuv420p_y.y";
-//char *in_file_path = "/root/视频/yuv/240_240_rgb24_haoke.yuv";
-//char *out_file_path = "/root/视频/rgb/720_480_rgb24.rgb";
-char *out_file_path = "/root/视频/tomcat_video/yuv/haoke.yuv";
+char *inFilePath = "/root/视频/tomcat_video/kingsman.mp4";
+//char *inFilePath = "/root/视频/tomcat_video/yuv/256_256_yuv420p_y.y";
+//char *inFilePath = "/root/视频/yuv/240_240_rgb24_haoke.yuv";
+//char *outFilePath = "/root/视频/rgb/720_480_rgb24.rgb";
+char *outFilePath = "/root/视频/tomcat_video/yuv/haoke.yuv";
 
-FILE *in_file = NULL;
-FILE *out_file = NULL;
+FILE *inFile = NULL;
+FILE *outFile = NULL;
 
 int ret = -1, got_picture_ptr = -1;
 
 ///////////////////////////video///////////////////////////
 
 //SwsContext作为sws_scale的第一个参数,记录数据要转换的格式、大小及转换方式(用于图像像素的处理)
-struct SwsContext *video_sws_context = NULL;
+struct SwsContext *videoSwsContext = NULL;
 //源视频宽高
 int src_video_width = 0, src_video_height = 0;
 size_t src_video_area = 0;
@@ -94,33 +126,33 @@ int dst_video_width = 0, dst_video_height = 0;
 size_t dst_video_area = 0;
 int playback_window_w = 0, playback_window_h = 0;
 // 编解码器的管家(通过这个管家才能找到编解码器,而且本身也保存了好多的信息)
-AVCodecContext *video_avcodec_context = NULL;
-AVCodecParameters *video_avcodec_parameters = NULL;
+AVCodecContext *videoAVCodecContext = NULL;
 // Decoder解码器 Encoder编码器
-AVCodec *video_avcodec_decoder = NULL, *video_avcodec_encoder = NULL;
+AVCodec *videoAVCodecDecoder = NULL, *videoAVCodecEncoder = NULL;
+AVCodecParameters *videoAVCodecParameters = NULL;
 // src_avframe保存原始帧 dst_avframe转换成yuv后的帧保存在此处
-AVFrame *src_video_avframe = NULL, *dst_video_avframe = NULL;
+AVFrame *srcVideoAVFrame = NULL, *dstVideoAVFrame = NULL;
 //先自己申请空间,然后为初始化video_dst_avframe而服务
 unsigned char *video_out_buffer = NULL;
-uint8_t *video_out_buffer2 = NULL;
+unsigned char *video_out_buffer2 = NULL;
 size_t video_out_buffer_size = 0;
 int video_frame_count = 0;
 //使用到sws_scale函数时需要定义这些变量
-uint8_t *src_video_data[4] = {NULL}, *dst_video_data[4] = {NULL};
+unsigned char *src_video_data[4] = {NULL}, *dst_video_data[4] = {NULL};
 int src_video_linesize[4] = {0}, dst_video_linesize[4] = {0};
-//像素格式
-enum AVPixelFormat src_avpixel_format = AV_PIX_FMT_NONE;
-enum AVPixelFormat dst_avpixel_format = AV_PIX_FMT_YUV420P;
+// 像素格式
+enum AVPixelFormat srcAVPixelFormat = AV_PIX_FMT_NONE;
+enum AVPixelFormat dstAVPixelFormat = AV_PIX_FMT_YUV420P;
 
 ///////////////////////////audio///////////////////////////
 
-struct SwrContext *audio_swr_context = NULL;
-AVCodecContext *audio_avcodec_context = NULL;
-AVCodecParameters *audio_avcodec_parameters = NULL;
-//
-AVFrame *src_audio_avframe = NULL, *dst_audio_avframe = NULL;
+struct SwrContext *audioSwrContext = NULL;
+AVCodecContext *audioAVCodecContext = NULL;
 //Decoder Encoder
-AVCodec *audio_avcodec_decoder = NULL, *audio_avcodec_encoder = NULL;
+AVCodec *audioAVCodecDecoder = NULL, *audioAVCodecEncoder = NULL;
+AVCodecParameters *audioAVCodecParameters = NULL;
+//
+AVFrame *srcAudioAVFrame = NULL, *dstAudioAVFrame = NULL;
 unsigned char *audio_out_buffer = NULL;
 uint8_t *audio_out_buffer2 = NULL;
 size_t audio_out_buffer_size = 0;
@@ -135,8 +167,8 @@ int src_audio_linesize[4] = {0}, dst_audio_linesize[4] = {0};
 uint64_t src_ch_layout = AV_CH_LAYOUT_STEREO, dst_ch_layout = AV_CH_LAYOUT_STEREO;
 //采样率
 int src_sample_rate = 0, dst_sample_rate = 0;
-//采样格式(一个采样点占用的字节数)
-enum AVSampleFormat src_avsample_format = AV_SAMPLE_FMT_NONE, dst_avsample_format = AV_SAMPLE_FMT_S16;
+// 采样格式(一个采样点占用的字节数)
+enum AVSampleFormat srcAVSampleFormat = AV_SAMPLE_FMT_NONE, dstAVSampleFormat = AV_SAMPLE_FMT_S16;
 //声道数(一般使用双声道)
 int src_nb_channels = 0, dst_nb_channels = 0;
 //一个声道采用的sample采样点个数(aac = 1024, mp3 = 1152)
@@ -167,7 +199,7 @@ void init_av() {
     // avdevice_register_all();
     // AVFormatContext初始化，里面设置结构体的一些默认信息
     // 相当于Java中创建对象
-    src_avformat_context = avformat_alloc_context();
+    srcAVFormatContext = avformat_alloc_context();
 }
 
 /***
@@ -182,7 +214,7 @@ int init_sdl() {
     //得到文件名
     /*char *file_name = NULL;
     char temp_file_path[1024];
-    strncpy(temp_file_path, in_file_path, strlen(in_file_path));
+    strncpy(temp_file_path, inFilePath, strlen(inFilePath));
     strncpy(temp_file_path, temp_file_path + 1, strlen(temp_file_path));
     char *pchar = strtok(temp_file_path, "/");
     while (pchar != NULL) {
@@ -200,7 +232,7 @@ int init_sdl() {
     }
 
     //SDL 2.0 Support for multiple windows
-    sdl_window = SDL_CreateWindow(in_file_path,
+    sdl_window = SDL_CreateWindow(inFilePath,
                                   SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                   src_video_width, src_video_height,
                                   SDL_WINDOW_OPENGL);
@@ -253,26 +285,26 @@ void close() {
         av_freep(&dst_video_data[0]);
         dst_video_data[0] = NULL;
     }
-    if (video_sws_context != NULL) {
-        sws_freeContext(video_sws_context);
-        video_sws_context = NULL;
+    if (videoSwsContext != NULL) {
+        sws_freeContext(videoSwsContext);
+        videoSwsContext = NULL;
     }
-    if (src_video_avframe != NULL) {
-        av_frame_free(&src_video_avframe);
-        src_video_avframe = NULL;
+    if (srcVideoAVFrame != NULL) {
+        av_frame_free(&srcVideoAVFrame);
+        srcVideoAVFrame = NULL;
     }
-    if (dst_video_avframe != NULL) {
-        av_frame_free(&dst_video_avframe);
-        dst_video_avframe = NULL;
+    if (dstVideoAVFrame != NULL) {
+        av_frame_free(&dstVideoAVFrame);
+        dstVideoAVFrame = NULL;
     }
-    if (video_avcodec_parameters != NULL) {
-        avcodec_parameters_free(&video_avcodec_parameters);
-        video_avcodec_parameters = NULL;
+    if (videoAVCodecParameters != NULL) {
+        avcodec_parameters_free(&videoAVCodecParameters);
+        videoAVCodecParameters = NULL;
     }
-    if (video_avcodec_context != NULL) {
-        avcodec_close(video_avcodec_context);
-        av_free(video_avcodec_context);
-        video_avcodec_context = NULL;
+    if (videoAVCodecContext != NULL) {
+        avcodec_close(videoAVCodecContext);
+        av_free(videoAVCodecContext);
+        videoAVCodecContext = NULL;
     }
     //audio
     if (audio_out_buffer != NULL) {
@@ -283,18 +315,18 @@ void close() {
         av_free(audio_out_buffer2);
         audio_out_buffer2 = NULL;
     }
-    if (audio_swr_context != NULL) {
-        swr_close(audio_swr_context);
-        swr_free(&audio_swr_context);
-        audio_swr_context = NULL;
+    if (audioSwrContext != NULL) {
+        swr_close(audioSwrContext);
+        swr_free(&audioSwrContext);
+        audioSwrContext = NULL;
     }
-    if (src_audio_avframe != NULL) {
-        av_frame_free(&src_audio_avframe);
-        src_audio_avframe = NULL;
+    if (srcAudioAVFrame != NULL) {
+        av_frame_free(&srcAudioAVFrame);
+        srcAudioAVFrame = NULL;
     }
-    if (dst_audio_avframe != NULL) {
-        av_frame_free(&dst_audio_avframe);
-        dst_audio_avframe = NULL;
+    if (dstAudioAVFrame != NULL) {
+        av_frame_free(&dstAudioAVFrame);
+        dstAudioAVFrame = NULL;
     }
     if (src_audio_data[0] != NULL) {
         av_freep(&src_audio_data[0]);
@@ -304,35 +336,35 @@ void close() {
         av_freep(&dst_audio_data[0]);
         dst_audio_data[0] = NULL;
     }
-    if (audio_avcodec_parameters != NULL) {
-        avcodec_parameters_free(&audio_avcodec_parameters);
-        audio_avcodec_parameters = NULL;
+    if (audioAVCodecParameters != NULL) {
+        avcodec_parameters_free(&audioAVCodecParameters);
+        audioAVCodecParameters = NULL;
     }
-    if (audio_avcodec_context != NULL) {
-        avcodec_close(audio_avcodec_context);
-        av_free(audio_avcodec_context);
-        audio_avcodec_context = NULL;
+    if (audioAVCodecContext != NULL) {
+        avcodec_close(audioAVCodecContext);
+        av_free(audioAVCodecContext);
+        audioAVCodecContext = NULL;
     }
 
-    if (avframe != NULL) {
-        av_frame_free(&avframe);
-        avframe = NULL;
+    if (avFrame != NULL) {
+        av_frame_free(&avFrame);
+        avFrame = NULL;
     }
-    if (avpacket != NULL) {
-        av_free(&avpacket);
-        avpacket = NULL;
+    if (avPacket != NULL) {
+        av_free(&avPacket);
+        avPacket = NULL;
     }
-    if (src_avformat_context != NULL) {
-        avformat_close_input(&src_avformat_context);
-        src_avformat_context = NULL;
+    if (srcAVFormatContext != NULL) {
+        avformat_close_input(&srcAVFormatContext);
+        srcAVFormatContext = NULL;
     }
-    if (in_file != NULL) {
-        fclose(in_file);
-        in_file = NULL;
+    if (inFile != NULL) {
+        fclose(inFile);
+        inFile = NULL;
     }
-    if (out_file != NULL) {
-        fclose(out_file);
-        out_file = NULL;
+    if (outFile != NULL) {
+        fclose(outFile);
+        outFile = NULL;
     }
 }
 
@@ -340,11 +372,11 @@ void close() {
  src_avformat_context相当于初始化操作
  */
 int avformat_open_and_find() {
-    if (avformat_open_input(&src_avformat_context, in_file_path, NULL, NULL) != 0) {
+    if (avformat_open_input(&srcAVFormatContext, inFilePath, NULL, NULL) != 0) {
         printf("Couldn't open input stream.\n");
         return -1;
     }
-    if (avformat_find_stream_info(src_avformat_context, NULL) < 0) {
+    if (avformat_find_stream_info(srcAVFormatContext, NULL) < 0) {
         printf("Couldn't find stream information.\n");
         return -1;
     }
@@ -355,86 +387,86 @@ int avformat_open_and_find() {
  */
 void find_stream_index() {
     int i;
-    int nb_streams = src_avformat_context->nb_streams;
+    int nb_streams = srcAVFormatContext->nb_streams;
     for (i = 0; i < nb_streams; i++) {
-        AVMediaType codec_type = src_avformat_context->streams[i]->codec->codec_type;
+        AVMediaType codec_type = srcAVFormatContext->streams[i]->codec->codec_type;
         if (codec_type == AVMEDIA_TYPE_VIDEO) {
-            video_stream_index = i;
+            videoStreamIndex = i;
         } else if (codec_type == AVMEDIA_TYPE_AUDIO) {
-            audio_stream_index = i;
+            audioStreamIndex = i;
         }
     }
-    if (video_stream_index == -1) {
+    if (videoStreamIndex == -1) {
         printf("Didn't find a video stream.\n");
     } else {
-        printf("video_stream_index = %d\n", video_stream_index);
+        printf("videoStreamIndex = %d\n", videoStreamIndex);
     }
-    if (audio_stream_index == -1) {
+    if (audioStreamIndex == -1) {
         printf("Didn't find a audio stream.\n");
     } else {
-        printf("audio_stream_index = %d\n", audio_stream_index);
+        printf("audioStreamIndex = %d\n", audioStreamIndex);
     }
 }
 
 int open_video_avcodec_decoder() {
-    if (video_stream_index != -1) {
-        video_avcodec_context = src_avformat_context->streams[video_stream_index]->codec;
+    if (videoStreamIndex != -1) {
+        videoAVCodecContext = srcAVFormatContext->streams[videoStreamIndex]->codec;
         // 找到编码器
-        video_avcodec_decoder = avcodec_find_decoder(video_avcodec_context->codec_id);
+        videoAVCodecDecoder = avcodec_find_decoder(videoAVCodecContext->codec_id);
     }
-    if (video_avcodec_decoder == NULL) {
+    if (videoAVCodecDecoder == NULL) {
         printf("Codec not found.\n");
         return -1;
     }
     // 打开编码器
-    if (avcodec_open2(video_avcodec_context, video_avcodec_decoder, NULL) < 0) {
+    if (avcodec_open2(videoAVCodecContext, videoAVCodecDecoder, NULL) < 0) {
         printf("Could not open codec.\n");
         return -1;
     }
 }
 
 int open_audio_avcodec_decoder() {
-    if (audio_stream_index != -1) {
-        audio_avcodec_context = src_avformat_context->streams[audio_stream_index]->codec;
-        audio_avcodec_decoder = avcodec_find_decoder(audio_avcodec_context->codec_id);
+    if (audioStreamIndex != -1) {
+        audioAVCodecContext = srcAVFormatContext->streams[audioStreamIndex]->codec;
+        audioAVCodecDecoder = avcodec_find_decoder(audioAVCodecContext->codec_id);
     }
-    if (audio_avcodec_decoder == NULL) {
+    if (audioAVCodecDecoder == NULL) {
         printf("Codec not found.\n");
         return -1;
     }
-    if (avcodec_open2(audio_avcodec_context, audio_avcodec_decoder, NULL) < 0) {
+    if (avcodec_open2(audioAVCodecContext, audioAVCodecDecoder, NULL) < 0) {
         printf("Could not open codec.\n");
         return -1;
     }
 }
 
 int create_video_sws_context() {
-    src_video_width = video_avcodec_context->width;
-    src_video_height = video_avcodec_context->height;
+    src_video_width = videoAVCodecContext->width;
+    src_video_height = videoAVCodecContext->height;
     src_video_area = src_video_width * src_video_height;
-    src_avpixel_format = video_avcodec_context->pix_fmt;
+    srcAVPixelFormat = videoAVCodecContext->pix_fmt;
     // 为要操作的视频帧先申请空间
-    src_video_avframe = av_frame_alloc();
-    dst_video_avframe = av_frame_alloc();
-    avpacket = (AVPacket *) av_malloc(sizeof(AVPacket));
-    av_init_packet(avpacket);
+    srcVideoAVFrame = av_frame_alloc();
+    dstVideoAVFrame = av_frame_alloc();
+    avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+    av_init_packet(avPacket);
 
-    int image_get_buffer_size = av_image_get_buffer_size(dst_avpixel_format,
+    int image_get_buffer_size = av_image_get_buffer_size(dstAVPixelFormat,
                                                          src_video_width,
                                                          src_video_height,
                                                          1);
     video_out_buffer = (unsigned char *) av_malloc(image_get_buffer_size);
-    av_image_fill_arrays(dst_video_avframe->data, dst_video_avframe->linesize,
+    av_image_fill_arrays(dstVideoAVFrame->data, dstVideoAVFrame->linesize,
                          video_out_buffer,
-                         dst_avpixel_format,
+                         dstAVPixelFormat,
                          src_video_width, src_video_height,
                          1);
-    video_sws_context = sws_getContext(src_video_width, src_video_height, src_avpixel_format,
-                                       src_video_width, src_video_height, dst_avpixel_format,
-                                       SWS_BICUBIC,//flags
-                                       NULL, NULL, NULL);
-    if (video_sws_context == NULL) {
-        printf("%s\n", "video_sws_context is NULL");
+    videoSwsContext = sws_getContext(src_video_width, src_video_height, srcAVPixelFormat,
+                                     src_video_width, src_video_height, dstAVPixelFormat,
+                                     SWS_BICUBIC,//flags
+                                     NULL, NULL, NULL);
+    if (videoSwsContext == NULL) {
+        printf("%s\n", "videoSwsContext is NULL");
         return -1;
     }
 
@@ -442,8 +474,8 @@ int create_video_sws_context() {
            src_video_width, src_video_height);
     printf("image_get_buffer_size = %d\n", image_get_buffer_size);
     //即使源文件像素格式与目标文件像素格式一样,也是需要调用sws_scale函数进行处理的
-    printf("src_avpixel_format = %d\n", src_avpixel_format);
-    printf("dst_avpixel_format = %d\n", dst_avpixel_format);
+    printf("srcAVPixelFormat = %d\n", srcAVPixelFormat);
+    printf("dstAVPixelFormat = %d\n", dstAVPixelFormat);
 }
 
 int open_files() {
@@ -455,7 +487,7 @@ int open_files() {
 
     char *file_name;
     char temp_file_path[1024];
-    strncpy(temp_file_path, out_file_path, strlen(out_file_path));
+    strncpy(temp_file_path, outFilePath, strlen(outFilePath));
     strncpy(temp_file_path, temp_file_path + 1, strlen(temp_file_path));
     char *pchar = strtok(temp_file_path, "/");
     while (pchar != NULL) {
@@ -476,25 +508,25 @@ int open_files() {
     strcat(temp_out_file_path, "yuv420p");
     strcat(temp_out_file_path, "_");
     strcat(temp_out_file_path, file_name);
-    printf("out_file_path: %s\n", temp_out_file_path);
+    printf("outFilePath: %s\n", temp_out_file_path);
 
-    out_file = fopen(temp_out_file_path, "wb+");
-    if (out_file == NULL) {
+    outFile = fopen(temp_out_file_path, "wb+");
+    if (outFile == NULL) {
         printf("%s\n", "输出文件打开有问题");
         return -1;
     }
 #else
-    if (out_file_path != NULL) {
-        out_file = fopen(out_file_path, "wb+");
-        if (out_file == NULL) {
+    if (outFilePath != NULL) {
+        outFile = fopen(outFilePath, "wb+");
+        if (outFile == NULL) {
             printf("%s\n", "输出文件打开有问题");
             return -1;
         }
     }
 #endif
-    if (in_file_path != NULL) {
-        in_file = fopen(in_file_path, "rb+");
-        if (in_file == NULL) {
+    if (inFilePath != NULL) {
+        inFile = fopen(inFilePath, "rb+");
+        if (inFile == NULL) {
             printf("%s\n", "输入文件打开有问题");
             return -1;
         }
@@ -504,7 +536,7 @@ int open_files() {
 void av_dump_format() {
 #if AV_DUMP_FORMAT
     printf("-------------File Information-------------\n");
-    av_dump_format(src_avformat_context, 0, in_file_path, 0);
+    av_dump_format(srcAVFormatContext, 0, inFilePath, 0);
     printf("------------------------------------------\n");
 #endif
 }
@@ -573,33 +605,33 @@ int alexander_video_player_sdl2() {
         SDL_WaitEvent(&sdl_event);
         if (sdl_event.type == REFRESH_EVENT) {
             while (1) {
-                if (av_read_frame(src_avformat_context, avpacket) < 0) {
+                if (av_read_frame(srcAVFormatContext, avPacket) < 0) {
                     thread_exit_flag = 1;
                 }
 
-                if (avpacket->stream_index == video_stream_index) {
+                if (avPacket->stream_index == videoStreamIndex) {
                     break;
                 }
             }
-            ret = avcodec_decode_video2(video_avcodec_context, src_video_avframe, &got_picture_ptr, avpacket);
+            ret = avcodec_decode_video2(videoAVCodecContext, srcVideoAVFrame, &got_picture_ptr, avPacket);
             if (ret < 0) {
                 printf("Decode Error.\n");
                 return -1;
             }
             if (got_picture_ptr) {
-                sws_scale(video_sws_context, (const unsigned char *const *) src_video_avframe->data,
-                          src_video_avframe->linesize, 0,
-                          src_video_height, dst_video_avframe->data, dst_video_avframe->linesize);
+                sws_scale(videoSwsContext, (const unsigned char *const *) srcVideoAVFrame->data,
+                          srcVideoAVFrame->linesize, 0,
+                          src_video_height, dstVideoAVFrame->data, dstVideoAVFrame->linesize);
 
                 //SDL---------------------------
-                SDL_UpdateTexture(sdl_texture, NULL, dst_video_avframe->data[0], dst_video_avframe->linesize[0]);
+                SDL_UpdateTexture(sdl_texture, NULL, dstVideoAVFrame->data[0], dstVideoAVFrame->linesize[0]);
                 SDL_RenderClear(sdl_renderer);
                 //SDL_RenderCopy( sdlRenderer, sdlTexture, &sdlRect, &sdlRect );
                 SDL_RenderCopy(sdl_renderer, sdl_texture, NULL, NULL);
                 SDL_RenderPresent(sdl_renderer);
                 //SDL End-----------------------
             }
-            av_free_packet(avpacket);
+            av_free_packet(avPacket);
         } else if (sdl_event.type == SDL_KEYDOWN) {
             //Pause
             if (sdl_event.key.keysym.sym == SDLK_SPACE) {
@@ -618,54 +650,54 @@ int alexander_video_player_sdl2() {
 }
 
 void *alexander_decode_video_thread(void *) {
-    while (av_read_frame(src_avformat_context, avpacket) >= 0) {
-        if (avpacket->stream_index == video_stream_index) {
-            ret = avcodec_decode_video2(video_avcodec_context, src_video_avframe, &got_picture_ptr, avpacket);
+    while (av_read_frame(srcAVFormatContext, avPacket) >= 0) {
+        if (avPacket->stream_index == videoStreamIndex) {
+            ret = avcodec_decode_video2(videoAVCodecContext, srcVideoAVFrame, &got_picture_ptr, avPacket);
             if (ret < 0) {
                 printf("Decode Error.\n");
                 break;
             }
             if (got_picture_ptr) {
                 //像素格式转换,改变大小(放大或缩小)
-                sws_scale(video_sws_context,
-                          (const unsigned char *const *) src_video_avframe, src_video_avframe->linesize,
-                          0, src_video_height, dst_video_avframe->data, dst_video_avframe->linesize);
+                sws_scale(videoSwsContext,
+                          (const unsigned char *const *) srcVideoAVFrame, srcVideoAVFrame->linesize,
+                          0, src_video_height, dstVideoAVFrame->data, dstVideoAVFrame->linesize);
 
                 src_video_area = src_video_width * src_video_height;
                 //Y
-                fwrite(dst_video_avframe->data[0], 1, src_video_area, out_file);
+                fwrite(dstVideoAVFrame->data[0], 1, src_video_area, outFile);
                 //U
-                fwrite(dst_video_avframe->data[1], 1, src_video_area / 4, out_file);
+                fwrite(dstVideoAVFrame->data[1], 1, src_video_area / 4, outFile);
                 //V
-                fwrite(dst_video_avframe->data[2], 1, src_video_area / 4, out_file);
+                fwrite(dstVideoAVFrame->data[2], 1, src_video_area / 4, outFile);
 
                 ++video_frame_count;
             }
         }
-        av_free_packet(avpacket);
+        av_free_packet(avPacket);
     }
 
     //flush decoder
     //FIX: Flush Frames remained in Codec
     while (1) {
-        ret = avcodec_decode_video2(video_avcodec_context, src_video_avframe, &got_picture_ptr, avpacket);
+        ret = avcodec_decode_video2(videoAVCodecContext, srcVideoAVFrame, &got_picture_ptr, avPacket);
         if (ret < 0) {
             break;
         }
         if (!got_picture_ptr) {
             break;
         }
-        sws_scale(video_sws_context,
-                  (const unsigned char *const *) src_video_avframe, src_video_avframe->linesize,
-                  0, src_video_height, dst_video_avframe->data, dst_video_avframe->linesize);
+        sws_scale(videoSwsContext,
+                  (const unsigned char *const *) srcVideoAVFrame, srcVideoAVFrame->linesize,
+                  0, src_video_height, dstVideoAVFrame->data, dstVideoAVFrame->linesize);
 
         src_video_area = src_video_width * src_video_height;
         //Y
-        fwrite(dst_video_avframe->data[0], 1, src_video_area, out_file);
+        fwrite(dstVideoAVFrame->data[0], 1, src_video_area, outFile);
         //U
-        fwrite(dst_video_avframe->data[1], 1, src_video_area / 4, out_file);
+        fwrite(dstVideoAVFrame->data[1], 1, src_video_area / 4, outFile);
         //V
-        fwrite(dst_video_avframe->data[2], 1, src_video_area / 4, out_file);
+        fwrite(dstVideoAVFrame->data[2], 1, src_video_area / 4, outFile);
 
         ++video_frame_count;
     }
@@ -717,9 +749,9 @@ int alexander_decode_video_to_yuv() {
 int alexander_playback_yuv() {
     char *pc = NULL;
     char *temp_file_path = NULL;
-    char temp_path[strlen(in_file_path)];
-    memset(temp_path, 0, strlen(in_file_path));
-    strncpy(temp_path, in_file_path + 1, strlen(in_file_path) - 1);
+    char temp_path[strlen(inFilePath)];
+    memset(temp_path, 0, strlen(inFilePath));
+    strncpy(temp_path, inFilePath + 1, strlen(inFilePath) - 1);
     printf("temp_path: %s\n", temp_path);
     pc = strtok(temp_path, "/");
     while (pc != NULL) {
@@ -762,11 +794,11 @@ int alexander_playback_yuv() {
     while (1) {
         SDL_WaitEvent(&sdl_event);
         if (sdl_event.type == REFRESH_EVENT) {
-            if (fread(video_out_buffer, 1, src_video_width * src_video_height * bpp / 8, in_file)
+            if (fread(video_out_buffer, 1, src_video_width * src_video_height * bpp / 8, inFile)
                 != src_video_width * src_video_height * bpp / 8) {
                 // Loop
-                fseek(in_file, 0, SEEK_SET);
-                fread(video_out_buffer, 1, src_video_width * src_video_height * bpp / 8, in_file);
+                fseek(inFile, 0, SEEK_SET);
+                fread(video_out_buffer, 1, src_video_width * src_video_height * bpp / 8, inFile);
             }
 
             SDL_UpdateTexture(sdl_texture, NULL, video_out_buffer, src_video_width);
@@ -804,51 +836,51 @@ int alexander_playback_yuv() {
  */
 int alexander_use_libavcodec_decode_to_yuv() {
     //error
-//    memset(in_file_path, 0, strlen(in_file_path));
-//    memset(out_file_path, 0, strlen(out_file_path));
+//    memset(inFilePath, 0, strlen(inFilePath));
+//    memset(outFilePath, 0, strlen(outFilePath));
 
 #define TEST_HEVC 0
 #define TEST_H264 0
 
 #if TEST_HEVC
     //HEVC
-    avcodec_id = AV_CODEC_ID_HEVC;
-    in_file_path = "/root/视频/bigbuckbunny_480x272.hevc";
+    avCodecId = AV_CODEC_ID_HEVC;
+    inFilePath = "/root/视频/bigbuckbunny_480x272.hevc";
 #elif TEST_H264
     //H.264
-    avcodec_id = AV_CODEC_ID_H264;
-    in_file_path = "/root/视频/bigbuckbunny_480x272.h264";
+    avCodecId = AV_CODEC_ID_H264;
+    inFilePath = "/root/视频/bigbuckbunny_480x272.h264";
 #else
     //MPEG2
-    avcodec_id = AV_CODEC_ID_MPEG2VIDEO;
-    in_file_path = "/root/视频/bigbuckbunny_480x272.m2v";
+    avCodecId = AV_CODEC_ID_MPEG2VIDEO;
+    inFilePath = "/root/视频/bigbuckbunny_480x272.m2v";
 #endif
 
-    out_file_path = "/root/视频/yuv/480_272_bigbuckbunny.yuv";
+    outFilePath = "/root/视频/yuv/480_272_bigbuckbunny.yuv";
 
     uint8_t out_buffer[INBUF_SIZE + AV_INPUT_BUFFER_PADDING_SIZE] = {0};
     int first_time = 1;
 
     avcodec_register_all();
     //解码特定的格式(根据格式找到解码器,大多数视频的解码器是能找到的,编码器就比较少了)
-    video_avcodec_decoder = avcodec_find_decoder(avcodec_id);
-    if (!video_avcodec_decoder) {
-        printf("%s\n", "video_avcodec_decoder is NULL.");
+    videoAVCodecDecoder = avcodec_find_decoder(avCodecId);
+    if (!videoAVCodecDecoder) {
+        printf("%s\n", "videoAVCodecDecoder is NULL.");
         return -1;
     }
-    video_avcodec_context = avcodec_alloc_context3(video_avcodec_decoder);
-    if (!video_avcodec_context) {
-        printf("%s\n", "video_avcodec_context is NULL.");
+    videoAVCodecContext = avcodec_alloc_context3(videoAVCodecDecoder);
+    if (!videoAVCodecContext) {
+        printf("%s\n", "videoAVCodecContext is NULL.");
         return -1;
     }
-    if (avcodec_open2(video_avcodec_context, video_avcodec_decoder, NULL) < 0) {
+    if (avcodec_open2(videoAVCodecContext, videoAVCodecDecoder, NULL) < 0) {
         printf("%s\n", "avcodec_open2 failure");
         return -1;
     }
 
-    avcodec_parser_context = av_parser_init(avcodec_id);
-    if (!avcodec_parser_context) {
-        printf("%s\n", "avcodec_parser_context is NULL.");
+    avCodecParserContext = av_parser_init(avCodecId);
+    if (!avCodecParserContext) {
+        printf("%s\n", "avCodecParserContext is NULL.");
         return -1;
     }
 
@@ -856,12 +888,12 @@ int alexander_use_libavcodec_decode_to_yuv() {
         return -1;
     }
 
-    avframe = av_frame_alloc();
-    avpacket = (AVPacket *) av_malloc(sizeof(AVPacket));
-    av_init_packet(avpacket);
+    avFrame = av_frame_alloc();
+    avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+    av_init_packet(avPacket);
 
     while (1) {
-        video_out_buffer_size = fread(out_buffer, 1, INBUF_SIZE, in_file);
+        video_out_buffer_size = fread(out_buffer, 1, INBUF_SIZE, inFile);
         printf("video_out_buffer_size = %d\n", video_out_buffer_size);
         if (!video_out_buffer_size) {
             break;
@@ -875,20 +907,20 @@ int alexander_use_libavcodec_decode_to_yuv() {
              还需要再次调用av_parser_parse2()解析一部分数据才可以得到解析后的数据帧。
              当函数执行完后输出数据不为空的时候，代表解析完成，可以将poutbuf中的这帧数据取出来做后续处理。
              */
-            int len = av_parser_parse2(avcodec_parser_context, video_avcodec_context,
-                                       &(avpacket->data), &(avpacket->size),
+            int len = av_parser_parse2(avCodecParserContext, videoAVCodecContext,
+                                       &(avPacket->data), &(avPacket->size),
                                        video_out_buffer2, video_out_buffer_size,
                                        AV_NOPTS_VALUE, AV_NOPTS_VALUE, AV_NOPTS_VALUE);
 
             printf("len: %6d\n", len);
-            printf("avpacket->all_pkts_size: %6d\n", avpacket->size);
+            printf("avPacket->all_pkts_size: %6d\n", avPacket->size);
             video_out_buffer2 += len;
             video_out_buffer_size -= len;
-            if (!avpacket->size) {
+            if (!avPacket->size) {
                 //继续解析
                 continue;
             }
-            switch (avcodec_parser_context->pict_type) {
+            switch (avCodecParserContext->pict_type) {
                 case AV_PICTURE_TYPE_I:
                     printf("Type:\tI帧\t");
                     break;
@@ -902,9 +934,9 @@ int alexander_use_libavcodec_decode_to_yuv() {
                     printf("Type:Other\t");
                     break;
             }
-            printf("Number:\t%d\n", avcodec_parser_context->output_picture_number);
+            printf("Number:\t%d\n", avCodecParserContext->output_picture_number);
 
-            ret = avcodec_decode_video2(video_avcodec_context, avframe, &got_picture_ptr, avpacket);
+            ret = avcodec_decode_video2(videoAVCodecContext, avFrame, &got_picture_ptr, avPacket);
             if (ret < 0) {
                 printf("Decode Error.\n");
                 return ret;
@@ -914,21 +946,21 @@ int alexander_use_libavcodec_decode_to_yuv() {
                     //解码一帧成功后才能得到某些信息
                     //纯净”的解码器中，可以通过avcodec_decode_video2()获得这些信息。
                     //因此我们只有在成功解码第一帧之后，才能通过读取相应的字段获取到这些信息。
-                    printf("\nCodec Full Name: %s\n", video_avcodec_context->codec->long_name);
-                    printf("width: %d\nheight: %d\n\n", video_avcodec_context->width, video_avcodec_context->height);
+                    printf("\nCodec Full Name: %s\n", videoAVCodecContext->codec->long_name);
+                    printf("width: %d\nheight: %d\n\n", videoAVCodecContext->width, videoAVCodecContext->height);
                     first_time = 0;
                 }
 
                 //Y U V
                 int i;
-                for (i = 0; i < avframe->height; i++) {
-                    fwrite(avframe->data[0] + avframe->linesize[0] * i, 1, avframe->width, out_file);
+                for (i = 0; i < avFrame->height; i++) {
+                    fwrite(avFrame->data[0] + avFrame->linesize[0] * i, 1, avFrame->width, outFile);
                 }
-                for (i = 0; i < avframe->height / 2; i++) {
-                    fwrite(avframe->data[1] + avframe->linesize[1] * i, 1, avframe->width / 2, out_file);
+                for (i = 0; i < avFrame->height / 2; i++) {
+                    fwrite(avFrame->data[1] + avFrame->linesize[1] * i, 1, avFrame->width / 2, outFile);
                 }
-                for (i = 0; i < avframe->height / 2; i++) {
-                    fwrite(avframe->data[2] + avframe->linesize[2] * i, 1, avframe->width / 2, out_file);
+                for (i = 0; i < avFrame->height / 2; i++) {
+                    fwrite(avFrame->data[2] + avFrame->linesize[2] * i, 1, avFrame->width / 2, outFile);
                 }
 
                 video_frame_count++;
@@ -937,10 +969,10 @@ int alexander_use_libavcodec_decode_to_yuv() {
     }//while end
 
     //Flush Decoder
-    avpacket->data = NULL;
-    avpacket->size = 0;
+    avPacket->data = NULL;
+    avPacket->size = 0;
     while (1) {
-        ret = avcodec_decode_video2(video_avcodec_context, avframe, &got_picture_ptr, avpacket);
+        ret = avcodec_decode_video2(videoAVCodecContext, avFrame, &got_picture_ptr, avPacket);
         if (ret < 0) {
             printf("Decode Error.\n");
             return ret;
@@ -950,14 +982,14 @@ int alexander_use_libavcodec_decode_to_yuv() {
         }
 
         //Y, U, V
-        for (int i = 0; i < avframe->height; i++) {
-            fwrite(avframe->data[0] + avframe->linesize[0] * i, 1, avframe->width, out_file);
+        for (int i = 0; i < avFrame->height; i++) {
+            fwrite(avFrame->data[0] + avFrame->linesize[0] * i, 1, avFrame->width, outFile);
         }
-        for (int i = 0; i < avframe->height / 2; i++) {
-            fwrite(avframe->data[1] + avframe->linesize[1] * i, 1, avframe->width / 2, out_file);
+        for (int i = 0; i < avFrame->height / 2; i++) {
+            fwrite(avFrame->data[1] + avFrame->linesize[1] * i, 1, avFrame->width / 2, outFile);
         }
-        for (int i = 0; i < avframe->height / 2; i++) {
-            fwrite(avframe->data[2] + avframe->linesize[2] * i, 1, avframe->width / 2, out_file);
+        for (int i = 0; i < avFrame->height / 2; i++) {
+            fwrite(avFrame->data[2] + avFrame->linesize[2] * i, 1, avFrame->width / 2, outFile);
         }
 
         video_frame_count++;
@@ -1121,8 +1153,8 @@ int alexander_how_to_use_sws_scale2() {
     int src_linesize[4], dst_linesize[4];
     src_video_width = 1440;
     src_video_height = 960;
-    src_avpixel_format = AV_PIX_FMT_YUV420P;
-    dst_avpixel_format = AV_PIX_FMT_RGB24;
+    srcAVPixelFormat = AV_PIX_FMT_YUV420P;
+    dstAVPixelFormat = AV_PIX_FMT_RGB24;
     const char *dst_size = NULL;
     int dst_bufsize;
     int i, ret;
@@ -1136,23 +1168,23 @@ int alexander_how_to_use_sws_scale2() {
         exit(1);
     }
 
-    out_file = fopen(out_file_path, "wb");
-    if (!out_file) {
-        fprintf(stderr, "Could not open destination file %s\n", out_file_path);
+    outFile = fopen(outFilePath, "wb");
+    if (!outFile) {
+        fprintf(stderr, "Could not open destination file %s\n", outFilePath);
         exit(1);
     }
 
     /* create scaling context */
-    video_sws_context = sws_getContext(src_video_width, src_video_height, src_avpixel_format,
-                                       dst_video_width, dst_video_height, dst_avpixel_format,
-                                       SWS_BILINEAR,
-                                       NULL, NULL, NULL);
-    if (!video_sws_context) {
+    videoSwsContext = sws_getContext(src_video_width, src_video_height, srcAVPixelFormat,
+                                     dst_video_width, dst_video_height, dstAVPixelFormat,
+                                     SWS_BILINEAR,
+                                     NULL, NULL, NULL);
+    if (!videoSwsContext) {
         fprintf(stderr,
                 "Impossible to create scale context for the conversion "
                 "fmt:%s s:%dx%d -> fmt:%s s:%dx%d\n",
-                av_get_pix_fmt_name(src_avpixel_format), src_video_width, src_video_height,
-                av_get_pix_fmt_name(dst_avpixel_format), dst_video_width, dst_video_height);
+                av_get_pix_fmt_name(srcAVPixelFormat), src_video_width, src_video_height,
+                av_get_pix_fmt_name(dstAVPixelFormat), dst_video_width, dst_video_height);
         ret = AVERROR(EINVAL);
         return -1;;
     }
@@ -1161,7 +1193,7 @@ int alexander_how_to_use_sws_scale2() {
     //申请空间
     ret = av_image_alloc(src_data, src_linesize,
                          src_video_width, src_video_height,
-                         src_avpixel_format, 16);
+                         srcAVPixelFormat, 16);
     if (ret < 0) {
         fprintf(stderr, "Could not allocate source image\n");
         return -1;;
@@ -1171,7 +1203,7 @@ int alexander_how_to_use_sws_scale2() {
     //申请空间
     ret = av_image_alloc(dst_data, dst_linesize,
                          dst_video_width, dst_video_height,
-                         dst_avpixel_format, 1);
+                         dstAVPixelFormat, 1);
     if (ret < 0) {
         fprintf(stderr, "Could not allocate destination image\n");
         return -1;;
@@ -1189,24 +1221,24 @@ int alexander_how_to_use_sws_scale2() {
                          int srcSliceY, int srcSliceH,
                           uint8_t *const dst[], const int dstStride[])
          */
-        sws_scale(video_sws_context,
+        sws_scale(videoSwsContext,
                   (const uint8_t *const *) src_data, src_linesize,
                   0, src_video_height,
                   dst_data, dst_linesize);
 
         /* write scaled image to file */
-        fwrite(dst_data[0], 1, dst_bufsize, out_file);
+        fwrite(dst_data[0], 1, dst_bufsize, outFile);
     }
 
     fprintf(stderr, "Scaling succeeded. Play the output file with the command:\n"
                     "ffplay -f rawvideo -pix_fmt %s -video_size %dx%d %s\n",
-            av_get_pix_fmt_name(dst_avpixel_format), dst_video_width, dst_video_height, out_file_path);
+            av_get_pix_fmt_name(dstAVPixelFormat), dst_video_width, dst_video_height, outFilePath);
 
     end:
-    fclose(out_file);
+    fclose(outFile);
     av_freep(&src_data[0]);
     av_freep(&dst_data[0]);
-    sws_freeContext(video_sws_context);
+    sws_freeContext(videoSwsContext);
     return ret < 0;
 }
 
@@ -1221,8 +1253,8 @@ int alexander_how_to_use_sws_scale3() {
     const char *srcFileName = "/root/视频/yuv/720_576_yuv420p_haoke.yuv";
     const char *dstFileName = "/root/视频/rgb/240_240_rgb24_haoke.rgb";
 
-    src_video_width = 720, src_video_height = 576, src_avpixel_format = AV_PIX_FMT_YUV420P;
-    dst_video_width = 240, dst_video_height = 240, dst_avpixel_format = AV_PIX_FMT_RGB24;//AV_PIX_FMT_RGB24
+    src_video_width = 720, src_video_height = 576, srcAVPixelFormat = AV_PIX_FMT_YUV420P;
+    dst_video_width = 240, dst_video_height = 240, dstAVPixelFormat = AV_PIX_FMT_RGB24;//AV_PIX_FMT_RGB24
     uint8_t *src_data[4] = {NULL};
     //保存多少数据就申请多少空间
     src_data[0] = (uint8_t *) malloc(src_video_width * src_video_height);
@@ -1253,35 +1285,35 @@ int alexander_how_to_use_sws_scale3() {
         return -1;
     }
 
-    in_file = fopen(srcFileName, "rb+");
-    if (!in_file) {
+    inFile = fopen(srcFileName, "rb+");
+    if (!inFile) {
         fprintf(stderr, "Could not open destination file %s\n", srcFileName);
         exit(1);
     }
 
-    out_file = fopen(dstFileName, "wb+");
-    if (!out_file) {
+    outFile = fopen(dstFileName, "wb+");
+    if (!outFile) {
         fprintf(stderr, "Could not open destination file %s\n", dstFileName);
         exit(1);
     }
 
-    video_sws_context = sws_getContext(src_video_width, src_video_height, src_avpixel_format,
-                                       dst_video_width, dst_video_height, dst_avpixel_format,
-                                       SWS_BILINEAR,
-                                       NULL, NULL, NULL);
-    if (!video_sws_context) {
+    videoSwsContext = sws_getContext(src_video_width, src_video_height, srcAVPixelFormat,
+                                     dst_video_width, dst_video_height, dstAVPixelFormat,
+                                     SWS_BILINEAR,
+                                     NULL, NULL, NULL);
+    if (!videoSwsContext) {
         fprintf(stderr,
                 "Impossible to create scale context for the conversion "
                 "fmt:%s s:%dx%d -> fmt:%s s:%dx%d\n",
-                av_get_pix_fmt_name(src_avpixel_format), src_video_width, src_video_height,
-                av_get_pix_fmt_name(dst_avpixel_format), dst_video_width, dst_video_height);
+                av_get_pix_fmt_name(srcAVPixelFormat), src_video_width, src_video_height,
+                av_get_pix_fmt_name(dstAVPixelFormat), dst_video_width, dst_video_height);
         ret = AVERROR(EINVAL);
         return -1;
     }
 
     ret = av_image_alloc(dst_data, dst_linesize,
                          dst_video_width, dst_video_height,
-                         dst_avpixel_format, 1);
+                         dstAVPixelFormat, 1);
     if (ret < 0) {
         fprintf(stderr, "Could not allocate destination image\n");
         return -1;
@@ -1291,7 +1323,7 @@ int alexander_how_to_use_sws_scale3() {
     bool bExit = false;
     while (!bExit) {
         //
-        if ((fread(ptr_src_yuv_buf, 1, read_size, in_file) < 0) || (feof(in_file))) {
+        if ((fread(ptr_src_yuv_buf, 1, read_size, inFile) < 0) || (feof(inFile))) {
             bExit = true;
             break;
         }
@@ -1302,27 +1334,27 @@ int alexander_how_to_use_sws_scale3() {
 
         // ********* 主要的 function ******
         // ********* sws_scale ************
-        sws_scale(video_sws_context, src_data, src_linesize,
+        sws_scale(videoSwsContext, src_data, src_linesize,
                   0, src_video_height, dst_data, dst_linesize);
 
         /*memcpy(ptr_dst_yuv_buf, dst_data[0], out_y_size);
         memcpy(ptr_dst_yuv_buf + out_y_size, dst_data[1], out_y_size >> 2);
         memcpy(ptr_dst_yuv_buf + (out_y_size * 5 >> 2), dst_data[2], out_y_size >> 2);
 
-        fwrite(ptr_dst_yuv_buf, 1, write_size, out_file);*/
+        fwrite(ptr_dst_yuv_buf, 1, write_size, outFile);*/
 
-        fwrite(dst_data[0], 1, dst_bufsize, out_file);
+        fwrite(dst_data[0], 1, dst_bufsize, outFile);
     }
 
-    fclose(in_file);
-    fclose(out_file);
+    fclose(inFile);
+    fclose(outFile);
     delete[] ptr_src_yuv_buf;
     ptr_src_yuv_buf = nullptr;
     delete[] ptr_dst_yuv_buf;
     ptr_dst_yuv_buf = nullptr;
     av_freep(&src_data[0]);
     av_freep(&dst_data[0]);
-    sws_freeContext(video_sws_context);
+    sws_freeContext(videoSwsContext);
 
     return 0;
 }
@@ -1344,17 +1376,17 @@ int alexander_how_to_use_sws_scale3() {
  这几种之间的互转.
  */
 int alexander_how_to_use_sws_scale4() {
-    in_file_path = "/root/视频/yuv/720_576_yuv420p.yuv";
-    out_file_path = "/root/视频/rgb/240_240_bgra.rgb";
+    inFilePath = "/root/视频/yuv/720_576_yuv420p.yuv";
+    outFilePath = "/root/视频/rgb/240_240_bgra.rgb";
 
     if (open_files() < 0) {
         return -1;
     }
 
-    src_video_width = 720, src_video_height = 576, src_avpixel_format = AV_PIX_FMT_YUV420P;
-    dst_video_width = 240, dst_video_height = 240, dst_avpixel_format = AV_PIX_FMT_BGRA;//AV_PIX_FMT_RGB24
+    src_video_width = 720, src_video_height = 576, srcAVPixelFormat = AV_PIX_FMT_YUV420P;
+    dst_video_width = 240, dst_video_height = 240, dstAVPixelFormat = AV_PIX_FMT_BGRA;//AV_PIX_FMT_RGB24
     //这个参数很重要
-    int src_video_bpp = av_get_bits_per_pixel(av_pix_fmt_desc_get(src_avpixel_format));
+    int src_video_bpp = av_get_bits_per_pixel(av_pix_fmt_desc_get(srcAVPixelFormat));
     printf("src_video_bpp = %d\n", src_video_bpp);
     src_video_area = src_video_width * src_video_height;
     dst_video_area = dst_video_width * dst_video_height;
@@ -1365,13 +1397,13 @@ int alexander_how_to_use_sws_scale4() {
 
     //申请空间
     ret = av_image_alloc(src_video_data, src_video_linesize,
-                         src_video_width, src_video_height, src_avpixel_format, 1);
+                         src_video_width, src_video_height, srcAVPixelFormat, 1);
     if (ret < 0) {
         printf("Could not allocate source image\n");
         return -1;
     }
     ret = av_image_alloc(dst_video_data, dst_video_linesize,
-                         dst_video_width, dst_video_height, dst_avpixel_format, 1);
+                         dst_video_width, dst_video_height, dstAVPixelFormat, 1);
     if (ret < 0) {
         printf("Could not allocate destination image\n");
         return -1;
@@ -1396,12 +1428,12 @@ int alexander_how_to_use_sws_scale4() {
     sws_init_context(video_sws_context, NULL, NULL);*/
 
     //Init Method 2
-    video_sws_context = sws_getContext(src_video_width, src_video_height, src_avpixel_format,
-                                       dst_video_width, dst_video_height, dst_avpixel_format,
-                                       SWS_BICUBIC,
-                                       NULL, NULL, NULL);
+    videoSwsContext = sws_getContext(src_video_width, src_video_height, srcAVPixelFormat,
+                                     dst_video_width, dst_video_height, dstAVPixelFormat,
+                                     SWS_BICUBIC,
+                                     NULL, NULL, NULL);
     //Colorspace
-    ret = sws_setColorspaceDetails(video_sws_context,
+    ret = sws_setColorspaceDetails(videoSwsContext,
                                    sws_getCoefficients(SWS_CS_ITU601), 0,
                                    sws_getCoefficients(SWS_CS_ITU709), 0,
                                    0, 1 << 16, 1 << 16);
@@ -1411,7 +1443,7 @@ int alexander_how_to_use_sws_scale4() {
     }
 
     while (1) {
-        if (fread(video_out_buffer2, 1, video_out_buffer_size, in_file) != video_out_buffer_size) {
+        if (fread(video_out_buffer2, 1, video_out_buffer_size, inFile) != video_out_buffer_size) {
             break;
         }
 
@@ -1420,7 +1452,7 @@ int alexander_how_to_use_sws_scale4() {
 
          数据的流向: video_out_buffer2 ---> src_video_data
          */
-        switch (src_avpixel_format) {
+        switch (srcAVPixelFormat) {
             case AV_PIX_FMT_GRAY8: {
                 memcpy(src_video_data[0], video_out_buffer2, src_video_area);
                 break;
@@ -1468,7 +1500,7 @@ int alexander_how_to_use_sws_scale4() {
         /***
          数据的流向: src_video_data ---> dst_video_data
          */
-        sws_scale(video_sws_context,
+        sws_scale(videoSwsContext,
                   src_video_data, src_video_linesize,
                   0, src_video_height,
                   dst_video_data, dst_video_linesize);
@@ -1477,43 +1509,43 @@ int alexander_how_to_use_sws_scale4() {
         /***
          数据的流向: dst_video_data ---> out_file
          */
-        switch (dst_avpixel_format) {
+        switch (dstAVPixelFormat) {
             case AV_PIX_FMT_GRAY8: {
-                fwrite(dst_video_data[0], 1, dst_video_area, out_file);
+                fwrite(dst_video_data[0], 1, dst_video_area, outFile);
                 break;
             }
             case AV_PIX_FMT_YUV420P: {
-                fwrite(dst_video_data[0], 1, dst_video_area, out_file);                     //Y
-                fwrite(dst_video_data[1], 1, dst_video_area / 4, out_file);                 //U
-                fwrite(dst_video_data[2], 1, dst_video_area / 4, out_file);                 //V
+                fwrite(dst_video_data[0], 1, dst_video_area, outFile);                     //Y
+                fwrite(dst_video_data[1], 1, dst_video_area / 4, outFile);                 //U
+                fwrite(dst_video_data[2], 1, dst_video_area / 4, outFile);                 //V
                 break;
             }
             case AV_PIX_FMT_YUV422P: {
-                fwrite(dst_video_data[0], 1, dst_video_area, out_file);                     //Y
-                fwrite(dst_video_data[1], 1, dst_video_area / 2, out_file);                 //U
-                fwrite(dst_video_data[2], 1, dst_video_area / 2, out_file);                 //V
+                fwrite(dst_video_data[0], 1, dst_video_area, outFile);                     //Y
+                fwrite(dst_video_data[1], 1, dst_video_area / 2, outFile);                 //U
+                fwrite(dst_video_data[2], 1, dst_video_area / 2, outFile);                 //V
                 break;
             }
             case AV_PIX_FMT_YUV444P: {
-                fwrite(dst_video_data[0], 1, dst_video_area, out_file);                     //Y
-                fwrite(dst_video_data[1], 1, dst_video_area, out_file);                     //U
-                fwrite(dst_video_data[2], 1, dst_video_area, out_file);                     //V
+                fwrite(dst_video_data[0], 1, dst_video_area, outFile);                     //Y
+                fwrite(dst_video_data[1], 1, dst_video_area, outFile);                     //U
+                fwrite(dst_video_data[2], 1, dst_video_area, outFile);                     //V
                 break;
             }
             case AV_PIX_FMT_YUYV422: {
-                fwrite(dst_video_data[0], 1, dst_video_area * 2, out_file);                 //Packed
+                fwrite(dst_video_data[0], 1, dst_video_area * 2, outFile);                 //Packed
                 break;
             }
             case AV_PIX_FMT_RGB24: {
-                fwrite(dst_video_data[0], 1, dst_video_area * 3, out_file);                 //Packed
+                fwrite(dst_video_data[0], 1, dst_video_area * 3, outFile);                 //Packed
                 break;
             }
             case AV_PIX_FMT_BGR24: {
-                fwrite(dst_video_data[0], 1, dst_video_area * 3, out_file);                 //Packed
+                fwrite(dst_video_data[0], 1, dst_video_area * 3, outFile);                 //Packed
                 break;
             }
             case AV_PIX_FMT_BGRA: {
-                fwrite(dst_video_data[0], 1, dst_video_area * 4, out_file);                 //Packed
+                fwrite(dst_video_data[0], 1, dst_video_area * 4, outFile);                 //Packed
                 break;
             }
             default: {
@@ -1568,10 +1600,10 @@ int alexander_playback_pcm() {
     SDL_AudioSpec sdl_audio_spec_;
     sdl_audio_spec = &sdl_audio_spec_;
 
-    in_file_path = "/root/音乐/tdjm.mp3";
+    inFilePath = "/root/音乐/tdjm.mp3";
 
 #if OUTPUT_PCM
-    out_file = fopen("/root/音乐/pcm/01_xxx_24kHz_32kbps_Stereo.pcm", "wb+");
+    outFile = fopen("/root/音乐/pcm/01_xxx_24kHz_32kbps_Stereo.pcm", "wb+");
 #endif
 
     init_av();
@@ -1587,23 +1619,23 @@ int alexander_playback_pcm() {
     }
 
     // Dump valid information onto standard error
-    //av_dump_format(src_avformat_context, 0, in_file_path, false);
+    //av_dump_format(srcAVFormatContext, 0, inFilePath, false);
 
     //Out Audio Param
     //FIX:Some Codec's Context Information is missing
-    int64_t in_ch_layout = av_get_default_channel_layout(audio_avcodec_context->channels);
+    int64_t in_ch_layout = av_get_default_channel_layout(audioAVCodecContext->channels);
     int64_t out_ch_layout = AV_CH_LAYOUT_STEREO;
 
-    enum AVSampleFormat in_sample_fmt = audio_avcodec_context->sample_fmt;
+    enum AVSampleFormat in_sample_fmt = audioAVCodecContext->sample_fmt;
     enum AVSampleFormat out_sample_fmt = AV_SAMPLE_FMT_S16;
     printf("in_sample_fmt = %d\n", in_sample_fmt);
     printf("out_sample_fmt = %d\n", out_sample_fmt);
 
-    int in_sample_rate = audio_avcodec_context->sample_rate;
+    int in_sample_rate = audioAVCodecContext->sample_rate;
     int out_sample_rate = 44100;
 
     //nb_samples: AAC-1024 MP3-1152
-    int out_nb_samples = audio_avcodec_context->frame_size;
+    int out_nb_samples = audioAVCodecContext->frame_size;
     printf("out_nb_samples = %d\n", out_nb_samples);
     int out_nb_channels = av_get_channel_layout_nb_channels(out_ch_layout);
     printf("out_nb_channels = %d\n", out_nb_channels);
@@ -1612,16 +1644,16 @@ int alexander_playback_pcm() {
     printf("audio_out_buffer_size = %d\n", audio_out_buffer_size);
 
     //Swr
-    audio_swr_context = swr_alloc();
-    audio_swr_context = swr_alloc_set_opts(audio_swr_context,
-                                           out_ch_layout, out_sample_fmt, out_sample_rate,
-                                           in_ch_layout, in_sample_fmt, in_sample_rate,
-                                           0, NULL);
-    swr_init(audio_swr_context);
+    audioSwrContext = swr_alloc();
+    audioSwrContext = swr_alloc_set_opts(audioSwrContext,
+                                         out_ch_layout, out_sample_fmt, out_sample_rate,
+                                         in_ch_layout, in_sample_fmt, in_sample_rate,
+                                         0, NULL);
+    swr_init(audioSwrContext);
 
-    avpacket = (AVPacket *) av_malloc(sizeof(AVPacket));
-    av_init_packet(avpacket);
-    avframe = av_frame_alloc();
+    avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
+    av_init_packet(avPacket);
+    avFrame = av_frame_alloc();
     audio_out_buffer2 = (uint8_t *) av_malloc(MAX_AUDIO_FRAME_SIZE * 2);
 
 #if PLAYBACK_AUDIO_WITH_SDL2
@@ -1636,7 +1668,7 @@ int alexander_playback_pcm() {
     sdl_audio_spec->channels = out_nb_channels;
     sdl_audio_spec->silence = 0;
     sdl_audio_spec->samples = out_nb_samples;
-    sdl_audio_spec->userdata = audio_avcodec_context;
+    sdl_audio_spec->userdata = audioAVCodecContext;
     sdl_audio_spec->callback = alexander_fill_audio2;
     if (SDL_OpenAudio(sdl_audio_spec, NULL) < 0) {
         printf("can't open audio.\n");
@@ -1646,9 +1678,9 @@ int alexander_playback_pcm() {
     SDL_PauseAudio(0);
 #endif
 
-    while (av_read_frame(src_avformat_context, avpacket) >= 0) {
-        if (avpacket->stream_index == audio_stream_index) {
-            ret = avcodec_decode_audio4(audio_avcodec_context, avframe, &got_picture_ptr, avpacket);
+    while (av_read_frame(srcAVFormatContext, avPacket) >= 0) {
+        if (avPacket->stream_index == audioStreamIndex) {
+            ret = avcodec_decode_audio4(audioAVCodecContext, avFrame, &got_picture_ptr, avPacket);
             if (ret < 0) {
                 printf("ret = %d\n", ret);
                 printf("Error in decoding audio frame.\n");
@@ -1656,13 +1688,13 @@ int alexander_playback_pcm() {
             }
             if (got_picture_ptr > 0) {
                 //avframe为解码后的数据
-                swr_convert(audio_swr_context, &audio_out_buffer2, MAX_AUDIO_FRAME_SIZE,
-                            (const uint8_t **) avframe->data, avframe->nb_samples);
-                //printf("index:%5d\t pts:%lld\t packet all_pkts_size:%d\n", index, avpacket->pts, avpacket->all_pkts_size);
+                swr_convert(audioSwrContext, &audio_out_buffer2, MAX_AUDIO_FRAME_SIZE,
+                            (const uint8_t **) avFrame->data, avFrame->nb_samples);
+                //printf("index:%5d\t pts:%lld\t packet all_pkts_size:%d\n", index, avPacket->pts, avPacket->all_pkts_size);
 
 #if OUTPUT_PCM
                 //Write PCM
-                fwrite(audio_out_buffer2, 1, audio_out_buffer_size, out_file);
+                fwrite(audio_out_buffer2, 1, audio_out_buffer_size, outFile);
 #endif
                 audio_frame_count++;
             }
@@ -1680,7 +1712,7 @@ int alexander_playback_pcm() {
             audio_pos = audio_chunk;
 #endif
         }
-        av_free_packet(avpacket);
+        av_free_packet(avPacket);
     }//while end
 
     close();
@@ -1697,48 +1729,48 @@ int alexander_playback_pcm() {
     avfilter_register_all();
 
     //input
-    if (avformat_open_input(&src_avformat_context, in_file_path, NULL, NULL) < 0) {
+    if (avformat_open_input(&srcAVFormatContext, inFilePath, NULL, NULL) < 0) {
         printf("can not open input file context");
         return -1;;
     }
 
-    if (avformat_find_stream_info(src_avformat_context, NULL) < 0) {
+    if (avformat_find_stream_info(srcAVFormatContext, NULL) < 0) {
         printf("can not find input stream info!\n");
         return -1;;
     }
 
     //output
-    avformat_alloc_output_context2(&dst_avformat_context, NULL, NULL, out_file_path);
-    if (!dst_avformat_context) {
+    avformat_alloc_output_context2(&dstAVFormatContext, NULL, NULL, outFilePath);
+    if (!dstAVFormatContext) {
         printf("can not alloc output context!\n");
         return -1;;
     }
 
     //open decoder & new out stream & open encoder
-    for (int i = 0; i < src_avformat_context->nb_streams; i++) {
-        if (src_avformat_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+    for (int i = 0; i < srcAVFormatContext->nb_streams; i++) {
+        if (srcAVFormatContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
             //open decoder
-            if (0 > avcodec_open2(src_avformat_context->streams[i]->codec,
-                                  avcodec_find_decoder(src_avformat_context->streams[i]->codec->codec_id), NULL)) {
+            if (0 > avcodec_open2(srcAVFormatContext->streams[i]->codec,
+                                  avcodec_find_decoder(srcAVFormatContext->streams[i]->codec->codec_id), NULL)) {
                 printf("can not find or open decoder!\n");
                 return -1;;
             }
-            audio_stream_index = i;
+            audioStreamIndex = i;
 
             //new stream
-            out_stream = avformat_new_stream(dst_avformat_context, NULL);
+            out_stream = avformat_new_stream(dstAVFormatContext, NULL);
             if (!out_stream) {
                 printf("can not new stream for output!\n");
                 return -1;;
             }
             //set codec context param
             //use default audio encoder
-            out_stream->codec->codec = avcodec_find_encoder(dst_avformat_context->oformat->audio_codec);
+            out_stream->codec->codec = avcodec_find_encoder(dstAVFormatContext->oformat->audio_codec);
             //use the input audio encoder
             //
-            out_stream->codec->codec = avcodec_find_encoder(src_avformat_context->streams[i]->codec->codec_id);
-            out_stream->codec->sample_rate = src_avformat_context->streams[i]->codec->sample_rate;
-            out_stream->codec->channel_layout = src_avformat_context->streams[i]->codec->channel_layout;
+            out_stream->codec->codec = avcodec_find_encoder(srcAVFormatContext->streams[i]->codec->codec_id);
+            out_stream->codec->sample_rate = srcAVFormatContext->streams[i]->codec->sample_rate;
+            out_stream->codec->channel_layout = srcAVFormatContext->streams[i]->codec->channel_layout;
             out_stream->codec->channels = av_get_channel_layout_nb_channels(out_stream->codec->channel_layout);
 
             // take first format from list of supported formats
@@ -1755,27 +1787,27 @@ int alexander_playback_pcm() {
                 printf("can not open the encoder\n");
                 return -1;;
             }
-            if (dst_avformat_context->oformat->flags & AVFMT_GLOBALHEADER)
+            if (dstAVFormatContext->oformat->flags & AVFMT_GLOBALHEADER)
                 out_stream->codec->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
             break;
         }
     }
     //dump input info
-    av_dump_format(src_avformat_context, 0, in_file_path, 0);
+    av_dump_format(srcAVFormatContext, 0, inFilePath, 0);
     //dump output info
-    av_dump_format(dst_avformat_context, 0, out_file_path, 1);
-    if (-1 == audio_stream_index) {
+    av_dump_format(dstAVFormatContext, 0, outFilePath, 1);
+    if (-1 == audioStreamIndex) {
         printf("found no audio stream in input file!\n");
         return -1;;
     }
-    if (!(dst_avformat_context->oformat->flags & AVFMT_NOFILE)) {
-        if (avio_open(&dst_avformat_context->pb, out_file_path, AVIO_FLAG_WRITE) < 0) {
+    if (!(dstAVFormatContext->oformat->flags & AVFMT_NOFILE)) {
+        if (avio_open(&dstAVFormatContext->pb, outFilePath, AVIO_FLAG_WRITE) < 0) {
             printf("can not open output file handle!\n");
             return -1;;
         }
     }
 
-    if (avformat_write_header(dst_avformat_context, NULL) < 0) {
+    if (avformat_write_header(dstAVFormatContext, NULL) < 0) {
         printf("can not write the header of the output file!\n");
         return -1;;
     }
@@ -1789,17 +1821,17 @@ int alexander_playback_pcm() {
         pkt_in.all_pkts_size = 0;
         got_frame = -1;
         got_picture_ptr = -1;
-        if (av_read_frame(src_avformat_context, &pkt_in) < 0) {
+        if (av_read_frame(srcAVFormatContext, &pkt_in) < 0) {
             break;
         }
 
-        if (pkt_in.stream_index != audio_stream_index) {
+        if (pkt_in.stream_index != audioStreamIndex) {
             continue;
         }
 
         frame = av_frame_alloc();
 
-        if ((ret = avcodec_decode_audio4(src_avformat_context->streams[audio_stream_index]->codec, frame, &got_frame,
+        if ((ret = avcodec_decode_audio4(srcAVFormatContext->streams[audioStreamIndex]->codec, frame, &got_frame,
                                          &pkt_in)) < 0) {
             av_frame_free(&frame);
             printf("can not decoder a frame");
@@ -1817,7 +1849,7 @@ int alexander_playback_pcm() {
             }
 
             av_init_packet(&pkt_out);
-            int ret = avcodec_encode_audio2(dst_avformat_context->streams[0]->codec, &pkt_out, frame_out,
+            int ret = avcodec_encode_audio2(dstAVFormatContext->streams[0]->codec, &pkt_out, frame_out,
                                             &got_picture_ptr);
 
             av_free(frame_out->data[0]);
@@ -1826,21 +1858,21 @@ int alexander_playback_pcm() {
             if (got_picture_ptr) {
                 pkt_out.stream_index = out_stream->index;
                 pkt_out.dts = av_rescale_q_rnd(pkt_out.dts,
-                                               dst_avformat_context->streams[out_stream->index]->codec->time_base,
-                                               dst_avformat_context->streams[out_stream->index]->time_base,
+                                               dstAVFormatContext->streams[out_stream->index]->codec->time_base,
+                                               dstAVFormatContext->streams[out_stream->index]->time_base,
                                                (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
                 pkt_out.pts = av_rescale_q_rnd(pkt_out.pts,
-                                               dst_avformat_context->streams[out_stream->index]->codec->time_base,
-                                               dst_avformat_context->streams[out_stream->index]->time_base,
+                                               dstAVFormatContext->streams[out_stream->index]->codec->time_base,
+                                               dstAVFormatContext->streams[out_stream->index]->time_base,
                                                (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
                 pkt_out.duration = av_rescale_q(pkt_out.duration,
-                                                dst_avformat_context->streams[out_stream->index]->codec->time_base,
-                                                dst_avformat_context->streams[out_stream->index]->time_base);
+                                                dstAVFormatContext->streams[out_stream->index]->codec->time_base,
+                                                dstAVFormatContext->streams[out_stream->index]->time_base);
 
                 av_log(NULL, AV_LOG_DEBUG, "Muxing frame\n");
 
                 *//* mux encoded frame *//*
-                ret = av_interleaved_write_frame(dst_avformat_context, &pkt_out);
+                ret = av_interleaved_write_frame(dstAVFormatContext, &pkt_out);
                 av_free_packet(&pkt_out);
 
                 if (ret < 0) {
@@ -1853,25 +1885,25 @@ int alexander_playback_pcm() {
         }
     }
 
-    ret = flush_encoder2(dst_avformat_context, out_stream->index);
+    ret = flush_encoder2(dstAVFormatContext, out_stream->index);
     if (ret < 0) {
         printf("Flushing encoder failed");
         return -1;
     }
 
     //write file trailer
-    av_write_trailer(dst_avformat_context);
+    av_write_trailer(dstAVFormatContext);
 
     //clean
     avcodec_close(out_stream->codec);
-    avcodec_close(src_avformat_context->streams[audio_stream_index]->codec);
+    avcodec_close(srcAVFormatContext->streams[audioStreamIndex]->codec);
 
     end:
-    avformat_close_input(&src_avformat_context);
-    if (dst_avformat_context && !(dst_avformat_context->oformat->flags & AVFMT_NOFILE)) {
-        avio_close(dst_avformat_context->pb);
+    avformat_close_input(&srcAVFormatContext);
+    if (dstAVFormatContext && !(dstAVFormatContext->oformat->flags & AVFMT_NOFILE)) {
+        avio_close(dstAVFormatContext->pb);
     }
-    avformat_free_context(dst_avformat_context);
+    avformat_free_context(dstAVFormatContext);
     getchar();
     return 0;
 }*/
@@ -1879,78 +1911,78 @@ int alexander_playback_pcm() {
 int alexander_save_yuv_to_char() {
     int i = 0, j = 0, k = 0;
     int Zoom_Width = 0, Zoom_Height = 0, Zoom_pix_fmt = AV_PIX_FMT_NONE;
-    if (video_avcodec_context->codec_type == AVMEDIA_TYPE_VIDEO) {
-        int new_videosize = avpacket->size;
-        int video_decode_size = avpicture_get_size(video_avcodec_context->pix_fmt, Zoom_Width, Zoom_Height);
+    if (videoAVCodecContext->codec_type == AVMEDIA_TYPE_VIDEO) {
+        int new_videosize = avPacket->size;
+        int video_decode_size = avpicture_get_size(videoAVCodecContext->pix_fmt, Zoom_Width, Zoom_Height);
         //最大分配的空间，能满足yuv的各种格式
         uint8_t *video_decode_buffer = (uint8_t *) calloc(1, video_decode_size * 3 * sizeof(char));
 
         // Decode video frame
-        avcodec_decode_video2(video_avcodec_context, avframe, &got_picture_ptr, avpacket);
+        avcodec_decode_video2(videoAVCodecContext, avFrame, &got_picture_ptr, avPacket);
         if (got_picture_ptr) {
             //如果是yuv420p的
-            if (video_avcodec_context->pix_fmt == AV_PIX_FMT_YUV420P) {
-                for (i = 0; i < video_avcodec_context->height; i++) {
-                    memcpy(video_decode_buffer + video_avcodec_context->width * i,
-                           avframe->data[0] + avframe->linesize[0] * i,
-                           video_avcodec_context->width);
+            if (videoAVCodecContext->pix_fmt == AV_PIX_FMT_YUV420P) {
+                for (i = 0; i < videoAVCodecContext->height; i++) {
+                    memcpy(video_decode_buffer + videoAVCodecContext->width * i,
+                           avFrame->data[0] + avFrame->linesize[0] * i,
+                           videoAVCodecContext->width);
                 }
-                for (j = 0; j < video_avcodec_context->height / 2; j++) {
-                    memcpy(video_decode_buffer + video_avcodec_context->width * i +
-                           video_avcodec_context->width / 2 * j,
-                           avframe->data[1] + avframe->linesize[1] * j,
-                           video_avcodec_context->width / 2);
+                for (j = 0; j < videoAVCodecContext->height / 2; j++) {
+                    memcpy(video_decode_buffer + videoAVCodecContext->width * i +
+                           videoAVCodecContext->width / 2 * j,
+                           avFrame->data[1] + avFrame->linesize[1] * j,
+                           videoAVCodecContext->width / 2);
                 }
-                for (k = 0; k < video_avcodec_context->height / 2; k++) {
-                    memcpy(video_decode_buffer + video_avcodec_context->width * i +
-                           video_avcodec_context->width / 2 * j +
-                           video_avcodec_context->width / 2 * k,
-                           avframe->data[2] + avframe->linesize[2] * k,
-                           video_avcodec_context->width / 2);
+                for (k = 0; k < videoAVCodecContext->height / 2; k++) {
+                    memcpy(video_decode_buffer + videoAVCodecContext->width * i +
+                           videoAVCodecContext->width / 2 * j +
+                           videoAVCodecContext->width / 2 * k,
+                           avFrame->data[2] + avFrame->linesize[2] * k,
+                           videoAVCodecContext->width / 2);
                 }
                 //如果是yuv422p的
-            } else if (video_avcodec_context->pix_fmt == AV_PIX_FMT_YUV422P) {
-                for (i = 0; i < video_avcodec_context->height; i++) {
-                    memcpy(video_decode_buffer + video_avcodec_context->width * i,
-                           avframe->data[0] + avframe->linesize[0] * i,
-                           video_avcodec_context->width);
+            } else if (videoAVCodecContext->pix_fmt == AV_PIX_FMT_YUV422P) {
+                for (i = 0; i < videoAVCodecContext->height; i++) {
+                    memcpy(video_decode_buffer + videoAVCodecContext->width * i,
+                           avFrame->data[0] + avFrame->linesize[0] * i,
+                           videoAVCodecContext->width);
                 }
-                for (j = 0; j < video_avcodec_context->height; j++) {
-                    memcpy(video_decode_buffer + video_avcodec_context->width * i +
-                           video_avcodec_context->width / 2 * j,
-                           avframe->data[1] + avframe->linesize[1] * j,
-                           video_avcodec_context->width / 2);
+                for (j = 0; j < videoAVCodecContext->height; j++) {
+                    memcpy(video_decode_buffer + videoAVCodecContext->width * i +
+                           videoAVCodecContext->width / 2 * j,
+                           avFrame->data[1] + avFrame->linesize[1] * j,
+                           videoAVCodecContext->width / 2);
                 }
-                for (k = 0; k < video_avcodec_context->height; k++) {
-                    memcpy(video_decode_buffer + video_avcodec_context->width * i +
-                           video_avcodec_context->width / 2 * j +
-                           video_avcodec_context->width / 2 * k,
-                           avframe->data[2] + avframe->linesize[2] * k,
-                           video_avcodec_context->width / 2);
+                for (k = 0; k < videoAVCodecContext->height; k++) {
+                    memcpy(video_decode_buffer + videoAVCodecContext->width * i +
+                           videoAVCodecContext->width / 2 * j +
+                           videoAVCodecContext->width / 2 * k,
+                           avFrame->data[2] + avFrame->linesize[2] * k,
+                           videoAVCodecContext->width / 2);
                 }
             } else {
                 //可扩展
             }
-            video_decode_size = avpicture_get_size(video_avcodec_context->pix_fmt,
-                                                   video_avcodec_context->width,
-                                                   video_avcodec_context->height);
+            video_decode_size = avpicture_get_size(videoAVCodecContext->pix_fmt,
+                                                   videoAVCodecContext->width,
+                                                   videoAVCodecContext->height);
             new_videosize = video_decode_size;
 
             //缩放或格式转换
-            if (video_avcodec_context->width != Zoom_Width
-                || video_avcodec_context->height != Zoom_Height
-                || video_avcodec_context->pix_fmt != Zoom_pix_fmt) {
-                /*new_videosize = VideoScaleYuvZoom(Is_flip, video_avcodec_context->width,
-                                                  video_avcodec_context->height,
-                                                  (int) video_avcodec_context->pix_fmt,
+            if (videoAVCodecContext->width != Zoom_Width
+                || videoAVCodecContext->height != Zoom_Height
+                || videoAVCodecContext->pix_fmt != Zoom_pix_fmt) {
+                /*new_videosize = VideoScaleYuvZoom(Is_flip, videoAVCodecContext->width,
+                                                  videoAVCodecContext->height,
+                                                  (int) videoAVCodecContext->pix_fmt,
                                                   Zoom_Width, Zoom_Height, Zoom_pix_fmt,
                                                   video_decode_buffer);*/
             }
             /*//这里可以取出数据
             frame_info->stream_idx = pstream_info->stream_idx;
             //转化成毫秒
-            //frame_info->pts = avframe->pkt_pts * 1000 * av_q2d(pstream_info->stream->time_base);
-            frame_info->pts = avframe->pkt_pts;
+            //frame_info->pts = avFrame->pkt_pts * 1000 * av_q2d(pstream_info->stream->time_base);
+            frame_info->pts = avFrame->pkt_pts;
             frame_info->timebase_den = pstream_info->stream->time_base.den;
             frame_info->timebase_num = pstream_info->stream->time_base.num;
             frame_info->bufsize = new_videosize;
@@ -1973,9 +2005,9 @@ int alexander_save_yuv_to_char() {
 }
 
 int yuv422p() {
-//    AVFormatContext *src_avformat_context;
-//    int i, video_stream_index;
-//    AVCodecContext *video_avcodec_context;
+//    AVFormatContext *srcAVFormatContext;
+//    int i, videoStreamIndex;
+//    AVCodecContext *videoAVCodecContext;
 //    AVCodec *pCodec;
 //    AVFrame *pFrame;
 //    AVFrame *pFrameYUV;
@@ -1985,7 +2017,7 @@ int yuv422p() {
 //    uint8_t *video_out_buffer2;
 //    SDL_Rect rect;
 //    static int sws_flags = SWS_BICUBIC;
-//    struct SwsContext *video_sws_context;
+//    struct SwsContext *videoSwsContext;
 //    AVPicture pict;
 //    //  argc = 2;
 //    char argv[100] = "d:\\temp\\VIDEO720576.264";
@@ -1996,33 +2028,33 @@ int yuv422p() {
 //
 //    // Open video file
 //    /*以输入方式打开一个媒体文件,也即源文件,codecs并没有打开,只读取了文件的头信息*/
-//    if (avformat_open_input(&src_avformat_context, argv, NULL, NULL) != 0)
+//    if (avformat_open_input(&srcAVFormatContext, argv, NULL, NULL) != 0)
 //        return -1; // Couldn't open file
 //
 //    // Retrieve stream information
 ///*通过读取媒体文件的中的包来获取媒体文件中的流信息,对于没有头信息的文件如(mpeg)是非常有用的,
 //// 该函数通常重算类似mpeg-2帧模式的真实帧率,该函数并未改变逻辑文件的position.
 //*/
-//    if (avformat_find_stream_info(src_avformat_context, NULL) < 0)
+//    if (avformat_find_stream_info(srcAVFormatContext, NULL) < 0)
 //        return -1; // Couldn't find stream information
 //
 //    // Find the first video stream
-//    video_stream_index = -1;
-//    printf("%d\n", src_avformat_context->nb_streams);
+//    videoStreamIndex = -1;
+//    printf("%d\n", srcAVFormatContext->nb_streams);
 //    getchar();
-//    for (i = 0; i < src_avformat_context->nb_streams; i++)
-//        if (src_avformat_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO && video_stream_index < 0) {
-//            video_stream_index = i;
+//    for (i = 0; i < srcAVFormatContext->nb_streams; i++)
+//        if (srcAVFormatContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex < 0) {
+//            videoStreamIndex = i;
 //            break;
 //        }
-//    if (video_stream_index == -1)
+//    if (videoStreamIndex == -1)
 //        return -1; // Didn't find a video stream
 //
 //    // Get a pointer to the codec context for the video stream
-//    video_avcodec_context = src_avformat_context->streams[video_stream_index]->codec;
+//    videoAVCodecContext = srcAVFormatContext->streams[videoStreamIndex]->codec;
 //
 //    // Find the decoder for the video stream
-//    pCodec = avcodec_find_decoder(video_avcodec_context->codec_id);
+//    pCodec = avcodec_find_decoder(videoAVCodecContext->codec_id);
 //    /*通过code ID查找一个已经注册的音视频编码器,查找编码器之前,必须先调用av_register_all注册所有支持的编码器
 //    音视频编码器保存在一个链表中,查找过程中,函数从头到尾遍历链表,通过比较编码器的ID来查找
 //    */
@@ -2034,7 +2066,7 @@ int yuv422p() {
 ////使用给定的AVCodec初始化AVCodecContext
 //
 //
-//    if (avcodec_open2(video_avcodec_context, pCodec, NULL) < 0)
+//    if (avcodec_open2(videoAVCodecContext, pCodec, NULL) < 0)
 //        return -1; // Could not open codec
 //
 //
@@ -2051,15 +2083,15 @@ int yuv422p() {
 //        return -1;
 //
 //    // Determine required video_out_buffer2 all_pkts_size and allocate video_out_buffer2
-//    numBytes = avpicture_get_size(AV_PIX_FMT_YUV422P, video_avcodec_context->width,
-//                                  video_avcodec_context->height);
+//    numBytes = avpicture_get_size(AV_PIX_FMT_YUV422P, videoAVCodecContext->width,
+//                                  videoAVCodecContext->height);
 //    video_out_buffer2 = (uint8_t *) av_malloc(numBytes * sizeof(uint8_t));
 //
 //    // Assign appropriate parts of video_out_buffer2 to image planes in pFrameRGB
 //    // Note that pFrameRGB is an AVFrame, but AVFrame is a superset
 //    // of AVPicture
 //    avpicture_fill((AVPicture *) pFrameYUV, video_out_buffer2, AV_PIX_FMT_YUV422P,
-//                   video_avcodec_context->width, video_avcodec_context->height);
+//                   videoAVCodecContext->width, videoAVCodecContext->height);
 //
 //    // Read frames and save first five frames to disk
 //    i = 0;
@@ -2077,8 +2109,8 @@ int yuv422p() {
 //    SDL_Overlay *image;
 //
 //
-//    image = SDL_CreateYUVOverlay(video_avcodec_context->width,
-//                                 video_avcodec_context->height,
+//    image = SDL_CreateYUVOverlay(videoAVCodecContext->width,
+//                                 videoAVCodecContext->height,
 //                                 SDL_YUY2_OVERLAY,
 //                                 screen);
 //
@@ -2088,11 +2120,11 @@ int yuv422p() {
 //        exit(1);
 //    }
 //    //////////////////////////////////////////////////////////////////
-//    while (av_read_frame(src_avformat_context, &packet) >= 0) {
+//    while (av_read_frame(srcAVFormatContext, &packet) >= 0) {
 //        // Is this a packet from the video stream?
-//        if (packet.stream_index == video_stream_index) {
+//        if (packet.stream_index == videoStreamIndex) {
 //            // Decode video frame
-//            avcodec_decode_video(video_avcodec_context, pFrame, &frameFinished,
+//            avcodec_decode_video(videoAVCodecContext, pFrame, &frameFinished,
 //                                 packet.data, packet.all_pkts_size);
 //
 //            // Did we get a video frame?
@@ -2110,17 +2142,17 @@ int yuv422p() {
 //// pFrameYUV->linesize[2] = image->pitches[1];
 //
 //
-//                video_sws_context = sws_getContext(video_avcodec_context->width,
-//                                                   video_avcodec_context->height,
-//                                                   video_avcodec_context->pix_fmt,
-//                                                   video_avcodec_context->width,
-//                                                   video_avcodec_context->height,
+//                videoSwsContext = sws_getContext(videoAVCodecContext->width,
+//                                                   videoAVCodecContext->height,
+//                                                   videoAVCodecContext->pix_fmt,
+//                                                   videoAVCodecContext->width,
+//                                                   videoAVCodecContext->height,
 //                                                   PIX_FMT_YUV422,
 //                                                   sws_flags, NULL, NULL, NULL);
-//                sws_scale(video_sws_context, pFrame->data, pFrame->linesize, 0, video_avcodec_context->height,
+//                sws_scale(videoSwsContext, pFrame->data, pFrame->linesize, 0, videoAVCodecContext->height,
 //                          pFrameYUV->data,
 //                          pFrameYUV->linesize);
-//                sws_freeContext(video_sws_context);
+//                sws_freeContext(videoSwsContext);
 //
 //                memcpy(image->pixels[0], pFrameYUV->data[0], 720 * 576 * 2);//拷贝数据yuv422
 //
@@ -2128,8 +2160,8 @@ int yuv422p() {
 //
 //                rect.x = 0;
 //                rect.y = 0;
-//                rect.w = video_avcodec_context->width;
-//                rect.h = video_avcodec_context->height;
+//                rect.w = videoAVCodecContext->width;
+//                rect.h = videoAVCodecContext->height;
 //                SDL_DisplayYUVOverlay(image, &rect);
 //            }
 //        }
@@ -2146,7 +2178,7 @@ int yuv422p() {
 //    av_free(pFrame);
 //
 //    // Close the codec
-//    avcodec_close(video_avcodec_context);
+//    avcodec_close(videoAVCodecContext);
 }
 
 /***
@@ -2418,8 +2450,8 @@ int video_dst_bufsize;
 int decode_packet(int *got_frame) {
     int ret = 0;
     *got_frame = 0;
-    if (avpacket->stream_index == video_avstream->index) {
-        ret = avcodec_decode_video2(video_avcodec_context, avframe, got_frame, avpacket);
+    if (avPacket->stream_index == video_avstream->index) {
+        ret = avcodec_decode_video2(videoAVCodecContext, avFrame, got_frame, avPacket);
         if (ret < 0) {
             printf("%s\n", "");
             return -1;
@@ -2427,12 +2459,12 @@ int decode_packet(int *got_frame) {
         if (*got_frame) {
             printf("%s\n", "");
             av_image_copy(video_dst_data, video_dst_linesize,
-                          (const unsigned char **) avframe->data, avframe->linesize,
-                          dst_avpixel_format, src_video_width, src_video_height);
+                          (const unsigned char **) avFrame->data, avFrame->linesize,
+                          dstAVPixelFormat, src_video_width, src_video_height);
             fwrite(video_dst_data[0], 1, video_dst_bufsize, pOutputVideo);
         }
-    } else if (avpacket->stream_index == audio_avstream->index) {
-        ret = avcodec_decode_audio4(audio_avcodec_context, avframe, got_frame, avpacket);
+    } else if (avPacket->stream_index == audio_avstream->index) {
+        ret = avcodec_decode_audio4(audioAVCodecContext, avFrame, got_frame, avPacket);
         if (ret < 0) {
             printf("%s\n", "");
             return -1;
@@ -2445,12 +2477,12 @@ int decode_packet(int *got_frame) {
         */
         if (*got_frame) {
             size_t unpadded_linesize =
-                    avframe->nb_samples * av_get_bytes_per_sample((enum AVSampleFormat) avframe->format);
-            fwrite(avframe->extended_data[0], 1, unpadded_linesize, pOutputAudio);
+                    avFrame->nb_samples * av_get_bytes_per_sample((enum AVSampleFormat) avFrame->format);
+            fwrite(avFrame->extended_data[0], 1, unpadded_linesize, pOutputAudio);
         }
     }
 
-    return FFMIN(ret, avpacket->size);
+    return FFMIN(ret, avPacket->size);
 }
 
 static int open_codec_context(enum AVMediaType type) {
@@ -2458,12 +2490,12 @@ static int open_codec_context(enum AVMediaType type) {
     /*
     根据type找到对应的音视频流或者字母流，返回的是对应文件流的index
     */
-    stream_index = av_find_best_stream(src_avformat_context, type, -1, -1, NULL, 0);
+    stream_index = av_find_best_stream(srcAVFormatContext, type, -1, -1, NULL, 0);
     if (stream_index < 0) {
         printf("%s\n", "");
         return -1;
     } else {
-        avstream = src_avformat_context->streams[stream_index];
+        avstream = srcAVFormatContext->streams[stream_index];
         avcodec_context = avstream->codec;
         avcodec = avcodec_find_decoder(avcodec_context->codec_id);
         if (!avcodec) {
@@ -2491,14 +2523,14 @@ int separate_media_to_yuv_and_aac() {
     打开待处理的音视频文件，探测读取文件格式信息保存到ftm_ctx中，
     同时读取多媒体文件信息，根据视音频流创建AVstream
     */
-    if (avformat_open_input(&src_avformat_context, src_filename, NULL, NULL) < 0) {
+    if (avformat_open_input(&srcAVFormatContext, src_filename, NULL, NULL) < 0) {
         printf("%s\n", "");
         return -1;
     }
     /*
     读取一部分视音频数据并且获得一些相关的信息,主要给每个媒体流的AVStream结构体赋值
     */
-    if (avformat_find_stream_info(src_avformat_context, NULL) < 0) {
+    if (avformat_find_stream_info(srcAVFormatContext, NULL) < 0) {
         printf("%s\n", "");
         return -1;
     }
@@ -2506,11 +2538,11 @@ int separate_media_to_yuv_and_aac() {
     //=====打开音频和视频流=====
     if (open_codec_context(AVMEDIA_TYPE_VIDEO) >= 0) {
         video_avstream = avstream;
-        video_avcodec_context = avcodec_context;
+        videoAVCodecContext = avcodec_context;
 
-        src_video_width = video_avcodec_context->width;
-        src_video_height = video_avcodec_context->height;
-        dst_avpixel_format = video_avcodec_context->pix_fmt;
+        src_video_width = videoAVCodecContext->width;
+        src_video_height = videoAVCodecContext->height;
+        dstAVPixelFormat = videoAVCodecContext->pix_fmt;
 
         /*
         分配像素的存储空间
@@ -2518,7 +2550,7 @@ int separate_media_to_yuv_and_aac() {
         该函数会返回分配的内存的大小。其实就是对video_dst_data,video_dst_linesize内存进行分配
         */
         ret = av_image_alloc(video_dst_data, video_dst_linesize,
-                             src_video_width, src_video_height, dst_avpixel_format, 1);
+                             src_video_width, src_video_height, dstAVPixelFormat, 1);
         if (ret < 0) {
             printf("%s\n", "");
             return -1;
@@ -2536,7 +2568,7 @@ int separate_media_to_yuv_and_aac() {
     */
     if (open_codec_context(AVMEDIA_TYPE_AUDIO) >= 0) {
         audio_avstream = avstream;
-        audio_avcodec_context = avcodec_context;
+        audioAVCodecContext = avcodec_context;
         if (!(pOutputAudio = fopen(audio_out_filename, "wb"))) {
             printf("%s\n", "");
             return -1;
@@ -2544,44 +2576,44 @@ int separate_media_to_yuv_and_aac() {
     }
 
     //=====打印输入输出格式信息====
-    av_dump_format(src_avformat_context, 0, src_filename, 0);
+    av_dump_format(srcAVFormatContext, 0, src_filename, 0);
 
     //=====读取和处理音视频文件=====
-    avframe = av_frame_alloc();
-    if (!avframe) {
+    avFrame = av_frame_alloc();
+    if (!avFrame) {
         printf("%s\n", "");
         return -1;
     }
 
-    av_init_packet(avpacket);
-    avpacket->data = NULL;
-    avpacket->size = 0;
+    av_init_packet(avPacket);
+    avPacket->data = NULL;
+    avPacket->size = 0;
 
-    while (av_read_frame(src_avformat_context, avpacket) >= 0) {
+    while (av_read_frame(srcAVFormatContext, avPacket) >= 0) {
         do {
             ret = decode_packet(&got_frame);
             printf("decode packet all_pkts_size: %d\n", ret);
-            avpacket->data += ret;
-            avpacket->size -= ret;
-        } while (avpacket->size > 0);
+            avPacket->data += ret;
+            avPacket->size -= ret;
+        } while (avPacket->size > 0);
     }
 
     /*
     将编码器缓存中的数据解码完
     */
-    avpacket->data = NULL;
-    avpacket->size = 0;
+    avPacket->data = NULL;
+    avPacket->size = 0;
     do {
         ret = decode_packet(&got_frame);
-        avpacket->data += ret;
-        avpacket->size -= ret;
+        avPacket->data += ret;
+        avPacket->size -= ret;
     } while (got_frame);
 
     //=====释放资源=====
-    avcodec_close(video_avcodec_context);
-    avcodec_close(audio_avcodec_context);
-    avformat_close_input(&src_avformat_context);
-    av_frame_free(&avframe);
+    avcodec_close(videoAVCodecContext);
+    avcodec_close(audioAVCodecContext);
+    avformat_close_input(&srcAVFormatContext);
+    av_frame_free(&avFrame);
     av_free(video_dst_data[0]);
 
     fclose(pOutputAudio);

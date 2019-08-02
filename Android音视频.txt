@@ -336,7 +336,9 @@ data[i+3] = (char)((sample_buffer_R[j]>>8) & 0xff);;//右声道高8位
 --enable-decklink \
 --enable-zlib \
 
-
+编译完成后会在/app/ffmpeg目录下生成bin,include,lib,share四个目录，进入bin目录执行./ffmpeg -version查看当前版本的详细信息，一般情况会出现如下错误
+./ffmpeg: error while loading shared libraries: libavdevice.so.58: cannot open shared object file: No such file or directory
+原因是lib目录未加载到链接到系统库中，系统ld目录列表在/etc/ld.so.conf中，打开文件会发现，里面引用了/etc/ld.so.conf.d/下面所有的.conf文件，比如mariadb-x86_64.conf我们只需要创建一个文件并写入lib路径即可，执行命令： vim /etc/ld.so.conf.d/ffmpeg.conf 然后添加一行内容： /app/ffmpeg/lib 之后保存并退出，然后执行 ldconfig 使配置生效，现在再次执行 ./ffmpeg -version 显示就正常了
 
 //音频输出参数
 //声道布局

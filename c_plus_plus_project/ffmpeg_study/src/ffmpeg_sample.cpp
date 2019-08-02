@@ -951,7 +951,7 @@ int resampling_audio(const char *dst_filename) {
 
         /* compute destination number of samples */
         // 可以理解成装目标数据的容器的空间够不够用了,不够用的话,需要重新申请空间
-        //swr_get_delay(audio_swr_context, src_rate)延迟时间 源采样率为单位的样本数
+        //swr_get_delay(audioSwrContext, src_rate)延迟时间 源采样率为单位的样本数
         dst_nb_samples = av_rescale_rnd(swr_get_delay(swr_context, src_sample_rate) + src_nb_samples,
                                         dst_sample_rate, src_sample_rate, AV_ROUND_UP);
         if (dst_nb_samples > max_dst_nb_samples) {

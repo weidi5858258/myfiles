@@ -99,7 +99,7 @@ void print_file_audio_info(AVFormatContext *avformat_context, AVCodecContext *au
     printf("Compile information： \t%s\n", avcodec_configuration());
     printf("\n");
     /*puts("FFMPEG支持的所有输入文件格式：");
-    AVInputFormat *pInputFormat = src_avformat_context->iformat;
+    AVInputFormat *pInputFormat = srcAVFormatContext->iformat;
     while (pInputFormat) {
         printf("%s ", pInputFormat->name);
         pInputFormat = pInputFormat->next;
@@ -292,7 +292,7 @@ void alexander_fill_audio(void *udata, Uint8 *stream, int len) {
 
 //int playbackAudio() {
 //    AVFormatContext *pFormatCtx;
-//    int i, audio_stream_index;
+//    int i, audioStreamIndex;
 //    AVCodecContext *pCodecCtx;
 //    AVCodec *pCodec;
 //
@@ -317,20 +317,20 @@ void alexander_fill_audio(void *udata, Uint8 *stream, int len) {
 //    av_dump_format(pFormatCtx, 0, url, false);
 //
 //    // Find the first audio stream
-//    audio_stream_index = -1;
+//    audioStreamIndex = -1;
 //    for (i = 0; i < pFormatCtx->nb_streams; i++)
 //        if (pFormatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
-//            audio_stream_index = i;
+//            audioStreamIndex = i;
 //            break;
 //        }
 //
-//    if (audio_stream_index == -1) {
+//    if (audioStreamIndex == -1) {
 //        printf("Didn't find a audio stream.\n");
 //        return -1;
 //    }
 //
 //    // Get a pointer to the codec context for the audio stream
-//    pCodecCtx = pFormatCtx->streams[audio_stream_index]->codec;
+//    pCodecCtx = pFormatCtx->streams[audioStreamIndex]->codec;
 //
 //    // Find the decoder for the audio stream
 //    pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
@@ -410,7 +410,7 @@ void alexander_fill_audio(void *udata, Uint8 *stream, int len) {
 //    SDL_PauseAudio(0);
 //
 //    while (av_read_frame(pFormatCtx, packet) >= 0) {
-//        if (packet->stream_index == audio_stream_index) {
+//        if (packet->stream_index == audioStreamIndex) {
 //
 //            ret = avcodec_decode_audio4(pCodecCtx, pFrame, &got_picture, packet);
 //            if (ret < 0) {
@@ -1635,7 +1635,7 @@ int pcm2aac() {
 
     //Method 1.
 //    pFormatCtx = avformat_alloc_context();
-//    fmt = av_guess_format(NULL, out_file, NULL);
+//    fmt = av_guess_format(NULL, outFile, NULL);
 //    pFormatCtx->oformat = fmt;
 
     //Method 2.
@@ -1662,7 +1662,7 @@ int pcm2aac() {
     pCodecCtx->channels = av_get_channel_layout_nb_channels(pCodecCtx->channel_layout);
 
     //Show some information
-//    av_dump_format(pFormatCtx, 0, out_file, 1);
+//    av_dump_format(pFormatCtx, 0, outFile, 1);
 
 //    pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
     pCodec = avcodec_find_encoder_by_name("libfdk_aac");
@@ -2257,7 +2257,7 @@ int AudioResampling(AVCodecContext *audio_avcodec_context, AVFrame *pAudioDecode
             return -1;
         }
     } else {
-        printf("audio_swr_context null error \n");
+        printf("audioSwrContext null error \n");
         return -1;
     }
 
@@ -2757,7 +2757,7 @@ int crazydiode_audio_devoder() {
         return -1;
     }
 
-//    av_dump_format(src_avformat_context, 0, in_file_path, false);
+//    av_dump_format(srcAVFormatContext, 0, inFilePath, false);
 
     //音频解码，需要找到对应的AVStream所在的pFormatCtx->streams的索引位置
     int nb_samples = avformat_context->nb_streams;

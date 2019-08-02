@@ -237,14 +237,14 @@ int decoder_video_frame_to_image() {
         AVMediaType avMediaType = av_format_context->streams[i]->codecpar->codec_type;
         if (avMediaType == AVMEDIA_TYPE_VIDEO) {
             video_stream_index = i;
-            printf("video_stream_index = %d\n", video_stream_index);
+            printf("videoStreamIndex = %d\n", video_stream_index);
         } else if (avMediaType == AVMEDIA_TYPE_AUDIO) {
             audio_stream_index = avMediaType;
-            printf("audio_stream_index = %d\n", audio_stream_index);
+            printf("audioStreamIndex = %d\n", audio_stream_index);
         }
     }
     // 至少要有一个视频流或者音频流
-    /*if (video_stream_index == -1 || audio_stream_index == -1) {
+    /*if (videoStreamIndex == -1 || audioStreamIndex == -1) {
         printf("Didn't find a video or audio stream.\n");
         return -1;
     }*/
