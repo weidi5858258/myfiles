@@ -56,20 +56,6 @@
  fwrite(pic+w*h*2,1,w*h,fp3);
  */
 
-struct Wrapper {
-    AVCodecContext *avCodecContext = NULL;
-    // 解码器
-    AVCodec *decoderAVCodec = NULL;
-    // 编码器
-    AVCodec *encoderAVCodec = NULL;
-    AVFrame *srcAVFrame = NULL;
-    AVFrame *dstAVFrame = NULL;
-    AVCodecParameters *avCodecParameters = NULL;
-    unsigned char *outBuffer = NULL;
-    size_t outBufferSize = 0;
-    int frameCount = 0;
-};
-
 ///////////////////////////公共变量///////////////////////////
 
 /***
@@ -104,7 +90,7 @@ int audioStreamIndex = -1;
 int thread_pause_flag = 0;
 int thread_exit_flag = 0;
 
-char *inFilePath = "/root/视频/tomcat_video/kingsman.mp4";
+char *inFilePath = "/root/视频/tomcat_video/game_of_thrones_5_01.mp4";
 //char *inFilePath = "/root/视频/tomcat_video/yuv/256_256_yuv420p_y.y";
 //char *inFilePath = "/root/视频/yuv/240_240_rgb24_haoke.yuv";
 //char *outFilePath = "/root/视频/rgb/720_480_rgb24.rgb";
@@ -154,11 +140,11 @@ AVCodecParameters *audioAVCodecParameters = NULL;
 //
 AVFrame *srcAudioAVFrame = NULL, *dstAudioAVFrame = NULL;
 unsigned char *audio_out_buffer = NULL;
-uint8_t *audio_out_buffer2 = NULL;
+unsigned char *audio_out_buffer2 = NULL;
 size_t audio_out_buffer_size = 0;
 int audio_frame_count = 0;
 //
-uint8_t *src_audio_data[4] = {NULL}, *dst_audio_data[4] = {NULL};
+unsigned char *src_audio_data[4] = {NULL}, *dst_audio_data[4] = {NULL};
 int src_audio_linesize[4] = {0}, dst_audio_linesize[4] = {0};
 
 ///////////////////////////音频重采样使用///////////////////////////
