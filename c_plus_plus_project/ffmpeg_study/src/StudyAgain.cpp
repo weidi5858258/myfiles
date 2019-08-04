@@ -32,6 +32,7 @@ struct Wrapper {
     AVFrame *srcAVFrame = NULL;
     // 用于格式转换
     AVFrame *dstAVFrame = NULL;
+    // 有些东西需要通过它去得到
     AVCodecParameters *avCodecParameters = NULL;
     int streamIndex = -1;
     int frameCount = 0;
@@ -53,13 +54,24 @@ struct AudioWrapper {
     enum AVSampleFormat srcAVSampleFormat = AV_SAMPLE_FMT_NONE;
     enum AVSampleFormat dstAVSampleFormat = AV_SAMPLE_FMT_S16;
     // 从音频源或视频源中得到
+    // 采样率
+    int srcSampleRate = 0;
     int srcNbSamples = 0;
+    // 声道数
     int srcNbChannels = 0;
+    // 由srcNbChannels能得到srcChannelLayout,也能由srcChannelLayout得到srcNbChannels
     int srcChannelLayout = 0;
     // 用户设置
-    int dstNbSamples = 44100;
-    int dstNbChannels = 2;
+    int dstSampleRate = 44100;
+    int dstNbSamples = 0;
+    // 由dstChannelLayout获到
+    int dstNbChannels = 0;
+    // 双声道输出
     int dstChannelLayout = AV_CH_LAYOUT_STEREO;
+
+    // SDL
+    SDL_AudioSpec srcSDLAudioSpec;
+    SDL_AudioSpec dstSDLAudioSpec;
 };
 
 struct VideoWrapper {
@@ -78,6 +90,8 @@ struct VideoWrapper {
     size_t dstArea = 0;
     // 使用到sws_scale函数时需要定义这些变量
     int srcLineSize[4] = {0}, dstLineSize[4] = {0};
+
+    // SDL
 };
 
 struct AudioWrapper audioWrapper;
@@ -86,7 +100,8 @@ struct VideoWrapper videoWrapper;
 //格式上下结构体，,可以理解为存储数据流的文件，伴随整个生命周期
 // AVFormatContext相当于Android的MediaExtractor,保存了音视频的Format信息(MediaFormat)
 //AVFormatContext *avFormatContext = NULL;
-char *inFilePath2 = "/root/视频/tomcat_video/shape_of_my_heart.mp4";
+//char *inFilePath2 = "/root/视频/tomcat_video/shape_of_my_heart.mp4";
+char *inFilePath2 = "/root/音乐/KuGou/蔡国权-不装饰你的梦.mp3";
 
 ///////////////////////////SDL2///////////////////////////
 
@@ -95,7 +110,7 @@ SDL_Window *sdlWindow = NULL;
 SDL_Renderer *sdlRenderer = NULL;
 SDL_Texture *sdlTexture = NULL;
 SDL_Thread *sdlThread = NULL;
-struct SDL_AudioSpec sdlAudioSpec;
+//struct SDL_AudioSpec sdlAudioSpec;
 SDL_Event sdlEvent;
 
 //用于线程
@@ -103,7 +118,10 @@ int threadPauseFlag = 0;
 int threadExitFlag = 0;
 
 #define SDL_AUDIO_BUFFER_SIZE 1024
-#define MAX_AUDIO_FRAME_SIZE 192000
+#define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
+
+static uint32_t audio_len = 0; // 音频数据缓冲区中未读数据剩余的长度
+static unsigned char *audio_pos = NULL; // 音频缓冲区中读取的位置
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -125,10 +143,12 @@ int openAndFindAVFormatContext() {
     if (audioWrapper.father.avFormatContext == NULL) {
         return -1;
     }
+    // 获取基本的文件信息
     if (avformat_open_input(&audioWrapper.father.avFormatContext, inFilePath2, NULL, NULL) != 0) {
         printf("Couldn't open input stream.\n");
         return -1;
     }
+    // 文件中的流信息
     if (avformat_find_stream_info(audioWrapper.father.avFormatContext, NULL) != 0) {
         printf("Couldn't find stream information.\n");
         return -1;
@@ -159,23 +179,29 @@ int findStreamIndex() {
     // audio stream index
     int streams = audioWrapper.father.avFormatContext->nb_streams;
     for (int i = 0; i < streams; i++) {
+        // 得到AVCodecParameters
         audioWrapper.father.avCodecParameters =
                 audioWrapper.father.avFormatContext->streams[i]->codecpar;
-        AVMediaType mediaType = audioWrapper.father.avCodecParameters->codec_type;
-        if (mediaType == AVMEDIA_TYPE_AUDIO) {
-            audioWrapper.father.streamIndex = i;
-            break;
+        if (audioWrapper.father.avCodecParameters != NULL) {
+            AVMediaType mediaType = audioWrapper.father.avCodecParameters->codec_type;
+            if (mediaType == AVMEDIA_TYPE_AUDIO) {
+                audioWrapper.father.streamIndex = i;
+                break;
+            }
         }
     }
     // video stream index
     streams = videoWrapper.father.avFormatContext->nb_streams;
     for (int i = 0; i < streams; i++) {
+        // 得到AVCodecParameters
         videoWrapper.father.avCodecParameters =
                 videoWrapper.father.avFormatContext->streams[i]->codecpar;
-        AVMediaType mediaType = videoWrapper.father.avCodecParameters->codec_type;
-        if (mediaType == AVMEDIA_TYPE_VIDEO) {
-            videoWrapper.father.streamIndex = i;
-            break;
+        if (videoWrapper.father.avCodecParameters != NULL) {
+            AVMediaType mediaType = videoWrapper.father.avCodecParameters->codec_type;
+            if (mediaType == AVMEDIA_TYPE_VIDEO) {
+                videoWrapper.father.streamIndex = i;
+                break;
+            }
         }
     }
 
@@ -191,22 +217,28 @@ int findStreamIndex() {
 }
 
 int findAndOpenAVCodec() {
-    if (audioWrapper.father.avFormatContext == NULL
-        || videoWrapper.father.avFormatContext == NULL
+    if ((audioWrapper.father.avCodecParameters == NULL
+         && videoWrapper.father.avCodecParameters == NULL)
         || (audioWrapper.father.streamIndex == -1
             && videoWrapper.father.streamIndex == -1)) {
         return -1;
     }
     // audio
     if (audioWrapper.father.streamIndex != -1) {
+        // 获取音频解码器
+        // 先通过AVCodecParameters找到AVCodec
         audioWrapper.father.decoderAVCodec = avcodec_find_decoder(audioWrapper.father.avCodecParameters->codec_id);
         if (audioWrapper.father.decoderAVCodec != NULL) {
+            // 获取解码器上下文
+            // 再通过AVCodec得到AVCodecContext
             audioWrapper.father.avCodecContext = avcodec_alloc_context3(audioWrapper.father.decoderAVCodec);
             if (audioWrapper.father.avCodecContext != NULL) {
+                // 关联操作
                 if (avcodec_parameters_to_context(
                         audioWrapper.father.avCodecContext, audioWrapper.father.avCodecParameters) < 0) {
                     return -1;
                 } else {
+                    // 打开AVCodec
                     if (avcodec_open2(
                             audioWrapper.father.avCodecContext, audioWrapper.father.decoderAVCodec, NULL) != 0) {
                         printf("Could not open audio codec.\n");
@@ -216,25 +248,6 @@ int findAndOpenAVCodec() {
             }
         }
     }
-    // 老的api
-    /*if (audioWrapper.father.streamIndex != -1) {
-        audioWrapper.father.avCodecContext =
-                audioWrapper.father.avFormatContext->streams[audioWrapper.father.streamIndex]->codec;
-        audioWrapper.father.avCodecParameters =
-                audioWrapper.father.avFormatContext->streams[audioWrapper.father.streamIndex]->codecpar;
-        if (audioWrapper.father.avCodecContext != NULL) {
-            audioWrapper.father.decoderAVCodec = avcodec_find_decoder(audioWrapper.father.avCodecContext->codec_id);
-            if (audioWrapper.father.decoderAVCodec != NULL) {
-                if (avcodec_open2(audioWrapper.father.avCodecContext, audioWrapper.father.decoderAVCodec, NULL) != 0) {
-                    printf("Could not open audio codec.\n");
-                    return -1;
-                }
-            } else {
-                printf("Codec not found audio codec.\n");
-                return -1;
-            }
-        }
-    }*/
     // video
     if (videoWrapper.father.streamIndex != -1) {
         videoWrapper.father.decoderAVCodec = avcodec_find_decoder(videoWrapper.father.avCodecParameters->codec_id);
@@ -254,40 +267,33 @@ int findAndOpenAVCodec() {
             }
         }
     }
-    // 老的api
-    /*if (videoWrapper.father.streamIndex != -1) {
-        videoWrapper.father.avCodecContext =
-                videoWrapper.father.avFormatContext->streams[videoWrapper.father.streamIndex]->codec;
-        videoWrapper.father.avCodecParameters =
-                videoWrapper.father.avFormatContext->streams[videoWrapper.father.streamIndex]->codecpar;
-        if (videoWrapper.father.avCodecContext != NULL) {
-            videoWrapper.father.decoderAVCodec = avcodec_find_decoder(videoWrapper.father.avCodecContext->codec_id);
-            if (videoWrapper.father.decoderAVCodec != NULL) {
-                if (avcodec_open2(videoWrapper.father.avCodecContext, videoWrapper.father.decoderAVCodec, NULL) != 0) {
-                    printf("Could not open video codec.\n");
-                    return -1;
-                }
-            } else {
-                printf("Codec not found video codec.\n");
-                return -1;
-            }
-        }
-    }*/
 
     return 0;
 }
 
 int createSwrContent() {
-    audioWrapper.srcNbChannels = audioWrapper.father.avCodecContext->channels;
-    audioWrapper.srcNbSamples = audioWrapper.father.avCodecContext->sample_rate;
-    audioWrapper.srcAVSampleFormat = audioWrapper.father.avCodecContext->sample_fmt;
-    // 播放声音时两个必须相同
-    audioWrapper.dstAVSampleFormat = audioWrapper.srcAVSampleFormat;
+    // src
+    audioWrapper.srcSampleRate = audioWrapper.father.avCodecContext->sample_rate;
+    audioWrapper.srcNbSamples = audioWrapper.father.avCodecContext->frame_size;
+    // audioWrapper.srcNbChannels = audioWrapper.father.avCodecContext->channels;
+    // audioWrapper.srcChannelLayout = audioWrapper.father.avCodecContext->channel_layout;
     audioWrapper.srcChannelLayout = av_get_default_channel_layout(audioWrapper.srcNbChannels);
-    audioWrapper.dstNbChannels = av_get_channel_layout_nb_channels(audioWrapper.dstChannelLayout);
-    printf("srcNbChannels       : %d\n", audioWrapper.srcNbChannels);
+    audioWrapper.srcAVSampleFormat = audioWrapper.father.avCodecContext->sample_fmt;
+    printf("srcSampleRate       : %d\n", audioWrapper.srcSampleRate);
     printf("srcNbSamples        : %d\n", audioWrapper.srcNbSamples);
+    printf("srcNbChannels       : %d\n", audioWrapper.srcNbChannels);
+    printf("srcChannelLayout    : %d\n", audioWrapper.srcChannelLayout);
     printf("srcAVSampleFormat   : %d\n", audioWrapper.srcAVSampleFormat);
+    // dst
+    audioWrapper.dstNbSamples = audioWrapper.srcNbSamples;
+    // audioWrapper.dstNbChannels = audioWrapper.srcNbChannels;
+    // audioWrapper.dstChannelLayout = audioWrapper.srcChannelLayout;
+    audioWrapper.dstNbChannels = av_get_channel_layout_nb_channels(audioWrapper.dstChannelLayout);
+    printf("dstSampleRate       : %d\n", audioWrapper.dstSampleRate);
+    printf("dstNbSamples        : %d\n", audioWrapper.dstNbSamples);
+    printf("dstNbChannels       : %d\n", audioWrapper.dstNbChannels);
+    printf("dstChannelLayout    : %d\n", audioWrapper.dstChannelLayout);
+    printf("dstAVSampleFormat   : %d\n", audioWrapper.dstAVSampleFormat);
 
     // avPacket ---> srcAVFrame ---> dstAVFrame ---> 播放声音
     audioWrapper.father.avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
@@ -299,6 +305,9 @@ int createSwrContent() {
             audioWrapper.father.dstAVFrame->linesize,
             audioWrapper.dstNbChannels, audioWrapper.dstNbSamples, audioWrapper.dstAVSampleFormat, 1);
     printf("samplesGetBufferSize: %d\n", samplesGetBufferSize);
+    audioWrapper.father.outBufferSize = samplesGetBufferSize;
+    // 存储音频帧的原始数据
+    // audioWrapper.father.outBuffer1 = (unsigned char *) av_malloc(MAX_AUDIO_FRAME_SIZE * 2);
     audioWrapper.father.outBuffer1 = (unsigned char *) av_malloc(samplesGetBufferSize);
     int samplesFillArrays = av_samples_fill_arrays(
             audioWrapper.father.dstAVFrame->data,
@@ -306,7 +315,8 @@ int createSwrContent() {
             audioWrapper.father.outBuffer1,
             audioWrapper.dstNbChannels,
             audioWrapper.dstNbChannels,
-            audioWrapper.dstAVSampleFormat, 1);
+            audioWrapper.dstAVSampleFormat,
+            1);
     if (samplesFillArrays < 0) {
         return -1;
     }
@@ -346,12 +356,14 @@ int createSwsContext() {
     videoWrapper.srcWidth = videoWrapper.father.avCodecContext->width;
     videoWrapper.srcHeight = videoWrapper.father.avCodecContext->height;
     videoWrapper.srcAVPixelFormat = videoWrapper.father.avCodecContext->pix_fmt;
-    videoWrapper.srcArea = videoWrapper.srcWidth * videoWrapper.srcHeight;
-    // 播放视频时两个必须相同
-    videoWrapper.dstAVPixelFormat = videoWrapper.srcAVPixelFormat;
     printf("srcWidth            : %d\n", videoWrapper.srcWidth);
     printf("srcHeight           : %d\n", videoWrapper.srcHeight);
     printf("srcAVPixelFormat    : %d\n", videoWrapper.srcAVPixelFormat);
+    // 播放视频时两个必须相同
+    videoWrapper.dstWidth = videoWrapper.srcWidth;
+    videoWrapper.dstHeight = videoWrapper.srcHeight;
+    videoWrapper.dstAVPixelFormat = videoWrapper.srcAVPixelFormat;
+    videoWrapper.srcArea = videoWrapper.srcWidth * videoWrapper.srcHeight;
 
     // avPacket ---> srcAVFrame ---> dstAVFrame ---> 渲染画面
     videoWrapper.father.avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
@@ -364,6 +376,7 @@ int createSwsContext() {
     int imageGetBufferSize = av_image_get_buffer_size(
             videoWrapper.dstAVPixelFormat, videoWrapper.srcWidth, videoWrapper.srcHeight, 1);
     printf("imageGetBufferSize  : %d\n", imageGetBufferSize);
+    videoWrapper.father.outBufferSize = imageGetBufferSize;
     // 存储视频帧的原始数据
     videoWrapper.father.outBuffer1 = (unsigned char *) av_malloc(imageGetBufferSize);
     // 类似于格式化刚刚申请的内存(关联操作:dstAVFrame, outBuffer1, dstAVPixelFormat)
@@ -417,6 +430,24 @@ int pushEventThread(void *opaque) {
     return 0;
 }
 
+// SDL提供的回调函数,数据只有往这个回调函数的stream中填充数据才能发出声音
+void sdlAudioCallback(void *userdata, uint8_t *stream, int len) {
+    SDL_memset(stream, 0, len);
+    if (audio_len <= 0) {
+        return;
+    }
+    // 比较剩余未读取的音频数据的长度和所需要的长度.尽最大可能的给予其音频数据
+    len = ((uint32_t) len > audio_len ? audio_len : len);
+
+    // SDL_MixAudio的作用和memcpy类似,这里将audio_pos的数据传递给stream
+    SDL_MixAudio(stream, audio_pos, len, SDL_MIX_MAXVOLUME);
+
+    //audio_pos是记录out_buffer（存放我们读取音频数据的缓冲区）当前读取的位置
+    //audio_len是记录out_buffer剩余未读数据的长度
+    audio_pos += len; //audio_pos前进到新的位置
+    audio_len -= len; //audio_len的长度做相应的减少
+}
+
 int audioRender(void *opaque) {
     printf("%s\n", "audioRender() start");
 
@@ -431,8 +462,6 @@ int audioRender(void *opaque) {
             printf("%s\n", "audioRender() break");
             break;
         }
-
-        SDL_Delay(40);
 
         while (1) {
             // 读取一帧压缩数据放到avPacket
@@ -462,22 +491,31 @@ int audioRender(void *opaque) {
         while (avcodec_receive_frame(audioWrapper.father.avCodecContext, audioWrapper.father.srcAVFrame) == 0) {
             swr_convert(audioWrapper.swrContext,
                         audioWrapper.father.dstAVFrame->data,
-                        audioWrapper.dstNbSamples,
+                        audioWrapper.father.outBufferSize,
                         (const uint8_t **) audioWrapper.father.srcAVFrame->data,
-                        audioWrapper.father.srcAVFrame->nb_samples);
+                        audioWrapper.srcNbSamples);
+
+            // 将音频的采样率转换成本机能播出的采样率
+            /*swr_convert(audioWrapper.swrContext,
+                        &audioWrapper.father.outBuffer1,
+                        audioWrapper.father.outBufferSize,
+                        (const uint8_t **) audioWrapper.father.srcAVFrame->data,
+                        audioWrapper.srcNbSamples);*/
+
+            // 在此处等待sdl_audio_callback将之前传递的音频数据播放完再向其中发送新的数据
+            while (audio_len > 0) {
+                SDL_Delay(1);
+            }
+
+            // 将读取到的数据存入音频缓冲区
+            // 记录音频数据的长度
+            audio_len = audioWrapper.father.outBufferSize;
+            audio_pos = audioWrapper.father.dstAVFrame->data[0];
+            //audio_pos = audioWrapper.father.outBuffer1;
         }
 
-        // SDL Start---------------------
-        /*SDL_UpdateTexture(sdlTexture, NULL,
-                          audioWrapper.father.dstAVFrame->data[0],
-                          audioWrapper.father.dstAVFrame->linesize[0]);
-        SDL_RenderClear(sdlRenderer);
-        //SDL_RenderCopy( sdlRenderer, sdlTexture, &sdlRect, &sdlRect );
-        SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-        SDL_RenderPresent(sdlRenderer);*/
-        // SDL End-----------------------
-
-        av_free_packet(audioWrapper.father.avPacket);
+        // av_frame_unref(audioWrapper.father.srcAVFrame);
+        av_packet_unref(audioWrapper.father.avPacket);
     }// for(;;) end
 
     printf("%s\n", "audioRender() end");
@@ -486,11 +524,17 @@ int audioRender(void *opaque) {
 int videoRender(void *opaque) {
     printf("%s\n", "videoRender() start");
 
+    printf("videoRender() sdlEvent.type: %d\n", REFRESH_EVENT);
+    printf("videoRender() sdlEvent.type: %d\n", BREAK_EVENT);
+    printf("videoRender() sdlEvent.type: %d\n", SDL_KEYDOWN);
+    printf("videoRender() sdlEvent.type: %d\n", SDL_QUIT);
+
     for (;;) {
         // 不断地接收消息
         SDL_WaitEvent(&sdlEvent);
+        //printf("SDL_WaitEvent sdlEvent.type: %d\n", sdlEvent.type);
         switch (sdlEvent.type) {
-            case REFRESH_EVENT: {
+            case REFRESH_EVENT: {// 32769
                 while (1) {
                     // 读取一帧压缩数据放到avPacket
                     int readFrame = av_read_frame(videoWrapper.father.avFormatContext, videoWrapper.father.avPacket);
@@ -540,15 +584,15 @@ int videoRender(void *opaque) {
                 SDL_RenderPresent(sdlRenderer);
                 // SDL End-----------------------
 
-                av_free_packet(videoWrapper.father.avPacket);
+                av_packet_unref(videoWrapper.father.avPacket);
                 continue;
             }
-            case BREAK_EVENT: {
+            case BREAK_EVENT: {// 32770
                 printf("%s\n", "videoRender() BREAK_EVENT");
                 threadExitFlag = 1;
                 break;
             }
-            case SDL_KEYDOWN: {
+            case SDL_KEYDOWN: {// 768
                 // Pause
                 if (sdlEvent.key.keysym.sym == SDLK_SPACE) {
                     printf("%s\n", "videoRender() SDLK_SPACE");
@@ -556,7 +600,7 @@ int videoRender(void *opaque) {
                     continue;
                 }
             }
-            case SDL_QUIT: {
+            case SDL_QUIT: {// 256
                 // 关闭播放窗口时会接收到这个事件
                 printf("%s\n", "videoRender() SDL_QUIT");
                 threadExitFlag = 1;
@@ -572,23 +616,36 @@ int videoRender(void *opaque) {
     printf("%s\n", "videoRender() end");
 }
 
+int initSDL() {
+    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_TIMER)) {
+        printf("SDL_Init() failed: %s\n", SDL_GetError());
+        return -1;
+    }
+}
+
 int initAudioSDL() {
+    // B2. 打开音频设备并创建音频处理线程
+    // B2.1 打开音频设备，获取SDL设备支持的音频参数srcSDLAudioSpec(期望的参数是dstSDLAudioSpec，实际得到srcSDLAudioSpec)
+    // 1) SDL提供两种使音频设备取得音频数据方法：
+    //    a. push，SDL以特定的频率调用回调函数，在回调函数中取得音频数据
+    //    b. pull，用户程序以特定的频率调用SDL_QueueAudio()，向音频设备提供数据。此种情况dstSDLAudioSpec.callback=NULL
+    // 2) 音频设备打开后播放静音，不启动回调，调用SDL_PauseAudio(0)后启动回调，开始正常播放音频
     // 采样率
-    sdlAudioSpec.freq = audioWrapper.dstNbSamples;
+    audioWrapper.dstSDLAudioSpec.freq = audioWrapper.dstSampleRate;
     // S表带符号，16是采样深度，SYS表采用系统字节序
-    sdlAudioSpec.format = AUDIO_S16SYS;
+    audioWrapper.dstSDLAudioSpec.format = AUDIO_S16SYS;
     // 声道数
-    sdlAudioSpec.channels = audioWrapper.dstNbChannels;
+    audioWrapper.dstSDLAudioSpec.channels = audioWrapper.dstNbChannels;
     // 静音值
-    sdlAudioSpec.silence = 0;
+    audioWrapper.dstSDLAudioSpec.silence = 0;
     // SDL声音缓冲区尺寸，单位是单声道采样点尺寸x通道数
-    sdlAudioSpec.samples = SDL_AUDIO_BUFFER_SIZE;
+    audioWrapper.dstSDLAudioSpec.samples = audioWrapper.dstNbSamples;
     // 回调函数，若为NULL，则应使用SDL_QueueAudio()机制
-    //sdlAudioSpec.callback = fill_audio;
+    audioWrapper.dstSDLAudioSpec.callback = sdlAudioCallback;
     // 提供给回调函数的参数
-    sdlAudioSpec.userdata = audioWrapper.father.avCodecContext;
-    if (SDL_OpenAudio(&sdlAudioSpec, NULL) < 0) {
-        printf("can not open SDL!\n");
+    audioWrapper.dstSDLAudioSpec.userdata = audioWrapper.father.avCodecContext;
+    if (SDL_OpenAudio(&audioWrapper.dstSDLAudioSpec, &audioWrapper.srcSDLAudioSpec) < 0) {
+        printf("SDL_OpenAudio() failed: %s\n", SDL_GetError());
         return -1;
     }
 
@@ -601,33 +658,42 @@ int initVideoSDL() {
         return -1;
     }
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
-        printf("Could not initialize SDL - %s\n", SDL_GetError());
-        return -1;
-    }
-
     //SDL 2.0 Support for multiple windows
     sdlWindow = SDL_CreateWindow(inFilePath2,
                                  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                  videoWrapper.dstWidth, videoWrapper.dstHeight,
                                  SDL_WINDOW_OPENGL);
     if (sdlWindow == NULL) {
-        printf("SDL: could not create window - exiting:%s\n", SDL_GetError());
+        printf("SDL_CreateWindow() failed: %s\n", SDL_GetError());
         return -1;
     }
 
     sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+    if (sdlRenderer == NULL) {
+        printf("SDL_CreateRenderer() failed: %s\n", SDL_GetError());
+        return -1;
+    }
+
     //IYUV: Y + U + V  (3 planes)
     //YV12: Y + V + U  (3 planes)
     sdlTexture = SDL_CreateTexture(sdlRenderer,
                                    SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STREAMING,
                                    videoWrapper.srcWidth, videoWrapper.srcHeight);
+    if (sdlTexture == NULL) {
+        printf("SDL_CreateTexture() failed: %s\n", SDL_GetError());
+        return -1;
+    }
+
     sdlRect.x = 0;
     sdlRect.y = 0;
     sdlRect.w = videoWrapper.srcWidth;
     sdlRect.h = videoWrapper.srcHeight;
 
     sdlThread = SDL_CreateThread(pushEventThread, NULL, NULL);
+    if (sdlThread == NULL) {
+        printf("SDL_CreateThread() failed: %s\n", SDL_GetError());
+        return -1;
+    }
 }
 
 void close2() {
@@ -787,7 +853,12 @@ int alexanderAudioPlayerWithSDL() {
         return -1;
     }
 
-    initAudioSDL();
+    if (initSDL() < 0) {
+        return -1;
+    }
+    if (initAudioSDL() < 0) {
+        return -1;
+    }
 
     // 创建子线程.audioRender和audioRender函数中的代码就是在子线程中执行的
     audioWrapper.father.renderThread = SDL_CreateThread(audioRender, NULL, NULL);
@@ -814,6 +885,8 @@ int alexanderVideoPlayerWithSDL() {
         return -1;
     }
 
+    //avDumpFormat();
+
     findStreamIndex();
 
     if (findAndOpenAVCodec() < 0) {
@@ -830,13 +903,15 @@ int alexanderVideoPlayerWithSDL() {
         return -1;
     }
 
-    initVideoSDL();
-    if (sdlThread == NULL) {
-        printf("%s\n", "");
+    if (initSDL() < 0) {
         return -1;
     }
-
-    //avDumpFormat();
+    if (initAudioSDL() < 0) {
+        return -1;
+    }
+    if (initVideoSDL() < 0) {
+        return -1;
+    }
 
     // 创建子线程.audioRender和audioRender函数中的代码就是在子线程中执行的
     audioWrapper.father.renderThread = SDL_CreateThread(audioRender, NULL, NULL);
