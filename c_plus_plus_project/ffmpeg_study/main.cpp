@@ -110,6 +110,8 @@ int simplest_yuv420p_split(char *url, int w, int h, int num);
 
 int audio_recorder(const char *out_file_path);
 
+int alexanderAudioPlayerWithSDL();
+
 int alexanderVideoPlayerWithSDL();
 
 int alexander_video_player_sdl2();
@@ -184,6 +186,7 @@ int main(int argc, char *argv[]) {
 //    separate_media_to_yuv_and_aac();
 //    simplest_yuv420p_split("/root/视频/tomcat_video/yuv/256_256_yuv420p.yuv", 256, 256, 1);
 //    audio_recorder("/root/音乐/myrecorder.pcm");
+//    alexanderAudioPlayerWithSDL();
     alexanderVideoPlayerWithSDL();
 //    alexander_video_player_sdl2();
 //    alexander_decode_video_to_yuv();// OUTPUT_YUV420P 1
