@@ -527,8 +527,7 @@ static int decode_thread(void *arg) {
     }
     if (audio_stream_index >= 0) {
         stream_component_open(audio_state, audio_stream_index);
-    }
-    if (audio_state->audio_stream_index < 0) {
+    } else if (audio_state->audio_stream_index < 0) {
         fprintf(stderr, "%s: could not open codecs\n", audio_state->in_file_path);
         goto fail;
     }
@@ -642,7 +641,6 @@ int alexander_music_player(const char *in_file_name) {
                 }
                 fprintf(stdout, "%s\n", "exit(0).");
                 exit(0);
-                return 0;
             default:
                 break;
         }

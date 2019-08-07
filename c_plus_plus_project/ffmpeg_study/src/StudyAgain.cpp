@@ -102,8 +102,8 @@ struct VideoWrapper videoWrapper;
 // AVFormatContext相当于Android的MediaExtractor,保存了音视频的Format信息(MediaFormat)
 //AVFormatContext *avFormatContext = NULL;
 //char *inFilePath2 = "/root/视频/tomcat_video/shape_of_my_heart.mp4";
-//char *inFilePath2 = "/root/音乐/KuGou/蔡国权-不装饰你的梦.mp3";
-char *inFilePath2 = "/root/音乐/alexander_music/容易受伤的女人.mp3";
+char *inFilePath2 = "/root/音乐/KuGou/蔡国权-不装饰你的梦.mp3";
+//char *inFilePath2 = "/root/音乐/alexander_music/容易受伤的女人.mp3";
 
 ///////////////////////////SDL2///////////////////////////
 
@@ -502,11 +502,12 @@ int audioRender(void *opaque) {
                         audioWrapper.srcNbSamples);*/
 
             // 将音频的采样率转换成本机能播出的采样率
-            /*swr_convert(audioWrapper.swrContext,
+            swr_convert(audioWrapper.swrContext,
                         &audioWrapper.father.outBuffer1,
-                        audioWrapper.father.outBufferSize,
+//                        audioWrapper.father.outBufferSize,
+                        audioWrapper.srcNbSamples,
                         (const uint8_t **) audioWrapper.father.srcAVFrame->data,
-                        audioWrapper.srcNbSamples);*/
+                        audioWrapper.srcNbSamples);
 
             // 在此处等待sdl_audio_callback将之前传递的音频数据播放完再向其中发送新的数据
             while (audio_len > 0) {
@@ -869,8 +870,8 @@ int alexanderAudioPlayerWithSDL() {
     // 创建子线程.audioRender和audioRender函数中的代码就是在子线程中执行的
     audioWrapper.father.renderThread = SDL_CreateThread(audioRender, NULL, NULL);
 
-    // 如果没有下面两个等待函数,那么子线程可能连执行的机会都没有
     int status = 0;
+    // 如果没有下面的等待函数,那么子线程可能连执行的机会都没有
     // 等待audioRender函数里的代码执行完后才往下走,不然一直阻塞在这里
     SDL_WaitThread(audioWrapper.father.renderThread, &status);
     printf("alexanderAudioPlayerWithSDL() audio status: %d\n", status);

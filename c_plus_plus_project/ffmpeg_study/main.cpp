@@ -186,7 +186,7 @@ int main(int argc, char *argv[]) {
 //    separate_media_to_yuv_and_aac();
 //    simplest_yuv420p_split("/root/视频/tomcat_video/yuv/256_256_yuv420p.yuv", 256, 256, 1);
 //    audio_recorder("/root/音乐/myrecorder.pcm");
-    alexanderAudioPlayerWithSDL();
+//    alexanderAudioPlayerWithSDL();
 //    alexanderVideoPlayerWithSDL();
 //    alexander_video_player_sdl2();
 //    alexander_decode_video_to_yuv();// OUTPUT_YUV420P 1
@@ -199,7 +199,7 @@ int main(int argc, char *argv[]) {
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/rgb/240_240_bgra.rgb");
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/tomcat_video/yuv/256_256_yuv420p.yuv");
 //    alexander_playback_pcm();
-//    alexander_music_player("/root/音乐/tdjm.mp3");
+    alexander_music_player("/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3");
 //    alexander_music_player("/root/音乐/txdx.mp3");
 //    alexander_music_player("/root/视频/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4");
 //    alexander_audio_or_video_demuxer();
