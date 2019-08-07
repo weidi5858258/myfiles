@@ -9,6 +9,7 @@ add_executable(
         main.cpp
         ffmpeg.cpp
         include/MyHead.h
+        include/decode_audio.h
 
         src/StudyFFmpeg.cpp
         src/ffmpeg_sample.cpp
@@ -16,7 +17,9 @@ add_executable(
         src/player.cpp
         src/music_player.cpp
         src/music_player2.cpp
-        src/decode_audio.cpp include/decode_audio.h src/StudyAgain.cpp)
+        src/decode_audio.cpp
+        src/StudyAgain.cpp
+)
 
 if (WIN32)
 
@@ -73,15 +76,15 @@ else ()
     include_directories(
             include
             /usr/include
-#            /usr/local/include
+            #            /usr/local/include
             /usr/include/SDL2
             /usr/local/include/lame
-#            /root/mydev/tools/ffmpeg/ffmpeg/include
+            #            /root/mydev/tools/ffmpeg/ffmpeg/include
             /root/mydev/tools/ffmpeg/ffmpeg_ubuntu/include
     )
 
     set(FFMPEG_LIB_PATH
-#            /root/mydev/tools/ffmpeg/ffmpeg/lib)
+            #            /root/mydev/tools/ffmpeg/ffmpeg/lib)
             /root/mydev/tools/ffmpeg/ffmpeg_ubuntu/lib)
 
     set(SDL2_LIB_PATH
@@ -98,8 +101,8 @@ else ()
             -L${FFMPEG_LIB_PATH} -lswresample
             -L${FFMPEG_LIB_PATH} -lswscale
             -L${FFMPEG_LIB_PATH} -lpostproc
-            -L${SDL2_LIB_PATH}   -lSDL2
-            -L${SDL2_LIB_PATH}   -lSDL2main
+            -L${SDL2_LIB_PATH} -lSDL2
+            -L${SDL2_LIB_PATH} -lSDL2main
 
             # 音频编码成mp3文件时要用到
             -lmp3lame

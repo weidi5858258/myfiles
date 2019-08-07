@@ -52,6 +52,7 @@ struct AudioWrapper {
     SwrContext *swrContext = NULL;
     // 从音频源或视频源中得到(采样格式)
     enum AVSampleFormat srcAVSampleFormat = AV_SAMPLE_FMT_NONE;
+    // 输出的采样格式16bit PCM
     enum AVSampleFormat dstAVSampleFormat = AV_SAMPLE_FMT_S16;
     // 从音频源或视频源中得到
     // 采样率
@@ -64,7 +65,7 @@ struct AudioWrapper {
     // 用户设置
     int dstSampleRate = 44100;
     int dstNbSamples = 0;
-    // 由dstChannelLayout获到
+    // 由dstChannelLayout去获到
     int dstNbChannels = 0;
     // 双声道输出
     int dstChannelLayout = AV_CH_LAYOUT_STEREO;
@@ -101,7 +102,8 @@ struct VideoWrapper videoWrapper;
 // AVFormatContext相当于Android的MediaExtractor,保存了音视频的Format信息(MediaFormat)
 //AVFormatContext *avFormatContext = NULL;
 //char *inFilePath2 = "/root/视频/tomcat_video/shape_of_my_heart.mp4";
-char *inFilePath2 = "/root/音乐/KuGou/蔡国权-不装饰你的梦.mp3";
+//char *inFilePath2 = "/root/音乐/KuGou/蔡国权-不装饰你的梦.mp3";
+char *inFilePath2 = "/root/音乐/alexander_music/容易受伤的女人.mp3";
 
 ///////////////////////////SDL2///////////////////////////
 
@@ -275,15 +277,17 @@ int createSwrContent() {
     // src
     audioWrapper.srcSampleRate = audioWrapper.father.avCodecContext->sample_rate;
     audioWrapper.srcNbSamples = audioWrapper.father.avCodecContext->frame_size;
-    // audioWrapper.srcNbChannels = audioWrapper.father.avCodecContext->channels;
-    // audioWrapper.srcChannelLayout = audioWrapper.father.avCodecContext->channel_layout;
-    audioWrapper.srcChannelLayout = av_get_default_channel_layout(audioWrapper.srcNbChannels);
+    audioWrapper.srcNbChannels = audioWrapper.father.avCodecContext->channels;
+    audioWrapper.srcChannelLayout = audioWrapper.father.avCodecContext->channel_layout;
+    //audioWrapper.srcChannelLayout = av_get_default_channel_layout(audioWrapper.srcNbChannels);
     audioWrapper.srcAVSampleFormat = audioWrapper.father.avCodecContext->sample_fmt;
+    printf("---------------------------------\n");
     printf("srcSampleRate       : %d\n", audioWrapper.srcSampleRate);
     printf("srcNbSamples        : %d\n", audioWrapper.srcNbSamples);
     printf("srcNbChannels       : %d\n", audioWrapper.srcNbChannels);
     printf("srcChannelLayout    : %d\n", audioWrapper.srcChannelLayout);
     printf("srcAVSampleFormat   : %d\n", audioWrapper.srcAVSampleFormat);
+    printf("---------------------------------\n");
     // dst
     audioWrapper.dstNbSamples = audioWrapper.srcNbSamples;
     // audioWrapper.dstNbChannels = audioWrapper.srcNbChannels;
@@ -294,6 +298,7 @@ int createSwrContent() {
     printf("dstNbChannels       : %d\n", audioWrapper.dstNbChannels);
     printf("dstChannelLayout    : %d\n", audioWrapper.dstChannelLayout);
     printf("dstAVSampleFormat   : %d\n", audioWrapper.dstAVSampleFormat);
+    printf("---------------------------------\n");
 
     // avPacket ---> srcAVFrame ---> dstAVFrame ---> 播放声音
     audioWrapper.father.avPacket = (AVPacket *) av_malloc(sizeof(AVPacket));
@@ -303,18 +308,18 @@ int createSwrContent() {
 
     int samplesGetBufferSize = av_samples_get_buffer_size(
             audioWrapper.father.dstAVFrame->linesize,
-            audioWrapper.dstNbChannels, audioWrapper.dstNbSamples, audioWrapper.dstAVSampleFormat, 1);
+            audioWrapper.dstNbChannels, audioWrapper.dstNbSamples, audioWrapper.dstAVSampleFormat,
+            1);
     printf("samplesGetBufferSize: %d\n", samplesGetBufferSize);
     audioWrapper.father.outBufferSize = samplesGetBufferSize;
     // 存储音频帧的原始数据
-    // audioWrapper.father.outBuffer1 = (unsigned char *) av_malloc(MAX_AUDIO_FRAME_SIZE * 2);
     audioWrapper.father.outBuffer1 = (unsigned char *) av_malloc(samplesGetBufferSize);
     int samplesFillArrays = av_samples_fill_arrays(
             audioWrapper.father.dstAVFrame->data,
             audioWrapper.father.dstAVFrame->linesize,
             audioWrapper.father.outBuffer1,
             audioWrapper.dstNbChannels,
-            audioWrapper.dstNbChannels,
+            audioWrapper.dstNbSamples,
             audioWrapper.dstAVSampleFormat,
             1);
     if (samplesFillArrays < 0) {
@@ -328,15 +333,16 @@ int createSwrContent() {
      int log_offset, void *log_ctx
      */
     audioWrapper.swrContext = swr_alloc();
-    audioWrapper.swrContext = swr_alloc_set_opts(audioWrapper.swrContext,
-                                                 audioWrapper.dstChannelLayout,  // out_ch_layout
-                                                 audioWrapper.dstAVSampleFormat, // out_sample_fmt
-                                                 audioWrapper.dstNbSamples,      // out_sample_rate
-                                                 audioWrapper.srcChannelLayout,  // in_ch_layout
-                                                 audioWrapper.srcAVSampleFormat, // in_sample_fmt
-                                                 audioWrapper.srcNbSamples,      // in_sample_rate
-                                                 0,                              // log_offset
-                                                 NULL);                          // log_ctx
+    //audioWrapper.swrContext =
+    swr_alloc_set_opts(audioWrapper.swrContext,
+                       audioWrapper.dstChannelLayout,  // out_ch_layout
+                       audioWrapper.dstAVSampleFormat, // out_sample_fmt
+                       audioWrapper.dstSampleRate,     // out_sample_rate
+                       audioWrapper.srcChannelLayout,  // in_ch_layout
+                       audioWrapper.srcAVSampleFormat, // in_sample_fmt
+                       audioWrapper.srcSampleRate,     // in_sample_rate
+                       0,                              // log_offset
+                       NULL);                          // log_ctx
     if (audioWrapper.swrContext == NULL) {
         printf("%s\n", "audioSwrContext is NULL.");
         return -1;
@@ -489,11 +495,11 @@ int audioRender(void *opaque) {
 
         // 对压缩数据进行解码,解码后的数据放到srcAVFrame(保存的是非压缩数据)
         while (avcodec_receive_frame(audioWrapper.father.avCodecContext, audioWrapper.father.srcAVFrame) == 0) {
-            swr_convert(audioWrapper.swrContext,
+            /*swr_convert(audioWrapper.swrContext,
                         audioWrapper.father.dstAVFrame->data,
                         audioWrapper.father.outBufferSize,
                         (const uint8_t **) audioWrapper.father.srcAVFrame->data,
-                        audioWrapper.srcNbSamples);
+                        audioWrapper.srcNbSamples);*/
 
             // 将音频的采样率转换成本机能播出的采样率
             /*swr_convert(audioWrapper.swrContext,
@@ -510,8 +516,8 @@ int audioRender(void *opaque) {
             // 将读取到的数据存入音频缓冲区
             // 记录音频数据的长度
             audio_len = audioWrapper.father.outBufferSize;
-            audio_pos = audioWrapper.father.dstAVFrame->data[0];
-            //audio_pos = audioWrapper.father.outBuffer1;
+            //audio_pos = audioWrapper.father.dstAVFrame->data[0];
+            audio_pos = audioWrapper.father.outBuffer1;
         }
 
         // av_frame_unref(audioWrapper.father.srcAVFrame);
