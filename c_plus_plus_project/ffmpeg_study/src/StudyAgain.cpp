@@ -18,6 +18,19 @@
                                enum AVSampleFormat sample_fmt, int align);
  */
 
+typedef struct AVPacketQueue {
+    AVPacketList *firstAVPacketList = NULL;
+    AVPacketList *lastAVPacketList = NULL;
+    // 有多少个AVPacketList
+    int allAVPackets = 0;
+    // 所有AVPacket占用的空间大小
+    int allAVPacketsSize = 0;
+    // 互斥量
+    SDL_mutex *sdlMutex = NULL;
+    // 条件变量
+    SDL_cond *sdlCond = NULL;
+};
+
 // 子类都要用到的部分
 struct Wrapper {
     AVFormatContext *avFormatContext = NULL;
@@ -35,7 +48,7 @@ struct Wrapper {
     // 有些东西需要通过它去得到
     AVCodecParameters *avCodecParameters = NULL;
     int streamIndex = -1;
-    int frameCount = 0;
+    int framesCount = 0;
     // 存储原始数据
     unsigned char *outBuffer1 = NULL;
     unsigned char *outBuffer2 = NULL;
@@ -68,11 +81,14 @@ struct AudioWrapper {
     // 由dstChannelLayout去获到
     int dstNbChannels = 0;
     // 双声道输出
-    int dstChannelLayout = AV_CH_LAYOUT_STEREO;
+    //int dstChannelLayout = AV_CH_LAYOUT_STEREO;
+    int64_t dstChannelLayout = 0;
 
     // SDL
     SDL_AudioSpec srcSDLAudioSpec;
     SDL_AudioSpec dstSDLAudioSpec;
+
+    AVPacketQueue avPacketQueue;
 };
 
 struct VideoWrapper {
@@ -119,6 +135,7 @@ SDL_Event sdlEvent;
 int threadPauseFlag = 0;
 int threadExitFlag = 0;
 
+#define MAX_AUDIO_QUEUE_SIZE (1 * 1024 * 1024)
 #define SDL_AUDIO_BUFFER_SIZE 1024
 #define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
 
@@ -126,6 +143,14 @@ static uint32_t audio_len = 0; // 音频数据缓冲区中未读数据剩余的�
 static unsigned char *audio_pos = NULL; // 音频缓冲区中读取的位置
 
 ////////////////////////////////////////////////////////////////////////////////////
+
+void initAVPacketQueue(struct AVPacketQueue *queue) {
+    memset(queue, 0, sizeof(struct AVPacketQueue));
+    //创建的互斥量默认是未上锁的
+    queue->sdlMutex = SDL_CreateMutex();
+    //创建条件变量
+    queue->sdlCond = SDL_CreateCond();
+}
 
 // 已经不需要调用了
 void initAV() {
@@ -290,13 +315,22 @@ int createSwrContent() {
     printf("---------------------------------\n");
     // dst
     audioWrapper.dstNbSamples = audioWrapper.srcNbSamples;
-    // audioWrapper.dstNbChannels = audioWrapper.srcNbChannels;
+    audioWrapper.dstNbChannels = audioWrapper.srcNbChannels;
     // audioWrapper.dstChannelLayout = audioWrapper.srcChannelLayout;
+    if (!audioWrapper.dstChannelLayout
+        || audioWrapper.dstChannelLayout != av_get_channel_layout_nb_channels(audioWrapper.dstChannelLayout)) {
+        audioWrapper.dstChannelLayout = av_get_default_channel_layout(audioWrapper.dstNbChannels);
+        printf("dstChannelLayout1   : %d\n", audioWrapper.dstChannelLayout);
+        //why?
+        audioWrapper.dstChannelLayout &= ~AV_CH_LAYOUT_STEREO_DOWNMIX;
+        printf("dstChannelLayout2   : %d\n", audioWrapper.dstChannelLayout);
+    }
     audioWrapper.dstNbChannels = av_get_channel_layout_nb_channels(audioWrapper.dstChannelLayout);
+
     printf("dstSampleRate       : %d\n", audioWrapper.dstSampleRate);
     printf("dstNbSamples        : %d\n", audioWrapper.dstNbSamples);
     printf("dstNbChannels       : %d\n", audioWrapper.dstNbChannels);
-    printf("dstChannelLayout    : %d\n", audioWrapper.dstChannelLayout);
+    //printf("dstChannelLayout    : %d\n", audioWrapper.dstChannelLayout);
     printf("dstAVSampleFormat   : %d\n", audioWrapper.dstAVSampleFormat);
     printf("---------------------------------\n");
 
@@ -411,6 +445,39 @@ int createSwsContext() {
     return 0;
 }
 
+int putAVPacketToQueue(struct AVPacketQueue *packet_queue, AVPacket *avpacket) {
+    if (SDL_LockMutex(packet_queue->sdlMutex) == 0) {
+        //需要把AVPacket类型构造成AVPacketList类型,因此先要构造一个AVPacketList指针
+        AVPacketList *avpacket_list = NULL;
+        avpacket_list = (AVPacketList *) av_malloc(sizeof(AVPacketList));
+        if (!avpacket_list) {
+            return -1;
+        }
+        avpacket_list->pkt = *avpacket;
+        avpacket_list->next = NULL;
+
+        //SDL_LockMutex(packet_queue->sdl_mutex);
+
+        // 第一次为NULL
+        if (!packet_queue->lastAVPacketList) {
+            packet_queue->firstAVPacketList = avpacket_list;
+            fprintf(stdout,
+                    "packet_queue->first_pkt->pkt.pos = %ld\n",
+                    packet_queue->firstAVPacketList->pkt.pos);
+        } else {
+            packet_queue->lastAVPacketList->next = avpacket_list;
+        }
+        packet_queue->lastAVPacketList = avpacket_list;
+        packet_queue->allAVPackets++;
+        packet_queue->allAVPacketsSize += avpacket_list->pkt.size;
+        //?
+        SDL_CondSignal(packet_queue->sdlCond);
+
+        SDL_UnlockMutex(packet_queue->sdlMutex);
+    }
+    return 0;
+}
+
 // 线程
 // REFRESH_EVENT和BREAK_EVENT是用户自定义的消息
 int pushEventThread(void *opaque) {
@@ -469,6 +536,11 @@ int audioRender(void *opaque) {
             break;
         }
 
+        if (audioWrapper.avPacketQueue.allAVPacketsSize > MAX_AUDIO_QUEUE_SIZE) {
+            SDL_Delay(10);
+            continue;
+        }
+
         while (1) {
             // 读取一帧压缩数据放到avPacket
             int readFrame = av_read_frame(audioWrapper.father.avFormatContext, audioWrapper.father.avPacket);
@@ -480,6 +552,8 @@ int audioRender(void *opaque) {
 
             if (audioWrapper.father.avPacket->stream_index == audioWrapper.father.streamIndex) {
                 //printf("Audio break.\n");
+                audioWrapper.father.framesCount++;
+                putAVPacketToQueue(&audioWrapper.avPacketQueue, audioWrapper.father.avPacket);
                 break;
             }
         }
@@ -527,6 +601,8 @@ int audioRender(void *opaque) {
 
     printf("%s\n", "audioRender() end");
 }
+
+
 
 int videoRender(void *opaque) {
     printf("%s\n", "videoRender() start");
@@ -646,15 +722,55 @@ int initAudioSDL() {
     // 静音值
     audioWrapper.dstSDLAudioSpec.silence = 0;
     // SDL声音缓冲区尺寸，单位是单声道采样点尺寸x通道数
-    audioWrapper.dstSDLAudioSpec.samples = audioWrapper.dstNbSamples;
+    // audioWrapper.dstSDLAudioSpec.samples = audioWrapper.dstNbSamples;
+    audioWrapper.dstSDLAudioSpec.samples = 1024;
     // 回调函数，若为NULL，则应使用SDL_QueueAudio()机制
     audioWrapper.dstSDLAudioSpec.callback = sdlAudioCallback;
     // 提供给回调函数的参数
-    audioWrapper.dstSDLAudioSpec.userdata = audioWrapper.father.avCodecContext;
+    audioWrapper.dstSDLAudioSpec.userdata = &audioWrapper;
     if (SDL_OpenAudio(&audioWrapper.dstSDLAudioSpec, &audioWrapper.srcSDLAudioSpec) < 0) {
         printf("SDL_OpenAudio() failed: %s\n", SDL_GetError());
         return -1;
     }
+
+    const int next_nb_channels[] = {0, 0, 1, 6, 2, 6, 4, 6};
+    while (SDL_OpenAudio(&audioWrapper.dstSDLAudioSpec, &audioWrapper.srcSDLAudioSpec) < 0) {
+        fprintf(stderr, "SDL_OpenAudio (%d channels): %s\n", audioWrapper.dstNbChannels, SDL_GetError());
+        audioWrapper.dstSDLAudioSpec.channels = next_nb_channels[FFMIN(7, audioWrapper.dstSDLAudioSpec.channels)];
+        if (!audioWrapper.dstSDLAudioSpec.channels) {
+            fprintf(stderr, "No more channel combinations to tyu, audio open failed\n");
+            return -1;
+        }
+        audioWrapper.dstChannelLayout = av_get_default_channel_layout(audioWrapper.dstNbChannels);
+    }
+    if (audioWrapper.srcSDLAudioSpec.format != AUDIO_S16SYS) {
+        fprintf(stderr, "SDL advised audio format %d is not supported!\n", audioWrapper.srcSDLAudioSpec.format);
+        return -1;
+    }
+    if (audioWrapper.srcSDLAudioSpec.channels != audioWrapper.dstSDLAudioSpec.channels) {
+        audioWrapper.dstChannelLayout = av_get_default_channel_layout(audioWrapper.srcSDLAudioSpec.channels);
+        if (!audioWrapper.dstChannelLayout) {
+            fprintf(stderr, "SDL advised channel count %d is not supported!\n", audioWrapper.srcSDLAudioSpec.channels);
+            return -1;
+        }
+    }
+
+    fprintf(stdout, "%d: dstSDLAudioSpec.freq    : %d\n", __LINE__, audioWrapper.dstSDLAudioSpec.freq);
+    fprintf(stdout, "%d: dstSDLAudioSpec.channels: %d\n", __LINE__, audioWrapper.dstSDLAudioSpec.channels);
+    fprintf(stdout, "%d: dstSDLAudioSpec.format  : %d\n", __LINE__, audioWrapper.dstSDLAudioSpec.format);
+    fprintf(stdout, "%d: dstSDLAudioSpec.samples : %d\n", __LINE__, audioWrapper.dstSDLAudioSpec.samples);
+
+    fprintf(stdout, "%d: srcSDLAudioSpec.freq    : %d\n", __LINE__, audioWrapper.srcSDLAudioSpec.freq);
+    fprintf(stdout, "%d: srcSDLAudioSpec.channels: %d\n", __LINE__, audioWrapper.srcSDLAudioSpec.channels);
+    fprintf(stdout, "%d: srcSDLAudioSpec.format  : %d\n", __LINE__, audioWrapper.srcSDLAudioSpec.format);
+    fprintf(stdout, "%d: srcSDLAudioSpec.samples : %d\n", __LINE__, audioWrapper.srcSDLAudioSpec.samples);
+
+    audioWrapper.srcAVSampleFormat = audioWrapper.dstAVSampleFormat = AV_SAMPLE_FMT_S16;
+    audioWrapper.srcSampleRate = audioWrapper.dstSampleRate = audioWrapper.srcSDLAudioSpec.freq;
+    audioWrapper.srcChannelLayout = audioWrapper.dstChannelLayout;
+    audioWrapper.srcNbChannels = audioWrapper.dstNbChannels = audioWrapper.srcSDLAudioSpec.channels;
+
+    audioWrapper.father.avFormatContext->streams[audioWrapper.father.streamIndex]->discard = AVDISCARD_DEFAULT;
 
     return 0;
 }
@@ -866,6 +982,8 @@ int alexanderAudioPlayerWithSDL() {
     if (initAudioSDL() < 0) {
         return -1;
     }
+
+    initAVPacketQueue(&audioWrapper.avPacketQueue);
 
     // 创建子线程.audioRender和audioRender函数中的代码就是在子线程中执行的
     audioWrapper.father.renderThread = SDL_CreateThread(audioRender, NULL, NULL);

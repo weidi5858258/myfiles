@@ -397,8 +397,9 @@ int stream_component_open(AudioState *audio_state, int audio_stream_index) {
 
     audio_avcodec_context = avformat_context->streams[audio_stream_index]->codec;
 
-    wanted_nb_channels = audio_avcodec_context->channels;
     wanted_sample_rate = audio_avcodec_context->sample_rate;
+    wanted_nb_channels = audio_avcodec_context->channels;
+    fprintf(stdout, "wanted_sample_rate = %d\n", wanted_sample_rate);
     fprintf(stdout, "wanted_nb_channels = %d\n", wanted_nb_channels);
     //得到声道数要不要这样子做?
     if (!wanted_channel_layout
@@ -415,8 +416,6 @@ int stream_component_open(AudioState *audio_state, int audio_stream_index) {
         fprintf(stderr, "Invalid sample rate or channel count!\n");
         return -1;
     }
-    fprintf(stdout, "wanted_nb_channels = %d\n", wanted_nb_channels);
-    fprintf(stdout, "wanted_sample_rate = %d\n", wanted_sample_rate);
 
     //1.需要为SDL_AudioSpec设置下面这些参数
     sdl_audio_spec.channels = wanted_nb_channels;
@@ -566,7 +565,7 @@ static int decode_thread(void *arg) {
         } else {
             av_free_packet(avpacket);
         }
-    }
+    }// for(;;) end
 
     fprintf(stdout, "%s\n", "for loop end.");
     fprintf(stdout, "audio_frame_count = %d\n", audio_frame_count2);
@@ -603,17 +602,26 @@ int alexander_music_player(const char *in_file_name) {
 
     AudioState *audio_state = NULL;
     audio_state = (AudioState *) av_mallocz(sizeof(AudioState));
+    // 复制文件路径
     av_strlcpy(audio_state->in_file_path, in_file_name, sizeof(audio_state->in_file_path));
 
     if (SDL_Init(SDL_INIT_AUDIO)) {
         fprintf(stderr, "Could not initialize SDL - %s\n", SDL_GetError());
         exit(1);
     }
+
+    // 创建解码线程
     audio_state->sdl_thread = SDL_CreateThread(decode_thread, NULL, audio_state);
     if (!audio_state->sdl_thread) {
         av_free(audio_state);
         return -1;
     }
+
+    /*int status = 0;
+    // 如果没有下面的等待函数,那么子线程可能连执行的机会都没有
+    // 等待audioRender函数里的代码执行完后才往下走,不然一直阻塞在这里
+    SDL_WaitThread(audio_state->sdl_thread, &status);
+    printf("alexander_music_player() audio status: %d\n", status);*/
 
     SDL_Event sdl_event;
     for (;;) {
@@ -644,7 +652,7 @@ int alexander_music_player(const char *in_file_name) {
             default:
                 break;
         }
-    }
+    }// for(;;) end
 
     return 0;
 }
