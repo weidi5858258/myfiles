@@ -199,7 +199,8 @@ int main(int argc, char *argv[]) {
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/rgb/240_240_bgra.rgb");
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/tomcat_video/yuv/256_256_yuv420p.yuv");
 //    alexander_playback_pcm();
-    alexander_music_player("/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3");
+    alexander_music_player("/root/音乐/alexander_music/冷漠、云菲菲 - 伤心城市.mp3");
+//    alexander_music_player("/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3");
 //    alexander_music_player("/root/音乐/txdx.mp3");
 //    alexander_music_player("/root/视频/Prison.Break.S05E01.WEB-HR.AAC.720P.x264V3.mp4");
 //    alexander_audio_or_video_demuxer();
