@@ -349,9 +349,9 @@ void audio_callback(void *userdata, uint8_t *sdl_need_stream_data, int sdl_max_h
     while (sdl_max_handle_data_size > 0) {
         if (audio_state->audio_decoded_data_size_index >= audio_state->audio_decoded_data_size) {
             audio_decoded_data_size = audio_decode_frame(audio_state);
+            //fprintf(stdout, "audio_decoded_data_size = %d\n", audio_decoded_data_size);
 
             if (audio_decoded_data_size < 0) {
-                fprintf(stdout, "audio_decoded_data_size = %d\n", audio_decoded_data_size);
                 /* silence */
                 audio_state->audio_decoded_data_size = 1024;
                 memset(audio_state->audio_buf, 0, audio_state->audio_decoded_data_size);
