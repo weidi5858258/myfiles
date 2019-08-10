@@ -242,6 +242,25 @@ int main(int argc, char *argv[]) {
  fclose(fp);
  fclose(fp1);
 
+    // 第二种解码方式,旧的
+    int got_picture_ptr = 0;
+    int ret = avcodec_decode_video2(videoWrapper.father.avCodecContext,
+                                videoWrapper.father.srcAVFrame,
+                                &got_picture_ptr,
+                                avPacket);
+    if (ret < 0) {
+        fprintf(stderr, "video decode error.\n");
+        break;
+    }
+    if (got_picture_ptr) {
+        sws_scale(videoWrapper.swsContext,
+                  (const unsigned char *const *) videoWrapper.father.srcAVFrame->data,
+                  videoWrapper.father.srcAVFrame->linesize,
+                  0, videoWrapper.srcHeight,
+                  videoWrapper.father.dstAVFrame->data,
+                  videoWrapper.father.dstAVFrame->linesize);
+    }
+
  关于子线程
  std::mutex lockMutex;
  std::condition_variable lockCond;
