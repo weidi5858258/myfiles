@@ -24,11 +24,7 @@ typedef struct AVPacketQueue {
     // 有多少个AVPacketList
     int allAVPacketsCount = 0;
     // 所有AVPacket占用的空间大小
-    int allAVPacketsSize = 0;
-    // 互斥量
-    SDL_mutex *sdlMutex = NULL;
-    // 条件变量
-    SDL_cond *sdlCond = NULL;
+    int64_t allAVPacketsSize = 0;
 };
 
 // 子类都要用到的部分
@@ -156,14 +152,6 @@ static uint32_t audio_len = 0; // 音频数据缓冲区中未读数据剩余的�
 static unsigned char *audio_pos = NULL; // 音频缓冲区中读取的位置
 
 ////////////////////////////////////////////////////////////////////////////////////
-
-void initAVPacketQueue(struct AVPacketQueue *queue) {
-    memset(queue, 0, sizeof(struct AVPacketQueue));
-    //创建的互斥量默认是未上锁的
-    queue->sdlMutex = SDL_CreateMutex();
-    //创建条件变量
-    queue->sdlCond = SDL_CreateCond();
-}
 
 // SDL提供的回调函数,数据只有往这个回调函数的stream中填充数据才能发出声音
 void sdlAudioCallback(void *userdata, uint8_t *stream, int len) {
@@ -956,17 +944,11 @@ void *readData(void *opaque) {
                     }
                 }
 
-                /*if (handleDataThread == NULL) {
-                    fprintf(stdout, "readData() SDL_CreateThread(handleData, NULL, NULL) break\n");
-                    handleDataThread = SDL_CreateThread(handleData, NULL, NULL);
-                }*/
-
-                /*std::lock_guard<std::mutex> lk(lockMutex);
-                fprintf(stdout, "readData() lockCond.notify_one() break\n");
-                lockCond.notify_one();*/
-
+                // 唤醒线程
+                pthread_mutex_lock(&lockMutex);
                 fprintf(stdout, "readData() pthread_cond_signal() break\n");
                 pthread_cond_signal(&lockCondition);
+                pthread_mutex_unlock(&lockMutex);
 
                 threadExitFlag = 1;
                 break;
@@ -982,19 +964,16 @@ void *readData(void *opaque) {
                         onlyOne = false;
                         videoWrapper.father.isHandlingForQueue1 = true;
                         videoWrapper.father.isHandlingForQueue2 = false;
+                        fprintf(stdout, "readData() allAVPacketsSize: %ld\n",
+                                videoWrapper.father.queue1->allAVPacketsSize);
                         // 开始解码
                         fprintf(stdout, "readData() 开始解码\n");
-                        /*if (handleDataThread == NULL) {
-                            fprintf(stdout, "readData() SDL_CreateThread(handleData, NULL, NULL)\n");
-                            handleDataThread = SDL_CreateThread(handleData, NULL, NULL);
-                        }*/
-
-                        /*std::lock_guard<std::mutex> lk(lockMutex);
-                        fprintf(stdout, "readData() lockCond.notify_one()\n");
-                        lockCond.notify_one();*/
-
+                        // 唤醒线程
+                        pthread_mutex_lock(&lockMutex);
                         fprintf(stdout, "readData() pthread_cond_signal()\n");
+                        // 相当于java的notify()
                         pthread_cond_signal(&lockCondition);
+                        pthread_mutex_unlock(&lockMutex);
                     }
                 } else if (!videoWrapper.father.isHandlingForQueue2) {
                     videoWrapper.father.readFramesCount++;
@@ -1019,19 +998,13 @@ void *readData(void *opaque) {
 void *handleData(void *opaque) {
     printf("%s\n", "handleData() start");
 
-    /*std::unique_lock<std::mutex> lk(lockMutex);
-    fprintf(stdout, "handleData() lockCond.wait() start\n");
-    lockCond.wait(lk,
-                  [] {
-                      //return videoWrapper.father.isHandlingForQueue1;
-                      return true;
-                  });
-    fprintf(stdout, "handleData() lockCond.wait() end\n");
-    lk.unlock();*/
-
+    // 线程等待
+    pthread_mutex_lock(&lockMutex);
     fprintf(stdout, "handleData() pthread_cond_wait() start\n");
+    // 相当于java的wait()
     pthread_cond_wait(&lockCondition, &lockMutex);
     fprintf(stdout, "handleData() pthread_cond_wait() end\n");
+    pthread_mutex_unlock(&lockMutex);
 
     clock_t startTime = clock();
     fprintf(stdout, "handleData() startTime: %ld\n", startTime);
@@ -1287,8 +1260,6 @@ int alexanderAudioPlayerWithSDL() {
         return -1;
     }
 
-    initAVPacketQueue(&audioWrapper.avPacketQueue);
-
     // 创建子线程.audioRender和audioRender函数中的代码就是在子线程中执行的
     audioWrapper.father.renderThread = SDL_CreateThread(audioRender, NULL, NULL);
 
@@ -1346,53 +1317,24 @@ int alexanderVideoPlayerWithSDL() {
     videoWrapper.father.queue2 = (struct AVPacketQueue *) malloc(sizeof(struct AVPacketQueue));
     memset(videoWrapper.father.queue1, 0, sizeof(struct AVPacketQueue));
     memset(videoWrapper.father.queue2, 0, sizeof(struct AVPacketQueue));
-    /*initAVPacketQueue(videoWrapper.father.queue1);
-    initAVPacketQueue(videoWrapper.father.queue2);*/
 
-    /*
-    // 不用SDL的线程,不然到时候不好移植
-    // 创建子线程.audioRender和audioRender函数中的代码就是在子线程中执行的
-    SDL_Thread *readDataThread = SDL_CreateThread(readData, NULL, NULL);
-    SDL_Thread *handleDataThread = SDL_CreateThread(handleData, NULL, NULL);
-    // 如果没有下面两个等待函数,那么子线程可能连执行的机会都没有
-    int status = 0;
-    if (readDataThread != NULL) {
-        // 等待readData函数里的代码执行完后才往下走,不然一直阻塞在这里
-        SDL_WaitThread(readDataThread, &status);
-        printf("alexanderVideoPlayerWithSDL() readDataThread   status: %d\n", status);
-        // 线程不要在这里析构
-    }
-    if (handleDataThread != NULL) {
-        SDL_WaitThread(handleDataThread, &status);
-        printf("alexanderVideoPlayerWithSDL() handleDataThread status: %d\n", status);
-    }
-    // 线程在最后析构
-    if (readDataThread != NULL) {
-        SDL_DetachThread(readDataThread);
-        readDataThread = NULL;
-    }
-    if (handleDataThread != NULL) {
-        SDL_DetachThread(handleDataThread);
-        handleDataThread = NULL;
-    }
-    */
-
-    /*// 同步锁
-    pthread_mutex_lock(&lockMutex);
-    // ...
-    pthread_mutex_unlock(&lockMutex);*/
     pthread_t readDataThread, handleDataThread;
+    // 创建线程
     pthread_create(&readDataThread, NULL, readData, NULL);
     pthread_create(&handleDataThread, NULL, handleData, NULL);
+    // 等待线程执行完
     pthread_join(readDataThread, NULL);
     pthread_join(handleDataThread, NULL);
+    // 取消线程
     pthread_cancel(readDataThread);
     pthread_cancel(handleDataThread);
-
-    printf("%s\n", "alexanderVideoPlayerWithSDL() end");
+    pthread_mutex_destroy(&lockMutex);
+    pthread_cond_destroy(&lockCondition);
 
     free(videoWrapper.father.queue1);
     free(videoWrapper.father.queue2);
+
+    printf("%s\n", "alexanderVideoPlayerWithSDL() end");
 
     close2();
 

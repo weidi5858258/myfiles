@@ -263,6 +263,43 @@ int main(int argc, char *argv[]) {
                   });
  fprintf(stdout, "handleData() lockCond.wait() end\n");
  lk.unlock();
+
+ pthread_mutex_t lockMutex = PTHREAD_MUTEX_INITIALIZER;
+ pthread_cond_t lockCondition = PTHREAD_COND_INITIALIZER;
+ // 唤醒线程
+ fprintf(stdout, "readData() pthread_cond_signal()\n");
+ pthread_cond_signal(&lockCondition);
+ // 线程等待
+ fprintf(stdout, "handleData() pthread_cond_wait() start\n");
+ pthread_cond_wait(&lockCondition, &lockMutex);
+ fprintf(stdout, "handleData() pthread_cond_wait() end\n");
+
+    // 不用SDL的线程,不然到时候不好移植
+    // 创建子线程.audioRender和audioRender函数中的代码就是在子线程中执行的
+    SDL_Thread *readDataThread = SDL_CreateThread(readData, NULL, NULL);
+    SDL_Thread *handleDataThread = SDL_CreateThread(handleData, NULL, NULL);
+    // 如果没有下面两个等待函数,那么子线程可能连执行的机会都没有
+    int status = 0;
+    if (readDataThread != NULL) {
+        // 等待readData函数里的代码执行完后才往下走,不然一直阻塞在这里
+        SDL_WaitThread(readDataThread, &status);
+        printf("alexanderVideoPlayerWithSDL() readDataThread   status: %d\n", status);
+        // 线程不要在这里析构
+    }
+    if (handleDataThread != NULL) {
+        SDL_WaitThread(handleDataThread, &status);
+        printf("alexanderVideoPlayerWithSDL() handleDataThread status: %d\n", status);
+    }
+    // 线程在最后析构
+    if (readDataThread != NULL) {
+        SDL_DetachThread(readDataThread);
+        readDataThread = NULL;
+    }
+    if (handleDataThread != NULL) {
+        SDL_DetachThread(handleDataThread);
+        handleDataThread = NULL;
+    }
+
  */
 
 
