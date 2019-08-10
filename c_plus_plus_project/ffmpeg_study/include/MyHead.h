@@ -43,6 +43,9 @@
 #include <map>
 #include <pthread.h>
 
+#include <mutex>
+#include <condition_variable>
+
 extern "C" {// 不能少
 #include <libavcodec/avcodec.h>
 // 摄像头所用

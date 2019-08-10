@@ -241,6 +241,28 @@ int main(int argc, char *argv[]) {
  free(pic);
  fclose(fp);
  fclose(fp1);
+
+ 关于子线程
+ std::mutex lockMutex;
+ std::condition_variable lockCond;
+ // 唤醒线程
+ std::lock_guard<std::mutex> lk(lockMutex);
+ fprintf(stdout, "readData() lockCond.notify_one()\n");
+ lockCond.notify_one();
+ // 线程等待
+ std::unique_lock<std::mutex> lk(lockMutex);
+ fprintf(stdout, "handleData() lockCond.wait() start\n");
+ lockCond.wait(lk,
+                  [] {
+                      // 如果直接返回true的话,不会等待
+                      return true;
+                      // 如果直接返回false的话,一直等待
+                      return false;
+                      // 只有在唤醒的地方创建好条件,然后在这里根据那个条件判断出是true就往下走
+                      return videoWrapper.father.isHandlingForQueue1;
+                  });
+ fprintf(stdout, "handleData() lockCond.wait() end\n");
+ lk.unlock();
  */
 
 
