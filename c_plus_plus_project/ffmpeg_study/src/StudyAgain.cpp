@@ -199,19 +199,7 @@ int audioDecodeFrame() {
                 continue;
             }
 
-            if (audioWrapper.srcNbChannels != audioWrapper.father.srcAVFrame->channels) {
-                fprintf(stdout, "声道数变了 srcNbChannels: %d now: \n",
-                        audioWrapper.srcNbChannels, audioWrapper.father.srcAVFrame->channels);
-            }
-
             //执行到这里我们得到了一个AVFrame(audioWrapper.father.srcAVFrame为解码后的数据)
-            /*decoded_data_size = av_samples_get_buffer_size(NULL,
-                                                           audioWrapper.father.srcAVFrame->channels,
-                    // 这个AVFrame每个声道的采样数
-                                                           audioWrapper.father.srcAVFrame->nb_samples,
-                                                           (enum AVSampleFormat) audioWrapper.father.srcAVFrame->format,
-                                                           1);*/
-
             // 得到这个AVFrame的声音布局,比如立体声
             get_ch_layout_from_decoded_avframe =
                     (audioWrapper.father.srcAVFrame->channel_layout != 0
@@ -222,6 +210,19 @@ int audioDecodeFrame() {
                     :
                     av_get_default_channel_layout(audioWrapper.father.srcAVFrame->channels);
 
+            if (audioWrapper.srcSampleRate != audioWrapper.father.srcAVFrame->sample_rate) {
+                fprintf(stdout, "SampleRate变了 srcSampleRate: %d now: %d\n",
+                        audioWrapper.srcSampleRate, audioWrapper.father.srcAVFrame->sample_rate);
+            }
+            if (audioWrapper.srcAVSampleFormat != audioWrapper.father.srcAVFrame->format) {
+                fprintf(stdout, "AVSampleFormat变了 srcAVSampleFormat: %d now: %d\n",
+                        audioWrapper.srcAVSampleFormat, audioWrapper.father.srcAVFrame->format);
+            }
+            if (audioWrapper.srcChannelLayout != get_ch_layout_from_decoded_avframe) {
+                fprintf(stdout, "ChannelLayout变了 srcChannelLayout: %d now: %d\n",
+                        audioWrapper.srcChannelLayout, get_ch_layout_from_decoded_avframe);
+            }
+
             /***
              接下来判断我们之前设置SDL时设置的声音格式(AV_SAMPLE_FMT_S16)，声道布局，
              采样频率，每个AVFrame的每个声道采样数与
@@ -231,18 +232,27 @@ int audioDecodeFrame() {
             if (audioWrapper.srcSampleRate != audioWrapper.father.srcAVFrame->sample_rate
                 || audioWrapper.srcAVSampleFormat != audioWrapper.father.srcAVFrame->format
                 || audioWrapper.srcChannelLayout != get_ch_layout_from_decoded_avframe) {
+                printf("---------------------------------\n");
+                printf("nowSampleRate       : %d\n", audioWrapper.father.srcAVFrame->sample_rate);
+                printf("nowAVSampleFormat   : %d\n", audioWrapper.father.srcAVFrame->format);
+                printf("nowChannelLayout    : %d\n", get_ch_layout_from_decoded_avframe);
+                printf("nowNbChannels       : %d\n", audioWrapper.father.srcAVFrame->channels);
+                printf("nowNbSamples        : %d\n", audioWrapper.father.srcAVFrame->nb_samples);
+                printf("---------------------------------\n");
+
                 if (audioWrapper.swrContext) {
                     swr_free(&audioWrapper.swrContext);
                 }
                 fprintf(stdout, "audio_state->audioSwrContext swr_alloc_set_opts.\n");
-                audioWrapper.swrContext = swr_alloc_set_opts(NULL,
-                                                             audioWrapper.dstChannelLayout,
-                                                             audioWrapper.dstAVSampleFormat,
-                                                             audioWrapper.dstSampleRate,
-                                                             get_ch_layout_from_decoded_avframe,
-                                                             (enum AVSampleFormat) audioWrapper.father.srcAVFrame->format,
-                                                             audioWrapper.father.srcAVFrame->sample_rate,
-                                                             0, NULL);
+                audioWrapper.swrContext = swr_alloc();
+                swr_alloc_set_opts(audioWrapper.swrContext,
+                                   audioWrapper.dstChannelLayout,
+                                   audioWrapper.dstAVSampleFormat,
+                                   audioWrapper.dstSampleRate,
+                                   get_ch_layout_from_decoded_avframe,
+                                   (enum AVSampleFormat) audioWrapper.father.srcAVFrame->format,
+                                   audioWrapper.father.srcAVFrame->sample_rate,
+                                   0, NULL);
                 if (!audioWrapper.swrContext || swr_init(audioWrapper.swrContext) < 0) {
                     fprintf(stderr, "swr_init() failed\n");
                     break;
@@ -257,22 +267,34 @@ int audioDecodeFrame() {
                 audioWrapper.srcChannelLayout = get_ch_layout_from_decoded_avframe;
             }
 
-            //fprintf(stdout, "audio_state->audioSwrContext is not NULL.\n");
             /***
-             * 转换该AVFrame到设置好的SDL需要的样子，有些旧的代码示例最主要就是少了这一部分，
-             * 往往一些音频能播，一些不能播，这就是原因，比如有些源文件音频恰巧是AV_SAMPLE_FMT_S16的。
-             * swr_convert 返回的是转换后每个声道(channel)的采样数
+             转换该AVFrame到设置好的SDL需要的样子，有些旧的代码示例最主要就是少了这一部分，
+             往往一些音频能播，一些不能播，这就是原因，比如有些源文件音频恰巧是AV_SAMPLE_FMT_S16的。
+             swr_convert 返回的是转换后每个声道(channel)的采样数
              */
-            // const uint8_t *in[] = { audio_state->audio_avframe->data[0] };
-            uint8_t *out[] = {audioWrapper.father.outBuffer2};
+            unsigned char *out[] = {audioWrapper.father.outBuffer2};
             int out_count = sizeof(audioWrapper.father.outBuffer2)
                             / audioWrapper.dstNbChannels
                             / av_get_bytes_per_sample(audioWrapper.dstAVSampleFormat);
-            const uint8_t **in = (const uint8_t **) audioWrapper.father.srcAVFrame->extended_data;
+            const unsigned char **in = (const unsigned char **) audioWrapper.father.srcAVFrame->extended_data;
             int in_count = audioWrapper.father.srcAVFrame->nb_samples;
             get_nb_samples_per_channel = swr_convert(audioWrapper.swrContext,
-                                                     out, out_count,
-                                                     in, in_count);
+                                                     out,
+                                                     out_count,
+                                                     in,
+                                                     in_count);
+            /***
+             struct SwrContext *s
+             uint8_t **out
+             int out_count
+             const uint8_t **in
+             int in_count
+             swr_convert(audioWrapper.swrContext,
+                        audioWrapper.father.dstAVFrame->data,
+                        audioWrapper.father.outBufferSize,
+                        (const uint8_t **) audioWrapper.father.srcAVFrame->data,
+                        audioWrapper.srcNbSamples);
+             */
             if (get_nb_samples_per_channel < 0) {
                 fprintf(stderr, "swr_convert() failed\n");
                 break;
@@ -334,7 +356,7 @@ void sdlAudioCallback(void *userdata, uint8_t *sdl_need_stream_data, int sdl_max
         }
 
         memcpy(sdl_need_stream_data,
-               (uint8_t *) audioWrapper.father.outBuffer3 + audioWrapper.decodedDataSizeIndex,
+               (unsigned char *) audioWrapper.father.outBuffer3 + audioWrapper.decodedDataSizeIndex,
                max_handle_data_size);
         sdl_max_handle_data_size -= max_handle_data_size;
         sdl_need_stream_data += max_handle_data_size;
@@ -1171,7 +1193,7 @@ void *handleAudioData(void *opaque) {
             swr_convert(audioWrapper.swrContext,
                         audioWrapper.father.dstAVFrame->data,
                         audioWrapper.srcNbSamples,
-                        (const uint8_t **) audioWrapper.father.srcAVFrame->data,
+                        (const unsigned char **) audioWrapper.father.srcAVFrame->data,
                         audioWrapper.srcNbSamples);
         }
         av_packet_unref(avPacket);
