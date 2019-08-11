@@ -27,8 +27,13 @@ typedef struct AVPacketQueue {
     int64_t allAVPacketsSize = 0;
 };
 
+#define TYPE_UNKNOW -1
+#define TYPE_AUDIO 1
+#define TYPE_VIDEO 2
+
 // 子类都要用到的部分
 struct Wrapper {
+    int type = TYPE_UNKNOW;
     AVFormatContext *avFormatContext = NULL;
     AVCodecContext *avCodecContext = NULL;
     // 解码器
@@ -346,6 +351,8 @@ void sdlAudioCallback(void *userdata, uint8_t *sdl_need_stream_data, int sdl_max
         && audioWrapper.father.queue2->allAVPacketsCount == 0
         /*&& !audioWrapper.father.isHandlingForQueue1
         && !audioWrapper.father.isHandlingForQueue2*/) {
+        fprintf(stdout, "sdlAudioCallback() isHandlingForQueue1: %d\n", audioWrapper.father.isHandlingForQueue1);
+        fprintf(stdout, "sdlAudioCallback() isHandlingForQueue2: %d\n", audioWrapper.father.isHandlingForQueue2);
         // 唤醒线程
         pthread_mutex_lock(&lockMutex);
         fprintf(stdout, "sdlAudioCallback() pthread_cond_signal() return\n");
@@ -1082,8 +1089,9 @@ void *readData(void *opaque) {
                     }
                 }
 
-                // 为了调用initAudioSDL()
-                if (audioWrapper.dstSDLAudioSpec.channels == 0) {
+                // 如果是音频时为了调用initAudioSDL()
+                if ((wrapper->type == TYPE_AUDIO && audioWrapper.dstSDLAudioSpec.channels == 0)
+                    || wrapper->type == TYPE_VIDEO) {
                     // 唤醒线程
                     pthread_mutex_lock(&lockMutex);
                     fprintf(stdout, "readData() pthread_cond_signal() break\n");
@@ -1111,8 +1119,9 @@ void *readData(void *opaque) {
                                 wrapper->queue1->allAVPacketsSize);
                         // 开始解码
                         fprintf(stdout, "readData() 开始解码\n");
-                        // 为了调用initAudioSDL()
-                        if (audioWrapper.dstSDLAudioSpec.channels == 0) {
+                        // 如果是音频时为了调用initAudioSDL()
+                        if ((wrapper->type == TYPE_AUDIO && audioWrapper.dstSDLAudioSpec.channels == 0)
+                            || wrapper->type == TYPE_VIDEO) {
                             // 唤醒线程
                             pthread_mutex_lock(&lockMutex);
                             fprintf(stdout, "readData() pthread_cond_signal()\n");
@@ -1422,6 +1431,7 @@ int alexanderAudioPlayerWithSDL() {
     printf("%s\n", "alexanderAudioPlayerWithSDL() start");
 
     memset(&audioWrapper, 0, sizeof(struct AudioWrapper));
+    audioWrapper.father.type = TYPE_AUDIO;
 
     if (initSDL() < 0) {
         return -1;
@@ -1472,7 +1482,7 @@ int alexanderAudioPlayerWithSDL() {
 
     close2();
 
-    printf("%s\n", "alexanderAudioPlayerWithSDL() start");
+    printf("%s\n", "alexanderAudioPlayerWithSDL() end");
 }
 
 /***
@@ -1482,6 +1492,7 @@ int alexanderVideoPlayerWithSDL() {
     printf("%s\n", "alexanderVideoPlayerWithSDL() start");
 
     memset(&videoWrapper, 0, sizeof(struct VideoWrapper));
+    videoWrapper.father.type = TYPE_VIDEO;
 
     // initAV();
     if (initSDL() < 0) {
