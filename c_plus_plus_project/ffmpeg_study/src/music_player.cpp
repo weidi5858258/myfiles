@@ -412,24 +412,24 @@ int stream_component_open(AudioState *audio_state, int audio_stream_index) {
     }
 
     wanted_nb_channels = av_get_channel_layout_nb_channels(wanted_channel_layout);
+    fprintf(stdout, "wanted_nb_channels = %d\n", wanted_nb_channels);
     if (wanted_nb_channels <= 0 || wanted_sample_rate <= 0) {
         fprintf(stderr, "Invalid sample rate or channel count!\n");
         return -1;
     }
 
     //1.需要为SDL_AudioSpec设置下面这些参数
-    sdl_audio_spec.channels = wanted_nb_channels;
     sdl_audio_spec.freq = wanted_sample_rate;
+    sdl_audio_spec.channels = wanted_nb_channels;
     sdl_audio_spec.format = AUDIO_S16SYS;
     sdl_audio_spec.silence = 0;
     sdl_audio_spec.samples = 1024;
-    sdl_audio_spec.userdata = audio_state;
     sdl_audio_spec.callback = audio_callback;
+    sdl_audio_spec.userdata = audio_state;
 
     //2.
     while (SDL_OpenAudio(&sdl_audio_spec, &spec) < 0) {
-        fprintf(stderr, "SDL_OpenAudio (%d channels): %s\n",
-                sdl_audio_spec.channels, SDL_GetError());
+        fprintf(stderr, "SDL_OpenAudio (%d channels): %s\n", sdl_audio_spec.channels, SDL_GetError());
         sdl_audio_spec.channels = next_nb_channels[FFMIN(7, sdl_audio_spec.channels)];
         if (!sdl_audio_spec.channels) {
             fprintf(stderr,
@@ -437,6 +437,7 @@ int stream_component_open(AudioState *audio_state, int audio_stream_index) {
             return -1;
         }
         wanted_channel_layout = av_get_default_channel_layout(sdl_audio_spec.channels);
+        fprintf(stdout, "wanted_channel_layout = %d\n", wanted_channel_layout);
     }
     if (spec.format != AUDIO_S16SYS) {
         fprintf(stderr, "SDL advised audio format %d is not supported!\n", spec.format);
