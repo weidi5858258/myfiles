@@ -342,10 +342,10 @@ int audioDecodeFrame() {
 void sdlAudioCallback(void *userdata, uint8_t *sdl_need_stream_data, int sdl_max_handle_data_size) {
     int max_handle_data_size, audio_decoded_data_size;
 
-    if (!audioWrapper.father.isHandlingForQueue1
-        && audioWrapper.father.queue1->allAVPacketsCount == 0
-        && !audioWrapper.father.isHandlingForQueue2
-        && audioWrapper.father.queue2->allAVPacketsCount == 0) {
+    if (audioWrapper.father.queue1->allAVPacketsCount == 0
+        && audioWrapper.father.queue2->allAVPacketsCount == 0
+        /*&& !audioWrapper.father.isHandlingForQueue1
+        && !audioWrapper.father.isHandlingForQueue2*/) {
         // 唤醒线程
         pthread_mutex_lock(&lockMutex);
         fprintf(stdout, "sdlAudioCallback() pthread_cond_signal() return\n");
