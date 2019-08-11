@@ -48,8 +48,7 @@ struct Wrapper {
     int handleFramesCount = 0;
     // 存储原始数据
     unsigned char *outBuffer1 = NULL;
-    //unsigned char *outBuffer2 = NULL;
-    DECLARE_ALIGNED(16, unsigned char, outBuffer2)[MAX_AUDIO_FRAME_SIZE * 4];
+    unsigned char *outBuffer2 = NULL;
     unsigned char *outBuffer3 = NULL;
     size_t outBufferSize = 0;
     // 视频使用到sws_scale函数时需要定义这些变量,音频也要用到
@@ -83,6 +82,9 @@ struct AudioWrapper {
     enum AVSampleFormat srcAVSampleFormat = AV_SAMPLE_FMT_NONE;
     // 输出的采样格式16bit PCM
     enum AVSampleFormat dstAVSampleFormat = AV_SAMPLE_FMT_S16;
+
+    // 要播放的数据存在于playBuffer中
+    DECLARE_ALIGNED(16, unsigned char, playBuffer)[MAX_AUDIO_FRAME_SIZE * 4];
 
     //解码一次得到的数据量
     unsigned int decodedDataSize = 0;
@@ -162,18 +164,15 @@ static int getAVPacketFromQueue(struct AVPacketQueue *packet_queue, AVPacket *av
 
 int audioDecodeFrame() {
     int ret, get_nb_samples_per_channel;
-    // 压缩数据
-    AVPacket *avPacket = av_packet_alloc();
-    //下面两个变量的数据就是audio_avpacket中的data和size数据
-    unsigned char *audio_pkt_data = NULL;
-    int audio_pkt_size = 0;
     int got_frame_ptr = 0;
     int64_t get_ch_layout_from_decoded_avframe;
-    int resampled_data_size;
+    // 压缩数据
+    AVPacket *avPacket = av_packet_alloc();
+    unsigned char *audio_pkt_data = NULL;
+    int audio_pkt_size = 0;
+    //AVFrame *decodedAVFrame = audioWrapper.father.srcAVFrame;
 
-    //fprintf(stdout, "%s\n", "audio_decode_frame");
     for (;;) {
-        //fprintf(stdout, "audio_state->audio_pkt_size = %d\n", audio_state->audio_pkt_size);
         while (audio_pkt_size > 0) {
             av_frame_unref(audioWrapper.father.srcAVFrame);
             /***
@@ -272,48 +271,34 @@ int audioDecodeFrame() {
              往往一些音频能播，一些不能播，这就是原因，比如有些源文件音频恰巧是AV_SAMPLE_FMT_S16的。
              swr_convert 返回的是转换后每个声道(channel)的采样数
              */
-            unsigned char *out[] = {audioWrapper.father.outBuffer2};
-            int out_count = sizeof(audioWrapper.father.outBuffer2)
+            unsigned char *out[] = {audioWrapper.playBuffer};
+            int out_count = sizeof(audioWrapper.playBuffer)
                             / audioWrapper.dstNbChannels
                             / av_get_bytes_per_sample(audioWrapper.dstAVSampleFormat);
             const unsigned char **in = (const unsigned char **) audioWrapper.father.srcAVFrame->extended_data;
             int in_count = audioWrapper.father.srcAVFrame->nb_samples;
+            // 转换后的数据存在audioWrapper.outBuffer中,也就是要播放的数据
+            // 大小为audioWrapper.father.srcAVFrame->nb_samples
             get_nb_samples_per_channel = swr_convert(audioWrapper.swrContext,
                                                      out,
                                                      out_count,
                                                      in,
                                                      in_count);
-            /***
-             struct SwrContext *s
-             uint8_t **out
-             int out_count
-             const uint8_t **in
-             int in_count
-             swr_convert(audioWrapper.swrContext,
-                        audioWrapper.father.dstAVFrame->data,
-                        audioWrapper.father.outBufferSize,
-                        (const uint8_t **) audioWrapper.father.srcAVFrame->data,
-                        audioWrapper.srcNbSamples);
-             */
             if (get_nb_samples_per_channel < 0) {
                 fprintf(stderr, "swr_convert() failed\n");
                 break;
             }
-            if (get_nb_samples_per_channel
-                == sizeof(audioWrapper.father.outBuffer2) / audioWrapper.dstNbChannels
-                   / av_get_bytes_per_sample(audioWrapper.dstAVSampleFormat)) {
+            if (get_nb_samples_per_channel == out_count) {
                 fprintf(stderr,
                         "warning: audio buffer audio_state probably too small\n");
                 swr_init(audioWrapper.swrContext);
             }
-            audioWrapper.father.outBuffer3 = audioWrapper.father.outBuffer2;
 
-            //声道数 x 每声道采样数 x 每个采样字节数
-            resampled_data_size = audioWrapper.dstNbChannels
-                                  * get_nb_samples_per_channel
-                                  * av_get_bytes_per_sample(audioWrapper.dstAVSampleFormat);
+            // 声道数 x 每个声道采样数 x 每个样本字节数
             // We have data, return it and come back for more later
-            return resampled_data_size;
+            return audioWrapper.dstNbChannels
+                   * get_nb_samples_per_channel
+                   * av_get_bytes_per_sample(audioWrapper.dstAVSampleFormat);
         }//while end
 
         if (avPacket->data) {
@@ -341,7 +326,7 @@ void sdlAudioCallback(void *userdata, uint8_t *sdl_need_stream_data, int sdl_max
             if (audio_decoded_data_size < 0) {
                 /* silence */
                 audioWrapper.decodedDataSize = 1024;
-                memset(audioWrapper.father.outBuffer3, 0, audioWrapper.decodedDataSize);
+                memset(audioWrapper.playBuffer, 0, audioWrapper.decodedDataSize);
             } else {
                 audioWrapper.decodedDataSize = audio_decoded_data_size;
             }
@@ -356,7 +341,7 @@ void sdlAudioCallback(void *userdata, uint8_t *sdl_need_stream_data, int sdl_max
         }
 
         memcpy(sdl_need_stream_data,
-               (unsigned char *) audioWrapper.father.outBuffer3 + audioWrapper.decodedDataSizeIndex,
+               (unsigned char *) audioWrapper.playBuffer + audioWrapper.decodedDataSizeIndex,
                max_handle_data_size);
         sdl_max_handle_data_size -= max_handle_data_size;
         sdl_need_stream_data += max_handle_data_size;
@@ -1363,7 +1348,7 @@ void close2() {
     }
     if (audioWrapper.father.outBuffer2 != NULL) {
         av_free(audioWrapper.father.outBuffer2);
-        //audioWrapper.father.outBuffer2 = NULL;
+        audioWrapper.father.outBuffer2 = NULL;
     }
     if (audioWrapper.father.outBuffer3 != NULL) {
         av_free(audioWrapper.father.outBuffer3);
