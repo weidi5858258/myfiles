@@ -198,8 +198,8 @@ int main(int argc, char *argv[]) {
 //    bgra_rgb24_bgr24_yuv420p_player_with_sdl2_pure("/root/视频/tomcat_video/yuv/256_256_yuv420p.yuv");
 //    alexander_playback_pcm();
 
-    alexanderAudioPlayerWithSDL();
-//    alexanderVideoPlayerWithSDL();
+//    alexanderAudioPlayerWithSDL();
+    alexanderVideoPlayerWithSDL();
 //    alexander_music_player("/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3");
 //    alexander_music_player("/root/音乐/alexander_music/冷漠、云菲菲 - 伤心城市.mp3");
 

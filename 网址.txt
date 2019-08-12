@@ -152,6 +152,7 @@ https://blog.csdn.net/u013057253/article/details/82725585 Android硬件控制之
 https://blog.csdn.net/aa425705261/article/details/86288880 Android 通过USB与PLC设备通信(USB转串口)
 https://blog.csdn.net/leixiaohua1020/article/category/1360795/3 雷霄骅(leixiaohua1020)的专栏
 https://rangaofei.github.io/ 有美女看
+https://www.cnblogs.com/meiwubiao/p/7258493.html 解密FFmpeg播放状态控制内幕
 
 
 
