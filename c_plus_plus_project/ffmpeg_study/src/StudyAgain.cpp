@@ -160,12 +160,13 @@ struct VideoWrapper *videoWrapper = NULL;
 
 // 自己电脑上的文件路径
 //char *inFilePath2 = "/root/视频/tomcat_video/流浪的地球.mp4";
-char *inFilePath2 = "/root/视频/tomcat_video/疾速备战.mp4";
+//char *inFilePath2 = "/root/视频/tomcat_video/疾速备战.mp4";
 //char *inFilePath2 = "/root/视频/tomcat_video/shape_of_my_heart.mp4";
 //char *inFilePath2 = "/root/音乐/KuGou/蔡国权-不装饰你的梦.mp3";
 //char *inFilePath2 = "/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3";
 // 公司电脑上的文件路径
 //char *inFilePath2 = "http://ok.xzokzyzy.com/20190606/1940_094739d9/%E6%80%92%E6%B5%B7%E6%BD%9C%E6%B2%99&%E7%A7%A6%E5%B2%AD%E7%A5%9E%E6%A0%91%E7%AC%AC01%E9%9B%86.mp4";
+char *inFilePath2 = "http://xunlei.jingpin88.com/20171026/cQ7hsCrN/mp4/cQ7hsCrN.mp4";
 //char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
 //char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
 //char *inFilePath2 = "/root/视频/tomcat_video/test.mp4";
