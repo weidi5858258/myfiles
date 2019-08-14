@@ -1557,3 +1557,51 @@ nv12_to_rgb32
 伪实时：视频消费延迟超过 3 秒，单向观看实时，通用架构是 CDN + RTMP + HLS，现在基本上所有的直播都是这类技术。
 准实时： 视频消费延迟 1 ~ 3 秒，能进行双方互动但互动有障碍。有些直播网站通过 TCP/UDP + FLV 已经实现了这类技术，YY 直播属于这类技术。
 真实时：视频消费延迟 < 1秒，平均 500 毫秒。这类技术是真正的实时技术，人和人交谈没有明显延迟感。QQ、微信、Skype 和 WebRTC 等都已经实现了这类技术。
+
+ffmpeg获取视频时长，Duration: 00:00:00.00的解决方案
+情况：用了ffmpeg把直播视频流录制为视频了，用ffmpeg -i d://a.mp4 查看视频的时长，结果获得了Duration: 00:00:00.00, start: 0.022000, bitrate: N/A
+解决办法：用ffmpeg把这个视频再次转码换个名字就行
+ffmpeg -i d://a.mp4 -c copy -f mp4 -i d://b.mp4
+
+可以根据pts来计算一桢在整个视频中的时间位置：
+timestamp(秒) = pts * av_q2d(st->time_base)
+计算视频长度的方法：
+time(秒) = st->duration * av_q2d(st->time_base)
+时间基转换公式
+timestamp(ffmpeg内部时间戳) = AV_TIME_BASE * time(秒)
+time(秒) = AV_TIME_BASE_Q * timestamp(ffmpeg内部时间戳)
+所以当需要把视频跳转到N秒的时候可以使用下面的方法：
+int64_t timestamp = N * AV_TIME_BASE; 
+av_seek_frame(fmtctx, index_of_video, timestamp, AVSEEK_FLAG_BACKWARD);
+ffmpeg同样为我们提供了不同时间基之间的转换函数：
+int64_t av_rescale_q(int64_t a, AVRational bq, AVRational cq)
+这个函数的作用是计算a * bq / cq，来把时间戳从一个时基调整到另外一个时基。在进行时基转换的时候，我们应该首选这个函数，因为它可以避免溢出的情况发生。
+
+int av_seek_frame(AVFormatContext *s, int stream_index, int64_t timestamp, int flags);
+timestamp：要seek的时间点，以time_base或者AV_TIME_BASE为单位。
+Flags：seek标志，可以设置为按字节，在按时间seek时取该点之前还是之后的关键帧，以及不按关键帧seek等.
+seek功能的实现
+要转跳到视频100秒（100 000毫秒）处的第一个I帧（如果没有则向前找第一个）：
+av_seek_frame(pFormatCtx, vid_index, 100000*vid_time_scale/time_base, AVSEEK_FLAG_BACKWARD);
+跳到音频80秒（80 000毫秒）处的帧（采样）：
+av_seek_frame(pFormatCtx, aud_index, 80000*aud_time_scale/ time_base, AVSEEK_FLAG_BACKWARD);
+跳到文件开始的地方开始播放：
+av_seek_frame(pFormatCtx, vid_index, 0, AVSEEK_FLAG_BACKWARD);
+上面的time_scale、time_base都能通过流信息获取到
+AVSEEK_FLAG_BACKWARD  是seek到请求的timestamp之前最近的关键帧
+AVSEEK_FLAG_BYTE      是基于字节位置的查找
+AVSEEK_FLAG_ANY       是可以seek到任意帧，注意不一定是关键帧，因此使用时可能会导致花屏
+AVSEEK_FLAG_FRAME     是基于帧数量快进
+
+
+ret = av_read_frame(pFormatCtx, packet);
+if (ret < 0)
+{
+    ret = av_seek_frame(pFormatCtx, videoindex, pFormatCtx->streams[videoindex]->start_time, 0);//seek到视频的开始位置
+    if (ret<0) {
+        printf("av_seek_frame ==video== error\n");
+    }
+    avcodec_flush_buffers(pFormatCtx->streams[videoindex]->codec);//清空解码器的缓存
+    printf("av_seek_frame ==video== error\n");
+    continue;
+}

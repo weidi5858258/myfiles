@@ -223,7 +223,7 @@ int main(int argc, char *argv[]) {
  “LE”代表Little Endian,代表2 Byte采样值的存储方式为高位存在高地址中.
 
  unsigned char相当于byte(标准C中没有byte)
-                  char                           -128~127
+           signed char                           -128~127
  typedef unsigned char		uint8_t;  1个字节 8位  0~255(ffmpeg中常用到)
                   short int                      -32768~32767
  typedef unsigned short int	uint16_t; 2个字节16位  0~65535
