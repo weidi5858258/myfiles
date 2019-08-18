@@ -1605,3 +1605,7 @@ if (ret < 0)
     printf("av_seek_frame ==video== error\n");
     continue;
 }
+
+884736     11
+1382400    
+432000     3
