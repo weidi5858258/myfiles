@@ -1606,6 +1606,35 @@ if (ret < 0)
     continue;
 }
 
-884736     11
-1382400    
-432000     3
+YUV采样方式
+YUV444，YUV422，YUV420。
+YUV 4:4:4采样，每一个Y对应一组UV分量。
+YUV 4:2:2采样，每两个Y共用一组UV分量。
+YUV 4:2:0采样，每四个Y共用一组UV分量。
+YUV存储格式
+YUV存储可以分为两种：packed（打包）和planar（平面）；
+packed：Y、U、V分量穿插着排列，三个分量存在一个Byte型数组里；
+planar：Y、U、V分量分别存在三个Byte型数组中；
+
+YUV444p YUV444sp
+YUV422p YUV422sp
+YUV420p YUV420sp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
