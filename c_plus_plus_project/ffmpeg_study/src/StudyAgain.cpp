@@ -171,29 +171,25 @@ struct VideoWrapper {
 struct AudioWrapper *audioWrapper = NULL;
 struct VideoWrapper *videoWrapper = NULL;
 
-//pthread_mutex_t lockMutex = PTHREAD_MUTEX_INITIALIZER;
-//pthread_cond_t lockCondition = PTHREAD_COND_INITIALIZER;
-
-//格式上下结构体,,可以理解为存储数据流的文件,伴随整个生命周期
-// AVFormatContext相当于Android的MediaExtractor,保存了音视频的Format信息(MediaFormat)
-//AVFormatContext *avFormatContext = NULL;
+//static char *inFilePath2 = "http://xunleib.zuida360.com/1806/%E7%AA%81%E8%A2%AD.BD1280%E9%AB%98%E6%B8%85%E4%B8%AD%E5%AD%97%E7%89%88.mp4";
+//static char *inFilePath2 = "http://ok.xzokzyzy.com/20190606/1940_094739d9/%E6%80%92%E6%B5%B7%E6%BD%9C%E6%B2%99&%E7%A7%A6%E5%B2%AD%E7%A5%9E%E6%A0%91%E7%AC%AC01%E9%9B%86.mp4";
+//static char *inFilePath2 = "http://xunlei.xiazai-zuida.com/1908/%E6%89%AB%E6%AF%922.HD1280%E9%AB%98%E6%B8%85%E5%9B%BD%E8%AF%AD%E4%B8%AD%E5%AD%97%E7%89%88.mp4";
+//static char *inFilePath2 = "http://download.xunleizuida.com/1906/DM%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%80%92%E6%B5%B7QS-01.mp4";
+//static char *inFilePath2 = "http://xunlei.jingpin88.com/20171026/cQ7hsCrN/mp4/cQ7hsCrN.mp4";
 
 // 自己电脑上的文件路径
-//char *inFilePath2 = "/root/视频/tomcat_video/流浪的地球.mp4";
-//char *inFilePath2 = "/root/视频/tomcat_video/疾速备战.mp4";
-char *inFilePath2 = "/root/视频/tomcat_video/痞子英雄2-黎明升起.mp4";
-//char *inFilePath2 = "/root/视频/tomcat_video/shape_of_my_heart.mp4";
-//char *inFilePath2 = "/root/音乐/KuGou/蔡国权-不装饰你的梦.mp3";
-//char *inFilePath2 = "/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3";
+//static char *inFilePath2 = "/root/视频/tomcat_video/流浪的地球.mp4";
+static char *inFilePath2 = "/root/视频/tomcat_video/疾速备战.mp4";
+//static char *inFilePath2 = "/root/视频/tomcat_video/痞子英雄2-黎明升起.mp4";
+//static char *inFilePath2 = "/root/视频/tomcat_video/shape_of_my_heart.mp4";
+//static char *inFilePath2 = "/root/音乐/KuGou/蔡国权-不装饰你的梦.mp3";
+//static char *inFilePath2 = "/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3";
 // 公司电脑上的文件路径
-//char *inFilePath2 = "http://ok.xzokzyzy.com/20190606/1940_094739d9/%E6%80%92%E6%B5%B7%E6%BD%9C%E6%B2%99&%E7%A7%A6%E5%B2%AD%E7%A5%9E%E6%A0%91%E7%AC%AC01%E9%9B%86.mp4";
-//char *inFilePath2 = "http://xunlei.xiazai-zuida.com/1908/%E6%89%AB%E6%AF%922.HD1280%E9%AB%98%E6%B8%85%E5%9B%BD%E8%AF%AD%E4%B8%AD%E5%AD%97%E7%89%88.mp4";
-//char *inFilePath2 = "http://xunlei.jingpin88.com/20171026/cQ7hsCrN/mp4/cQ7hsCrN.mp4";
-//char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
-//char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
-//char *inFilePath2 = "/root/视频/tomcat_video/test.mp4";
-//char *inFilePath2 = "/root/视频/tomcat_video/kingsman.mp4";
-//char *inFilePath2 = "/root/音乐/alexander_music/容易受伤的女人.mp3";
+//static char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
+//static char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
+//static char *inFilePath2 = "/root/视频/tomcat_video/test.mp4";
+//static char *inFilePath2 = "/root/视频/tomcat_video/kingsman.mp4";
+//static char *inFilePath2 = "/root/音乐/alexander_music/容易受伤的女人.mp3";
 
 ///////////////////////////SDL2///////////////////////////
 
@@ -209,25 +205,15 @@ SDL_Event sdlEvent;
 int threadPauseFlag = 0;
 int threadExitFlag = 0;
 
-#define MAX_AUDIO_QUEUE_SIZE (1 * 1024 * 1024)
-#define SDL_AUDIO_BUFFER_SIZE 1024
-#define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
-
-static uint32_t audio_len = 0; // 音频数据缓冲区中未读数据剩余的长度
-static unsigned char *audio_pos = NULL; // 音频缓冲区中读取的位置
-
 static bool isLocal = false;
+static bool needLog = false;
 
 double TIME_DIFFERENCE = 1.000000;// 0.180000
 double audioTimeDifference = 0;
 double videoTimeDifference = 0;
-double totalTimeDifference = 0;
-long totalTimeDifferenceCount = 0;
 long preProgress = 0;
 long videoSleep = 0;
 long sleepStep = 0;
-
-bool needLog = false;
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -382,6 +368,30 @@ int audioDecodeFrame() {
                    * get_nb_samples_per_channel
                    * av_get_bytes_per_sample(audioWrapper->dstAVSampleFormat);
         }//while end
+
+        if (audioWrapper->father->isPausedForUser
+            || audioWrapper->father->isPausedForCache) {
+            bool isPausedForUser = audioWrapper->father->isPausedForUser;
+            if (isPausedForUser) {
+                printf("handleAudioData() wait() User  start\n");
+            } else {
+                printf("handleAudioData() wait() Cache start\n");
+            }
+            pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
+            pthread_cond_wait(&audioWrapper->father->handleLockCondition,
+                              &audioWrapper->father->handleLockMutex);
+            pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
+            if (isPausedForUser) {
+                printf("handleAudioData() wait() User  end\n");
+            } else {
+                printf("handleAudioData() wait() Cache end\n");
+            }
+        }
+
+        if (!audioWrapper->father->isHandling) {
+            // for (;;) end
+            break;
+        }
 
         av_free_packet(avPacket);
 
@@ -862,7 +872,6 @@ int createSwrContent() {
     audioWrapper->father->avPacket = av_packet_alloc();
     // avPacket ---> decodedAVFrame ---> dstAVFrame ---> 播放声音
     audioWrapper->father->decodedAVFrame = av_frame_alloc();
-    // audioWrapper->father->dstAVFrame = av_frame_alloc();
 
     /*int samplesGetBufferSize = av_samples_get_buffer_size(
             audioWrapper->father->dstAVFrame->linesize,
@@ -895,7 +904,6 @@ int createSwrContent() {
      int log_offset, void *log_ctx
      */
     audioWrapper->swrContext = swr_alloc();
-    //audioWrapper->swrContext =
     swr_alloc_set_opts(audioWrapper->swrContext,
                        audioWrapper->dstChannelLayout,  // out_ch_layout
                        audioWrapper->dstAVSampleFormat, // out_sample_fmt
@@ -944,8 +952,6 @@ int createSwsContext() {
     videoWrapper->dstArea = videoWrapper->srcArea;
 
     // avPacket ---> decodedAVFrame ---> wantedAVFrame ---> 渲染画面
-    //videoWrapper->father->decodedAVFrame = av_frame_alloc();
-    //videoWrapper->father->dstAVFrame = av_frame_alloc();
     videoWrapper->father->decodedAVFrame = av_frame_alloc();
     videoWrapper->wantedAVFrame = av_frame_alloc();
 
@@ -1062,88 +1068,6 @@ int pushEventThread(void *opaque) {
     printf("SDL_PushEvent BREAK_EVENT\n");
 
     return 0;
-}
-
-int audioRender(void *opaque) {
-    printf("%s\n", "audioRender() start");
-
-    // 暂停/继续音频回调处理。参数1表暂停,0表继续。
-    // 打开音频设备后默认未启动回调处理,通过调用SDL_PauseAudio(0)来启动回调处理。
-    // 这样就可以在打开音频设备后先为回调函数安全初始化数据,一切就绪后再启动音频回调。
-    // 在暂停期间,会将静音值往音频设备写。
-    SDL_PauseAudio(0);
-
-    AVPacket *srcAVPacket = av_packet_alloc();
-    for (;;) {
-        if (threadExitFlag == 1) {
-            printf("%s\n", "audioRender() break");
-            break;
-        }
-
-        /*if (audioWrapper->avPacketQueue.allAVPacketsSize > MAX_AUDIO_QUEUE_SIZE) {
-            SDL_Delay(10);
-            continue;
-        }*/
-
-        while (1) {
-            // 读取一帧压缩数据放到avPacket
-            int readFrame = av_read_frame(audioWrapper->father->avFormatContext, srcAVPacket);
-            //printf("readFrame           : %d\n", readFrame);
-            if (readFrame < 0) {
-                /*threadExitFlag = 1;
-                break;*/
-            }
-
-            /*if (srcAVPacket->stream_index == audioWrapper->father->streamIndex) {
-                //printf("Audio break.\n");
-                audioWrapper->father->readFramesCount++;
-                putAVPacketToQueue(&audioWrapper->avPacketQueue, srcAVPacket);
-                break;
-            }*/
-        }
-
-        // 把aac数据(压缩数据)写入文件
-        // fwrite(audioWrapper->father->avPacket->data, 1, audioWrapper->father->avPacket->size, fp_aac);
-
-        // 解码一帧压缩数据
-        if (avcodec_send_packet(audioWrapper->father->avCodecContext, srcAVPacket) < 0) {
-            printf("Audio Decode Error.\n");
-            return -1;
-        }
-
-        // 对压缩数据进行解码,解码后的数据放到srcAVFrame(保存的是非压缩数据)
-        while (avcodec_receive_frame(audioWrapper->father->avCodecContext, audioWrapper->father->decodedAVFrame) == 0) {
-            /*swr_convert(audioWrapper->swrContext,
-                        audioWrapper->father->dstAVFrame->data,
-                        audioWrapper->father->outBufferSize,
-                        (const uint8_t **) audioWrapper->father->decodedAVFrame->data,
-                        audioWrapper->srcNbSamples);*/
-
-            // 将音频的采样率转换成本机能播出的采样率
-            swr_convert(audioWrapper->swrContext,
-                        &audioWrapper->father->outBuffer1,
-//                        audioWrapper->father->outBufferSize,
-                        audioWrapper->srcNbSamples,
-                        (const uint8_t **) audioWrapper->father->decodedAVFrame->data,
-                        audioWrapper->srcNbSamples);
-
-            // 在此处等待sdl_audio_callback将之前传递的音频数据播放完再向其中发送新的数据
-            while (audio_len > 0) {
-                SDL_Delay(1);
-            }
-
-            // 将读取到的数据存入音频缓冲区
-            // 记录音频数据的长度
-            audio_len = audioWrapper->father->outBufferSize;
-            //audio_pos = audioWrapper->father->dstAVFrame->data[0];
-            audio_pos = audioWrapper->father->outBuffer1;
-        }
-
-        // av_frame_unref(audioWrapper->father->decodedAVFrame);
-        av_packet_unref(srcAVPacket);
-    }// for(;;) end
-
-    printf("%s\n", "audioRender() end");
 }
 
 int videoRender(void *opaque) {
@@ -1507,7 +1431,7 @@ void *handleAudioData(void *opaque) {
     pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
     printf("handleAudioData() wait() end\n");
 
-    // 调用后会马上回调sdlAudioCallback(...)
+    // 调用后会马上回调sdlAudioCallback(...),所以必须要先有数据
     if (initAudioSDL() < 0) {
         closeAudio();
         return NULL;
@@ -1532,13 +1456,10 @@ void *handleVideoData(void *opaque) {
 
     audioTimeDifference = 0;
     videoTimeDifference = 0;
-    totalTimeDifference = 0;
-    totalTimeDifferenceCount = 0;
-
+    preProgress = 0;
     videoSleep = 0;
     sleepStep = 0;
     long tempSleep = 0;
-    preProgress = 0;
     int64_t prePts = 0;
     int64_t nowPts = 0;
     double timeDifference = 0;
@@ -1549,6 +1470,7 @@ void *handleVideoData(void *opaque) {
             videoWrapper->father->avFormatContext->streams[videoWrapper->father->streamIndex];
     // 必须创建(存放压缩数据,如H264)
     AVPacket *avPacket = av_packet_alloc();
+    AVFrame *decodedAVFrame = videoWrapper->father->decodedAVFrame;
     videoWrapper->father->isHandling = true;
     printf("handleVideoData() for (;;) start\n");
     for (;;) {
@@ -1699,7 +1621,7 @@ void *handleVideoData(void *opaque) {
         // 对压缩数据进行解码,解码后的数据放到decodedAVFrame(保存的是非压缩数据)
         while (1) {
             ret = avcodec_receive_frame(videoWrapper->father->avCodecContext,
-                                        videoWrapper->father->decodedAVFrame);
+                                        decodedAVFrame);
             switch (ret) {
                 case AVERROR(EAGAIN):
                     break;
@@ -1708,7 +1630,7 @@ void *handleVideoData(void *opaque) {
                     videoWrapper->father->isHandling = false;
                     break;
                 case 0: {
-                    nowPts = videoWrapper->father->decodedAVFrame->pts;
+                    nowPts = decodedAVFrame->pts;
                     // 0.040000
                     timeDifference = (nowPts - prePts) * av_q2d(stream->time_base);
                     prePts = nowPts;
@@ -1751,7 +1673,7 @@ void *handleVideoData(void *opaque) {
                     // 如果发现小了,说明视频播放慢了,应丢弃这些帧
                     if (videoTimeDifference < audioTimeDifference) {
                         // break后videoTimeDifference增长的速度会加快
-                        //LOGD("handleVideoData() audio nowPts : %lf\n", audioTimeDifference);
+                        //printf("handleVideoData() audio nowPts : %lf\n", audioTimeDifference);
                         //LOGW("handleVideoData() video nowPts : %lf\n", videoTimeDifference);
                         // switch end
                         break;
@@ -1773,8 +1695,8 @@ void *handleVideoData(void *opaque) {
                     // 对于planar格式的数据（例如YUV420P）,则会分开成data[0],data[1],data[2]...
                     // （YUV420P中data[0]存Y,data[1]存U,data[2]存V）
                     sws_scale(videoWrapper->swsContext,
-                              (const unsigned char *const *) videoWrapper->father->decodedAVFrame->data,
-                              videoWrapper->father->decodedAVFrame->linesize,
+                              (const unsigned char *const *) decodedAVFrame->data,
+                              decodedAVFrame->linesize,
                               0,
                               videoWrapper->srcHeight,
                               videoWrapper->wantedAVFrame->data,
@@ -1789,7 +1711,7 @@ void *handleVideoData(void *opaque) {
                         videoSleep = tempSleep;
                         printf("handleVideoData() sleep  : %ld\n", videoSleep);
                     }
-                    if (videoSleep < 100 && videoSleep > 0) {
+                    if (videoSleep < 45 && videoSleep > 0) {
                         usleep(videoSleep * 1000);
                     } else {
                         if (videoSleep > 0) {
