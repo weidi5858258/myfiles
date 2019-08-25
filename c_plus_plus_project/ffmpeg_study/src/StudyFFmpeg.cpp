@@ -702,8 +702,8 @@ int simplest_ffmpeg_audio_decoder() {
                     /*swr_convert(audioSwrContext,
                                 dstAVFrame->data,
                                 MAX_AUDIO_FRAME_SIZE,
-                                (const uint8_t **) srcAVFrame->data,
-                                srcAVFrame->nb_samples);*/
+                                (const uint8_t **) decodedAVFrame->data,
+                                decodedAVFrame->nb_samples);*/
 
                     printf("index:%5d\tavPacket->pts:%lld\tavPacket->all_pkts_size:%d\n", index, avPacket->pts,
                            avPacket->size);

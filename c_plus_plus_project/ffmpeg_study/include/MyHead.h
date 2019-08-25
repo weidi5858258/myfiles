@@ -95,7 +95,8 @@ extern "C" {// 不能少
 
 };// extern "C" end
 
-#define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
+// 1 second of 48khz 32bit audio
+#define MAX_AUDIO_FRAME_SIZE 192000
 #define AUDIO_INBUF_SIZE 20480
 #define AUDIO_REFILL_THRESH 4096
 

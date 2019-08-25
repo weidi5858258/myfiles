@@ -658,5 +658,23 @@ int alexander_music_player(const char *in_file_name) {
     return 0;
 }
 
+// 视频的话前三个有值(可能是data[0], data[1], data[2]分别存了YUV的值吧)
+/*fprintf(stdout, "handleData() dstAVFrame->linesize[0]: %d\n",
+        videoWrapper->father->dstAVFrame->linesize[0]);
+fprintf(stdout, "handleData() dstAVFrame->linesize[1]: %d\n",
+        videoWrapper->father->dstAVFrame->linesize[1]);
+fprintf(stdout, "handleData() dstAVFrame->linesize[2]: %d\n",
+        videoWrapper->father->dstAVFrame->linesize[2]);
+fprintf(stdout, "handleData() dstAVFrame->linesize[3]: %d\n",
+        videoWrapper->father->dstAVFrame->linesize[3]);
+fprintf(stdout, "handleData() dstAVFrame->linesize[4]: %d\n",
+        videoWrapper->father->dstAVFrame->linesize[4]);
+fprintf(stdout, "handleData() dstAVFrame->linesize[5]: %d\n",
+        videoWrapper->father->dstAVFrame->linesize[5]);
+fprintf(stdout, "handleData() dstAVFrame->linesize[6]: %d\n",
+        videoWrapper->father->dstAVFrame->linesize[6]);
+fprintf(stdout, "handleVideoData() dstAVFrame->linesize[7]: %d\n",
+        videoWrapper->father->dstAVFrame->linesize[7]);*/
+
 
 #endif //MYSTUDY_FFMPEG_MUSIC_PLAYER
