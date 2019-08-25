@@ -1070,51 +1070,6 @@ int pushEventThread(void *opaque) {
     return 0;
 }
 
-int videoRender(void *opaque) {
-    printf("%s\n", "videoRender() start");
-
-    printf("videoRender() sdlEvent.type: %d\n", REFRESH_EVENT);
-    printf("videoRender() sdlEvent.type: %d\n", BREAK_EVENT);
-    printf("videoRender() sdlEvent.type: %d\n", SDL_KEYDOWN);
-    printf("videoRender() sdlEvent.type: %d\n", SDL_QUIT);
-
-    for (;;) {
-        // 不断地接收消息
-        SDL_WaitEvent(&sdlEvent);
-        //printf("SDL_WaitEvent sdlEvent.type: %d\n", sdlEvent.type);
-        switch (sdlEvent.type) {
-            case REFRESH_EVENT: {// 32769
-                break;
-            }
-            case BREAK_EVENT: {// 32770
-                printf("%s\n", "videoRender() BREAK_EVENT");
-                threadExitFlag = 1;
-                break;
-            }
-            case SDL_KEYDOWN: {// 768
-                // Pause
-                if (sdlEvent.key.keysym.sym == SDLK_SPACE) {
-                    printf("%s\n", "videoRender() SDLK_SPACE");
-                    threadPauseFlag = !threadPauseFlag;
-                    continue;
-                }
-            }
-            case SDL_QUIT: {// 256
-                // 关闭播放窗口时会接收到这个事件
-                printf("%s\n", "videoRender() SDL_QUIT");
-                threadExitFlag = 1;
-                continue;
-            }
-            default:
-                continue;
-        }
-
-        break;
-    }// for(;;) end
-
-    printf("%s\n", "videoRender() end");
-}
-
 int64_t getDuration();
 
 void *handleVideoData(void *opaque);
@@ -1446,7 +1401,7 @@ void *handleAudioData(void *opaque) {
 void *handleVideoData(void *opaque) {
     printf("%s\n", "handleVideoData() start");
 
-    // 线程等待
+    // 线程等待(等待第一个队列满了才通知这里停止等待)
     printf("handleVideoData() wait() start\n");
     pthread_mutex_lock(&videoWrapper->father->handleLockMutex);
     pthread_cond_wait(&videoWrapper->father->handleLockCondition,
@@ -1632,6 +1587,7 @@ void *handleVideoData(void *opaque) {
                 case 0: {
                     nowPts = decodedAVFrame->pts;
                     // 0.040000
+                    // 此刻应该显示的图片时间与上一张图片显示的时间的差值就是应该睡眠的时间
                     timeDifference = (nowPts - prePts) * av_q2d(stream->time_base);
                     prePts = nowPts;
                     videoTimeDifference = nowPts * av_q2d(stream->time_base);
@@ -1669,20 +1625,20 @@ void *handleVideoData(void *opaque) {
                         //onPlayed();
                     }
 
+                    // 下面代码是为了让音视频同步(音频那里不作任何处理)
                     // 正常情况下videoTimeDifference比audioTimeDifference大一些
                     // 如果发现小了,说明视频播放慢了,应丢弃这些帧
                     if (videoTimeDifference < audioTimeDifference) {
                         // break后videoTimeDifference增长的速度会加快
                         //printf("handleVideoData() audio nowPts : %lf\n", audioTimeDifference);
-                        //LOGW("handleVideoData() video nowPts : %lf\n", videoTimeDifference);
-                        // switch end
-                        break;
+                        //printf("handleVideoData() video nowPts : %lf\n", videoTimeDifference);
+                        break;// switch end
                     }
                     // 0.177853 0.155691 0.156806 0.154362
-                    double tempTimeDifference = videoTimeDifference - audioTimeDifference;
-                    if (tempTimeDifference > 2.000000) {
+                    if (videoTimeDifference - audioTimeDifference > 2.000000) {
                         // 不好的现象
-                        printf("handleVideoData() video - audio   : %lf\n", tempTimeDifference);
+                        printf("handleVideoData() video - audio   : %lf\n",
+                               (videoTimeDifference - audioTimeDifference));
                     }
                     // 如果videoTimeDifference比audioTimeDifference大出了一定的范围
                     // 那么说明视频播放快了,应等待音频
@@ -1723,7 +1679,8 @@ void *handleVideoData(void *opaque) {
 
                     // SDL Start---------------------
                     // sws_scale()函数不调用,直接播放decodedAVFrame中的数据也可以,只是画质没有转换过的好
-                    SDL_UpdateTexture(sdlTexture, NULL,
+                    SDL_UpdateTexture(sdlTexture,
+                                      NULL,
                                       videoWrapper->wantedAVFrame->data[0],
                                       videoWrapper->wantedAVFrame->linesize[0]);
                     SDL_RenderClear(sdlRenderer);
@@ -1732,11 +1689,10 @@ void *handleVideoData(void *opaque) {
                     SDL_RenderPresent(sdlRenderer);
                     // SDL End-----------------------
 
-                    // switch end
-                    break;
+                    break;// switch end
                 }
                 default:
-                    break;
+                    break;// switch end
             }// switch end
             break;
         }// while(1) end
@@ -2454,6 +2410,84 @@ int initVideoPlayer() {
     return 0;
 }
 
+void *keyEvent(void *opaque) {
+    printf("%s\n", "keyEvent() start");
+
+    printf("keyEvent() sdlEvent.type: %d\n", REFRESH_EVENT);
+    printf("keyEvent() sdlEvent.type: %d\n", BREAK_EVENT);
+    printf("keyEvent() sdlEvent.type: %d\n", SDL_KEYDOWN);
+    printf("keyEvent() sdlEvent.type: %d\n", SDL_QUIT);
+
+    bool isExit = false;
+
+    for (;;) {
+        if (isExit) {
+            break;
+        }
+
+        usleep(10 * 1000);
+        // 不断地接收消息
+        SDL_WaitEvent(&sdlEvent);
+        //printf("SDL_WaitEvent sdlEvent.type: %d\n", sdlEvent.type);
+        switch (sdlEvent.type) {
+            case REFRESH_EVENT: {// 32769
+                break;
+            }
+            case BREAK_EVENT: {// 32770
+                printf("%s\n", "keyEvent() BREAK_EVENT");
+                break;
+            }
+            case SDL_KEYDOWN: {// 768
+                switch (sdlEvent.key.keysym.sym) {
+                    // 空格键
+                    case SDLK_SPACE: {
+                        printf("%s\n", "keyEvent() SDLK_SPACE");
+                        if (isRunning()) {
+                            if (isPlaying()) {
+                                pause();
+                            } else {
+                                play();
+                            }
+                        }
+                        break;
+                    }
+                    case SDLK_UP: {
+                        printf("%s\n", "keyEvent() SDLK_UP");
+                        break;
+                    }
+                    case SDLK_DOWN: {
+                        printf("%s\n", "keyEvent() SDLK_DOWN");
+                        break;
+                    }
+                    case SDLK_LEFT: {
+                        printf("%s\n", "keyEvent() SDLK_LEFT");
+                        break;
+                    }
+                    case SDLK_RIGHT: {
+                        printf("%s\n", "keyEvent() SDLK_RIGHT");
+                        break;
+                    }
+                    default:
+                        break;
+                }
+                break;
+            }
+            case SDL_QUIT: {// 256
+                // 关闭播放窗口时会接收到这个事件
+                printf("%s\n", "keyEvent() SDL_QUIT");
+                isExit = true;
+                release();
+                break;
+            }
+            default:
+                break;
+        }// switch end
+    }// for(;;) end
+
+    printf("%s\n", "keyEvent() end");
+    return NULL;
+}
+
 /***
 
  */
@@ -2518,6 +2552,11 @@ int alexanderVideoPlayerWithSDL() {
     // 创建线程
     pthread_create(&videoReadDataThread, NULL, readData, videoWrapper->father);
 #endif
+
+    pthread_t keyEventThread;
+    pthread_create(&keyEventThread, NULL, keyEvent, NULL);
+    pthread_join(keyEventThread, NULL);
+    pthread_cancel(keyEventThread);
 
 #ifdef USE_AUDIO
     // 等待线程执行完
