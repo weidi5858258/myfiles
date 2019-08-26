@@ -36,9 +36,6 @@
 #define MAX_AVPACKET_COUNT_AUDIO_LOCAL 1000000
 #define MAX_AVPACKET_COUNT_VIDEO_LOCAL 100
 
-#define USE_AUDIO
-//#define USE_VIDEO
-
 typedef struct AVPacketQueue {
     AVPacketList *firstAVPacketList = NULL;
     AVPacketList *lastAVPacketList = NULL;
@@ -171,6 +168,10 @@ struct VideoWrapper {
 struct AudioWrapper *audioWrapper = NULL;
 struct VideoWrapper *videoWrapper = NULL;
 
+//#define USE_AUDIO_CALLBACK
+#define USE_AUDIO
+#define USE_VIDEO
+
 //static char *inFilePath2 = "http://anning.luanniao-zuida.com/1907/%E5%9C%B0%E7%8B%B1%E7%94%B7%E7%88%B5%EF%BC%9A%E8%A1%80%E7%9A%87%E5%90%8E%E5%B4%9B%E8%B5%B7.BD1280%E9%AB%98%E6%B8%85%E4%B8%AD%E8%8B%B1%E5%8F%8C%E5%AD%97%E7%89%88.mp4";
 //static char *inFilePath2 = "http://ok.xzokzyzy.com/20190606/1940_094739d9/%E6%80%92%E6%B5%B7%E6%BD%9C%E6%B2%99&%E7%A7%A6%E5%B2%AD%E7%A5%9E%E6%A0%91%E7%AC%AC01%E9%9B%86.mp4";
 //static char *inFilePath2 = "http://xunlei.xiazai-zuida.com/1908/%E6%89%AB%E6%AF%922.HD1280%E9%AB%98%E6%B8%85%E5%9B%BD%E8%AF%AD%E4%B8%AD%E5%AD%97%E7%89%88.mp4";
@@ -183,13 +184,14 @@ struct VideoWrapper *videoWrapper = NULL;
 //static char *inFilePath2 = "/root/视频/tomcat_video/疾速备战.mp4";
 //static char *inFilePath2 = "/root/视频/tomcat_video/痞子英雄2-黎明升起.mp4";
 //static char *inFilePath2 = "/root/视频/tomcat_video/shape_of_my_heart.mp4";
+//static char *inFilePath2 = "/root/视频/tomcat_video/war3end.mp4";
 //static char *inFilePath2 = "/root/音乐/KuGou/蔡国权-不装饰你的梦.mp3";
-//static char *inFilePath2 = "/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3";
+static char *inFilePath2 = "/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3";
 // 公司电脑上的文件路径
 //static char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
 //static char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
 //static char *inFilePath2 = "/root/视频/tomcat_video/test.mp4";
-static char *inFilePath2 = "/root/视频/tomcat_video/kingsman.mp4";
+//static char *inFilePath2 = "/root/视频/tomcat_video/kingsman.mp4";
 //static char *inFilePath2 = "/root/音乐/alexander_music/容易受伤的女人.mp3";
 
 ///////////////////////////SDL2///////////////////////////
@@ -207,7 +209,7 @@ int threadPauseFlag = 0;
 int threadExitFlag = 0;
 
 static bool isLocal = false;
-static bool needLog = true;
+static bool needLog = false;
 
 double TIME_DIFFERENCE = 1.000000;// 0.180000
 double audioTimeDifference = 0;
@@ -219,6 +221,8 @@ long sleepStep = 0;
 ////////////////////////////////////////////////////////////////////////////////////
 
 static int getAVPacketFromQueue(struct AVPacketQueue *packet_queue, AVPacket *avpacket);
+
+void sdlAudioCallback(void *userdata, uint8_t *sdl_need_stream_data, int sdl_max_handle_data_size);
 
 int initSDL() {
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_TIMER)) {
@@ -247,12 +251,16 @@ int initAudioSDL() {
     // SDL声音缓冲区尺寸,单位是单声道采样点尺寸x通道数
     // audioWrapper->dstSDLAudioSpec.samples = audioWrapper->dstNbSamples;
     audioWrapper->dstSDLAudioSpec.samples = 1024;
-    // 回调函数,若为NULL,则应使用SDL_QueueAudio()机制
-    //audioWrapper->dstSDLAudioSpec.callback = sdlAudioCallback;
-    // 提供给回调函数的参数
-    //audioWrapper->dstSDLAudioSpec.userdata = &audioWrapper;
+
     audioWrapper->dstSDLAudioSpec.callback = NULL;
     audioWrapper->dstSDLAudioSpec.userdata = NULL;
+
+#ifdef USE_AUDIO_CALLBACK
+    // 回调函数,若为NULL,则应使用SDL_QueueAudio()机制
+    audioWrapper->dstSDLAudioSpec.callback = sdlAudioCallback;
+    // 提供给回调函数的参数
+    audioWrapper->dstSDLAudioSpec.userdata = &audioWrapper;
+#endif
 
     const int next_nb_channels[] = {0, 0, 1, 6, 2, 6, 4, 6};
     // 第二步
@@ -1056,7 +1064,7 @@ void *readData(void *opaque) {
     return NULL;
 }
 
-void *handleAudioData(void *opaque) {
+void *handleAudioData2(void *opaque) {
     printf("%s\n", "handleAudioData() start");
 
     // 线程等待
@@ -1071,6 +1079,13 @@ void *handleAudioData(void *opaque) {
         closeAudio();
         return NULL;
     }
+
+    // 现在音频也要睡眠
+    double timeDifference = 0;
+    int64_t prePts = 0;
+    int64_t nowPts = 0;
+    long audioSleep = 0;
+    long tempSleep = 0;
 
     int ret = 0;
     int resampled_data_size = 0;
@@ -1239,6 +1254,10 @@ void *handleAudioData(void *opaque) {
                     audioWrapper->father->isHandling = false;
                     break;
                 case 0: {
+                    nowPts = decodedAVFrame->pts;
+                    timeDifference = (nowPts - prePts) * av_q2d(stream->time_base);
+                    prePts = nowPts;
+
                     if (!audioWrapper->father->isStarted) {
                         audioWrapper->father->isStarted = true;
                     }
@@ -1343,14 +1362,35 @@ void *handleAudioData(void *opaque) {
                         break;
                     }
 
+                    // 单位: 毫秒
+                    /*tempSleep = timeDifference * 1000;
+                    tempSleep -= 3;
+                    if (audioSleep != tempSleep) {
+                        audioSleep = tempSleep;
+                        printf("handleAudioData() sleep  : %ld\n", audioSleep);
+                    }
+                    if (audioSleep < 30 && audioSleep > 0) {
+                        usleep(audioSleep * 1000);
+                    } else {
+                        if (audioSleep > 0) {
+                            // 好像是个比较合理的值
+                            usleep(23 * 1000);
+                        }
+                        // sleep <= 0时不需要sleep
+                    }*/
+
                     // 声道数 x 每个声道采样数 x 每个样本字节数
                     // We have data, return it and come back for more later
                     resampled_data_size = audioWrapper->dstNbChannels
                                           * get_nb_samples_per_channel
                                           * av_get_bytes_per_sample(audioWrapper->dstAVSampleFormat);
+
+                    //Uint32 size = SDL_GetQueuedAudioSize(1);
+                    //printf("handleAudioData() SDL_GetQueuedAudioSize size: %d\n", size);
                     // write
                     ret = SDL_QueueAudio(1, audioWrapper->playBuffer, resampled_data_size);
-                    printf("handleAudioData() SDL_QueueAudio ret: %d\n", ret);
+                    //SDL_ClearQueuedAudio(1);
+                    //printf("handleAudioData() SDL_QueueAudio ret: %d\n", ret);
                     break;// switch end
                 }
                 default:
@@ -1364,8 +1404,20 @@ void *handleAudioData(void *opaque) {
     }// for(;;) end
     printf("handleAudioData() for (;;) end\n");
 
+#ifdef USE_VIDEO
+    while (videoWrapper->father->isHandling) {
+        usleep(1000 * 1000);
+    }
+#else
+    usleep(audioWrapper->father->duration * 1000 * 1000);
+#endif
+
     av_packet_unref(avPacket);
     avPacket = NULL;
+
+    SDL_Event event;
+    event.type = BREAK_EVENT;
+    SDL_PushEvent(&event);
 
     printf("handleAudioData() audio handleFramesCount : %d\n",
            audioWrapper->father->handleFramesCount);
@@ -1378,6 +1430,8 @@ void *handleAudioData(void *opaque) {
     printf("%s\n", "handleAudioData() end");
     return NULL;
 }
+
+void *handleAudioData(void *opaque);
 
 void *handleVideoData(void *opaque) {
     printf("%s\n", "handleVideoData() start");
@@ -1684,6 +1738,10 @@ void *handleVideoData(void *opaque) {
     av_packet_unref(avPacket);
     avPacket = NULL;
 
+    SDL_Event event;
+    event.type = BREAK_EVENT;
+    SDL_PushEvent(&event);
+
     printf("handleVideoData() video handleFramesCount : %d\n",
            videoWrapper->father->handleFramesCount);
     if (videoWrapper->father->readFramesCount == videoWrapper->father->handleFramesCount) {
@@ -1699,7 +1757,9 @@ void *handleVideoData(void *opaque) {
 }
 
 static void closeAudio() {
+    SDL_PauseAudio(1);
     SDL_CloseAudio();
+    SDL_AudioQuit();
     printf("%s\n", "closeAudio() start");
     // audio
     if (audioWrapper->father->avPacket != NULL) {
@@ -2416,6 +2476,7 @@ void *keyEvent(void *opaque) {
             }
             case BREAK_EVENT: {// 32770
                 printf("%s\n", "keyEvent() BREAK_EVENT");
+                isExit = true;
                 break;
             }
             case SDL_KEYDOWN: {// 768
@@ -2510,7 +2571,7 @@ int alexanderVideoPlayerWithSDL() {
     // 线程变量
     pthread_t audioReadDataThread, audioHandleDataThread;
     // 创建线程
-    pthread_create(&audioHandleDataThread, NULL, handleAudioData, NULL);
+    pthread_create(&audioHandleDataThread, NULL, handleAudioData2, NULL);
 #endif
 #ifdef USE_VIDEO
     // video
@@ -2860,6 +2921,10 @@ void sdlAudioCallback(void *userdata, uint8_t *sdl_need_stream_data, int sdl_max
         pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
         pthread_cond_signal(&audioWrapper->father->handleLockCondition);
         pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
+
+        SDL_Event event;
+        event.type = BREAK_EVENT;
+        SDL_PushEvent(&event);
         return;
     }
 
@@ -2895,7 +2960,7 @@ void sdlAudioCallback(void *userdata, uint8_t *sdl_need_stream_data, int sdl_max
     }//while end
 }
 
-void *handleAudioData2(void *opaque) {
+void *handleAudioData(void *opaque) {
     printf("%s\n", "handleAudioData() start");
 
     // 等待读取一定的数据
