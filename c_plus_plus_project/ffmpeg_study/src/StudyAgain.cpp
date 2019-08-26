@@ -33,11 +33,11 @@
 #define MAX_AVPACKET_COUNT_AUDIO_HTTP 3000
 #define MAX_AVPACKET_COUNT_VIDEO_HTTP 3000
 
-#define MAX_AVPACKET_COUNT_AUDIO_LOCAL 100
+#define MAX_AVPACKET_COUNT_AUDIO_LOCAL 1000000
 #define MAX_AVPACKET_COUNT_VIDEO_LOCAL 100
 
 #define USE_AUDIO
-#define USE_VIDEO
+//#define USE_VIDEO
 
 typedef struct AVPacketQueue {
     AVPacketList *firstAVPacketList = NULL;
@@ -171,15 +171,16 @@ struct VideoWrapper {
 struct AudioWrapper *audioWrapper = NULL;
 struct VideoWrapper *videoWrapper = NULL;
 
-//static char *inFilePath2 = "http://xunleib.zuida360.com/1806/%E7%AA%81%E8%A2%AD.BD1280%E9%AB%98%E6%B8%85%E4%B8%AD%E5%AD%97%E7%89%88.mp4";
+//static char *inFilePath2 = "http://anning.luanniao-zuida.com/1907/%E5%9C%B0%E7%8B%B1%E7%94%B7%E7%88%B5%EF%BC%9A%E8%A1%80%E7%9A%87%E5%90%8E%E5%B4%9B%E8%B5%B7.BD1280%E9%AB%98%E6%B8%85%E4%B8%AD%E8%8B%B1%E5%8F%8C%E5%AD%97%E7%89%88.mp4";
 //static char *inFilePath2 = "http://ok.xzokzyzy.com/20190606/1940_094739d9/%E6%80%92%E6%B5%B7%E6%BD%9C%E6%B2%99&%E7%A7%A6%E5%B2%AD%E7%A5%9E%E6%A0%91%E7%AC%AC01%E9%9B%86.mp4";
 //static char *inFilePath2 = "http://xunlei.xiazai-zuida.com/1908/%E6%89%AB%E6%AF%922.HD1280%E9%AB%98%E6%B8%85%E5%9B%BD%E8%AF%AD%E4%B8%AD%E5%AD%97%E7%89%88.mp4";
+//static char *inFilePath2 = "http://xunleib.zuida360.com/1806/%E7%AA%81%E8%A2%AD.BD1280%E9%AB%98%E6%B8%85%E4%B8%AD%E5%AD%97%E7%89%88.mp4";
 //static char *inFilePath2 = "http://download.xunleizuida.com/1906/DM%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%80%92%E6%B5%B7QS-01.mp4";
 //static char *inFilePath2 = "http://xunlei.jingpin88.com/20171026/cQ7hsCrN/mp4/cQ7hsCrN.mp4";
 
 // 自己电脑上的文件路径
 //static char *inFilePath2 = "/root/视频/tomcat_video/流浪的地球.mp4";
-static char *inFilePath2 = "/root/视频/tomcat_video/疾速备战.mp4";
+//static char *inFilePath2 = "/root/视频/tomcat_video/疾速备战.mp4";
 //static char *inFilePath2 = "/root/视频/tomcat_video/痞子英雄2-黎明升起.mp4";
 //static char *inFilePath2 = "/root/视频/tomcat_video/shape_of_my_heart.mp4";
 //static char *inFilePath2 = "/root/音乐/KuGou/蔡国权-不装饰你的梦.mp3";
@@ -188,7 +189,7 @@ static char *inFilePath2 = "/root/视频/tomcat_video/疾速备战.mp4";
 //static char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
 //static char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
 //static char *inFilePath2 = "/root/视频/tomcat_video/test.mp4";
-//static char *inFilePath2 = "/root/视频/tomcat_video/kingsman.mp4";
+static char *inFilePath2 = "/root/视频/tomcat_video/kingsman.mp4";
 //static char *inFilePath2 = "/root/音乐/alexander_music/容易受伤的女人.mp3";
 
 ///////////////////////////SDL2///////////////////////////
@@ -206,7 +207,7 @@ int threadPauseFlag = 0;
 int threadExitFlag = 0;
 
 static bool isLocal = false;
-static bool needLog = false;
+static bool needLog = true;
 
 double TIME_DIFFERENCE = 1.000000;// 0.180000
 double audioTimeDifference = 0;
@@ -218,327 +219,6 @@ long sleepStep = 0;
 ////////////////////////////////////////////////////////////////////////////////////
 
 static int getAVPacketFromQueue(struct AVPacketQueue *packet_queue, AVPacket *avpacket);
-
-int audioDecodeFrame() {
-    int ret, get_nb_samples_per_channel;
-    int got_frame_ptr = 0;
-    int64_t get_ch_layout_from_decoded_avframe;
-    // 压缩数据
-    AVPacket *avPacket = audioWrapper->father->avPacket;
-    unsigned char *audio_pkt_data = NULL;
-    int audio_pkt_size = 0;
-    // decodedAVFrame为解码后的原始数据
-    AVFrame *decodedAVFrame = audioWrapper->father->decodedAVFrame;
-    AVStream *stream =
-            audioWrapper->father->avFormatContext->streams[audioWrapper->father->streamIndex];
-
-    for (;;) {
-        while (audio_pkt_size > 0) {
-            av_frame_unref(decodedAVFrame);
-            /***
-             当AVPacket中装得是音频时,有可能一个AVPacket中有多个AVFrame,
-             而某些解码器只会解出第一个AVFrame,这种情况我们必须循环解码出后续AVFrame.
-             */
-            ret = avcodec_decode_audio4(audioWrapper->father->avCodecContext,
-                                        decodedAVFrame,
-                                        &got_frame_ptr,
-                                        avPacket);
-            if (ret < 0) {
-                fprintf(stderr, "ret = %d\n", ret);
-                // error, skip the frame
-                audio_pkt_size = 0;
-                break;
-            }
-
-            audio_pkt_data += ret;
-            audio_pkt_size -= ret;
-
-            if (!got_frame_ptr) {
-                //fprintf(stderr, "got_frame_ptr = %d\n", got_frame_ptr);
-                continue;
-            }
-
-            if (!audioWrapper->father->isStarted) {
-                audioWrapper->father->isStarted = true;
-            }
-#ifdef USE_VIDEO
-            while (videoWrapper != NULL
-                   && videoWrapper->father != NULL
-                   && !videoWrapper->father->isStarted) {
-                usleep(1000);
-            }
-            audioTimeDifference = decodedAVFrame->pts * av_q2d(stream->time_base);
-            //printf("handleAudioData() nowPts : %lf\n", audioTimeDifference);
-#endif
-
-            // 执行到这里我们得到了一个AVFrame
-            // 得到这个AVFrame的声音布局,比如立体声
-            get_ch_layout_from_decoded_avframe =
-                    (decodedAVFrame->channel_layout != 0
-                     && decodedAVFrame->channels ==
-                        av_get_channel_layout_nb_channels(decodedAVFrame->channel_layout))
-                    ?
-                    decodedAVFrame->channel_layout
-                    :
-                    av_get_default_channel_layout(decodedAVFrame->channels);
-
-            if (audioWrapper->srcSampleRate != decodedAVFrame->sample_rate) {
-                printf("SampleRate变了 srcSampleRate: %d now: %d\n",
-                       audioWrapper->srcSampleRate, decodedAVFrame->sample_rate);
-            }
-            if (audioWrapper->srcAVSampleFormat != decodedAVFrame->format) {
-                printf("AVSampleFormat变了 srcAVSampleFormat: %d now: %d\n",
-                       audioWrapper->srcAVSampleFormat, decodedAVFrame->format);
-            }
-            if (audioWrapper->srcChannelLayout != get_ch_layout_from_decoded_avframe) {
-                printf("ChannelLayout变了 srcChannelLayout: %d now: %d\n",
-                       audioWrapper->srcChannelLayout, get_ch_layout_from_decoded_avframe);
-            }
-
-            /***
-             接下来判断我们之前设置SDL时设置的声音格式(AV_SAMPLE_FMT_S16),声道布局,
-             采样频率,每个AVFrame的每个声道采样数与
-             得到的该AVFrame分别是否相同,如有任意不同,我们就需要swr_convert该AVFrame,
-             然后才能符合之前设置好的SDL的需要,才能播放.
-             */
-            if (audioWrapper->srcSampleRate != decodedAVFrame->sample_rate
-                || audioWrapper->srcAVSampleFormat != decodedAVFrame->format
-                || audioWrapper->srcChannelLayout != get_ch_layout_from_decoded_avframe) {
-                printf("---------------------------------\n");
-                printf("nowSampleRate       : %d\n", decodedAVFrame->sample_rate);
-                printf("nowNbSamples        : %d\n", decodedAVFrame->nb_samples);
-                printf("nowAVSampleFormat   : %d\n", decodedAVFrame->format);
-                printf("nowChannelLayout    : %d\n", get_ch_layout_from_decoded_avframe);
-                printf("nowNbChannels       : %d\n", decodedAVFrame->channels);
-                printf("---------------------------------\n");
-
-                if (audioWrapper->swrContext) {
-                    swr_free(&audioWrapper->swrContext);
-                }
-                printf("audio_state->audioSwrContext swr_alloc_set_opts.\n");
-                audioWrapper->swrContext = swr_alloc();
-                swr_alloc_set_opts(audioWrapper->swrContext,
-                                   audioWrapper->dstChannelLayout,
-                                   audioWrapper->dstAVSampleFormat,
-                                   audioWrapper->dstSampleRate,
-                                   get_ch_layout_from_decoded_avframe,
-                                   (enum AVSampleFormat) decodedAVFrame->format,
-                                   decodedAVFrame->sample_rate,
-                                   0, NULL);
-                if (!audioWrapper->swrContext || swr_init(audioWrapper->swrContext) < 0) {
-                    fprintf(stderr, "swr_init() failed\n");
-                    break;
-                } else {
-                    fprintf(stdout, "audio_state->audioSwrContext is created.\n");
-                }
-
-                audioWrapper->srcSampleRate = decodedAVFrame->sample_rate;
-                audioWrapper->srcNbChannels = decodedAVFrame->channels;
-                audioWrapper->srcAVSampleFormat = (enum AVSampleFormat) decodedAVFrame->format;
-                audioWrapper->srcNbSamples = decodedAVFrame->nb_samples;
-                audioWrapper->srcChannelLayout = get_ch_layout_from_decoded_avframe;
-            }
-
-            /***
-             转换该AVFrame到设置好的SDL需要的样子,有些旧的代码示例最主要就是少了这一部分,
-             往往一些音频能播,一些不能播,这就是原因,比如有些源文件音频恰巧是AV_SAMPLE_FMT_S16的.
-             swr_convert 返回的是转换后每个声道(channel)的采样数
-             */
-            unsigned char *out[] = {audioWrapper->playBuffer};
-            int out_count = sizeof(audioWrapper->playBuffer)
-                            / audioWrapper->dstNbChannels
-                            / av_get_bytes_per_sample(audioWrapper->dstAVSampleFormat);
-            const unsigned char **in = (const unsigned char **) decodedAVFrame->extended_data;
-            int in_count = decodedAVFrame->nb_samples;
-            // 转换后的数据存在audioWrapper->outBuffer中,也就是要播放的数据
-            // 大小为decodedAVFrame->nb_samples
-            get_nb_samples_per_channel = swr_convert(audioWrapper->swrContext,
-                                                     out,
-                                                     out_count,
-                                                     in,
-                                                     in_count);
-            if (get_nb_samples_per_channel < 0) {
-                fprintf(stderr, "swr_convert() failed\n");
-                break;
-            }
-
-            // 声道数 x 每个声道采样数 x 每个样本字节数
-            // We have data, return it and come back for more later
-            return audioWrapper->dstNbChannels
-                   * get_nb_samples_per_channel
-                   * av_get_bytes_per_sample(audioWrapper->dstAVSampleFormat);
-        }//while end
-
-        if (audioWrapper->father->isPausedForUser
-            || audioWrapper->father->isPausedForCache) {
-            bool isPausedForUser = audioWrapper->father->isPausedForUser;
-            if (isPausedForUser) {
-                printf("handleAudioData() wait() User  start\n");
-            } else {
-                printf("handleAudioData() wait() Cache start\n");
-            }
-            pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
-            pthread_cond_wait(&audioWrapper->father->handleLockCondition,
-                              &audioWrapper->father->handleLockMutex);
-            pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
-            if (isPausedForUser) {
-                printf("handleAudioData() wait() User  end\n");
-            } else {
-                printf("handleAudioData() wait() Cache end\n");
-            }
-        }
-
-        if (!audioWrapper->father->isHandling) {
-            // for (;;) end
-            break;
-        }
-
-        av_free_packet(avPacket);
-
-        memset(avPacket, 0, sizeof(*avPacket));
-        if (audioWrapper->father->nextHandle == NEXT_HANDLE_QUEUE1
-            && audioWrapper->father->isReadQueue1Full
-            && audioWrapper->father->queue1->allAVPacketsCount > 0) {
-            audioWrapper->father->handleFramesCount++;
-            getAVPacketFromQueue(audioWrapper->father->queue1, avPacket);
-            if (audioWrapper->father->queue1->allAVPacketsCount == 0) {
-                memset(audioWrapper->father->queue1, 0, sizeof(struct AVPacketQueue));
-                audioWrapper->father->isReadQueue1Full = false;
-                audioWrapper->father->nextHandle = NEXT_HANDLE_QUEUE2;
-                if (needLog) {
-                    printf("handleAudioData() Queue1 用完了\n");
-                    printf("handleAudioData() Queue2 isReadQueue2Full : %d\n",
-                           audioWrapper->father->isReadQueue2Full);
-                    printf("handleAudioData() Queue2 allAVPacketsCount: %d\n",
-                           audioWrapper->father->queue2->allAVPacketsCount);
-                }
-                if (audioWrapper->father->isReading) {
-                    if (needLog) {
-                        printf("handleAudioData() signal() readLockCondition\n");
-                    }
-                    pthread_mutex_lock(&audioWrapper->father->readLockMutex);
-                    pthread_cond_signal(&audioWrapper->father->readLockCondition);
-                    pthread_mutex_unlock(&audioWrapper->father->readLockMutex);
-                }
-            }
-        } else if (audioWrapper->father->nextHandle == NEXT_HANDLE_QUEUE2
-                   && audioWrapper->father->isReadQueue2Full
-                   && audioWrapper->father->queue2->allAVPacketsCount > 0) {
-            audioWrapper->father->handleFramesCount++;
-            getAVPacketFromQueue(audioWrapper->father->queue2, avPacket);
-            if (audioWrapper->father->queue2->allAVPacketsCount == 0) {
-                memset(audioWrapper->father->queue2, 0, sizeof(struct AVPacketQueue));
-                audioWrapper->father->isReadQueue2Full = false;
-                audioWrapper->father->nextHandle = NEXT_HANDLE_QUEUE1;
-                if (needLog) {
-                    printf("handleAudioData() Queue2 用完了\n");
-                    printf("handleAudioData() Queue1 isReadQueue1Full : %d\n",
-                           audioWrapper->father->isReadQueue1Full);
-                    printf("handleAudioData() Queue1 allAVPacketsCount: %d\n",
-                           audioWrapper->father->queue1->allAVPacketsCount);
-                }
-                if (audioWrapper->father->isReading) {
-                    if (needLog) {
-                        printf("handleAudioData() signal() readLockCondition\n");
-                    }
-                    pthread_mutex_lock(&audioWrapper->father->readLockMutex);
-                    pthread_cond_signal(&audioWrapper->father->readLockCondition);
-                    pthread_mutex_unlock(&audioWrapper->father->readLockMutex);
-                }
-            }
-        } else if (audioWrapper->father->isReading
-                   && !audioWrapper->father->isReadQueue1Full
-                   && !audioWrapper->father->isReadQueue2Full) {
-            //onPaused();
-            // 音频Cache引起的暂停
-#ifdef USE_VIDEO
-            // 让视频也同时暂停
-            if (videoWrapper != NULL && videoWrapper->father != NULL) {
-                videoWrapper->father->isPausedForCache = true;
-            }
-#endif
-            audioWrapper->father->isPausedForCache = true;
-            printf("handleAudioData() wait() Cache start\n");
-            pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
-            pthread_cond_wait(&audioWrapper->father->handleLockCondition,
-                              &audioWrapper->father->handleLockMutex);
-            pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
-            printf("handleAudioData() wait() Cache end\n");
-            audioWrapper->father->isPausedForCache = false;
-            // 通知视频结束暂停
-#ifdef USE_VIDEO
-            if (videoWrapper != NULL && videoWrapper->father != NULL) {
-                videoWrapper->father->isPausedForCache = false;
-                pthread_mutex_lock(&videoWrapper->father->handleLockMutex);
-                pthread_cond_signal(&videoWrapper->father->handleLockCondition);
-                pthread_mutex_unlock(&videoWrapper->father->handleLockMutex);
-            }
-#endif
-            //onPlayed();
-            continue;
-        } else if (!audioWrapper->father->isReading
-                   && audioWrapper->father->queue1->allAVPacketsCount == 0
-                   && audioWrapper->father->queue2->allAVPacketsCount == 0) {
-            audioWrapper->father->isHandling = false;
-            // for (;;) end
-            break;
-        }
-
-        audio_pkt_data = avPacket->data;
-        audio_pkt_size = avPacket->size;
-    }//for end
-}
-
-// SDL提供的回调函数,数据只有往这个回调函数的stream中填充数据才能发出声音
-void sdlAudioCallback(void *userdata, uint8_t *sdl_need_stream_data, int sdl_max_handle_data_size) {
-    int max_handle_data_size, audio_decoded_data_size;
-
-    if (!audioWrapper->father->isHandling
-        || (audioWrapper->father->queue1->allAVPacketsCount == 0
-            && audioWrapper->father->queue2->allAVPacketsCount == 0)
-        /*&& !audioWrapper->father->isReadQueue1Full
-        && !audioWrapper->father->isReadQueue2Full*/) {
-        fprintf(stdout, "sdlAudioCallback() isReadQueue1Full: %d\n", audioWrapper->father->isReadQueue1Full);
-        fprintf(stdout, "sdlAudioCallback() isReadQueue2Full: %d\n", audioWrapper->father->isReadQueue2Full);
-        fprintf(stdout, "sdlAudioCallback() pthread_cond_signal() return\n");
-        // 唤醒线程
-        pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
-        pthread_cond_signal(&audioWrapper->father->handleLockCondition);
-        pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
-        return;
-    }
-
-    // 2048(意思就是SDL一次想要读取2048个字节的数据,这些数据放在sdl_need_stream_data中)
-    // printf("sdl_max_handle_data_size = %d\n", sdl_max_handle_data_size);
-    while (sdl_max_handle_data_size > 0) {
-        if (audioWrapper->decodedDataSizeIndex >= audioWrapper->decodedDataSize) {
-            audio_decoded_data_size = audioDecodeFrame();
-            // 4096
-            //fprintf(stdout, "audio_decoded_data_size = %d\n", audio_decoded_data_size);
-
-            if (audio_decoded_data_size < 0) {
-                /* silence */
-                audioWrapper->decodedDataSize = 1024;
-                memset(audioWrapper->playBuffer, 0, audioWrapper->decodedDataSize);
-            } else {
-                audioWrapper->decodedDataSize = audio_decoded_data_size;
-            }
-            audioWrapper->decodedDataSizeIndex = 0;
-        }
-
-        max_handle_data_size = audioWrapper->decodedDataSize - audioWrapper->decodedDataSizeIndex;
-        if (max_handle_data_size > sdl_max_handle_data_size) {
-            max_handle_data_size = sdl_max_handle_data_size;
-        }
-
-        memcpy(sdl_need_stream_data,
-               (unsigned char *) audioWrapper->playBuffer + audioWrapper->decodedDataSizeIndex,
-               max_handle_data_size);
-        sdl_max_handle_data_size -= max_handle_data_size;
-        sdl_need_stream_data += max_handle_data_size;
-        audioWrapper->decodedDataSizeIndex += max_handle_data_size;
-    }//while end
-}
 
 int initSDL() {
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_TIMER)) {
@@ -568,9 +248,11 @@ int initAudioSDL() {
     // audioWrapper->dstSDLAudioSpec.samples = audioWrapper->dstNbSamples;
     audioWrapper->dstSDLAudioSpec.samples = 1024;
     // 回调函数,若为NULL,则应使用SDL_QueueAudio()机制
-    audioWrapper->dstSDLAudioSpec.callback = sdlAudioCallback;
+    //audioWrapper->dstSDLAudioSpec.callback = sdlAudioCallback;
     // 提供给回调函数的参数
-    audioWrapper->dstSDLAudioSpec.userdata = &audioWrapper;
+    //audioWrapper->dstSDLAudioSpec.userdata = &audioWrapper;
+    audioWrapper->dstSDLAudioSpec.callback = NULL;
+    audioWrapper->dstSDLAudioSpec.userdata = NULL;
 
     const int next_nb_channels[] = {0, 0, 1, 6, 2, 6, 4, 6};
     // 第二步
@@ -1377,7 +1059,6 @@ void *readData(void *opaque) {
 void *handleAudioData(void *opaque) {
     printf("%s\n", "handleAudioData() start");
 
-    // 等待读取一定的数据
     // 线程等待
     printf("handleAudioData() wait() start\n");
     pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
@@ -1386,13 +1067,313 @@ void *handleAudioData(void *opaque) {
     pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
     printf("handleAudioData() wait() end\n");
 
-    // 调用后会马上回调sdlAudioCallback(...),所以必须要先有数据
     if (initAudioSDL() < 0) {
         closeAudio();
         return NULL;
     }
 
+    int ret = 0;
+    int resampled_data_size = 0;
+    int get_nb_samples_per_channel = 0;
+    int64_t get_ch_layout_from_decoded_avframe = 0;
+    AVStream *stream =
+            audioWrapper->father->avFormatContext->streams[audioWrapper->father->streamIndex];
+    // 压缩数据
+    AVPacket *avPacket = av_packet_alloc();
+    // decodedAVFrame为解码后的数据
+    AVFrame *decodedAVFrame = audioWrapper->father->decodedAVFrame;
     audioWrapper->father->isHandling = true;
+    printf("handleAudioData() for (;;) start\n");
+    for (;;) {
+        if (audioWrapper->father->isPausedForUser
+            || audioWrapper->father->isPausedForCache) {
+            bool isPausedForUser = audioWrapper->father->isPausedForUser;
+            if (isPausedForUser) {
+                printf("handleAudioData() wait() User  start\n");
+            } else {
+                printf("handleAudioData() wait() Cache start\n");
+            }
+            pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
+            pthread_cond_wait(&audioWrapper->father->handleLockCondition,
+                              &audioWrapper->father->handleLockMutex);
+            pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
+            if (isPausedForUser) {
+                printf("handleAudioData() wait() User  end\n");
+            } else {
+                printf("handleAudioData() wait() Cache end\n");
+            }
+        }
+
+        if (!audioWrapper->father->isHandling) {
+            // for (;;) end
+            break;
+        }
+
+        memset(avPacket, 0, sizeof(*avPacket));
+        if (audioWrapper->father->nextHandle == NEXT_HANDLE_QUEUE1
+            && audioWrapper->father->isReadQueue1Full
+            && audioWrapper->father->queue1->allAVPacketsCount > 0) {
+            audioWrapper->father->handleFramesCount++;
+            getAVPacketFromQueue(audioWrapper->father->queue1, avPacket);
+            if (audioWrapper->father->queue1->allAVPacketsCount == 0) {
+                memset(audioWrapper->father->queue1, 0, sizeof(struct AVPacketQueue));
+                audioWrapper->father->isReadQueue1Full = false;
+                audioWrapper->father->nextHandle = NEXT_HANDLE_QUEUE2;
+                if (needLog) {
+                    printf("handleAudioData() Queue1 用完了\n");
+                    printf("handleAudioData() Queue2 isReadQueue2Full : %d\n",
+                           audioWrapper->father->isReadQueue2Full);
+                    printf("handleAudioData() Queue2 allAVPacketsCount: %d\n",
+                           audioWrapper->father->queue2->allAVPacketsCount);
+                }
+                if (audioWrapper->father->isReading) {
+                    if (needLog) {
+                        printf("handleAudioData() signal() readLockCondition\n");
+                    }
+                    pthread_mutex_lock(&audioWrapper->father->readLockMutex);
+                    pthread_cond_signal(&audioWrapper->father->readLockCondition);
+                    pthread_mutex_unlock(&audioWrapper->father->readLockMutex);
+                }
+            }
+        } else if (audioWrapper->father->nextHandle == NEXT_HANDLE_QUEUE2
+                   && audioWrapper->father->isReadQueue2Full
+                   && audioWrapper->father->queue2->allAVPacketsCount > 0) {
+            audioWrapper->father->handleFramesCount++;
+            getAVPacketFromQueue(audioWrapper->father->queue2, avPacket);
+            if (audioWrapper->father->queue2->allAVPacketsCount == 0) {
+                memset(audioWrapper->father->queue2, 0, sizeof(struct AVPacketQueue));
+                audioWrapper->father->isReadQueue2Full = false;
+                audioWrapper->father->nextHandle = NEXT_HANDLE_QUEUE1;
+                if (needLog) {
+                    printf("handleAudioData() Queue2 用完了\n");
+                    printf("handleAudioData() Queue1 isReadQueue1Full : %d\n",
+                           audioWrapper->father->isReadQueue1Full);
+                    printf("handleAudioData() Queue1 allAVPacketsCount: %d\n",
+                           audioWrapper->father->queue1->allAVPacketsCount);
+                }
+                if (audioWrapper->father->isReading) {
+                    if (needLog) {
+                        printf("handleAudioData() signal() readLockCondition\n");
+                    }
+                    pthread_mutex_lock(&audioWrapper->father->readLockMutex);
+                    pthread_cond_signal(&audioWrapper->father->readLockCondition);
+                    pthread_mutex_unlock(&audioWrapper->father->readLockMutex);
+                }
+            }
+        } else if (audioWrapper->father->isReading
+                   && !audioWrapper->father->isReadQueue1Full
+                   && !audioWrapper->father->isReadQueue2Full) {
+            //onPaused();
+            // 音频Cache引起的暂停
+#ifdef USE_VIDEO
+            // 让视频也同时暂停
+            if (videoWrapper != NULL && videoWrapper->father != NULL) {
+                videoWrapper->father->isPausedForCache = true;
+            }
+#endif
+            audioWrapper->father->isPausedForCache = true;
+            printf("handleAudioData() wait() Cache start\n");
+            pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
+            pthread_cond_wait(&audioWrapper->father->handleLockCondition,
+                              &audioWrapper->father->handleLockMutex);
+            pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
+            printf("handleAudioData() wait() Cache end\n");
+            audioWrapper->father->isPausedForCache = false;
+            // 通知视频结束暂停
+#ifdef USE_VIDEO
+            if (videoWrapper != NULL && videoWrapper->father != NULL) {
+                videoWrapper->father->isPausedForCache = false;
+                pthread_mutex_lock(&videoWrapper->father->handleLockMutex);
+                pthread_cond_signal(&videoWrapper->father->handleLockCondition);
+                pthread_mutex_unlock(&videoWrapper->father->handleLockMutex);
+            }
+#endif
+            //onPlayed();
+            continue;
+        } else if (!audioWrapper->father->isReading
+                   && audioWrapper->father->queue1->allAVPacketsCount == 0
+                   && audioWrapper->father->queue2->allAVPacketsCount == 0) {
+            audioWrapper->father->isHandling = false;
+            // for (;;) end
+            break;
+        }
+
+        if (!avPacket) {
+            if (!audioWrapper->father->isReading
+                && audioWrapper->father->queue1->allAVPacketsCount == 0
+                && audioWrapper->father->queue2->allAVPacketsCount == 0) {
+                // for (;;) end
+                break;
+            }
+            continue;
+        }
+
+        ret = avcodec_send_packet(audioWrapper->father->avCodecContext, avPacket);
+        switch (ret) {
+            case AVERROR(EAGAIN):
+                continue;
+            case AVERROR(EINVAL):
+            case AVERROR(ENOMEM):
+            case AVERROR_EOF:
+                printf("audio 发送数据包到解码器时出错 %d", ret);
+                audioWrapper->father->isHandling = false;
+                break;
+            case 0:
+            default:
+                break;
+        }
+        if (!audioWrapper->father->isHandling) {
+            // for (;;) end
+            break;
+        }
+        while (1) {
+            ret = avcodec_receive_frame(audioWrapper->father->avCodecContext, decodedAVFrame);
+            switch (ret) {
+                // 输出是不可用的,必须发送新的输入
+                case AVERROR(EAGAIN):
+                    break;
+                    // codec打不开,或者是一个encoder
+                case AVERROR(EINVAL):
+                    // 已经完全刷新,不会再有输出帧了
+                case AVERROR_EOF:
+                    audioWrapper->father->isHandling = false;
+                    break;
+                case 0: {
+                    if (!audioWrapper->father->isStarted) {
+                        audioWrapper->father->isStarted = true;
+                    }
+#ifdef USE_VIDEO
+                    while (videoWrapper != NULL
+                           && videoWrapper->father != NULL
+                           && !videoWrapper->father->isStarted) {
+                        usleep(1000);
+                    }
+                    audioTimeDifference = decodedAVFrame->pts * av_q2d(stream->time_base);
+                    //printf("handleAudioData() nowPts : %lf\n", audioTimeDifference);
+#endif
+
+                    // 执行到这里我们得到了一个AVFrame
+                    // 得到这个AVFrame的声音布局,比如立体声
+                    get_ch_layout_from_decoded_avframe =
+                            (decodedAVFrame->channel_layout != 0
+                             && decodedAVFrame->channels ==
+                                av_get_channel_layout_nb_channels(decodedAVFrame->channel_layout))
+                            ?
+                            decodedAVFrame->channel_layout
+                            :
+                            av_get_default_channel_layout(decodedAVFrame->channels);
+
+                    if (audioWrapper->srcSampleRate != decodedAVFrame->sample_rate) {
+                        printf("SampleRate变了 srcSampleRate: %d now: %d\n",
+                               audioWrapper->srcSampleRate, decodedAVFrame->sample_rate);
+                    }
+                    if (audioWrapper->srcAVSampleFormat != decodedAVFrame->format) {
+                        printf("AVSampleFormat变了 srcAVSampleFormat: %d now: %d\n",
+                               audioWrapper->srcAVSampleFormat, decodedAVFrame->format);
+                    }
+                    if (audioWrapper->srcChannelLayout != get_ch_layout_from_decoded_avframe) {
+                        printf("ChannelLayout变了 srcChannelLayout: %d now: %d\n",
+                               audioWrapper->srcChannelLayout, get_ch_layout_from_decoded_avframe);
+                    }
+
+                    /***
+                     接下来判断我们之前设置SDL时设置的声音格式(AV_SAMPLE_FMT_S16),声道布局,
+                     采样频率,每个AVFrame的每个声道采样数与
+                     得到的该AVFrame分别是否相同,如有任意不同,我们就需要swr_convert该AVFrame,
+                     然后才能符合之前设置好的SDL的需要,才能播放.
+                     */
+                    if (audioWrapper->srcSampleRate != decodedAVFrame->sample_rate
+                        || audioWrapper->srcAVSampleFormat != decodedAVFrame->format
+                        || audioWrapper->srcChannelLayout != get_ch_layout_from_decoded_avframe) {
+                        printf("---------------------------------\n");
+                        printf("nowSampleRate       : %d\n", decodedAVFrame->sample_rate);
+                        printf("nowNbSamples        : %d\n", decodedAVFrame->nb_samples);
+                        printf("nowAVSampleFormat   : %d\n", decodedAVFrame->format);
+                        printf("nowChannelLayout    : %d\n", get_ch_layout_from_decoded_avframe);
+                        printf("nowNbChannels       : %d\n", decodedAVFrame->channels);
+                        printf("---------------------------------\n");
+
+                        if (audioWrapper->swrContext) {
+                            swr_free(&audioWrapper->swrContext);
+                        }
+                        printf("audio_state->audioSwrContext swr_alloc_set_opts.\n");
+                        audioWrapper->swrContext = swr_alloc();
+                        swr_alloc_set_opts(audioWrapper->swrContext,
+                                           audioWrapper->dstChannelLayout,
+                                           audioWrapper->dstAVSampleFormat,
+                                           audioWrapper->dstSampleRate,
+                                           get_ch_layout_from_decoded_avframe,
+                                           (enum AVSampleFormat) decodedAVFrame->format,
+                                           decodedAVFrame->sample_rate,
+                                           0, NULL);
+                        if (!audioWrapper->swrContext || swr_init(audioWrapper->swrContext) < 0) {
+                            fprintf(stderr, "swr_init() failed\n");
+                            break;
+                        } else {
+                            fprintf(stdout, "audio_state->audioSwrContext is created.\n");
+                        }
+
+                        audioWrapper->srcSampleRate = decodedAVFrame->sample_rate;
+                        audioWrapper->srcNbChannels = decodedAVFrame->channels;
+                        audioWrapper->srcAVSampleFormat = (enum AVSampleFormat) decodedAVFrame->format;
+                        audioWrapper->srcNbSamples = decodedAVFrame->nb_samples;
+                        audioWrapper->srcChannelLayout = get_ch_layout_from_decoded_avframe;
+                    }
+
+                    /***
+                     转换该AVFrame到设置好的SDL需要的样子,有些旧的代码示例最主要就是少了这一部分,
+                     往往一些音频能播,一些不能播,这就是原因,比如有些源文件音频恰巧是AV_SAMPLE_FMT_S16的.
+                     swr_convert 返回的是转换后每个声道(channel)的采样数
+                     */
+                    unsigned char *out[] = {audioWrapper->playBuffer};
+                    int out_count = sizeof(audioWrapper->playBuffer)
+                                    / audioWrapper->dstNbChannels
+                                    / av_get_bytes_per_sample(audioWrapper->dstAVSampleFormat);
+                    const unsigned char **in = (const unsigned char **) decodedAVFrame->extended_data;
+                    int in_count = decodedAVFrame->nb_samples;
+                    // 转换后的数据存在audioWrapper->outBuffer中,也就是要播放的数据
+                    // 大小为decodedAVFrame->nb_samples
+                    get_nb_samples_per_channel = swr_convert(audioWrapper->swrContext,
+                                                             out,
+                                                             out_count,
+                                                             in,
+                                                             in_count);
+                    if (get_nb_samples_per_channel < 0) {
+                        fprintf(stderr, "swr_convert() failed\n");
+                        break;
+                    }
+
+                    // 声道数 x 每个声道采样数 x 每个样本字节数
+                    // We have data, return it and come back for more later
+                    resampled_data_size = audioWrapper->dstNbChannels
+                                          * get_nb_samples_per_channel
+                                          * av_get_bytes_per_sample(audioWrapper->dstAVSampleFormat);
+                    // write
+                    ret = SDL_QueueAudio(1, audioWrapper->playBuffer, resampled_data_size);
+                    printf("handleAudioData() SDL_QueueAudio ret: %d\n", ret);
+                    break;// switch end
+                }
+                default:
+                    // 合法的解码错误
+                    printf("从解码器接收帧时出错 %d", ret);
+                    break;// switch end
+            }// switch end
+            break;
+        }// while(1) end
+        av_packet_unref(avPacket);
+    }// for(;;) end
+    printf("handleAudioData() for (;;) end\n");
+
+    av_packet_unref(avPacket);
+    avPacket = NULL;
+
+    printf("handleAudioData() audio handleFramesCount : %d\n",
+           audioWrapper->father->handleFramesCount);
+    if (audioWrapper->father->readFramesCount == audioWrapper->father->handleFramesCount) {
+        printf("%s\n", "audioWrapper() audio正常播放完毕");
+    }
+    stop();
+    closeAudio();
 
     printf("%s\n", "handleAudioData() end");
     return NULL;
@@ -2582,6 +2563,360 @@ int alexanderVideoPlayerWithSDL() {
 
     printf("%s\n", "alexanderVideoPlayerWithSDL() end");
     return 0;
+}
+
+/////////////////////////////////////////////////////////////////////
+/***
+ 下面的代码是关于音频回调函数的使用,回调函数用起来感觉不怎么顺手,所以使用SDL_QueueAudio()
+ // 回调函数,若为NULL,则应使用SDL_QueueAudio()机制
+ //audioWrapper->dstSDLAudioSpec.callback = sdlAudioCallback;
+ // 提供给回调函数的参数
+ //audioWrapper->dstSDLAudioSpec.userdata = &audioWrapper;
+ */
+
+int audioDecodeFrame() {
+    int ret, get_nb_samples_per_channel;
+    int got_frame_ptr = 0;
+    int64_t get_ch_layout_from_decoded_avframe;
+    // 压缩数据
+    AVPacket *avPacket = audioWrapper->father->avPacket;
+    unsigned char *audio_pkt_data = NULL;
+    int audio_pkt_size = 0;
+    // decodedAVFrame为解码后的原始数据
+    AVFrame *decodedAVFrame = audioWrapper->father->decodedAVFrame;
+    AVStream *stream =
+            audioWrapper->father->avFormatContext->streams[audioWrapper->father->streamIndex];
+
+    for (;;) {
+        while (audio_pkt_size > 0) {
+            av_frame_unref(decodedAVFrame);
+            /***
+             当AVPacket中装得是音频时,有可能一个AVPacket中有多个AVFrame,
+             而某些解码器只会解出第一个AVFrame,这种情况我们必须循环解码出后续AVFrame.
+             */
+            ret = avcodec_decode_audio4(audioWrapper->father->avCodecContext,
+                                        decodedAVFrame,
+                                        &got_frame_ptr,
+                                        avPacket);
+            if (ret < 0) {
+                fprintf(stderr, "ret = %d\n", ret);
+                // error, skip the frame
+                audio_pkt_size = 0;
+                break;
+            }
+
+            audio_pkt_data += ret;
+            audio_pkt_size -= ret;
+
+            if (!got_frame_ptr) {
+                //fprintf(stderr, "got_frame_ptr = %d\n", got_frame_ptr);
+                continue;
+            }
+
+            if (!audioWrapper->father->isStarted) {
+                audioWrapper->father->isStarted = true;
+            }
+#ifdef USE_VIDEO
+            while (videoWrapper != NULL
+                   && videoWrapper->father != NULL
+                   && !videoWrapper->father->isStarted) {
+                usleep(1000);
+            }
+            audioTimeDifference = decodedAVFrame->pts * av_q2d(stream->time_base);
+            //printf("handleAudioData() nowPts : %lf\n", audioTimeDifference);
+#endif
+
+            // 执行到这里我们得到了一个AVFrame
+            // 得到这个AVFrame的声音布局,比如立体声
+            get_ch_layout_from_decoded_avframe =
+                    (decodedAVFrame->channel_layout != 0
+                     && decodedAVFrame->channels ==
+                        av_get_channel_layout_nb_channels(decodedAVFrame->channel_layout))
+                    ?
+                    decodedAVFrame->channel_layout
+                    :
+                    av_get_default_channel_layout(decodedAVFrame->channels);
+
+            if (audioWrapper->srcSampleRate != decodedAVFrame->sample_rate) {
+                printf("SampleRate变了 srcSampleRate: %d now: %d\n",
+                       audioWrapper->srcSampleRate, decodedAVFrame->sample_rate);
+            }
+            if (audioWrapper->srcAVSampleFormat != decodedAVFrame->format) {
+                printf("AVSampleFormat变了 srcAVSampleFormat: %d now: %d\n",
+                       audioWrapper->srcAVSampleFormat, decodedAVFrame->format);
+            }
+            if (audioWrapper->srcChannelLayout != get_ch_layout_from_decoded_avframe) {
+                printf("ChannelLayout变了 srcChannelLayout: %d now: %d\n",
+                       audioWrapper->srcChannelLayout, get_ch_layout_from_decoded_avframe);
+            }
+
+            /***
+             接下来判断我们之前设置SDL时设置的声音格式(AV_SAMPLE_FMT_S16),声道布局,
+             采样频率,每个AVFrame的每个声道采样数与
+             得到的该AVFrame分别是否相同,如有任意不同,我们就需要swr_convert该AVFrame,
+             然后才能符合之前设置好的SDL的需要,才能播放.
+             */
+            if (audioWrapper->srcSampleRate != decodedAVFrame->sample_rate
+                || audioWrapper->srcAVSampleFormat != decodedAVFrame->format
+                || audioWrapper->srcChannelLayout != get_ch_layout_from_decoded_avframe) {
+                printf("---------------------------------\n");
+                printf("nowSampleRate       : %d\n", decodedAVFrame->sample_rate);
+                printf("nowNbSamples        : %d\n", decodedAVFrame->nb_samples);
+                printf("nowAVSampleFormat   : %d\n", decodedAVFrame->format);
+                printf("nowChannelLayout    : %d\n", get_ch_layout_from_decoded_avframe);
+                printf("nowNbChannels       : %d\n", decodedAVFrame->channels);
+                printf("---------------------------------\n");
+
+                if (audioWrapper->swrContext) {
+                    swr_free(&audioWrapper->swrContext);
+                }
+                printf("audio_state->audioSwrContext swr_alloc_set_opts.\n");
+                audioWrapper->swrContext = swr_alloc();
+                swr_alloc_set_opts(audioWrapper->swrContext,
+                                   audioWrapper->dstChannelLayout,
+                                   audioWrapper->dstAVSampleFormat,
+                                   audioWrapper->dstSampleRate,
+                                   get_ch_layout_from_decoded_avframe,
+                                   (enum AVSampleFormat) decodedAVFrame->format,
+                                   decodedAVFrame->sample_rate,
+                                   0, NULL);
+                if (!audioWrapper->swrContext || swr_init(audioWrapper->swrContext) < 0) {
+                    fprintf(stderr, "swr_init() failed\n");
+                    break;
+                } else {
+                    fprintf(stdout, "audio_state->audioSwrContext is created.\n");
+                }
+
+                audioWrapper->srcSampleRate = decodedAVFrame->sample_rate;
+                audioWrapper->srcNbChannels = decodedAVFrame->channels;
+                audioWrapper->srcAVSampleFormat = (enum AVSampleFormat) decodedAVFrame->format;
+                audioWrapper->srcNbSamples = decodedAVFrame->nb_samples;
+                audioWrapper->srcChannelLayout = get_ch_layout_from_decoded_avframe;
+            }
+
+            /***
+             转换该AVFrame到设置好的SDL需要的样子,有些旧的代码示例最主要就是少了这一部分,
+             往往一些音频能播,一些不能播,这就是原因,比如有些源文件音频恰巧是AV_SAMPLE_FMT_S16的.
+             swr_convert 返回的是转换后每个声道(channel)的采样数
+             */
+            unsigned char *out[] = {audioWrapper->playBuffer};
+            int out_count = sizeof(audioWrapper->playBuffer)
+                            / audioWrapper->dstNbChannels
+                            / av_get_bytes_per_sample(audioWrapper->dstAVSampleFormat);
+            const unsigned char **in = (const unsigned char **) decodedAVFrame->extended_data;
+            int in_count = decodedAVFrame->nb_samples;
+            // 转换后的数据存在audioWrapper->outBuffer中,也就是要播放的数据
+            // 大小为decodedAVFrame->nb_samples
+            get_nb_samples_per_channel = swr_convert(audioWrapper->swrContext,
+                                                     out,
+                                                     out_count,
+                                                     in,
+                                                     in_count);
+            if (get_nb_samples_per_channel < 0) {
+                fprintf(stderr, "swr_convert() failed\n");
+                break;
+            }
+
+            // 声道数 x 每个声道采样数 x 每个样本字节数
+            // We have data, return it and come back for more later
+            return audioWrapper->dstNbChannels
+                   * get_nb_samples_per_channel
+                   * av_get_bytes_per_sample(audioWrapper->dstAVSampleFormat);
+        }//while end
+
+        if (audioWrapper->father->isPausedForUser
+            || audioWrapper->father->isPausedForCache) {
+            bool isPausedForUser = audioWrapper->father->isPausedForUser;
+            if (isPausedForUser) {
+                printf("handleAudioData() wait() User  start\n");
+            } else {
+                printf("handleAudioData() wait() Cache start\n");
+            }
+            pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
+            pthread_cond_wait(&audioWrapper->father->handleLockCondition,
+                              &audioWrapper->father->handleLockMutex);
+            pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
+            if (isPausedForUser) {
+                printf("handleAudioData() wait() User  end\n");
+            } else {
+                printf("handleAudioData() wait() Cache end\n");
+            }
+        }
+
+        if (!audioWrapper->father->isHandling) {
+            // for (;;) end
+            break;
+        }
+
+        av_free_packet(avPacket);
+
+        memset(avPacket, 0, sizeof(*avPacket));
+        if (audioWrapper->father->nextHandle == NEXT_HANDLE_QUEUE1
+            && audioWrapper->father->isReadQueue1Full
+            && audioWrapper->father->queue1->allAVPacketsCount > 0) {
+            audioWrapper->father->handleFramesCount++;
+            getAVPacketFromQueue(audioWrapper->father->queue1, avPacket);
+            if (audioWrapper->father->queue1->allAVPacketsCount == 0) {
+                memset(audioWrapper->father->queue1, 0, sizeof(struct AVPacketQueue));
+                audioWrapper->father->isReadQueue1Full = false;
+                audioWrapper->father->nextHandle = NEXT_HANDLE_QUEUE2;
+                if (needLog) {
+                    printf("handleAudioData() Queue1 用完了\n");
+                    printf("handleAudioData() Queue2 isReadQueue2Full : %d\n",
+                           audioWrapper->father->isReadQueue2Full);
+                    printf("handleAudioData() Queue2 allAVPacketsCount: %d\n",
+                           audioWrapper->father->queue2->allAVPacketsCount);
+                }
+                if (audioWrapper->father->isReading) {
+                    if (needLog) {
+                        printf("handleAudioData() signal() readLockCondition\n");
+                    }
+                    pthread_mutex_lock(&audioWrapper->father->readLockMutex);
+                    pthread_cond_signal(&audioWrapper->father->readLockCondition);
+                    pthread_mutex_unlock(&audioWrapper->father->readLockMutex);
+                }
+            }
+        } else if (audioWrapper->father->nextHandle == NEXT_HANDLE_QUEUE2
+                   && audioWrapper->father->isReadQueue2Full
+                   && audioWrapper->father->queue2->allAVPacketsCount > 0) {
+            audioWrapper->father->handleFramesCount++;
+            getAVPacketFromQueue(audioWrapper->father->queue2, avPacket);
+            if (audioWrapper->father->queue2->allAVPacketsCount == 0) {
+                memset(audioWrapper->father->queue2, 0, sizeof(struct AVPacketQueue));
+                audioWrapper->father->isReadQueue2Full = false;
+                audioWrapper->father->nextHandle = NEXT_HANDLE_QUEUE1;
+                if (needLog) {
+                    printf("handleAudioData() Queue2 用完了\n");
+                    printf("handleAudioData() Queue1 isReadQueue1Full : %d\n",
+                           audioWrapper->father->isReadQueue1Full);
+                    printf("handleAudioData() Queue1 allAVPacketsCount: %d\n",
+                           audioWrapper->father->queue1->allAVPacketsCount);
+                }
+                if (audioWrapper->father->isReading) {
+                    if (needLog) {
+                        printf("handleAudioData() signal() readLockCondition\n");
+                    }
+                    pthread_mutex_lock(&audioWrapper->father->readLockMutex);
+                    pthread_cond_signal(&audioWrapper->father->readLockCondition);
+                    pthread_mutex_unlock(&audioWrapper->father->readLockMutex);
+                }
+            }
+        } else if (audioWrapper->father->isReading
+                   && !audioWrapper->father->isReadQueue1Full
+                   && !audioWrapper->father->isReadQueue2Full) {
+            //onPaused();
+            // 音频Cache引起的暂停
+#ifdef USE_VIDEO
+            // 让视频也同时暂停
+            if (videoWrapper != NULL && videoWrapper->father != NULL) {
+                videoWrapper->father->isPausedForCache = true;
+            }
+#endif
+            audioWrapper->father->isPausedForCache = true;
+            printf("handleAudioData() wait() Cache start\n");
+            pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
+            pthread_cond_wait(&audioWrapper->father->handleLockCondition,
+                              &audioWrapper->father->handleLockMutex);
+            pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
+            printf("handleAudioData() wait() Cache end\n");
+            audioWrapper->father->isPausedForCache = false;
+            // 通知视频结束暂停
+#ifdef USE_VIDEO
+            if (videoWrapper != NULL && videoWrapper->father != NULL) {
+                videoWrapper->father->isPausedForCache = false;
+                pthread_mutex_lock(&videoWrapper->father->handleLockMutex);
+                pthread_cond_signal(&videoWrapper->father->handleLockCondition);
+                pthread_mutex_unlock(&videoWrapper->father->handleLockMutex);
+            }
+#endif
+            //onPlayed();
+            continue;
+        } else if (!audioWrapper->father->isReading
+                   && audioWrapper->father->queue1->allAVPacketsCount == 0
+                   && audioWrapper->father->queue2->allAVPacketsCount == 0) {
+            audioWrapper->father->isHandling = false;
+            // for (;;) end
+            break;
+        }
+
+        audio_pkt_data = avPacket->data;
+        audio_pkt_size = avPacket->size;
+    }//for end
+}
+
+// SDL提供的回调函数,数据只有往这个回调函数的stream中填充数据才能发出声音
+void sdlAudioCallback(void *userdata, uint8_t *sdl_need_stream_data, int sdl_max_handle_data_size) {
+    int max_handle_data_size, audio_decoded_data_size;
+
+    if (!audioWrapper->father->isHandling
+        || (audioWrapper->father->queue1->allAVPacketsCount == 0
+            && audioWrapper->father->queue2->allAVPacketsCount == 0)
+        /*&& !audioWrapper->father->isReadQueue1Full
+        && !audioWrapper->father->isReadQueue2Full*/) {
+        fprintf(stdout, "sdlAudioCallback() isReadQueue1Full: %d\n", audioWrapper->father->isReadQueue1Full);
+        fprintf(stdout, "sdlAudioCallback() isReadQueue2Full: %d\n", audioWrapper->father->isReadQueue2Full);
+        fprintf(stdout, "sdlAudioCallback() pthread_cond_signal() return\n");
+        // 唤醒线程
+        pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
+        pthread_cond_signal(&audioWrapper->father->handleLockCondition);
+        pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
+        return;
+    }
+
+    // 2048(意思就是SDL一次想要读取2048个字节的数据,这些数据放在sdl_need_stream_data中)
+    // printf("sdl_max_handle_data_size = %d\n", sdl_max_handle_data_size);
+    while (sdl_max_handle_data_size > 0) {
+        if (audioWrapper->decodedDataSizeIndex >= audioWrapper->decodedDataSize) {
+            audio_decoded_data_size = audioDecodeFrame();
+            // 4096
+            //fprintf(stdout, "audio_decoded_data_size = %d\n", audio_decoded_data_size);
+
+            if (audio_decoded_data_size < 0) {
+                /* silence */
+                audioWrapper->decodedDataSize = 1024;
+                memset(audioWrapper->playBuffer, 0, audioWrapper->decodedDataSize);
+            } else {
+                audioWrapper->decodedDataSize = audio_decoded_data_size;
+            }
+            audioWrapper->decodedDataSizeIndex = 0;
+        }
+
+        max_handle_data_size = audioWrapper->decodedDataSize - audioWrapper->decodedDataSizeIndex;
+        if (max_handle_data_size > sdl_max_handle_data_size) {
+            max_handle_data_size = sdl_max_handle_data_size;
+        }
+
+        memcpy(sdl_need_stream_data,
+               (unsigned char *) audioWrapper->playBuffer + audioWrapper->decodedDataSizeIndex,
+               max_handle_data_size);
+        sdl_max_handle_data_size -= max_handle_data_size;
+        sdl_need_stream_data += max_handle_data_size;
+        audioWrapper->decodedDataSizeIndex += max_handle_data_size;
+    }//while end
+}
+
+void *handleAudioData2(void *opaque) {
+    printf("%s\n", "handleAudioData() start");
+
+    // 等待读取一定的数据
+    // 线程等待
+    printf("handleAudioData() wait() start\n");
+    pthread_mutex_lock(&audioWrapper->father->handleLockMutex);
+    pthread_cond_wait(&audioWrapper->father->handleLockCondition,
+                      &audioWrapper->father->handleLockMutex);
+    pthread_mutex_unlock(&audioWrapper->father->handleLockMutex);
+    printf("handleAudioData() wait() end\n");
+
+    // 调用后会马上回调sdlAudioCallback(...),所以必须要先有数据
+    if (initAudioSDL() < 0) {
+        closeAudio();
+        return NULL;
+    }
+
+    audioWrapper->father->isHandling = true;
+
+    printf("%s\n", "handleAudioData() end");
+    return NULL;
 }
 
 
