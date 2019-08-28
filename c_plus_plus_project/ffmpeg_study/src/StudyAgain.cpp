@@ -168,7 +168,7 @@ struct VideoWrapper {
 struct AudioWrapper *audioWrapper = NULL;
 struct VideoWrapper *videoWrapper = NULL;
 
-//#define USE_AUDIO_CALLBACK
+#define USE_AUDIO_CALLBACK
 #define USE_AUDIO
 #define USE_VIDEO
 
@@ -176,7 +176,7 @@ struct VideoWrapper *videoWrapper = NULL;
 //static char *inFilePath2 = "http://ok.xzokzyzy.com/20190606/1940_094739d9/%E6%80%92%E6%B5%B7%E6%BD%9C%E6%B2%99&%E7%A7%A6%E5%B2%AD%E7%A5%9E%E6%A0%91%E7%AC%AC01%E9%9B%86.mp4";
 //static char *inFilePath2 = "http://xunlei.xiazai-zuida.com/1908/%E6%89%AB%E6%AF%922.HD1280%E9%AB%98%E6%B8%85%E5%9B%BD%E8%AF%AD%E4%B8%AD%E5%AD%97%E7%89%88.mp4";
 //static char *inFilePath2 = "http://xunleib.zuida360.com/1806/%E7%AA%81%E8%A2%AD.BD1280%E9%AB%98%E6%B8%85%E4%B8%AD%E5%AD%97%E7%89%88.mp4";
-//static char *inFilePath2 = "http://download.xunleizuida.com/1906/DM%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%80%92%E6%B5%B7QS-01.mp4";
+static char *inFilePath2 = "http://vip.zuiku8.com/1808/%E9%9B%B6%E5%8F%B7%E7%97%85%E4%BA%BA.HD1280%E9%AB%98%E6%B8%85%E4%B8%AD%E8%8B%B1%E5%8F%8C%E5%AD%97%E7%89%88.mp4";
 //static char *inFilePath2 = "http://xunlei.jingpin88.com/20171026/cQ7hsCrN/mp4/cQ7hsCrN.mp4";
 
 // 自己电脑上的文件路径
@@ -186,7 +186,7 @@ struct VideoWrapper *videoWrapper = NULL;
 //static char *inFilePath2 = "/root/视频/tomcat_video/shape_of_my_heart.mp4";
 //static char *inFilePath2 = "/root/视频/tomcat_video/war3end.mp4";
 //static char *inFilePath2 = "/root/音乐/KuGou/蔡国权-不装饰你的梦.mp3";
-static char *inFilePath2 = "/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3";
+//static char *inFilePath2 = "/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3";
 // 公司电脑上的文件路径
 //static char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
 //static char *inFilePath2 = "/root/视频/tomcat_video/AC3Plus_mountainbike-cyberlink_1920_1080.mp4";
@@ -1404,13 +1404,13 @@ void *handleAudioData2(void *opaque) {
     }// for(;;) end
     printf("handleAudioData() for (;;) end\n");
 
-#ifdef USE_VIDEO
-    while (videoWrapper->father->isHandling) {
-        usleep(1000 * 1000);
-    }
-#else
-    usleep(audioWrapper->father->duration * 1000 * 1000);
-#endif
+//#ifdef USE_AUDIO_CALLBACK
+//    while (videoWrapper->father->isHandling) {
+//        usleep(1000 * 1000);
+//    }
+//#else
+//    usleep(audioWrapper->father->duration * 1000 * 1000);
+//#endif
 
     av_packet_unref(avPacket);
     avPacket = NULL;
@@ -2571,7 +2571,7 @@ int alexanderVideoPlayerWithSDL() {
     // 线程变量
     pthread_t audioReadDataThread, audioHandleDataThread;
     // 创建线程
-    pthread_create(&audioHandleDataThread, NULL, handleAudioData2, NULL);
+    pthread_create(&audioHandleDataThread, NULL, handleAudioData, NULL);
 #endif
 #ifdef USE_VIDEO
     // video
