@@ -28,7 +28,7 @@ add_executable(
         src/thread_pool_active.c
         #       src/thread_pool_simple.c
         main.cpp
-        include/TestRegularExpression.hpp include/TestClass.hpp)
+        include/TestRegularExpression.hpp include/TestClass.hpp include/TestString.hpp)
 
 #                   下面是加载一些头文件及库文件
 ################################################################

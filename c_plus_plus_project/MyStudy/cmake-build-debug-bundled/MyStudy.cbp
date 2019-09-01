@@ -113,6 +113,9 @@
 		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/include/TestRegularExpression.hpp">
 			<Option target="MyStudy"/>
 		</Unit>
+		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/include/TestString.hpp">
+			<Option target="MyStudy"/>
+		</Unit>
 		<Unit filename="/root/mydev/workspace_github/myfiles/c_plus_plus_project/MyStudy/include/leak_detector_c.hpp">
 			<Option target="MyStudy"/>
 		</Unit>

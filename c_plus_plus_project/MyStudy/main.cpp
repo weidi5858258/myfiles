@@ -14,6 +14,7 @@
 #include "./include/FormatCode.hpp"
 #include "./include/TestRegularExpression.hpp"
 #include "./include/leak_detector_c.hpp"
+#include "./include/TestString.hpp"
 //#include "./include/thread_pool_active.hpp"
 //#include "./include/leak_detector_c.h"
 
@@ -74,7 +75,10 @@ int main(int argc, char **argv) {
 //    TestRegularExpression testRegularExpression;
 //    testRegularExpression.test();
 
-    test(argc, argv);
+    alexander::TestString testString;
+    testString.testSmartPointer();
+
+    //test(argc, argv);
     //basicKnowledge(argc, argv);
 
     printf("------------------------------------------\n");
@@ -84,7 +88,7 @@ int main(int argc, char **argv) {
 
 /***
 类型	输出	例子
-d或i	带符号十进制整形	392
+d或i 带符号十进制整形	392
 u	无符号十进制整形	7235
 o	无符号八进制数	610
 x	无符号十六进制整形	7fa
@@ -171,6 +175,8 @@ int test(int argc, char **argv) {
 }
 
 int basicKnowledge(int argc, char **argv) {
+    // 程序中表示个数的时候从1开始数
+    // 程序中表示位置偏移的时候从0开始数
     char *p1 = "Hello World";
     char **p2 = &p1;
 
