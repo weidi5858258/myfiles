@@ -358,9 +358,22 @@ void test() {
     printf("OOpenGL实现的版本号：%s\n",OpenGLVersion );
     printf("OGLU工具库版本：%s\n", gluVersion);*/
 
+
+
 }
 
 /***
+ int money = 100000;
+ // const在*的左边时,pMoney指向的数据不能改变,pMoney指向的地址可以改变
+ const int * pMoney = &money;
+ int const * pMoney = &money;
+ // const在*的右边时,pMoney指向的数据可以改变,pMoney指向的地址不能改变
+ int * const pMoney = &money;
+ // pMoney指向的数据不能改变,pMoney指向的地址不能改变
+ const int * const pMoney = &money;
+
+ 数组名的本质就是常量指针,因此数组名不能再被赋值
+
  用typedef重定义类型名
  typedef 原类型名 新类型名;
  则以后可以用这个"新类型名"来代替"原类型名"进行使用了.

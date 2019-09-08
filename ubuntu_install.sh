@@ -3,6 +3,7 @@
 # cd /etc/apt
 # /etc/hosts
 
+# ntfsfix /dev/sdb1
 # ntfsfix /dev/sda4
 # display gnome-terminal &
 # unity-control-center

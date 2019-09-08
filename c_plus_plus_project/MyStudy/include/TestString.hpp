@@ -144,6 +144,7 @@ namespace alexander {
         pStr = tempStr;
         cout << *tempStr << endl;
         cout << *pStr << endl;
+
     }
 
 }
