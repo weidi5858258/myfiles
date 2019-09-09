@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 void handleSigIntSignal(int sign) {
-    printf("HandleSignal::handleSigIntSignal():sign = %d\n", sign);
+    printf("HandleSignal::handleSigIntSignal():sign  = %d\n", sign);
 }
 
 void handleSigPipeSignal(int sign) {

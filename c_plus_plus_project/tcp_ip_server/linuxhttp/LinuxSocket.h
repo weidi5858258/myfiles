@@ -61,8 +61,6 @@
 #define PORT 8888
 #define BACKLOG 2
 
-#define PTHREADS_NUM 5
-
 using namespace std;
 
 class LinuxSocket {
