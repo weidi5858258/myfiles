@@ -3631,29 +3631,12 @@ SO_BROADCAST广播选项用于进行广播设置,默认情况下系统的广播�
 
 */
 
-/////////////////////////////声明/////////////////////////////
-
-void test_open(void);
-
-void test_read(void);
-
-void test_write(void);
-
-void test_lseek(void);
-
-int test_start_server(void);
-
-void test_pthread(void);
-
-void test_class(void);
-
-void LinuxSocket::studyHard() {
-
-    test_start_server();
-
-}
 
 /////////////////////////////实现/////////////////////////////
+
+void LinuxSocket::studyHard() {
+    //test_start_server();
+}
 
 void sig_process(int signo) {
     printf("Catch a exit signal.signo: %d\n", signo);
@@ -3678,80 +3661,7 @@ void close_remote_client_sock_fd(int &remote_client_sock_fd) {
 
 // 下面是处理客户端消息的几种不同方式
 
-#define DATA_BUFFER 1024
-
 // 服务器端对客户端的处理
-// sc为客户端的socket描述符
-void process_client_with_read_write(int remote_client_sock_fd) {
-    ssize_t size = 0;
-    // 数据的缓冲区
-    char buffer[DATA_BUFFER];
-    for (;;) {
-        // 从套接字中读取数据放到缓冲区buffer中
-        memset(buffer, 0, sizeof(buffer));
-        size = read(remote_client_sock_fd, buffer, DATA_BUFFER);
-        // 没有数据
-        if (size == 0) {
-            return;
-        } else {
-            // 输出读到的内容,这个函数的作用就是写给谁,这个谁就是“1”
-            // “1”代表标准输出
-            write(1, buffer, size);
-        }
-        // 构建响应字符,为接收到客户端字节的数量
-        sprintf(buffer, "%d bytes altogether\n", size);
-        // 发给客户端
-        write(remote_client_sock_fd, buffer, strlen(buffer) + 1);
-    }
-}
-
-/***
- 这种方式比较好用,且便于理解
- */
-void process_client_with_recv_send(int remote_client_sock_fd) {
-    ssize_t recv_size = -1;
-    ssize_t send_size = -1;
-
-    // 数据的缓冲区
-    char buffer[DATA_BUFFER];
-    for (;;) {
-        // 从套接字中读取数据放到缓冲区buffer中
-        memset(buffer, 0, sizeof(buffer));
-        recv_size = recv(remote_client_sock_fd, buffer, DATA_BUFFER, 0);
-        if (recv_size == -1) {
-            fprintf(stderr, "server recv error. fd = %d\n", remote_client_sock_fd, strerror(errno));
-            close_remote_client_sock_fd(remote_client_sock_fd);
-            return;
-        }
-        if (recv_size == 0) {
-            // 跟客户端断开连接时
-            printf("server没有接收到数据\n");
-            close_remote_client_sock_fd(remote_client_sock_fd);
-            // 不能少
-            return;
-        }
-        // 显示到屏幕
-        write(1, buffer, recv_size);
-
-        memset(buffer, 0, sizeof(buffer));
-        // 构建响应字符,为接收到客户端字节的数量
-        //sprintf(buffer, "服务端已经收到客户端发送过去的 %d 个字节.\n", recv_size);
-        sprintf(buffer, "服务端已经收到客户端发送过去的 %d 个字节\n", recv_size);
-        // 发给客户端
-        send_size = send(remote_client_sock_fd, buffer, strlen(buffer) + 1, 0);
-        if (send_size == -1) {
-            fprintf(stderr, "server send error. fd = %d\n", remote_client_sock_fd, strerror(errno));
-            close_remote_client_sock_fd(remote_client_sock_fd);
-            return;
-        }
-        if (send_size == 0) {
-            printf("server没有发送数据\n");
-            /*return;*/
-        }
-        printf("server send size: %ld\n", send_size);
-    }
-}
-
 /***
  处理过程利用3个向量来完成数据的接收和响应工作.
  先申请3个向量,每个向量的大小为10个字符.
@@ -3811,6 +3721,34 @@ void process_client_with_readv_writev(int remote_client_sock_fd) {
         writev(remote_client_sock_fd, v, 3);
     }
     free(v);
+}
+
+// sc为客户端的socket描述符
+void process_client_with_read_write(int remote_client_sock_fd) {
+    ssize_t size = 0;
+    // 数据的缓冲区
+    char buffer[DATA_BUFFER];
+    for (;;) {
+        // 从套接字中读取数据放到缓冲区buffer中
+        memset(buffer, 0, sizeof(buffer));
+        size = read(remote_client_sock_fd, buffer, DATA_BUFFER);
+        // 没有数据
+        if (size == 0) {
+            return;
+        } else {
+            // 输出读到的内容,这个函数的作用就是写给谁,这个谁就是“1”
+            // “1”代表标准输出
+            write(1, buffer, size);
+        }
+        // 构建响应字符,为接收到客户端字节的数量
+        sprintf(buffer, "%d bytes altogether\n", size);
+        // 发给客户端
+        write(remote_client_sock_fd, buffer, strlen(buffer) + 1);
+    }
+}
+
+void process_client_with_recvfrom_sendto(int remote_client_sock_fd) {
+
 }
 
 void process_client_with_recvmsg_sendmsg(int remote_client_sock_fd) {
@@ -3895,14 +3833,67 @@ void process_client_with_recvmsg_sendmsg(int remote_client_sock_fd) {
     }
 }
 
+/***
+ 这种方式比较好用,且便于理解
+ */
+void process_client_with_recv_send(int remote_client_sock_fd) {
+    ssize_t recv_size = -1;
+    ssize_t send_size = -1;
+
+    // 数据的缓冲区
+    char buffer[DATA_BUFFER];
+    for (;;) {
+        // 从套接字中读取数据放到缓冲区buffer中
+        memset(buffer, 0, sizeof(buffer));
+        recv_size = recv(remote_client_sock_fd, buffer, DATA_BUFFER, 0);
+        if (recv_size == -1) {
+            fprintf(stderr, "server recv error. fd = %d\n", remote_client_sock_fd, strerror(errno));
+            close_remote_client_sock_fd(remote_client_sock_fd);
+            return;
+        }
+        if (recv_size == 0) {
+            // 跟客户端断开连接时
+            printf("server没有接收到数据\n");
+            close_remote_client_sock_fd(remote_client_sock_fd);
+            // 不能少
+            return;
+        }
+        // 显示到屏幕
+        write(1, buffer, recv_size);
+
+        memset(buffer, 0, sizeof(buffer));
+        // 构建响应字符,为接收到客户端字节的数量
+        //sprintf(buffer, "服务端已经收到客户端发送过去的 %d 个字节.\n", recv_size);
+        sprintf(buffer, "服务端已经收到客户端发送过去的 %d 个字节\n", recv_size);
+        // 发给客户端
+        send_size = send(remote_client_sock_fd, buffer, strlen(buffer) + 1, 0);
+        if (send_size == -1) {
+            fprintf(stderr, "server send error. fd = %d\n", remote_client_sock_fd, strerror(errno));
+            close_remote_client_sock_fd(remote_client_sock_fd);
+            return;
+        }
+        if (send_size == 0) {
+            printf("server没有发送数据\n");
+            /*return;*/
+        }
+        printf("server send size: %ld\n", send_size);
+    }
+}
+
+void readMsg() {
+    char buffer[DATA_BUFFER];
+}
+
+void writeMsg() {
+
+}
+
 // 下面是主程序
 
 /***
 1.bind error: Address already in use
   服务器设置的端口已被占用
 2.accept error: Bad file descriptor
- */
-/***
  想法:
  关键函数的参数用全局静态变量代替
  以后忘记网络编程的话,从这里开始看
@@ -3930,6 +3921,7 @@ int test_start_server(void) {
      关闭,因此客户端会收到一个SIGPIPE信号.
      */
     signal(SIGPIPE, sig_process);
+    signal(SIGIO, sig_process);
 
     /////////////////////////////socket创建过程/////////////////////////////
     /***
@@ -4059,175 +4051,6 @@ int test_start_server(void) {
             close(remote_client_sock_fd);
         }
     }
-}
-
-/////////////////////////传输大文件/////////////////////////
-
-#define BUFFER_SIZE 4096
-
-//32系统 可能会截断 一定要自己写 或则atoll有的系统不支持 故
-long long ato_ll(const char *p_str) //string --> long long
-{
-
-    long long result = 0;
-    long long mult = 1;
-    unsigned int len = strlen(p_str); // strlen(p_str) unsigned int
-    unsigned int i;
-
-    for (i = 0; i < len; ++i) {
-        char the_char = p_str[len - (i + 1)];
-        long long val;
-        if (the_char < '0' || the_char > '9') {
-            return 0;
-        }
-        val = the_char - '0';
-        val *= mult;
-        result += val;
-        mult *= 10;
-    }
-    return result;
-}
-
-
-struct sockaddr_in server_address;
-int filefd;
-
-
-void *receive(void *s) {
-    int thread_order = *(int *) s;
-
-    printf("thread_order = %d\n", thread_order);
-    char buf[BUFFER_SIZE];
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        perror("socket error");
-        exit(EXIT_SUCCESS);
-    }
-
-    if (connect(sockfd, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
-        fprintf(stderr, "thread %d connect error number %d: %s\n", thread_order, errno, strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-    printf("conncet success,thread id = %d\n", thread_order);
-    char head_buf[29] = {0};
-    int ret = recv(sockfd, head_buf, sizeof(head_buf) - 1, MSG_WAITALL); //接受每个包的头部
-    if (ret < 0) {
-        fprintf(stderr, "thread %d recv error number %d: %s\n",
-                thread_order, errno, strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-    char *cur_ptr = head_buf;
-    char *bk = strchr(head_buf, ':');
-    if (bk != NULL) {
-        *bk = '\0';
-    }
-    char *size_ptr = bk + 1;
-
-    long long cur = ato_ll(cur_ptr);
-    int size = atoi(size_ptr);
-    printf("thread %d cur = %lld size = %d\n", thread_order, cur, size);
-    while (size) {
-        ret = read(sockfd, buf, BUFFER_SIZE);
-        if (ret < 0 && errno == EINTR) {
-            puts("break by signal");
-            continue;
-        } else if (ret == 0) {
-            break;
-        } else if (ret < 0) {
-            perror("read");
-            exit(1);
-        }
-        if (pwrite(filefd, buf, ret, cur) < 0) {
-            perror("pwrite");
-            exit(1);
-        }
-        cur += ret;
-        size -= ret;
-    }
-
-    close(sockfd);
-    fprintf(stderr, "thread %d finished receiving\n", thread_order);
-    free(s);
-    pthread_exit((void *) thread_order);
-}
-
-int test_start_server(int argc, char **argv) {
-    if (argc != 3) {
-        fprintf(stderr, "usage: %s server_ip port\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
-    const char *ip = argv[1];
-    const int port = atoi(argv[2]);
-    printf("sizeof(off_t) = %d\n", sizeof(off_t));
-    memset(&server_address, 0, sizeof(server_address));
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(port);
-    inet_pton(AF_INET, ip, &server_address.sin_addr);
-
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        perror("socket error");
-        exit(EXIT_FAILURE);
-    }
-
-    struct timeval start, end;
-    gettimeofday(&start, NULL);
-    if (connect(sockfd, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
-        perror("connect error");
-        exit(EXIT_FAILURE);
-    }
-
-    int thread_number = 0;
-    int ret = recv(sockfd, &thread_number, sizeof(thread_number), MSG_WAITALL);
-    if (ret < 0) {
-        perror("recv MSG_WAITALL error");
-        exit(EXIT_FAILURE);
-    }
-
-    thread_number = ntohl(thread_number); //网络字节序转换成本机字节序
-    printf("thread_number = %d\n", thread_number);
-    if (thread_number > 500) {
-        puts(">>>>500");
-        exit(1);
-    } //开的线程太多了
-    //O_TRUNC 若文件存在 则把文件截断为零
-    if ((filefd = open("receive_file.rmvb", O_WRONLY | O_CREAT | O_TRUNC, 0777)) < 0) {
-        perror("open error");
-        exit(EXIT_FAILURE);
-    } else {
-        printf("open success\n");
-    }
-    pthread_t *tid = (pthread_t *) malloc(thread_number * sizeof(pthread_t));
-    if (tid == NULL) {
-        perror("malloc::");
-        exit(1);
-    }
-    printf("thread_number = %d\n", thread_number);
-
-    for (int i = 0; i < thread_number; ++i) {
-
-        int *thread_id = (int *) malloc(sizeof(int)); //记得在线程中释放
-        *thread_id = i;
-        pthread_create(&tid[i], NULL, receive, (void *) thread_id);
-
-    }
-
-    for (int i = 0; i < thread_number; ++i) {
-        char *ret;
-        pthread_join(tid[i], (void **) &ret);
-        printf("thread %d finished receiving\n", i);
-    }
-
-    close(sockfd);
-    close(filefd);
-    free(tid);
-
-    gettimeofday(&end, NULL);
-    double timeuse = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
-    timeuse /= 1000000;
-    printf("run time = %f\n", timeuse);
-
-    exit(EXIT_SUCCESS);
 }
 
 

@@ -60,6 +60,7 @@
 
 #define PORT 8888
 #define BACKLOG 2
+#define DATA_BUFFER 1024
 
 using namespace std;
 

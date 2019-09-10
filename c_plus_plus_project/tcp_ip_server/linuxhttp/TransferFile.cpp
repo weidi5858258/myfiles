@@ -145,3 +145,172 @@ int transferFile(int argc, char **argv) {
 
     return 0;
 }
+
+/////////////////////////传输大文件/////////////////////////
+
+#define BUFFER_SIZE 4096
+
+//32系统 可能会截断 一定要自己写 或则atoll有的系统不支持 故
+long long ato_ll(const char *p_str) //string --> long long
+{
+
+    long long result = 0;
+    long long mult = 1;
+    unsigned int len = strlen(p_str); // strlen(p_str) unsigned int
+    unsigned int i;
+
+    for (i = 0; i < len; ++i) {
+        char the_char = p_str[len - (i + 1)];
+        long long val;
+        if (the_char < '0' || the_char > '9') {
+            return 0;
+        }
+        val = the_char - '0';
+        val *= mult;
+        result += val;
+        mult *= 10;
+    }
+    return result;
+}
+
+
+struct sockaddr_in server_address;
+int filefd;
+
+
+void *receive(void *s) {
+    int thread_order = *(int *) s;
+
+    printf("thread_order = %d\n", thread_order);
+    char buf[BUFFER_SIZE];
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+        perror("socket error");
+        exit(EXIT_SUCCESS);
+    }
+
+    if (connect(sockfd, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
+        fprintf(stderr, "thread %d connect error number %d: %s\n", thread_order, errno, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    printf("conncet success,thread id = %d\n", thread_order);
+    char head_buf[29] = {0};
+    int ret = recv(sockfd, head_buf, sizeof(head_buf) - 1, MSG_WAITALL); //接受每个包的头部
+    if (ret < 0) {
+        fprintf(stderr, "thread %d recv error number %d: %s\n",
+                thread_order, errno, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    char *cur_ptr = head_buf;
+    char *bk = strchr(head_buf, ':');
+    if (bk != NULL) {
+        *bk = '\0';
+    }
+    char *size_ptr = bk + 1;
+
+    long long cur = ato_ll(cur_ptr);
+    int size = atoi(size_ptr);
+    printf("thread %d cur = %lld size = %d\n", thread_order, cur, size);
+    while (size) {
+        ret = read(sockfd, buf, BUFFER_SIZE);
+        if (ret < 0 && errno == EINTR) {
+            puts("break by signal");
+            continue;
+        } else if (ret == 0) {
+            break;
+        } else if (ret < 0) {
+            perror("read");
+            exit(1);
+        }
+        if (pwrite(filefd, buf, ret, cur) < 0) {
+            perror("pwrite");
+            exit(1);
+        }
+        cur += ret;
+        size -= ret;
+    }
+
+    close(sockfd);
+    fprintf(stderr, "thread %d finished receiving\n", thread_order);
+    free(s);
+    pthread_exit((void *) thread_order);
+}
+
+int test_start_server(int argc, char **argv) {
+    if (argc != 3) {
+        fprintf(stderr, "usage: %s server_ip port\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    const char *ip = argv[1];
+    const int port = atoi(argv[2]);
+    printf("sizeof(off_t) = %d\n", sizeof(off_t));
+    memset(&server_address, 0, sizeof(server_address));
+    server_address.sin_family = AF_INET;
+    server_address.sin_port = htons(port);
+    inet_pton(AF_INET, ip, &server_address.sin_addr);
+
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+        perror("socket error");
+        exit(EXIT_FAILURE);
+    }
+
+    struct timeval start, end;
+    gettimeofday(&start, NULL);
+    if (connect(sockfd, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
+        perror("connect error");
+        exit(EXIT_FAILURE);
+    }
+
+    int thread_number = 0;
+    int ret = recv(sockfd, &thread_number, sizeof(thread_number), MSG_WAITALL);
+    if (ret < 0) {
+        perror("recv MSG_WAITALL error");
+        exit(EXIT_FAILURE);
+    }
+
+    thread_number = ntohl(thread_number); //网络字节序转换成本机字节序
+    printf("thread_number = %d\n", thread_number);
+    if (thread_number > 500) {
+        puts(">>>>500");
+        exit(1);
+    } //开的线程太多了
+    //O_TRUNC 若文件存在 则把文件截断为零
+    if ((filefd = open("receive_file.rmvb", O_WRONLY | O_CREAT | O_TRUNC, 0777)) < 0) {
+        perror("open error");
+        exit(EXIT_FAILURE);
+    } else {
+        printf("open success\n");
+    }
+    pthread_t *tid = (pthread_t *) malloc(thread_number * sizeof(pthread_t));
+    if (tid == NULL) {
+        perror("malloc::");
+        exit(1);
+    }
+    printf("thread_number = %d\n", thread_number);
+
+    for (int i = 0; i < thread_number; ++i) {
+
+        int *thread_id = (int *) malloc(sizeof(int)); //记得在线程中释放
+        *thread_id = i;
+        pthread_create(&tid[i], NULL, receive, (void *) thread_id);
+
+    }
+
+    for (int i = 0; i < thread_number; ++i) {
+        char *ret;
+        pthread_join(tid[i], (void **) &ret);
+        printf("thread %d finished receiving\n", i);
+    }
+
+    close(sockfd);
+    close(filefd);
+    free(tid);
+
+    gettimeofday(&end, NULL);
+    double timeuse = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+    timeuse /= 1000000;
+    printf("run time = %f\n", timeuse);
+
+    exit(EXIT_SUCCESS);
+}
