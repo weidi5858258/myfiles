@@ -38,6 +38,7 @@ Default encoding for properties files: UTF-8
 //int main(int argc, char *argv[]) {
 int main(int argc, char **argv) {
     printf("\n");
+    // 有多少个参数
     printf("argc = %d\n", argc);
     for (int j = 0; j < argc; j++) {
         printf("argv[%d]: %s\n", j, argv[j]);
@@ -75,18 +76,100 @@ int main(int argc, char **argv) {
 //    TestRegularExpression testRegularExpression;
 //    testRegularExpression.test();
 
-    alexander::TestString testString;
-    testString.testSmartPointer();
+    // 智能指针
+//    alexander::TestString testString;
+//    testString.testSmartPointer();
 
     //test(argc, argv);
     //basicKnowledge(argc, argv);
+
+    FILE *fp = NULL;
+    fp = fopen("file.txt", "w");
+    fputs("这是 C 语言。", fp);
+    fputs("这是一种系统程序设计语言。", fp);
+    fclose(fp);
+    fp = NULL;
 
     printf("------------------------------------------\n");
     printf("\n");
     return 0;
 }
 
+int test(int argc, char **argv) {
+#define alloca __builtin_alloca
+#define alloca_array(type, size) ((type *) alloca ((size) * sizeof (type)))
+    char **url, **t;
+    // 申请存储两个字符串的空间,由二级指针保存这个空间首地址
+    url = alloca_array (char *, 2);
+    url[0] = "https://";
+    // 最后一个元素弄一个标记,这样在for循环中可以起到判断作用
+    url[1] = NULL;
+    // *t不为NULL就循环
+    for (t = url; *t; t++) {
+        fprintf(stdout, "test() url: %s\n", *t);
+    }
+
+#ifdef WIN32
+    fprintf(stdout, "  WIN32\n");
+#elif BOOST_OS_LINUX
+    fprintf(stdout, "  BOOST_OS_LINUX\n");
+#else
+    fprintf(stdout, "  UNKNOW\n");
+#endif
+
+    return 0;
+}
+
+int basicKnowledge(int argc, char **argv) {
+    /***
+     通过这个例子,只要知道能这样操作就行了.即:
+     我们一般要操作的是内容,因此使用p1或者*p2以%s输出时,得到的就是内容(限于char类型).
+     */
+    char *p1 = "Hello World";
+    char **p2 = &p1;
+
+    // Hello World
+    fprintf(stdout, "basicKnowledge() p1    %%s: %s\n", p1);// 指向字符串内容(使用的时候不要带上*)
+    // Hello World
+    fprintf(stdout, "basicKnowledge() *p2   %%s: %s\n", *p2);// 指向字符串内容
+    // Hello World
+    fprintf(stdout, "basicKnowledge() p2[0] %%s: %s\n", p2[0]);// 指向字符串内容
+    // H(只能以%c输出单个字符,以%s输出就会出错)
+    fprintf(stdout, "basicKnowledge() p2[0] %%c: %c\n", p1[0]);// 指向字符串内容
+    // 0x436dee
+    fprintf(stdout, "basicKnowledge() p1    %%p: %p\n", p1);// 指向字符串内容的地址
+    // 0x436dee
+    fprintf(stdout, "basicKnowledge() *p2   %%p: %p\n", *p2);// 指向字符串内容的地址,也就是指向p1地址处的值
+
+    // 0x7ffe793a41b0
+    fprintf(stdout, "basicKnowledge() &p1   %%p: %p\n", &p1);// 指向p1自身的地址,被保存到p2中了
+    // 0x7ffe793a41b0
+    fprintf(stdout, "basicKnowledge() p2    %%p: %p\n", p2);// 指向p1自身的地址
+    // 0x7ffe793a41b8
+    fprintf(stdout, "basicKnowledge() &p2   %%p: %p\n", &p2);// 指向p2自身的地址
+
+    // 0x48
+    fprintf(stdout, "basicKnowledge() p1[0] %%p: %p\n", p1[0]);
+    // 0x48
+    fprintf(stdout, "basicKnowledge() *p1   %%p: %p\n", *p1);
+    // 0x48
+    fprintf(stdout, "basicKnowledge() **p2  %%p: %p\n", **p2);
+
+    int a = 100;
+    int *p3 = &a;
+    int **p4 = &p3;
+    // 100
+    fprintf(stdout, "basicKnowledge() *p1   %%d: %d\n", *p3);// 指向int内容
+    // 100
+    fprintf(stdout, "basicKnowledge() **p2  %%d: %d\n", **p4);// 指向int内容
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 /***
+程序中表示个数的时候从1开始数
+程序中表示位置偏移的时候从0开始数
+
 类型	输出	例子
 d或i 带符号十进制整形	392
 u	无符号十进制整形	7235
@@ -148,54 +231,3 @@ Host key verification failed.
     getchar();
     printf("You are very good !!!!\n");
 #define KING_COUNTER_SIZE 1000*/
-
-int test(int argc, char **argv) {
-#define alloca __builtin_alloca
-#define alloca_array(type, size) ((type *) alloca ((size) * sizeof (type)))
-    char **url, **t;
-    // 申请存储两个字符串的空间,由二级指针保存这个空间首地址
-    url = alloca_array (char *, 2);
-    url[0] = "https://";
-    // 最后一个元素弄一个标记,这样在for循环中可以起到判断作用
-    url[1] = NULL;
-    // *t不为NULL就循环
-    for (t = url; *t; t++) {
-        fprintf(stdout, "test() url: %s\n", *t);
-    }
-
-#ifdef WIN32
-    fprintf(stdout, "  WIN32\n");
-#elif BOOST_OS_LINUX
-    fprintf(stdout, "  BOOST_OS_LINUX\n");
-#else
-    fprintf(stdout, "  UNKNOW\n");
-#endif
-
-    return 0;
-}
-
-int basicKnowledge(int argc, char **argv) {
-    // 程序中表示个数的时候从1开始数
-    // 程序中表示位置偏移的时候从0开始数
-    char *p1 = "Hello World";
-    char **p2 = &p1;
-
-    fprintf(stdout, "basicKnowledge() p1    %%s: %s\n", p1);// 指向字符串内容(使用的时候不要带上*)
-    fprintf(stdout, "basicKnowledge() p1    %%p: %p\n", p1);// 指向字符串内容的地址
-    fprintf(stdout, "basicKnowledge() *p2   %%s: %s\n", *p2);// 指向字符串内容
-    fprintf(stdout, "basicKnowledge() *p2   %%p: %p\n", *p2);// 指向字符串内容的地址,也就是指向p1地址处的值
-
-    fprintf(stdout, "basicKnowledge() &p1   %%p: %p\n", &p1);// 指向p1自身的地址,被保存到p2中了
-    fprintf(stdout, "basicKnowledge() p2    %%p: %p\n", p2);// 指向p1自身的地址
-    fprintf(stdout, "basicKnowledge() &p2   %%p: %p\n", &p2);// 指向p2自身的地址
-
-    fprintf(stdout, "basicKnowledge() p1[0] %%p: %p\n", p1[0]);
-    fprintf(stdout, "basicKnowledge() *p1   %%p: %p\n", *p1);
-    fprintf(stdout, "basicKnowledge() **p2  %%p: %p\n", **p2);
-
-    int a = 100;
-    int *p3 = &a;
-    int **p4 = &p3;
-    fprintf(stdout, "basicKnowledge() *p1   %%d: %d\n", *p3);// 指向int内容
-    fprintf(stdout, "basicKnowledge() **p2  %%d: %d\n", **p4);// 指向int内容
-}

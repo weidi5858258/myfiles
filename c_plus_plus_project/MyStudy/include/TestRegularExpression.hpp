@@ -138,9 +138,9 @@ void TestRegularExpression::test() {
     cout << std::regex_match("aaaAAA", std::regex("a*")) << endl;
 
     //输出：_2018,将Hello替换为""
-    cout << std::regex_replace("Hello_2018!", std::regex("Hello"), "") << endl;
+//    cout << std::regex_replace("Hello_2018!", std::regex("Hello"), "") << endl;
     //输出：Hi_2018,将Hello替换为Hi
-    cout << std::regex_replace("Hello_2018!", std::regex("Hello"), "Hi") << endl;
+//    cout << std::regex_replace("Hello_2018!", std::regex("Hello"), "Hi") << endl;
 }
 
 #endif //MYSTUDY_TESTREGULAREXPRESSION_HPP

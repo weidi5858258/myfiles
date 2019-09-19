@@ -119,9 +119,9 @@ namespace alexander {
         // 智能指针的创建
         // 第一种方式
         shared_ptr<double> pd1(new double(10.000000));
-        shared_ptr<double> pd2;
         double *p_reg = new double;
         // 第二种方式
+        shared_ptr<double> pd2;
         pd2 = shared_ptr<double>(p_reg);
         // 第三种方式
         shared_ptr<double> pd3(p_reg);
