@@ -83,40 +83,13 @@ int main(int argc, char **argv) {
     //test(argc, argv);
     //basicKnowledge(argc, argv);
 
-    FILE *fp = NULL;
-    fp = fopen("file.txt", "w");
-    fputs("这是 C 语言。", fp);
-    fputs("这是一种系统程序设计语言。", fp);
-    fclose(fp);
-    fp = NULL;
+    const char src[50] = "http://www.runoob.com";
+    char dest[50];
+    memcpy(dest, src, strlen(src) + 1);
+    printf("dest = %s\n", dest);
 
     printf("------------------------------------------\n");
     printf("\n");
-    return 0;
-}
-
-int test(int argc, char **argv) {
-#define alloca __builtin_alloca
-#define alloca_array(type, size) ((type *) alloca ((size) * sizeof (type)))
-    char **url, **t;
-    // 申请存储两个字符串的空间,由二级指针保存这个空间首地址
-    url = alloca_array (char *, 2);
-    url[0] = "https://";
-    // 最后一个元素弄一个标记,这样在for循环中可以起到判断作用
-    url[1] = NULL;
-    // *t不为NULL就循环
-    for (t = url; *t; t++) {
-        fprintf(stdout, "test() url: %s\n", *t);
-    }
-
-#ifdef WIN32
-    fprintf(stdout, "  WIN32\n");
-#elif BOOST_OS_LINUX
-    fprintf(stdout, "  BOOST_OS_LINUX\n");
-#else
-    fprintf(stdout, "  UNKNOW\n");
-#endif
-
     return 0;
 }
 
@@ -162,6 +135,63 @@ int basicKnowledge(int argc, char **argv) {
     fprintf(stdout, "basicKnowledge() *p1   %%d: %d\n", *p3);// 指向int内容
     // 100
     fprintf(stdout, "basicKnowledge() **p2  %%d: %d\n", **p4);// 指向int内容
+
+    // 下面是定义字符串的几种方式及得到字符串的长度
+    const char *string1 = "Hello World";
+    int len = strlen(string1);
+    printf("string1 strlen: %d\n", len);// 11
+    size_t size = sizeof(string1);
+    printf("string1 sizeof: %d\n", size);// 8
+
+    // 最好以这种方式定义一个字符串
+    const char string2[] = "Hello World";
+    len = strlen(string2);
+    printf("string2 strlen: %d\n", len);// 11
+    size = sizeof(string2);
+    printf("string2 sizeof: %d\n", size);// 12(包括了'\0'这个字符)
+
+    const char string3[] = {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd'};
+    len = strlen(string3);
+    printf("string3 strlen: %d\n", len);// 11
+    size = sizeof(string3);
+    printf("string3 sizeof: %d\n", size);// 11(大括号中有多少个字符结果就是多少)
+
+    const char string4[] = {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '\0'};
+    len = strlen(string4);
+    printf("string4 strlen: %d\n", len);// 11(遇到'\0'就结束计数)
+    size = sizeof(string4);
+    printf("string4 sizeof: %d\n", size);// 12(大括号中有多少个字符结果就是多少)
+
+    const char string5[] = {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '\0', 'a'};
+    len = strlen(string5);
+    printf("string5 strlen: %d\n", len);// 11(遇到'\0'就结束计数)
+    size = sizeof(string5);
+    printf("string5 sizeof: %d\n", size);// 13(大括号中有多少个字符结果就是多少)
+}
+
+int test(int argc, char **argv) {
+#define alloca __builtin_alloca
+#define alloca_array(type, size) ((type *) alloca ((size) * sizeof (type)))
+    char **url, **t;
+    // 申请存储两个字符串的空间,由二级指针保存这个空间首地址
+    url = alloca_array (char *, 2);
+    url[0] = "https://";
+    // 最后一个元素弄一个标记,这样在for循环中可以起到判断作用
+    url[1] = NULL;
+    // *t不为NULL就循环
+    for (t = url; *t; t++) {
+        fprintf(stdout, "test() url: %s\n", *t);
+    }
+
+#ifdef WIN32
+    fprintf(stdout, "  WIN32\n");
+#elif BOOST_OS_LINUX
+    fprintf(stdout, "  BOOST_OS_LINUX\n");
+#else
+    fprintf(stdout, "  UNKNOW\n");
+#endif
+
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
