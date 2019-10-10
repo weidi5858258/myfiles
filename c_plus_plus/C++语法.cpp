@@ -2541,7 +2541,7 @@ cout<<p2->age<<endl;
 
 
 
-
+/***
 Android.mk:
 可执行文件,动态库,静态库
 Jar包,APK
@@ -2569,6 +2569,7 @@ build/core/definitions.mk环境变量的配置文件
 build/core/config.mk
 build/core/main.mk
 build/core/clear_vars.mk
+*/
 
 /***
 C标准库

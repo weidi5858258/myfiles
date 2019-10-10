@@ -15,6 +15,7 @@
 #include "./include/TestRegularExpression.hpp"
 #include "./include/leak_detector_c.hpp"
 #include "./include/TestString.hpp"
+#include "./include/TestClass.hpp"
 //#include "./include/thread_pool_active.hpp"
 //#include "./include/leak_detector_c.h"
 
@@ -83,10 +84,7 @@ int main(int argc, char **argv) {
     //test(argc, argv);
     //basicKnowledge(argc, argv);
 
-    const char src[50] = "http://www.runoob.com";
-    char dest[50];
-    memcpy(dest, src, strlen(src) + 1);
-    printf("dest = %s\n", dest);
+    alexander::Son son;
 
     printf("------------------------------------------\n");
     printf("\n");
