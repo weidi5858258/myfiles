@@ -2,6 +2,7 @@
 
 # cd /etc/apt
 # /etc/hosts
+# /usr/share/applications
 
 # ntfsfix /dev/sdb1
 # ntfsfix /dev/sda4
