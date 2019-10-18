@@ -2632,6 +2632,106 @@ tmpnam函数创建的临时文件名的最大长度
 auto用于自动类型推断(之前指出变量为自动变量)
 register只是显式地指出变量是自动的(之前用于在声明中指示寄存器存储)
 
+第10章 对象和类
+*.h一般为类的声明,*.cpp一般为类的定义
+总结:
+1.内联函数的两种写法
+第一种:
+private:
+    long shares;
+    double share_val;
+    double total_val;
+    void set_tot(){total_val = shares*share_val;}
+第二种:
+inline void Stock::set_tot(){total_val = shares*share_val;}
+2.
+2-1.结构体的成员默认访问控制权限是public,类的成员默认访问控制权限是private.
+2-2.定义成员函数时,使用作用解析运算符(::)来标识函数所属的类.
+2-3.类方法可以访问类的private成员.
+2-4.用类所创建的每个对象都有自己的存储空间,用于存储其内部变量和类成员;
+但同一个类的所有对象共享同一组类方法,即每种方法只有一个副本.
+2-5.要使用新类型,最关键的是要了解成员函数的功能,而不必考虑其实现细节.
+2-6.类为只要声明了一个构造函数,那么就不再有默认的构造函数了.
+除非显式的声明默认构造函数和其他构造函数.
+3.构造函数的几种使用方式(非默认构造函数)
+Stock::Stock(const std::string &company, long shares, double share_val){...}
+3-1.Stock food = Stock("World Cabbage", 250, 1.25);
+3-2.Stock garment("Furry Mason", 50, 2.5);
+3-3.Stock *pstock = new Stock("Electroshock Games", 18, 19.0);
+4.默认构造函数的定义方式有两种
+第一种:给已有构造函数的所有参数提供默认值
+Stock::Stock(const std::string &company = "Error", long shares = 0, double share_val = 0.0){...}
+使用这种方式相当于定义了两个构造函数(一个是默认没有任何参数的构造,另一是三个参数的构造)
+第二种:通过函数重载来定义另一个构造函数
+Stock::Stock(){
+    company = "no name";
+    shares = 0;
+    share_val = 0.0;
+    total_val = 0.0;
+}
+使用方式:
+4-1.Stock first;
+4-2.Stock first = Stock();
+4-3.Stock *prelief = new Stock;
+5.
+// 初始化
+Stock stock = Stock("Boffo Objects", 2, 2.0);
+// 赋值(赋值前会创建一个临时对象)
+stock = Stock("Nifty Foods", 10, 50.0);
+因此,如果既可以通过初始化,也可以通过赋值来设置对象的值,
+则就采用初始化方式.通常这种方式的效率更高.
+6.C++11列表初始化
+只要提供与某个构造函数的参数列表匹配了就行
+Stock hot_tip = {"Derivatives Plus Plus", 100, 45.0};
+Stock jock{"Sport Age Storage, Inc"};
+Stock fufu = new Stock{"Fufu", 1, 3.7};
+Stock temp{};
+7.const成员函数
+只要类方法不修改调用对象,就应将其声明为const
+void show() const;// 声明
+void Stock::show() const{}// 定义
+8.this指的是对象的地址,不是对象本身,*this才是指的对象本身.
+9.对象数组
+const int STKS = 10;
+Stock stocks[STKS] = {
+    Stock("NanoSmart", 12, 20.5),
+    Stock(),
+    Stock("Monolithic Obelisks", 130, 3.25),
+};
+该声明只初始化了数组的部分元素,因此余下的7个元素将使用默认构造函数进行初始化.
+初始化对象数组的方案是,首先使用默认构造函数创建数组元素,
+然后花括号中的构造函数将创建临时对象,然后将临时对象的内容复制到相应的元素中.
+因此,要创建类对象数组,则这个类必须有默认构造函数.
+10.类的常量
+第一种方式:
+private:
+    enum {Months = 12};
+    double costs[Months];
+第二种方式:
+private:
+    static const int Months = 12;
+    double consts[Months];
+11.作用域内枚举(C++11)
+不能做的事:
+enum egg{Small, Media, Large, Jumbo};
+enum t_shirt{Small, Media, Large, Xlarge};
+C++11能做的事:
+enum class egg{Small, Media, Large, Jumbo};
+enum class t_shirt{Small, Media, Large, Xlarge};
+或者
+enum struct egg{Small, Media, Large, Jumbo};
+enum struct t_shirt{Small, Media, Large, Xlarge};
+使用:
+egg choice = egg::Large;
+t_shirt Floyd = t_shirt::Large;
+
+
+
+
+
+
+
+
 
 
 

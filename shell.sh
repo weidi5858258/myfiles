@@ -1518,6 +1518,8 @@ grep keydl -rn *
 # C++层log的输出，如果不全，可以调整log的级别：
 # 至少改成>=1
 adb shell dumpsys media.camera -v 1
+# 截屏
+adb shell /system/bin/screencap -p /sdcard/tmp.png
 adb install -t *.apk
 adb kill-server && adb start-server 
 && adb root && adb remount
@@ -1543,6 +1545,7 @@ adb install -r ${currentDir}/MySony-release.apk;
 #卸载apk
 adb uninstall ${packageName};
 adb shell pm clear ${packageName};
+# 杀进程
 adb shell am force-stop ${packageName};
 adb shell svc wifi enable;
 adb shell svc wifi disable;
