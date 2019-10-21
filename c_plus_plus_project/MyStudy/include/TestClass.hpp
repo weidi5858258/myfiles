@@ -45,12 +45,19 @@ namespace alexander {
     // 儿子类
     class Son : public Father, public Mather {
     public:
+        int data;
+    public:
         Son() {
             cout << "Son()" << endl;
         }
 
         virtual ~Son() {
             cout << "~Son()" << endl;
+        }
+
+        void setData() const {
+            cout << "data: " << data << endl;
+            // data = 10;
         }
     };
 

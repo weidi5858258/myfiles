@@ -11,7 +11,7 @@ class Test {
 public:
     Test();
 
-    Test(int);
+    Test(int d = 0);
 
     Test(const Test &t);
 

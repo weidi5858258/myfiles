@@ -2690,6 +2690,7 @@ Stock temp{};
 只要类方法不修改调用对象,就应将其声明为const
 void show() const;// 声明
 void Stock::show() const{}// 定义
+加了const后,那么在定义时不能修改对象的属性成员(私有或仅有)
 8.this指的是对象的地址,不是对象本身,*this才是指的对象本身.
 9.对象数组
 const int STKS = 10;
@@ -2724,6 +2725,95 @@ enum struct t_shirt{Small, Media, Large, Xlarge};
 使用:
 egg choice = egg::Large;
 t_shirt Floyd = t_shirt::Large;
+
+
+一个函数的返回值如果是对象的话,这个对象不能声明成引用或者指针.
+
+iterator(T* ptr, size_t size, size_t pos, size_t ctr);
+iterator& operator++();
+iterator operator++(int);
+bool operator==(const iterator& rhs);
+bool operator!=(const iterator& rhs);
+T& operator*();
+T* operator->();
+
+// use this type to return error codes
+#ifdef _WIN32
+    typedef int         status_t;
+#else
+    typedef int32_t     status_t;
+#endif
+
+typedef std::vector<int8_t>   Int8List;
+typedef std::vector<int16_t>  Int16List;
+typedef std::vector<int32_t>  Int32List;
+typedef std::vector<int64_t>  Int64List;
+typedef std::vector<uint8_t>  UInt8List;
+typedef std::vector<uint16_t> UInt16List;
+typedef std::vector<uint32_t> UInt32List;
+typedef std::vector<uint64_t> UInt64List;
+
+// 像这样返回指针的,一定在方法体中new了一个对象然后返回的
+Int8List*           getAInt8();
+Int16List*          getAInt16();
+Int32List*          getAInt32();
+Int64List*          getAInt64();
+UInt8List*          getAUInt8();
+UInt16List*         getAUInt16();
+UInt32List*         getAUInt32();
+UInt64List*         getAUInt64();
+
+在Android底层,一个成员函数的返回值可能是:
+android::sp<android::IAudioManager>          非常常见
+typedef          int32_t           status_t; 非常常见
+typedef          long unsigned int size_t;
+typedef          long              ssize_t;
+typedef          signed char       int8_t;
+typedef          short             int16_t;
+typedef          int               int32_t;
+typedef          long              int64_t;
+typedef unsigned char              uint8_t;
+typedef unsigned short             uint16_t;
+typedef unsigned int               uint32_t;
+typedef unsigned long              uint64_t;
+typedef          int64_t           off64_t;
+String8
+String16
+std::string
+bool
+int
+float
+double
+binder::Status
+
+virtual MediaTrack *getTrack(size_t index);
+MediaTrack *AACExtractor::getTrack(size_t index) {
+    if (mInitCheck != OK || index != 0) {
+        return NULL;
+    }
+    return new AACSource(mDataSource, mMeta, mOffsetVector, mFrameDurationUs);
+}
+
+virtual const char *name() { return "AACExtractor"; }
+virtual const uint8_t* getArray() const;
+long long elapsed() const;
+uint8_t *data();
+explicit MidiIoWrapper(const char *path);
+
+namespace android {
+    // 怎么会有这种写法
+    struct DrmSessionClientInterface : public RefBase {
+        virtual bool reclaimSession(const Vector<uint8_t> &sessionId) = 0;
+    protected:
+        virtual ~DrmSessionClientInterface() {}
+    };
+}// namespace android
+namespace android {
+    extern std::string dumpMemoryAddresses(size_t limit);
+};
+
+mutable Mutex mLock;
+constexpr char mtp_dev_path[] = "/dev/mtp_usb";
 
 
 
