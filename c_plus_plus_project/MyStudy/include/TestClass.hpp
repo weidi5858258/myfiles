@@ -37,18 +37,27 @@ namespace alexander {
             cout << "Mather()" << endl;
         }
 
+        Mather(int x) {
+            cout << "Mather(int)" << endl;
+        }
+
         virtual ~Mather() {
             cout << "~Mather()" << endl;
         }
     };
 
-    // 儿子类
-    class Son : public Father, public Mather {
+    // 儿子类(如果继承时不写public,那么默认就是private继承,这样父类中的任何成员函数都不能使用)
+    class Son : virtual public Father, virtual public Mather {
     public:
         int data;
     public:
         Son() {
             cout << "Son()" << endl;
+        }
+
+        // 如果不显式的写出调用哪个父类构造函数的话,那么默认就是调用无参构造函数
+        Son(int x) : Mather(x) {
+            cout << "Son(int)" << endl;
         }
 
         virtual ~Son() {

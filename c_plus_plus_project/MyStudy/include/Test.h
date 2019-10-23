@@ -11,7 +11,10 @@ class Test {
 public:
     Test();
 
-    Test(int d = 0);
+    /***
+     如果声明成Test(int d = 0);那么就会报错,因为这样跟默认构造是一样的,这样就二义性.
+     */
+    Test(int d);
 
     Test(const Test &t);
 

@@ -2645,7 +2645,7 @@ private:
 第二种:
 inline void Stock::set_tot(){total_val = shares*share_val;}
 2.
-2-1.结构体的成员默认访问控制权限是public,类的成员默认访问控制权限是private.
+2-1.struct的成员默认访问控制权限是public,class的成员默认访问控制权限是private.
 2-2.定义成员函数时,使用作用解析运算符(::)来标识函数所属的类.
 2-3.类方法可以访问类的private成员.
 2-4.用类所创建的每个对象都有自己的存储空间,用于存储其内部变量和类成员;
@@ -2725,6 +2725,7 @@ enum struct t_shirt{Small, Media, Large, Xlarge};
 使用:
 egg choice = egg::Large;
 t_shirt Floyd = t_shirt::Large;
+12.继承时最好都用virtual public这样去继承父类为好
 
 
 一个函数的返回值如果是对象的话,这个对象不能声明成引用或者指针.
@@ -2763,10 +2764,36 @@ UInt16List*         getAUInt16();
 UInt32List*         getAUInt32();
 UInt64List*         getAUInt64();
 
-在Android底层,一个成员函数的返回值可能是:
+int的取值范围为0～65535时说的是16位系统的范围
+和机器字长及编译器有关系：
+所以，int，long int，short int的宽度都可能随编译器而异。
+但有几条铁定的原则（ANSI/ISO制订的）：
+1. sizeof(short int)<=sizeof(int)
+2. sizeof(int)<=sizeof(long int)
+3. short int至少应为16位（2字节）
+4. long int至少应为32位。
+
+                     16位编译器    32位编译器    64位编译器(单位:字节)
+char                     1           1            1
+char*(指针变量)           2           4            8
+short int                2           2            2
+int                      2           4            4
+unsigned int             2           4            4
+float                    4           4            4
+double                   8           8            8
+long                     4           4            8
+long long                8           8            8
+unsigned long            4           4            8
+
+
+
+
+
+
+在Android底层,一个成员函数的返回值可能是下面的几种情况:
 android::sp<android::IAudioManager>          非常常见
 typedef          int32_t           status_t; 非常常见
-typedef          long unsigned int size_t;
+typedef          long unsigned int size_t;   (unsigned long int)无符号长整型
 typedef          long              ssize_t;
 typedef          signed char       int8_t;
 typedef          short             int16_t;
@@ -2794,8 +2821,8 @@ MediaTrack *AACExtractor::getTrack(size_t index) {
     return new AACSource(mDataSource, mMeta, mOffsetVector, mFrameDurationUs);
 }
 
-virtual const char *name() { return "AACExtractor"; }
-virtual const uint8_t* getArray() const;
+virtual const char *name() { return "AACExtractor"; } 内联函数
+virtual const uint8_t* getArray() const; 在getArray()这个成员函数中不能改变类的数据成员
 long long elapsed() const;
 uint8_t *data();
 explicit MidiIoWrapper(const char *path);

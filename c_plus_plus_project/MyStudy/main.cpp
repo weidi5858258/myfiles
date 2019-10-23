@@ -84,7 +84,9 @@ int main(int argc, char **argv) {
     //test(argc, argv);
     //basicKnowledge(argc, argv);
 
-    alexander::Son son;
+    {
+        alexander::Son son(10);
+    }
 
     printf("------------------------------------------\n");
     printf("\n");

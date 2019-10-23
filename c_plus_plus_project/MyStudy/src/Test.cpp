@@ -17,7 +17,7 @@ Test::Test() {
     data = 0;
 }
 
-Test::Test(int d = 1) : data(d) {
+Test::Test(int d) : data(d) {
     std::cout << "Create Test(int) Object: " << this << std::endl;
 }
 
