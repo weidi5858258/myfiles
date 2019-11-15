@@ -1,3 +1,8 @@
+public class RecyclerView {
+
+}
+
+/***
 // 线性布局  
 final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);  
 linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);  
@@ -112,3 +117,32 @@ void fouceSelected() {
         }
 }
 获取RV当前显示的第一个控件的位置和最后一个控件显示的位置来计算出当前应该获取焦点的View的位置，把焦点交给它。
+
+自定义LayoutManager的基础知识点
+onLayoutChildren()，这个方法是在RecyclerView初始化的时候回调的，并且会回调两次.
+在每一次的滑动事件中，都会完整的经过dy修正、子view填充、子view移动、子view回收四个过程.
+scrollVerticallyBy的实现步骤列一下：
+1.偏移值dy修正
+2.填充子view
+3.偏移子view
+4.回收子view
+
+detachAndScrapView和removeAndRecycleView的区别
+detachAndScrapView:
+在需要刷新的时候使用，子view临时保存在Recycler中的mAttachedScrap中，其后马上用到；
+removeAndRecycleView:
+在子view移出屏幕回收时使用，保存在Recycler中的mCachedViews中，
+mAttachedScrap和mCachedViews都是一个ArrayList类型的集合。
+其次，detachAndScrapView不会引起重新布局，因此是轻量级的，而removeAndRecycleView会引起重新布局。
+detachAndScrapAttachedViews:
+RecyclerView初始化的时候onLayoutChildren会调用两次，第一次的时候屏幕上已经填充好子view了，第二次到来的时候又会重新调用一次fill填充子view，因此fill之前先调用轻量级的detachAndScrapAttachedViews把子view都给移除掉，临时保存在一个集合里，然后进入fill的时候会从这个集合取出来重新添加到RecyclerView中
+
+在自定义LayoutManager中，我们需要重写onLayoutChildren方法，这个方法会在初始化或者Adapter数据集更新时回调，在这方法里面，需要做以下事情：
+进行布局之前，我们需要调用detachAndScrapAttachedViews方法把屏幕中的Items都分离出来，内部调整好位置和数据后，再把它添加回去(如果需要的话)；
+分离了之后，我们就要想办法把它们再添加回去了，所以需要通过addView方法来添加，那这些View在哪里得到呢？ 我们需要调用 Recycler的getViewForPosition(int position) 方法来获取；
+获取到Item并重新添加了之后，我们还需要对它进行测量，这时候可以调用measureChild或measureChildWithMargins方法，两者的区别我们已经了解过了，相信同学们都能根据需求选择更合适的方法；
+在测量完还需要做什么呢？ 没错，就是布局了，我们也是根据需求来决定使用layoutDecorated还是layoutDecoratedWithMargins方法；
+在自定义ViewGroup中，layout完就可以运行看效果了，但在LayoutManager还有一件非常重要的事情，就是回收了，我们在layout之后，还要把一些不再需要的Items回收，以保证滑动的流畅度；
+
+列表向下滚动dy为正，列表向上滚动dy为负
+*/
