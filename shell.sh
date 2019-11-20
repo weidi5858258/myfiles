@@ -2255,7 +2255,8 @@ echo -e "\033[36m build boot.img complete! \033[0m"
 
 ntfsfix /dev/sdb1
 
-
+# 查看系统位数
+getconf LONG_BIT
 
 
 
