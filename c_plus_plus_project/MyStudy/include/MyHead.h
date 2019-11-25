@@ -32,6 +32,7 @@
 #include <stdarg.h>
 #include <cctype>
 #include <regex>
+#include <climits>
 // 智能指针
 #include <memory>
 

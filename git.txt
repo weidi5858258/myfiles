@@ -36,6 +36,9 @@ git rebase --abort
 git checkout branchB
 git merge --no-ff branchA
 
+git cherry-pick
+git commit --amend
+
 git remote -v
 
 

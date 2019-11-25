@@ -82,11 +82,11 @@ int main(int argc, char **argv) {
 //    testString.testSmartPointer();
 
     //test(argc, argv);
-    //basicKnowledge(argc, argv);
+    basicKnowledge(argc, argv);
 
-    {
+    /*{
         alexander::Son son(10);
-    }
+    }*/
 
     printf("------------------------------------------\n");
     printf("\n");
@@ -167,6 +167,52 @@ int basicKnowledge(int argc, char **argv) {
     printf("string5 strlen: %d\n", len);// 11(遇到'\0'就结束计数)
     size = sizeof(string5);
     printf("string5 sizeof: %d\n", size);// 13(大括号中有多少个字符结果就是多少)
+
+    cout << endl;
+    short n_short_min = SHRT_MIN;
+    short n_short_max = SHRT_MAX;
+    int n_int_min = INT_MIN;
+    int n_int_max = INT_MAX;
+    int n_int8_min = INT8_MIN;
+    int n_int8_max = INT8_MAX;
+    int n_int16_min = INT16_MIN;
+    int n_int16_max = INT16_MAX;
+    int n_int32_min = INT32_MIN;
+    int n_int32_max = INT32_MAX;
+    int n_int64_min = INT64_MIN;
+    int n_int64_max = INT64_MAX;
+    long n_long_min = LONG_MIN;
+    long n_long_max = LONG_MAX;
+    long long n_llong_min = LLONG_MIN;
+    long long n_llong_max = LLONG_MAX;
+    cout << "short  max is " << sizeof n_short_max << " bytes." << endl;
+    cout << "int    max is " << sizeof(int) << " bytes." << endl;
+    cout << "int8   max is " << sizeof n_int8_max << " bytes." << endl;
+    cout << "int16  max is " << sizeof n_int16_max << " bytes." << endl;
+    cout << "int32  max is " << sizeof n_int32_max << " bytes." << endl;
+    cout << "int64  max is " << sizeof n_int64_max << " bytes." << endl;
+    cout << "long   max is " << sizeof n_long_max << " bytes." << endl;
+    cout << "long long max is " << sizeof n_llong_max << " bytes." << endl;
+    cout << endl;
+
+    cout << "short min: " << n_short_min << endl;
+    cout << "short max: " << n_short_max << endl;
+    cout << "int min  : " << n_int_min << endl;
+    cout << "int max  : " << n_int_max << endl;
+    cout << "int8 min : " << n_int8_min << endl;
+    cout << "int8 max : " << n_int8_max << endl;
+    cout << "int16 min: " << n_int16_min << endl;
+    cout << "int16 max: " << n_int16_max << endl;
+    cout << "int32 min: " << n_int32_min << endl;
+    cout << "int32 max: " << n_int32_max << endl;
+    cout << "int64 min: " << n_int64_min << endl;
+    cout << "int64 max: " << n_int64_max << endl;
+    cout << "long min : " << n_long_min << endl;
+    cout << "long max : " << n_long_max << endl;
+    cout << "long long min: " << n_llong_min << endl;
+    cout << "long long max: " << n_llong_max << endl;
+
+    cout << "Bits per byte = " << CHAR_BIT << endl;
 }
 
 int test(int argc, char **argv) {
