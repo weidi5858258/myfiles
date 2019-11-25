@@ -7,7 +7,7 @@ add_definitions(-std=c++11)
 add_executable(tcp_ip_server
         main.cpp
         linuxhttp/LinuxSocket.cpp
-        linuxhttp/LinuxSocket.h linuxhttp/TransferFile.cpp linuxhttp/TransferFile.h)
+        linuxhttp/LinuxSocket.h linuxhttp/TransferFile.cpp linuxhttp/TransferFile.h linuxhttp/basic_knowledge.cpp)
 
 #set(FFMPEG_LIB_PATH
 #        /root/mydev/tools/ffmpeg/lib)
