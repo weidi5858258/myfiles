@@ -1103,15 +1103,19 @@ android 第一次启动时，会读取apk的信息，
 /***
 底层进程间通信方式:
 1.
-先定义一个Bp和Bn公同的基类
+在IPowerManager.h头文件中先定义一个Bp和Bn公同的基类,
+Bp和Bn类的定义也可以放在这个头文件中
 #include <binder/IInterface.h>
 class IPowerManager : public IInterface {...}
+class IAudioTrack   : public IInterface {...}
+class BpAudioTrack  : public BpInterface<IAudioTrack> {...}
+class BnAudioTrack  : public BnInterface<IAudioTrack> {...}
 2.
 //PowerManager不能随便定义,接口是IPowerManager,那么定义时去掉I,为PowerManager
 DECLARE_META_INTERFACE(PowerManager)
-这个PowerManager需要跟Bp的实现类中的
+这个PowerManager需要跟Bp的实现类中的这个
 IMPLEMENT_META_INTERFACE(PowerManager, "android.os.IPowerManager");
-这个对应起来
+对应起来
 3.
 在基类中定义枚举,用于操作不同的动作
 enum {
@@ -1120,6 +1124,10 @@ enum {
 4.
 在基类中定义各种需要用到的纯虚函数
 virtual status_t crash(const String16 &message) = 0;
+virtual sp<media::VolumeShaper::State> getVolumeShaperState(int id) = 0;
+virtual media::VolumeShaper::Status applyVolumeShaper(
+                const sp<media::VolumeShaper::Configuration> &configuration,
+                const sp<media::VolumeShaper::Operation> &operation) = 0;
 5.
 实现Bp类
 #include <utils/Log.h>
@@ -1139,40 +1147,55 @@ virtual ~BpPowerManager();
 实现基类中定义的纯虚函数
 
 Bp(客户端)一般过程是这样的:
+//固定写法
 Parcel data, reply;
 data.writeInterfaceToken(IPowerManager::getInterfaceDescriptor());
 IPowerManager是基类,因此使用IPowerManager::getInterfaceDescriptor().
-上面也是固定写法.
 
 然后把要传递的数据写到data中去.
-//int flags, size_t len
+const android::sp<ICmrdCallback> &callback
+//写
+data.writeStrongBinder(IInterface::asBinder(callback));
+//读
+sp<IBinder> binder = reply.readStrongBinder();
+
+const android::sp<IBinder> &lock
+data.writeStrongBinder(lock);
+
+player_type_t playerType(player_type_t是enum)
+data.writeInt32((int32_t) playerType);
+
+bool wait
+data.writeInt32(wait);
+
+int flags, size_t len
 data.writeInt32(flags);
 data.writeInt32(len);
-//player_type_t playerType(player_type_t是enum)
-data.writeInt32((int32_t) playerType);
-//int64_t event_time_ms
+
+int64_t event_time_ms
 data.writeInt64(event_time_ms);
-//bool wait
-data.writeInt32(wait);
-//float vol
+
+float vol
 data.writeFloat(vol);
-//const sp<IBinder> &lock
-data.writeStrongBinder(lock);
-//const String16 &tag
+
+const String16 &tag
 data.writeString16(tag);
-//const char *path
+
+const char *path
 data.writeInt32(strlen(path));
 data.writeCString(path);
-//int len, const int *uids
-data.writeInt32Array(len, uids);
-//const android::sp<ICmrdCallback> &callback
-data.writeStrongBinder(IInterface::asBinder(callback));
 
-return remote()->transact(REBOOT, data, &reply, 0);
+int len, const int *uids
+data.writeInt32Array(len, uids);
+
+//把data数据发送给Bn端,操作Bn端相关的动作.然后就去看Bn的实现过程.
+return remote()->transact(IDaemon::REBOOT, data, &reply, 0);
+
 status_t status = remote()->transact(IDaemon::OPEN, data, &reply);
 if (status != OK) {
     return RESULT_ERR_BINDER_ERROR;
 }
+//Bn端如果在返回时带了一个值过来,那么可以使用这样读出来
 int ret = reply.readInt32();
 return ret;
 
@@ -1214,7 +1237,7 @@ static const char *getServiceName() {
     return SERVER_NAME;
 }
 6-2.
-取得Bp端的对象调用其方法.
+取得Bp端的对象调用其方法(得到Bp端对象都是使用的下面方法).
 sp<IServiceManager> serviceManager = defaultServiceManager();
 //此处的SERVER_NAME必须跟上面三种方法中返回的字符串一样
 sp<IBinder> binder = serviceManager->getService(String16(SERVER_NAME));
@@ -1222,6 +1245,11 @@ sp<IDaemon> daemon = interface_cast<IDaemon>(binder);
 //然后就可以使用daemon对象调用Bp端定义的方法了
 daemon->open(1);
 
+扩展:
+有哪些服务(实际是Bp端对象指针)可以通过
+serviceManager->getService(String16(SERVER_NAME));
+得到?
+sp<IAudioTrack>
 7.
 要想Bp端能够连接到Bn端,那么需要把Bn端先启动起来.
 7-1.
@@ -1258,6 +1286,32 @@ LOCAL_SRC_FILES:= \
 
 通过上面的步骤就能够在其他地方先调用到Bp的代码,然后通过Bp中的代码调用
 到Bn中的代码.这样就实现了跨进程调用了.
+
+audio流程:
+/root/mydev/android_source/hikey970/aosp/frameworks/base/core/jni/android_media_AudioTrack.cpp
+假如是进程A
+/root/mydev/android_source/hikey970/aosp/frameworks/av/media/libaudioclient/AudioTrack.cpp
+// 得到IAudioFlinger的Bp端(客户端)对象
+const sp<IAudioFlinger> &audioFlinger = AudioSystem::get_audio_flinger();
+if (audioFlinger == 0) {
+    ALOGE("Could not get audioflinger");
+    status = NO_INIT;
+    goto exit;
+}
+// 由IAudioFlinger的Bp端(客户端)对象调用到IAudioFlinger的Bn端(假如是进程B)
+// IAudioTrack的Bp端(客户端)对象
+sp<IAudioTrack> mBpAudioTrack = audioFlinger->createTrack(input, output, &status);
+
+进程B
+/root/mydev/android_source/hikey970/aosp/frameworks/av/media/libaudioclient/IAudioFlinger.cpp(Bn端)
+/root/mydev/android_source/hikey970/aosp/frameworks/av/services/audioflinger/AudioFlinger.cpp
+class AudioFlinger : public BinderService<AudioFlinger>, public BnAudioFlinger {...}
+IAudioFlinger的Bn端调用到子类AudioFlinger的createTrack(...)方法
+在这个方法中,创建TrackHandle对象(class TrackHandle : public android::BnAudioTrack)然后返回该对象,
+并使用IBinder传递给进程A.
+
+
+
 */
 
 
@@ -1323,7 +1377,14 @@ root@WEIDI5858258:/mnt/d/android_source/android_n# make -j4
 
 */
 
+/***
+ Android C++开发
+ .h文件只存放命名空间(如果需要的话),和跟类定义有关的头文件,其他东西一律不放在这里.
+ .cpp文件存放类实现时需要用到的头文件.然后是需要用到的常量,如
+ #define WAIT_STREAM_END_TIMEOUT_SEC 120
+ static const int kMaxLoopCountNotifications = 32;
 
+*/
 
 
 
