@@ -1384,6 +1384,9 @@ root@WEIDI5858258:/mnt/d/android_source/android_n# make -j4
  #define WAIT_STREAM_END_TIMEOUT_SEC 120
  static const int kMaxLoopCountNotifications = 32;
 
+ NDK so库文件位置:
+ /Users/alexander/mydev/tools/android_sdk/android-ndk-r16b/platforms/android-27/arch-arm/usr/lib
+
 */
 
 

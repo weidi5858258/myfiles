@@ -30,6 +30,21 @@ git stash
 git pull
 git stash pop stash@{0}
 
+没有add的情况下
+git checkout 需要还原的文件名
+已经add的情况下
+git reset HEAD 需要取消暂存的文件名
+git checkout 需要还原的文件名
+还原所有修改过的文件
+git checkout .
+
+git命令取别名
+git config --global alias.unstage 'reset HEAD --'
+git config --global alias.restore 'checkout --'
+即:
+git unstage README.md
+git restore README.md
+
 git rebase --abort
 
 把branchA merge to branchB上
