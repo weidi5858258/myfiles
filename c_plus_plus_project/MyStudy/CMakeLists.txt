@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.9.6)#3.10 3.10.2
 project(MyStudy)
 
-set(CMAKE_CXX_STANDARD 11)
-add_definitions(-std=c++11)
+#set(CMAKE_CXX_STANDARD 11)
+#add_definitions(-std=c++11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 add_executable(
         MyStudy
@@ -24,11 +25,11 @@ add_executable(
         src/Method.cpp
         src/function_study.cpp
         src/GuessNumber.cpp
-        src/HandleAndroidString.cpp
+#        src/HandleAndroidString.cpp
         src/thread_pool_active.c
         #       src/thread_pool_simple.c
         main.cpp
-        include/TestRegularExpression.hpp include/TestClass.hpp include/TestString.hpp)
+        include/TestRegularExpression.hpp include/TestClass.hpp include/TestString.hpp include/TestThread.hpp include/TestSTL.hpp include/TestMemory.hpp)
 
 #                   下面是加载一些头文件及库文件
 ################################################################
@@ -124,16 +125,18 @@ else ()
             #            -lX11
             #            -lxcb
             -lsqlite3
-            -ldl -lz -lrt -lm -lpthread
+            -ldl -lz
+#            -lrt
+            -lm -lpthread
             #            -lglut -lGL -lGLU
             #录音
             #            -lasound
             #            -lfdk-aac
             #            -lcrypto
             #            -lssl
-            -lboost_system
-            -lboost_filesystem
-            -lboost_thread
+#            -lboost_system
+#            -lboost_filesystem
+#            -lboost_thread
     )
 
 endif ()

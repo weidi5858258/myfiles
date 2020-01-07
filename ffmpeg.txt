@@ -688,7 +688,13 @@ ret = avcodec_fill_audio_frame(pInputFrame,Channel_in,SampleFormat_in,buf_in,buf
 
 自此,frame_size,nb_samples,profile之间的关系可以理清楚了,关于mp3的只发现过1152的,如果有其他再记录。 
 
+音视频同步认证
+杜比音效认证
+美国Netflix认证
 
+以音频为基准,同步视频到音频
+1.视频慢了则加快播放或丢掉部分视频帧
+2.视频快了则延迟播放,继续渲染上一帧
 
 
 

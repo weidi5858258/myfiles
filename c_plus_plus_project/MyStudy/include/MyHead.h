@@ -28,7 +28,7 @@
 #include <unordered_set>
 #include <pthread.h>
 #include <time.h>
-#include <malloc.h>
+//#include <malloc.h>
 #include <stdarg.h>
 #include <cctype>
 #include <regex>
@@ -74,28 +74,28 @@
 #else
 
 ////////////////////////////////boost start////////////////////////////////
-#include <boost/bind.hpp>
-#include <boost/thread.hpp>
-#include <boost/timer.hpp>
-#include <boost/random.hpp>
-#include <boost/range.hpp>
-#include <boost/limits.hpp>
-#include <boost/iterator.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
+//#include <boost/bind.hpp>
+//#include <boost/thread.hpp>
+//#include <boost/timer.hpp>
+//#include <boost/random.hpp>
+//#include <boost/range.hpp>
+//#include <boost/limits.hpp>
+//#include <boost/iterator.hpp>
+//#include <boost/format.hpp>
+//#include <boost/lexical_cast.hpp>
 ////////////////////////////////boost end////////////////////////////////
 
 #include <netdb.h>
 #include <sys/mman.h>
 #include <sys/socket.h>
-#include <sys/epoll.h>
+//#include <sys/epoll.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cstddef>
 //录音
-#include <alsa/asoundlib.h>
+//#include <alsa/asoundlib.h>
 #include <sys/mount.h>
-#include <GL/glut.h>
+//#include <GL/glut.h>
 
 #endif
 
@@ -104,6 +104,16 @@
 #define null NULL
 
 using namespace std;
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////
+
+#define xfree(a) do { if (a) { free((void *)(a)); a=NULL; } } while (0)
+
+///////////////////////////////////////////////////////////////////////////////////
 
 #endif //MYSTUDY_MYHEAD_H
 

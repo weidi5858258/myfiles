@@ -1,5 +1,13 @@
 C++基础知识
 
+在C/C++中,"!"需要理解成"是"这样的意思.
+如
+if(!0){
+    // 条件的意思为"是0"的时候怎样
+}
+if(!NULL){
+}
+
 ///////////////////////////零碎知识点///////////////////////////
 
 静态变量(static)
@@ -2856,13 +2864,108 @@ namespace android {
 mutable Mutex mLock;
 constexpr char mtp_dev_path[] = "/dev/mtp_usb";
 
+typedef enum exit_status_t {
+    WG_EXIT_STATUS_NO_ERROR       = EXIT_SUCCESS,
+    WG_EXIT_STATUS_GENERIC        = 1,
+    WG_EXIT_STATUS_PARSE_INIT     = 2,
+    WG_EXIT_STATUS_IO             = 3,
+    WG_EXIT_STATUS_NETWORK        = 4,
+    WG_EXIT_STATUS_TLS            = 5,
+    WG_EXIT_STATUS_AUTH           = 6,
+    WG_EXIT_STATUS_PROTOCOL       = 7,
+    WG_EXIT_STATUS_REMOTE         = 8,
+    WG_EXIT_STATUS_GPG_ERROR      = 9
+} exit_status_t;
+typedef enum {
+    WGET_E_SUCCESS = 0, 
+    WGET_E_UNKNOWN = -1, 
+    WGET_E_MEMORY = -2, 
+    WGET_E_INVALID = -3, 
+    WGET_E_TIMEOUT = -4, 
+    WGET_E_CONNECT = -5, 
+    WGET_E_HANDSHAKE = -6, 
+    WGET_E_CERTIFICATE = -7, 
+    WGET_E_TLS_DISABLED = -8, 
+    WGET_E_GPG_DISABLED = -9, 
+    WGET_E_GPG_VER_FAIL = -10, 
+    WGET_E_GPG_VER_ERR = -11, 
+    WGET_E_XML_PARSE_ERR = -12, 
+    WGET_E_OPEN = -13, 
+    WGET_E_IO = -14, 
+    WGET_E_UNSUPPORTED = -15, 
+} wget_error;
+
+结构体的初始化:
+struct sigaction sig_action;
+memset(&sig_action, 0, sizeof(sig_action));
+
+// see https://www.gnu.org/software/gnulib/manual/html_node/Exported-Symbols-of-Shared-Libraries.html
+#if defined BUILDING_LIBWGET && HAVE_VISIBILITY
+#   define WGETAPI __attribute__ ((__visibility__("default")))
+#elif defined BUILDING_LIBWGET && defined _MSC_VER && !defined LIBWGET_STATIC
+#   define WGETAPI __declspec(dllexport)
+#elif defined _MSC_VER && !defined LIBWGET_STATIC
+#   define WGETAPI __declspec(dllimport)
+#else
+#   define WGETAPI
+#endif
+
+#ifdef MALLOC_RETURNS_NONNULL
+#  define RETURNS_NONNULL WGET_GCC_RETURNS_NONNULL
+#  define NULLABLE
+#else
+#  define RETURNS_NONNULL
+#  if defined __clang_major__ && defined WGET_MANYWARNINGS
+#    define NULLABLE _Nullable
+#  else
+#    define NULLABLE
+#  endif
+#endif
+
+WGETAPI wget_hsts_host_match_fn wget_hsts_host_match;
+WGETAPI void wget_iri_test(void);
+WGETAPI wget_cookie * NULLABLE wget_cookie_init(wget_cookie *cookie);
+
+通过malloc函数得到的堆内存必须使用memset函数来初始化。
+wget_hashmap *h = malloc(sizeof(wget_hashmap));
+if (!h) return NULL;
+
+_entry_t **entry;
+h->entry = calloc(max, sizeof(_entry_t *));
+if (!h->entry) {
+    xfree(h);
+    return NULL;
+}
+
+char b[5];
+memset(b,'\0',sizeof(b)); 
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+extern JavaVM *gJavaVm;
+extern jmethodID gRecognizeMethodID;
+extern jmethodID gRecognizeNonImageMethodID;
+extern jmethodID gErrorMethodID;
+extern jobject gObject;
 
+#ifdef __cplusplus
+}
+#endif
 
+LOGE("%s:begin", __FUNCTION__);
 
-
+// 一般来说，采用V4L2驱动的摄像头设备文件是/dev/video0
+char DevName[DEV_NAME_MAX];
+sprintf(DevName, "/dev/video%d", i);
+mCameraFd = open(DevName, O_RDWR | O_NONBLOCK);
+if (mCameraFd < 0) {
+    LOGI("%s(): open failed(%s) --> mCameraFd %d (error : %s)",
+         __FUNCTION__, DevName, mCameraFd, strerror(errno));
+    continue;
+}
 
 
 

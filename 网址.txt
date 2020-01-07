@@ -157,9 +157,19 @@ https://www.meiju.net/ 爱美剧
 https://mp.weixin.qq.com/mp/homepage?__biz=MzI3OTAyNzAwNg==&hid=1&sn=b4b216d105a1496cd72ec6729bb22279&scene=18#wechat_redirect Flutter 即学即用系列博客
 https://source.android.com/ android源码
 http://www.lapulace.com/ Mac软件
+https://www.macbl.com/app/new
 https://github.com/googlesamples Google Samples
 https://github.com/android
 https://github.com/android/ndk-samples
+https://blog.csdn.net/lakebobo/article/details/79619584 android ffmpeg视频硬解码例子
+https://blog.csdn.net/zhangpengzp/article/details/82289224 ffmpeg 编译android so库文件
+https://blog.csdn.net/zhangpengzp/article/details/88943867 ffmpeg android jni端调用mediaCodec实现硬解码
+https://www.videoder.com YouTube视频下载器
+https://chromium.googlesource.com/?format=HTML
+https://www.zhihu.com/question/325943454 如何学习音视频开发?
+https://yq.aliyun.com/articles/550356?spm=a2c4e.11153940.0.0.61ad2013bCpwfi Android性能优化：这是一份全面&详细的内存优化指南
+https://www.jianshu.com/p/dad51f6c9c4d Android - 收藏集
+
 
 
 

@@ -8370,27 +8370,29 @@ set(ANDROID_INCLUDE_PATH
         /media/root/alexander/android_source/aosp)
 
 include_directories(
+        ${ANDROID_INCLUDE_PATH}/system
+        ${ANDROID_INCLUDE_PATH}/out/soong/.intermediates/vendor/sony/hardware/interfaces/eepserver/1.0/com.sony.dtv.hardware.eepserver@1.0_genc++_headers/gen
+        ${ANDROID_INCLUDE_PATH}/out/soong/.intermediates/system/libhidl/transport/base/1.0/android.hidl.base@1.0_genc++_headers/gen
+        ${ANDROID_INCLUDE_PATH}/bionic/libc/include
+        ${ANDROID_INCLUDE_PATH}/bionic/libc/kernel/uapi
+        ${ANDROID_INCLUDE_PATH}/external/boringssl/include
         ${ANDROID_INCLUDE_PATH}/external/curl/include
         ${ANDROID_INCLUDE_PATH}/external/expat/lib
-        ${ANDROID_INCLUDE_PATH}/external/skia/include/core
-        ${ANDROID_INCLUDE_PATH}/libnativehelper/include
-        ${ANDROID_INCLUDE_PATH}/prebuilts/ndk/current/platforms/android-24/arch-arm/usr/include/asm-generic
         ${ANDROID_INCLUDE_PATH}/external/libselinux/include
-        ${ANDROID_INCLUDE_PATH}/bionic/libc/include
         ${ANDROID_INCLUDE_PATH}/external/gtest/include
-        ${ANDROID_INCLUDE_PATH}/libnativehelper/include/nativehelper
         ${ANDROID_INCLUDE_PATH}/external/libchrome
         ${ANDROID_INCLUDE_PATH}/external/libbrillo
-        ${ANDROID_INCLUDE_PATH}/hardware/libhardware/include
-        ${ANDROID_INCLUDE_PATH}/external/skia/src/core
         ${ANDROID_INCLUDE_PATH}/external/kernel-headers/original/uapi
-
+        ${ANDROID_INCLUDE_PATH}/external/skia/include/core
+        ${ANDROID_INCLUDE_PATH}/external/skia/src/core
+        ${ANDROID_INCLUDE_PATH}/hardware/libhardware/include
+        ${ANDROID_INCLUDE_PATH}/libnativehelper/include
+        ${ANDROID_INCLUDE_PATH}/libnativehelper/include/nativehelper
+        ${ANDROID_INCLUDE_PATH}/prebuilts/ndk/current/platforms/android-24/arch-arm/usr/include/asm-generic
         ${ANDROID_INCLUDE_PATH}/frameworks/av/include
         ${ANDROID_INCLUDE_PATH}/frameworks/base/core/jni
         ${ANDROID_INCLUDE_PATH}/frameworks/base/include
         ${ANDROID_INCLUDE_PATH}/frameworks/native/include
-
-        ${ANDROID_INCLUDE_PATH}/system/extras/perfprofd/quipper
         ${ANDROID_INCLUDE_PATH}/system/bt/include
         ${ANDROID_INCLUDE_PATH}/system/bt/bta/include
         ${ANDROID_INCLUDE_PATH}/system/bt/btcore/include
@@ -8406,6 +8408,7 @@ include_directories(
         ${ANDROID_INCLUDE_PATH}/system/bt/utils/include
         ${ANDROID_INCLUDE_PATH}/system/bt/vendor_libs/test_vendor_lib/include
         ${ANDROID_INCLUDE_PATH}/system/bt/vnd/include
+        ${ANDROID_INCLUDE_PATH}/system/core/base/include
         ${ANDROID_INCLUDE_PATH}/system/core/include
         ${ANDROID_INCLUDE_PATH}/system/core/adf/libadf/include
         ${ANDROID_INCLUDE_PATH}/system/core/adf/libadfhwc/include
@@ -8428,12 +8431,11 @@ include_directories(
         ${ANDROID_INCLUDE_PATH}/system/core/trusty/libtrusty/include
         ${ANDROID_INCLUDE_PATH}/system/extras/libfec/include
         ${ANDROID_INCLUDE_PATH}/system/extras/libpagemap/include
+        ${ANDROID_INCLUDE_PATH}/system/extras/perfprofd/quipper
         ${ANDROID_INCLUDE_PATH}/system/extras/perfprofd/quipper/kernel-headers/tools/perf/util/include
         ${ANDROID_INCLUDE_PATH}/system/extras/perfprofd/quipper/original-kernel-headers/tools/perf/util/include
         ${ANDROID_INCLUDE_PATH}/system/extras/simpleperf/nonlinux_support/include
         ${ANDROID_INCLUDE_PATH}/system/extras/tests/include
-        ${ANDROID_INCLUDE_PATH}/system/gatekeeper/include
-        ${ANDROID_INCLUDE_PATH}/system/keymaster/include
         ${ANDROID_INCLUDE_PATH}/system/media/alsa_utils/include
         ${ANDROID_INCLUDE_PATH}/system/media/audio/include
         ${ANDROID_INCLUDE_PATH}/system/media/audio_effects/include
@@ -8449,5 +8451,6 @@ include_directories(
         ${ANDROID_INCLUDE_PATH}/system/security/softkeymaster/include
         ${ANDROID_INCLUDE_PATH}/system/update_engine/include
         ${ANDROID_INCLUDE_PATH}/system/update_engine/client_library/include
-
+        ${ANDROID_INCLUDE_PATH}/system/gatekeeper/include
+        ${ANDROID_INCLUDE_PATH}/system/keymaster/include
 )

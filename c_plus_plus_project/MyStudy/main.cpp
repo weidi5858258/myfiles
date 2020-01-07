@@ -13,9 +13,11 @@
 #include "./include/HandleAndroidString.h"
 #include "./include/FormatCode.hpp"
 #include "./include/TestRegularExpression.hpp"
-#include "./include/leak_detector_c.hpp"
+//#include "./include/leak_detector_c.hpp"
 #include "./include/TestString.hpp"
 #include "./include/TestClass.hpp"
+#include "./include/TestThread.hpp"
+#include "./include/TestMemory.hpp"
 //#include "./include/thread_pool_active.hpp"
 //#include "./include/leak_detector_c.h"
 
@@ -25,6 +27,13 @@ int test(int argc, char **argv);
 
 int basicKnowledge(int argc, char **argv);
 
+struct config config = {
+        .post_file = "false",
+        .post_data = "-1",
+        .http_username = "-1",
+        .http_password = "alexander"
+};
+
 /***
 @param argc 参数至少有一个,因为第一个参数就是本身的可执行文件
 @param argv
@@ -32,7 +41,7 @@ int basicKnowledge(int argc, char **argv);
 Clion 输出乱码问题
 File -> Settings -> Default Settings -> Editor -> File Encodings:
 Global Encoding: UTF-8
-Project Encoding : UTF-8
+Project Encoding: UTF-8
 Default encoding for properties files: UTF-8
 然后还有关键一步骤：在程程序左下角修改utf-8为GBK
  */
@@ -82,11 +91,25 @@ int main(int argc, char **argv) {
 //    testString.testSmartPointer();
 
     //test(argc, argv);
-    basicKnowledge(argc, argv);
+    //basicKnowledge(argc, argv);
 
     /*{
         alexander::Son son(10);
     }*/
+
+    cout << config.http_password << endl;
+
+    /*if (!-0.0000000000000000000000000000000000000000001f) {
+        cout << "!0" << endl;
+    } else {
+        cout << "1" << endl;
+    }*/
+    setlocale(LC_ALL, "");
+
+    alexander::TestMemory testMemory;
+    testMemory.testMalloc();
+    testMemory.testCalloc();
+    testMemory.testRealloc();
 
     printf("------------------------------------------\n");
     printf("\n");

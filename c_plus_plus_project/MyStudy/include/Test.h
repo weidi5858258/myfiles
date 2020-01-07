@@ -28,5 +28,12 @@ private:
     int data;
 };
 
+struct config {
+    const char
+            *post_file,
+            *post_data,
+            *http_username,
+            *http_password;
+};
 
 #endif //MYSTUDY_TEST_H
