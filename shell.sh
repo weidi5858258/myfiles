@@ -2258,6 +2258,31 @@ ntfsfix /dev/sdb1
 # 查看系统位数
 getconf LONG_BIT
 
+# macOS系统下挂载NTFS格式的硬盘
+# https://blog.csdn.net/huntstart/article/details/81257113
+brew install ntfs-3g
+sudo mkdir /Volumes/NTFS
+# 插上移动硬盘后
+diskutil list
+sudo umount /dev/disk2s1
+sudo /usr/local/bin/ntfs-3g \
+/dev/disk2s1 /Volumes/NTFS \
+-olocal -oallow_other
+
+# 下面这个方法最好
+# 1.创建文件夹
+sudo mkdir /Volumes/NTFS
+# 2.卸载
+sudo umount /Volumes/Alexander
+# 3.可读写挂载
+sudo mount -t ntfs -o rw,auto,nobrowse /dev/disk2s1 /Volumes/NTFS
+# 4.创建快捷方式
+sudo ln -s /Volumes/NTFS ~/Desktop/NTFS
+
+# /sbin/mount_ntfs -> /System/Library/Filesystems/ntfs.fs/Contents/Resources/mount_ntfs
+sudo ln -s /System/Library/Filesystems/ntfs.fs/Contents/Resources/mount_ntfs mount_ntfs
+
+sudo mount -t ntfs -o rw,auto,nobrowse /dev/disk1s5 /Volumes/ubuntu
 
 
 

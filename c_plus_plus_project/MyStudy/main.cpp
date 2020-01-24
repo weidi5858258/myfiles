@@ -160,7 +160,7 @@ int basicKnowledge(int argc, char **argv) {
     fprintf(stdout, "basicKnowledge() **p2  %%d: %d\n", **p4);// 指向int内容
 
     // 下面是定义字符串的几种方式及得到字符串的长度
-    const char *string1 = "Hello World";
+    const char *string1 = "Hello World";// 11
     int len = strlen(string1);
     printf("string1 strlen: %d\n", len);// 11
     size_t size = sizeof(string1);

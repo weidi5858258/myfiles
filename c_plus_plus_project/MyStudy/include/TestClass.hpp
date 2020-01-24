@@ -72,7 +72,40 @@ namespace alexander {
 
     /////////////////////////////////////////////////////////////////////////////////
 
+    class RuleOfThree {
+    private:
+        char *cstring;
+    public:
+        RuleOfThree(const char *arg) : cstring(new char[std::strlen(arg) + 1]) {
+            std::strcpy(cstring, arg);
+        }
 
+        ~RuleOfThree() {
+            delete[] cstring;
+        }
+
+        // copy constructor
+        RuleOfThree(const RuleOfThree &other) {
+            cstring = new char[std::strlen(other.cstring) + 1];
+            std::strcpy(cstring, other.cstring);
+        }
+
+        // copy assignment
+        RuleOfThree &operator=(const RuleOfThree &other) {
+            char *tmp_cstring = new char[std::strlen(other.cstring) + 1];
+            std::strcpy(tmp_cstring, other.cstring);
+            delete[] cstring;
+            cstring = tmp_cstring;
+            return *this;
+        }
+
+        // 如果不想要拷贝构造函数,那么只需要声明成private就行了,这样使用的时候就会报错
+        // 这样做是为了阻止编译器自动生成相关的代码而引起错误导致程序运行不正常
+    /*private:
+        RuleOfThree(const RuleOfThree &other) = delete;
+
+        RuleOfThree &operator=(const RuleOfThree &other) = delete;*/
+    };
 
 }
 

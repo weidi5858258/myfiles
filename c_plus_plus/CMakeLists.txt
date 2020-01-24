@@ -8419,6 +8419,7 @@ include_directories(
         ${ANDROID_INCLUDE_PATH}/system/core/libion/include
         ${ANDROID_INCLUDE_PATH}/system/core/libmemunreachable/include
         ${ANDROID_INCLUDE_PATH}/system/core/libnativeloader/include
+        ${ANDROID_INCLUDE_PATH}/system/core/libnativeloader/include_jni
         ${ANDROID_INCLUDE_PATH}/system/core/libpackagelistparser/include
         ${ANDROID_INCLUDE_PATH}/system/core/libpixelflinger/include
         ${ANDROID_INCLUDE_PATH}/system/core/libprocessgroup/include
