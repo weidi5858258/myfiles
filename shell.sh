@@ -2284,5 +2284,32 @@ sudo ln -s /System/Library/Filesystems/ntfs.fs/Contents/Resources/mount_ntfs mou
 
 sudo mount -t ntfs -o rw,auto,nobrowse /dev/disk1s5 /Volumes/ubuntu
 
+result=`cat test.txt`
+for aline in ${result};
+do
+	aline_wc=`wc -l ${aline}`
+	aline_wc=`echo ${aline_wc} | awk  -F '[ ;]+' '{print $1}'`
+	# 下面判断条件只是为了输出格式对齐,这样好看一点
+	if [ ${aline_wc} -le 9 ]; then
+		# 一位数字
+		echo ${aline_wc}"     "${aline}
+	elif [ ${aline_wc} -ge 10 -a ${aline_wc} -le 99 ]; then
+		# 二位数字
+		echo ${aline_wc}"    "${aline}
+	elif [ ${aline_wc} -ge 100 -a ${aline_wc} -le 999 ]; then
+		# 三位数字
+		echo ${aline_wc}"   "${aline}
+	elif [ ${aline_wc} -ge 1000 -a ${aline_wc} -le 9999 ]; then
+		# 四位数字
+		echo ${aline_wc}"  "${aline}
+	elif [ ${aline_wc} -ge 10000 -a ${aline_wc} -le 99999 ]; then
+		# 五位数字
+		echo ${aline_wc}" "${aline}
+	fi
+done
 
+cat filelist.txt | while read aline
+do
+	echo 'git log --since=2018-5-28 --pretty=onelone ${aline} | wc -l'
+done
 
