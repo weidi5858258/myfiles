@@ -2277,6 +2277,7 @@ sudo umount /Volumes/Alexander
 # 3.可读写挂载
 sudo mount -t ntfs -o rw,auto,nobrowse /dev/disk2s1 /Volumes/NTFS
 # 4.创建快捷方式
+sudo rm -rf ~/Desktop/NTFS
 sudo ln -s /Volumes/NTFS ~/Desktop/NTFS
 
 # /sbin/mount_ntfs -> /System/Library/Filesystems/ntfs.fs/Contents/Resources/mount_ntfs
@@ -2312,4 +2313,27 @@ cat filelist.txt | while read aline
 do
 	echo 'git log --since=2018-5-28 --pretty=onelone ${aline} | wc -l'
 done
+
+# super is command
+# { "keys": ["Command+j"], "command": "join_lines" },
+# { "keys": ["Command+Shift+d"], "command": "duplicate_line" },
+# { "keys": ["Command+Ctrl+up"], "command": "swap_line_up" },
+# { "keys": ["Command+Ctrl+down"], "command": "swap_line_down" },
+# { "keys": ["Ctrl+Shift+k"], "command": "run_macro_file", "args": {"file": "res://Packages/Default/Delete Line.sublime-macro"} },
+
+# 如果已经可以用usb连接adb，那么可以通过以下命令切换到无线连接方式。
+adb tcpip 5555
+adb connect 192.168.0.100:5555
+# 通过以下命令可以切换回usb方式。
+adb usb
+# 如果无法通过usb方式连接，比如因为没有驱动或没有数据线，那么可以在设备上执行以下命令，切换到无线连接方式。注意此方式需要root权限。
+setprop service.adb.tcp.port 5555
+stop adbd
+start adbd
+# 通过以下命令可以切换回usb方式。
+setprop service.adb.tcp.port -1
+stop adbd
+start adbd
+
+
 
