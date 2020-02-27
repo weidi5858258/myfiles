@@ -79,13 +79,13 @@ extern "C" {// 不能少
 #include <libavutil/error.h>
 #include <libavutil/time.h>
 
-#include <SDL2/SDL.h>
+//#include <SDL2/SDL.h>
 //mp3 encode
-#include <lame.h>
-#include <cstddef>
+//#include <lame.h>
+//#include <cstddef>
 //录音
-#include <alsa/asoundlib.h>
-#include <GL/glut.h>
+//#include <alsa/asoundlib.h>
+//#include <GL/glut.h>
 
 //    #include <jconfig.h>
 //    #include <jerror.h>

@@ -1,0 +1,79 @@
+cmake_minimum_required(VERSION 3.9)
+project(ffmpeg_study)
+
+set(CMAKE_CXX_STANDARD 11)
+add_definitions(-std=c++11)
+
+add_executable(
+        ffmpeg_study
+        main.cpp
+        ffmpeg.cpp
+        include/MyHead.h
+        include/decode_audio.h
+
+        src/StudyFFmpeg.cpp
+        src/ffmpeg_sample.cpp
+        src/leixiaohua1020.cpp
+        src/player.cpp
+        src/music_player.cpp
+        src/music_player2.cpp
+        src/decode_audio.cpp
+        src/StudyAgain.cpp
+)
+# 要包含的头文件
+include_directories(
+        include
+        /usr/local/include
+        /usr/local/include/lame
+        /usr/local/Cellar/sdl2/2.0.10/include/SDL2
+        /Users/alexander/mydev/tools/audio_video/ffmpeg/include
+)
+# 要包含的ffmpeg lib库
+set(FFMPEG_LIB_PATH
+        /Users/alexander/mydev/tools/audio_video/ffmpeg/lib)
+# 要包含的sdl2 lib库
+set(SDL2_LIB_PATH
+        /usr/local/Cellar/sdl2/2.0.10/lib)
+
+target_link_libraries(
+        ffmpeg_study
+
+        -L${FFMPEG_LIB_PATH} -lavformat
+        -L${FFMPEG_LIB_PATH} -lavcodec
+        -L${FFMPEG_LIB_PATH} -lavfilter
+        -L${FFMPEG_LIB_PATH} -lavutil
+        -L${FFMPEG_LIB_PATH} -lswresample
+        -L${FFMPEG_LIB_PATH} -lswscale
+        -L${FFMPEG_LIB_PATH} -lavdevice
+        -L${FFMPEG_LIB_PATH} -lpostproc
+        -L${SDL2_LIB_PATH} -lSDL2
+        -L${SDL2_LIB_PATH} -lSDL2main
+
+        # 音频编码成mp3文件时要用到
+        -lmp3lame
+        -L/usr/lib -lx264
+        -lx265
+        -lasound
+        -lsndio
+        -lXext
+        -lX11
+        -L/usr/lib -llzma
+        -lxcb
+        -lsqlite3
+        -lz
+        -lrt
+        -lm
+        -L/usr/lib -ldl
+        -lpthread
+        #opengl
+        -lglut -lGL -lGLU
+        #录音
+        -lasound
+        -lfdk-aac
+        -lcrypto
+        -lssl
+        -lvpx
+        # lib/libavformat.a(matroskadec.o)：在函数‘matroska_decode_buffer’中：
+        # libavformat/matroskadec.c:1435：对‘BZ2_bzDecompressInit’未定义的引用
+        -L/usr/lib -lbz2
+)

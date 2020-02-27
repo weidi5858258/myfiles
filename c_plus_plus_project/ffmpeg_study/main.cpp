@@ -1,5 +1,5 @@
 #include "./include/MyHead.h"
-#include "decode_audio.h"
+//#include "decode_audio.h"
 
 #ifdef MYSTUDY_FFMPEG_STUDYAGAIN
 #include "src/StudyAgain.cpp"
@@ -199,7 +199,7 @@ int main(int argc, char *argv[]) {
 //    alexander_playback_pcm();
 
 //    alexanderAudioPlayerWithSDL();
-    alexanderVideoPlayerWithSDL();
+//    alexanderVideoPlayerWithSDL();
 //    alexander_music_player("/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3");
 //    alexander_music_player("/root/音乐/alexander_music/冷漠、云菲菲 - 伤心城市.mp3");
 
