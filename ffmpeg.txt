@@ -696,11 +696,29 @@ ret = avcodec_fill_audio_frame(pInputFrame,Channel_in,SampleFormat_in,buf_in,buf
 1.视频慢了则加快播放或丢掉部分视频帧
 2.视频快了则延迟播放,继续渲染上一帧
 
+结构体中定义指针变量时,不需要把它置为NULL.
+结构体中成员变量该定义成指针还是普通变量?
+如果结构体中的成员变量是指针,那么它的值一般是其他指针变量赋值给它,
+或者通过某个方法后得到一个指针.意思就是说定义成指针时,
+其很容易通过某种方式给它赋值,而不需要另外分配空间后再使用.
+如果结构体中的成员变量是普通变量,那么给这个结构体分配空间时,
+这个普通变量也就分配了空间,可以直接使用了,只要给它一个初始值就行了.
 
-
-
-
-
+1.
+typedef struct VideoState{
+  //...
+} VideoState;
+VideoState *is;
+is = av_mallocz(sizeof(VideoState));
+av_free(is);
+2.
+// Cannot allocate memory
+return AVERROR(ENOMEM);
+3.
+char str[1000] = {0};
+4.
+int st_index[5];
+memset(st_index, -1, sizeof(st_index));
 
 
 
