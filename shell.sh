@@ -2335,5 +2335,38 @@ setprop service.adb.tcp.port -1
 stop adbd
 start adbd
 
+lines=0
+cat missed.txt | while read aline
+do
+	if [[ -n ${aline} ]]; then
+		array_class_name[${lines}]="${aline}"
+		echo ${lines} ${array_class_name[${lines}]}
+		lines=`expr ${lines} + 1`
+	fi
+done
+# array_class_name数组元素不能被读取 lines值还是0
+echo "lines: ${lines}"
 
+lines=0
+while read aline
+do
+	if [[ -n ${aline} ]]; then
+		array_class_name[${lines}]="${aline}"
+		echo ${lines} ${array_class_name[${lines}]}
+		lines=`expr ${lines} + 1`
+	fi
+done < "missed.txt"
+# array_class_name数组可以被读取 lines值被改变
+echo "lines: ${lines}"
 
+# 数组元素读取方式
+for ignPath in "${array_class_name[@]}"
+do
+	echo ${ignPath}
+done
+
+i=0
+for i in `seq ${lines}`;
+do
+	echo ${array_class_name[${i}]}
+done
