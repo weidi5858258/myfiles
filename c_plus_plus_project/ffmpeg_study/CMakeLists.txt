@@ -25,7 +25,7 @@ add_executable(
 #        src/music_player2.cpp
 #        src/decode_audio.cpp
 #        src/StudyAgain.cpp
-)
+        src/business/ffplay/ffplay.h src/business/ffplay/FFplayer.cpp src/business/ffplay/FFplayer.h)
 # 要包含的头文件
 include_directories(
         include

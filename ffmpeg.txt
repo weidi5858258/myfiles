@@ -712,8 +712,9 @@ VideoState *is;
 is = av_mallocz(sizeof(VideoState));
 av_free(is);
 2.
-// Cannot allocate memory
-return AVERROR(ENOMEM);
+AVFrame *frame = av_frame_alloc();
+if (!frame)
+    return AVERROR(ENOMEM);
 3.
 char str[1000] = {0};
 4.
@@ -722,11 +723,26 @@ memset(st_index, -1, sizeof(st_index));
 
 
 
+AVFormatContext *avFormatContext = NULL;
+avFormatContext = avformat_alloc_context();
+if (!avFormatContext) {
+  return AVERROR(ENOMEM);
+}
+avformat_open_input(&avFormatContext, is->filename, is->iformat, &format_opts);
 
+AVCodecContext *avctx = NULL;
+avctx = avcodec_alloc_context3(NULL);
+if (!avctx)
+  return AVERROR(ENOMEM);
+AVCodecParameters *par = ic->streams[stream_index]->codecpar;
+ret = avcodec_parameters_to_context(avctx, par);
+if (ret < 0)
+  goto fail;
 
-
-
-
+AVCodec *deCodec = NULL;
+deCodec = avcodec_find_decoder(avctx->codec_id);
+if (!deCodec)
+  goto fail;
 
 
 
