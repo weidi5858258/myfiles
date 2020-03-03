@@ -760,7 +760,9 @@ SDL_LockMutex(mutex);
 SDL_CondWait(cond, mutex);
 SDL_UnlockMutex(mutex);
 // 使用(取消暂停功能)
+SDL_LockMutex(mutex);
 SDL_CondSignal(cond);
+SDL_UnlockMutex(mutex);
 
 
 

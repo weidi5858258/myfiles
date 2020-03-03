@@ -13,6 +13,7 @@
 #include <signal.h>
 #include <stdint.h>
 #include <assert.h>
+#include <pthread.h>
 
 #include "libavutil/avstring.h"
 #include "libavutil/eval.h"
@@ -77,12 +78,6 @@
 #define SAMPLE_QUEUE_SIZE 9
 #define FRAME_QUEUE_SIZE FFMAX(SAMPLE_QUEUE_SIZE, FFMAX(VIDEO_PICTURE_QUEUE_SIZE, SUBPICTURE_QUEUE_SIZE))
 
-typedef struct MyAVPacketList {
-    AVPacket pkt;
-    struct MyAVPacketList *next;
-    int serial;
-} MyAVPacketList;
-
 typedef struct AudioParams {
     // 采样率
     int sample_rate;
@@ -120,6 +115,42 @@ typedef struct Frame {
     int uploaded;
     int flip_v;
 } Frame;
+
+typedef struct MyAVPacketList {
+    AVPacket pkt;
+    struct MyAVPacketList *next;
+    int serial;
+} MyAVPacketList;
+
+// 保存AVPacket(音频,视频,字幕各一个Queue)
+typedef struct PacketQueue {
+    MyAVPacketList *first_pkt, *last_pkt;
+    int nb_packets;
+    int size;
+    int serial;
+    int abort_request;
+    int64_t duration;
+    //SDL_mutex *mutex;// "同步"作用
+    //SDL_cond *cond;  // "暂停"作用
+    pthread_mutex_t pMutex;// "同步"作用
+    pthread_cond_t pCond;  // "暂停"作用
+} PacketQueue;
+
+// 保存AVFrame
+typedef struct FrameQueue {
+    Frame queue[FRAME_QUEUE_SIZE];
+    int rindex;
+    int windex;
+    int size;
+    int max_size;
+    int keep_last;
+    int rindex_shown;
+    PacketQueue *pktQ;
+    //SDL_mutex *mutex;
+    //SDL_cond *cond;
+    pthread_mutex_t pMutex;// "同步"作用
+    pthread_cond_t pCond;  // "暂停"作用
+} FrameQueue;
 
 enum {
     AV_SYNC_AUDIO_MASTER, /* default choice */
@@ -360,6 +391,305 @@ static void sync_clock_to_slave(Clock *c, Clock *slave) {
     double slave_clock = get_clock(slave);
     if (!isnan(slave_clock) && (isnan(clock) || fabs(clock - slave_clock) > AV_NOSYNC_THRESHOLD))
         set_clock(c, slave_clock, slave->serial);
+}
+
+/* return < 0 if aborted, 0 if no packet and > 0 if packet.  */
+static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block, int *serial) {
+    MyAVPacketList *pkt1;
+    int ret;
+
+    //SDL_LockMutex(q->mutex);
+    pthread_mutex_lock(&q->pMutex);
+
+    for (;;) {
+        if (q->abort_request) {
+            ret = -1;
+            break;
+        }
+
+        pkt1 = q->first_pkt;
+        if (pkt1) {
+            q->first_pkt = pkt1->next;
+            if (!q->first_pkt)
+                q->last_pkt = NULL;
+            q->nb_packets--;
+            q->size -= pkt1->pkt.size + sizeof(*pkt1);
+            q->duration -= pkt1->pkt.duration;
+            *pkt = pkt1->pkt;
+            if (serial)
+                *serial = pkt1->serial;
+            av_free(pkt1);
+            ret = 1;
+            break;
+        } else if (!block) {
+            ret = 0;
+            break;
+        } else {
+            //SDL_CondWait(q->cond, q->mutex);
+            pthread_cond_wait(&q->pCond, &q->pMutex);
+        }
+    }
+    //SDL_UnlockMutex(q->mutex);
+    pthread_mutex_unlock(&q->pMutex);
+    return ret;
+}
+
+static int packet_queue_put_private(PacketQueue *q, AVPacket *pkt) {
+    MyAVPacketList *pkt1;
+
+    if (q->abort_request)
+        return -1;
+
+    pkt1 = av_malloc(sizeof(MyAVPacketList));
+    if (!pkt1)
+        return -1;
+    pkt1->pkt = *pkt;
+    pkt1->next = NULL;
+    if (pkt == &flush_pkt)
+        q->serial++;
+    pkt1->serial = q->serial;
+
+    if (!q->last_pkt)
+        q->first_pkt = pkt1;
+    else
+        q->last_pkt->next = pkt1;
+    q->last_pkt = pkt1;
+    q->nb_packets++;
+    q->size += pkt1->pkt.size + sizeof(*pkt1);
+    q->duration += pkt1->pkt.duration;
+    /* XXX: should duplicate packet data in DV case */
+    //SDL_CondSignal(q->cond);
+    pthread_cond_signal(&q->pCond);
+    return 0;
+}
+
+static int packet_queue_put(PacketQueue *q, AVPacket *pkt) {
+    int ret;
+
+    //SDL_LockMutex(q->mutex);
+    pthread_mutex_lock(&q->pMutex);
+    ret = packet_queue_put_private(q, pkt);
+    //SDL_UnlockMutex(q->mutex);
+    pthread_mutex_unlock(&q->pMutex);
+
+    if (pkt != &flush_pkt && ret < 0)
+        av_packet_unref(pkt);
+
+    return ret;
+}
+
+/* packet queue handling */
+static int packet_queue_init(PacketQueue *q) {
+    memset(q, 0, sizeof(PacketQueue));
+    /*q->mutex = SDL_CreateMutex();
+    if (!q->mutex) {
+        av_log(NULL, AV_LOG_FATAL, "SDL_CreateMutex(): %s\n", SDL_GetError());
+        return AVERROR(ENOMEM);
+    }
+    q->cond = SDL_CreateCond();
+    if (!q->cond) {
+        av_log(NULL, AV_LOG_FATAL, "SDL_CreateCond(): %s\n", SDL_GetError());
+        return AVERROR(ENOMEM);
+    }*/
+    pthread_mutex_init(&q->pMutex, NULL);
+    pthread_cond_init(&q->pCond, NULL);
+    q->abort_request = 1;
+    return 0;
+}
+
+static void packet_queue_flush(PacketQueue *q) {
+    MyAVPacketList *pkt, *pkt1;
+
+    //SDL_LockMutex(q->mutex);
+    pthread_mutex_lock(&q->pMutex);
+    for (pkt = q->first_pkt; pkt; pkt = pkt1) {
+        pkt1 = pkt->next;
+        av_packet_unref(&pkt->pkt);
+        av_freep(&pkt);
+    }
+    q->last_pkt = NULL;
+    q->first_pkt = NULL;
+    q->nb_packets = 0;
+    q->size = 0;
+    q->duration = 0;
+    //SDL_UnlockMutex(q->mutex);
+    pthread_mutex_unlock(&q->pMutex);
+}
+
+static void packet_queue_destroy(PacketQueue *q) {
+    packet_queue_flush(q);
+    //SDL_DestroyMutex(q->mutex);
+    //SDL_DestroyCond(q->cond);
+    pthread_mutex_destroy(&q->pMutex);
+    pthread_cond_destroy(&q->pCond);
+}
+
+static void packet_queue_abort(PacketQueue *q) {
+    //SDL_LockMutex(q->mutex);
+    pthread_mutex_lock(&q->pMutex);
+    q->abort_request = 1;
+    //SDL_CondSignal(q->cond);
+    pthread_cond_signal(&q->pCond);
+    //SDL_UnlockMutex(q->mutex);
+    pthread_mutex_unlock(&q->pMutex);
+}
+
+static int packet_queue_put_nullpacket(PacketQueue *q, int stream_index) {
+    AVPacket pkt1, *pkt = &pkt1;
+    av_init_packet(pkt);
+    pkt->data = NULL;
+    pkt->size = 0;
+    pkt->stream_index = stream_index;
+    return packet_queue_put(q, pkt);
+}
+
+static void packet_queue_start(PacketQueue *q) {
+    //SDL_LockMutex(q->mutex);
+    pthread_mutex_lock(&q->pMutex);
+    q->abort_request = 0;
+    packet_queue_put_private(q, &flush_pkt);
+    //SDL_UnlockMutex(q->mutex);
+    pthread_mutex_unlock(&q->pMutex);
+}
+
+static void frame_queue_unref_item(Frame *vp) {
+    av_frame_unref(vp->frame);
+    avsubtitle_free(&vp->sub);
+}
+
+static int frame_queue_init(FrameQueue *f, PacketQueue *pktq, int max_size, int keep_last) {
+    memset(f, 0, sizeof(FrameQueue));
+    /*if (!(f->mutex = SDL_CreateMutex())) {
+        av_log(NULL, AV_LOG_FATAL, "SDL_CreateMutex(): %s\n", SDL_GetError());
+        return AVERROR(ENOMEM);
+    }
+    if (!(f->cond = SDL_CreateCond())) {
+        av_log(NULL, AV_LOG_FATAL, "SDL_CreateCond(): %s\n", SDL_GetError());
+        return AVERROR(ENOMEM);
+    }*/
+    pthread_mutex_init(&f->pMutex, NULL);
+    pthread_cond_init(&f->pCond, NULL);
+    f->pktQ = pktq;
+    f->max_size = FFMIN(max_size, FRAME_QUEUE_SIZE);
+    f->keep_last = !!keep_last;
+    int i;
+    for (i = 0; i < f->max_size; i++)
+        if (!(f->queue[i].frame = av_frame_alloc()))
+            return AVERROR(ENOMEM);
+    return 0;
+}
+
+static void frame_queue_destory(FrameQueue *f) {
+    int i;
+    for (i = 0; i < f->max_size; i++) {
+        Frame *vp = &f->queue[i];
+        frame_queue_unref_item(vp);
+        av_frame_free(&vp->frame);
+    }
+    //SDL_DestroyMutex(f->mutex);
+    //SDL_DestroyCond(f->cond);
+    pthread_mutex_destroy(&f->pMutex);
+    pthread_cond_destroy(&f->pCond);
+}
+
+static void frame_queue_signal(FrameQueue *f) {
+    /*SDL_LockMutex(f->mutex);
+    SDL_CondSignal(f->cond);
+    SDL_UnlockMutex(f->mutex);*/
+    pthread_mutex_lock(&f->pMutex);
+    pthread_cond_signal(&f->pCond);
+    pthread_mutex_unlock(&f->pMutex);
+}
+
+static Frame *frame_queue_peek(FrameQueue *f) {
+    return &f->queue[(f->rindex + f->rindex_shown) % f->max_size];
+}
+
+static Frame *frame_queue_peek_next(FrameQueue *f) {
+    return &f->queue[(f->rindex + f->rindex_shown + 1) % f->max_size];
+}
+
+static Frame *frame_queue_peek_last(FrameQueue *f) {
+    return &f->queue[f->rindex];
+}
+
+static Frame *frame_queue_peek_writable(FrameQueue *f) {
+    /* wait until we have space to put a new frame */
+    //SDL_LockMutex(f->mutex);
+    pthread_mutex_lock(&f->pMutex);
+    while (f->size >= f->max_size &&
+           !f->pktQ->abort_request) {
+        //SDL_CondWait(f->cond, f->mutex);
+        pthread_cond_wait(&f->pCond, &f->pMutex);
+    }
+    //SDL_UnlockMutex(f->mutex);
+    pthread_mutex_unlock(&f->pMutex);
+
+    if (f->pktQ->abort_request)
+        return NULL;
+
+    return &f->queue[f->windex];
+}
+
+static Frame *frame_queue_peek_readable(FrameQueue *f) {
+    /* wait until we have a readable a new frame */
+    //SDL_LockMutex(f->mutex);
+    pthread_mutex_lock(&f->pMutex);
+    while (f->size - f->rindex_shown <= 0 &&
+           !f->pktQ->abort_request) {
+        //SDL_CondWait(f->cond, f->mutex);
+        pthread_cond_wait(&f->pCond, &f->pMutex);
+    }
+    //SDL_UnlockMutex(f->mutex);
+    pthread_mutex_unlock(&f->pMutex);
+
+    if (f->pktQ->abort_request)
+        return NULL;
+
+    return &f->queue[(f->rindex + f->rindex_shown) % f->max_size];
+}
+
+static void frame_queue_push(FrameQueue *f) {
+    if (++f->windex == f->max_size)
+        f->windex = 0;
+    //SDL_LockMutex(f->mutex);
+    pthread_mutex_lock(&f->pMutex);
+    f->size++;
+    //SDL_CondSignal(f->cond);
+    pthread_cond_signal(&f->pCond);
+    //SDL_UnlockMutex(f->mutex);
+    pthread_mutex_unlock(&f->pMutex);
+}
+
+static void frame_queue_next(FrameQueue *f) {
+    if (f->keep_last && !f->rindex_shown) {
+        f->rindex_shown = 1;
+        return;
+    }
+    frame_queue_unref_item(&f->queue[f->rindex]);
+    if (++f->rindex == f->max_size)
+        f->rindex = 0;
+    //SDL_LockMutex(f->mutex);
+    pthread_mutex_lock(&f->pMutex);
+    f->size--;
+    //SDL_CondSignal(f->cond);
+    pthread_cond_signal(&f->pCond);
+    //SDL_UnlockMutex(f->mutex);
+    pthread_mutex_unlock(&f->pMutex);
+}
+
+/* return the number of undisplayed frames in the queue */
+static int frame_queue_nb_remaining(FrameQueue *f) {
+    return f->size - f->rindex_shown;
+}
+
+/* return last shown position */
+static int64_t frame_queue_last_pos(FrameQueue *f) {
+    Frame *fp = &f->queue[f->rindex];
+    if (f->rindex_shown && fp->serial == f->pktQ->serial)
+        return fp->pos;
+    else
+        return -1;
 }
 
 #endif //FFMPEG_STUDY_FFPLAY_H
