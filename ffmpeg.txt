@@ -720,6 +720,47 @@ char str[1000] = {0};
 4.
 int st_index[5];
 memset(st_index, -1, sizeof(st_index));
+5.
+结构体的变量定义,内存初始化
+typedef struct PacketQueue {
+  MyAVPacketList *first_pkt, *last_pkt;
+  int nb_packets;
+  int size;
+  int64_t duration;
+  int abort_request;
+  int serial;
+  SDL_mutex *mutex;// "同步"作用
+  SDL_cond *cond;  // "暂停"作用
+} PacketQueue;
+PacketQueue videoq;
+PacketQueue *q = &videoq;
+memset(q, 0, sizeof(PacketQueue));
+6.
+关于SDL同步,暂停方面
+SDL_mutex *mutex;// "同步"作用
+SDL_cond *cond;  // "暂停"作用
+// 创建
+mutex = SDL_CreateMutex();
+if (!mutex) {
+  return AVERROR(ENOMEM);
+}
+cond = SDL_CreateCond();
+if (!cond) {
+  return AVERROR(ENOMEM);
+}
+// 销毁
+SDL_DestroyMutex(mutex);
+SDL_DestroyCond(cond);
+// 使用(同步功能)
+SDL_LockMutex(mutex);
+ret = packet_queue_put_private(q, pkt);
+SDL_UnlockMutex(mutex);
+// 使用(暂停功能)
+SDL_LockMutex(mutex);
+SDL_CondWait(cond, mutex);
+SDL_UnlockMutex(mutex);
+// 使用(取消暂停功能)
+SDL_CondSignal(cond);
 
 
 

@@ -84,10 +84,13 @@ typedef struct MyAVPacketList {
 } MyAVPacketList;
 
 typedef struct AudioParams {
-    int freq;
+    // 采样率
+    int sample_rate;
+    // 声道数
     int channels;
+    // 声道布局
     int64_t channel_layout;
-    enum AVSampleFormat fmt;
+    enum AVSampleFormat sample_fmt;
     int frame_size;
     int bytes_per_sec;
 } AudioParams;
