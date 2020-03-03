@@ -464,17 +464,14 @@ static int packet_queue_put_private(PacketQueue *q, AVPacket *pkt) {
 }
 
 static int packet_queue_put(PacketQueue *q, AVPacket *pkt) {
-    int ret;
-
     //SDL_LockMutex(q->mutex);
+    //SDL_UnlockMutex(q->mutex);
+    int ret;
     pthread_mutex_lock(&q->pMutex);
     ret = packet_queue_put_private(q, pkt);
-    //SDL_UnlockMutex(q->mutex);
     pthread_mutex_unlock(&q->pMutex);
-
     if (pkt != &flush_pkt && ret < 0)
         av_packet_unref(pkt);
-
     return ret;
 }
 
