@@ -3392,7 +3392,7 @@ int main(int argc, char **argv) {
 
     parse_options(NULL, argc, argv, options, opt_input_file);
 
-    input_filename = "/Users/alexander/Downloads/番茄炒蛋.mp4";
+    input_filename = "/Users/alexander/Downloads/地狱男爵-血皇后崛起.mp4";
     if (!input_filename) {
         show_usage();
         av_log(NULL, AV_LOG_FATAL, "An input file must be specified\n");
