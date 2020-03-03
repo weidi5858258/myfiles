@@ -718,6 +718,7 @@ if (!frame)
 3.
 char str[1000] = {0};
 4.
+// 普通数组也可以这样初始化内存
 int st_index[5];
 memset(st_index, -1, sizeof(st_index));
 5.

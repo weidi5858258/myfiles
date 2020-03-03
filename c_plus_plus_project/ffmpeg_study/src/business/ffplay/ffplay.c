@@ -47,13 +47,15 @@ typedef struct Decoder {
     AVRational start_pts_tb;
     int64_t next_pts;
     AVRational next_pts_tb;
+
     SDL_cond *empty_queue_cond;
-    SDL_Thread *decoder_tid;
+    //SDL_Thread *decoder_tid;
+    pthread_t decoder_thread;
 } Decoder;
 
 typedef struct VideoState {
     pthread_t read_thread;
-    SDL_Thread *read_tid;// 读线程id
+    //SDL_Thread *read_tid;// 读线程id
     AVInputFormat *iformat;
     int abort_request;
     int force_refresh;
@@ -82,6 +84,7 @@ typedef struct VideoState {
     Decoder viddec;
     Decoder subdec;
 
+    // audio
     int audio_stream;
     int audio_clock_serial;
     int audio_diff_avg_count;
@@ -120,11 +123,11 @@ typedef struct VideoState {
     SDL_Texture *vis_texture;
     SDL_Texture *sub_texture;
     SDL_Texture *vid_texture;
-
+    // subtitle
     int subtitle_stream;
     AVStream *subtitle_st;
     PacketQueue subtitleQ;
-
+    // video
     double frame_timer;
     double frame_last_returned_time;
     double frame_last_filter_delay;
@@ -299,8 +302,9 @@ static void decoder_destroy(Decoder *d) {
 static void decoder_abort(Decoder *d, FrameQueue *fq) {
     packet_queue_abort(d->queue);
     frame_queue_signal(fq);
-    SDL_WaitThread(d->decoder_tid, NULL);
-    d->decoder_tid = NULL;
+    pthread_join(d->decoder_thread, NULL);
+    //SDL_WaitThread(d->decoder_tid, NULL);
+    //d->decoder_tid = NULL;
     packet_queue_flush(d->queue);
 }
 
@@ -743,10 +747,11 @@ static void stream_component_close(VideoState *is, int stream_index) {
 }
 
 static void stream_close(VideoState *is) {
+    printf("stream_close() start\n");
     /* XXX: use a special url_shutdown call to abort parse cleanly */
     is->abort_request = 1;
-    SDL_WaitThread(is->read_tid, NULL);
-    //pthread_join(is->read_thread, NULL);
+    //SDL_WaitThread(is->read_tid, NULL);
+    pthread_join(is->read_thread, NULL);
 
     /* close each stream */
     if (is->audio_stream >= 0)
@@ -777,6 +782,7 @@ static void stream_close(VideoState *is) {
     if (is->sub_texture)
         SDL_DestroyTexture(is->sub_texture);
     av_free(is);
+    printf("stream_close() end\n");
 }
 
 static void do_exit(VideoState *is) {
@@ -1451,9 +1457,14 @@ static int configure_audio_filters(VideoState *is, const char *afilters, int for
 
 static int decoder_start(Decoder *d, int (*fn)(void *), const char *thread_name, void *arg) {
     packet_queue_start(d->queue);
-    d->decoder_tid = SDL_CreateThread(fn, thread_name, arg);
+    /*d->decoder_tid = SDL_CreateThread(fn, thread_name, arg);
     if (!d->decoder_tid) {
         av_log(NULL, AV_LOG_ERROR, "SDL_CreateThread(): %s\n", SDL_GetError());
+        return AVERROR(ENOMEM);
+    }*/
+    int ret = pthread_create(&d->decoder_thread, NULL, fn, arg);
+    if (ret != 0) {
+        av_log(NULL, AV_LOG_ERROR, "decoder_start() pthread_create(): %s\n", strerror(ret));
         return AVERROR(ENOMEM);
     }
     return 0;
@@ -2210,12 +2221,7 @@ static int read_thread(void *arg) {
     AVFormatContext *avFormatContext = NULL;
     AVDictionaryEntry *t = NULL;
     AVPacket pkt1, *pkt = &pkt1;
-    int err, i, ret;
-    // st_index[0] AVMEDIA_TYPE_VIDEO
-    // st_index[1] AVMEDIA_TYPE_AUDIO
-    // st_index[2] AVMEDIA_TYPE_SUBTITLE
-    int st_index[AVMEDIA_TYPE_NB];
-    int pkt_in_play_range = 0, scan_all_pmts_set = 0;
+    int err, i, ret, pkt_in_play_range = 0, scan_all_pmts_set = 0;
     int64_t pkt_ts, stream_start_time;
 
     SDL_mutex *wait_mutex = SDL_CreateMutex();
@@ -2225,7 +2231,11 @@ static int read_thread(void *arg) {
         goto fail;
     }
 
-    memset(st_index, -1, sizeof(st_index));
+    // st_index[0] AVMEDIA_TYPE_VIDEO
+    // st_index[1] AVMEDIA_TYPE_AUDIO
+    // st_index[2] AVMEDIA_TYPE_SUBTITLE
+    int stream_index[AVMEDIA_TYPE_NB];
+    memset(stream_index, -1, sizeof(stream_index));
     is->last_video_stream = is->video_stream = -1;
     is->last_audio_stream = is->audio_stream = -1;
     is->last_subtitle_stream = is->subtitle_stream = -1;
@@ -2266,25 +2276,26 @@ static int read_thread(void *arg) {
     av_format_inject_global_side_data(avFormatContext);
 
     if (find_stream_info) {
-        AVDictionary **opts = setup_find_stream_info_opts(avFormatContext, codec_opts);
+        AVDictionary **options = setup_find_stream_info_opts(avFormatContext, codec_opts);
+        // 流个数(视频流,音频流,字幕流)
         int orig_nb_streams = avFormatContext->nb_streams;
 
-        err = avformat_find_stream_info(avFormatContext, opts);
+        err = avformat_find_stream_info(avFormatContext, options);
 
         for (i = 0; i < orig_nb_streams; i++)
-            av_dict_free(&opts[i]);
-        av_freep(&opts);
+            av_dict_free(&options[i]);
+        av_freep(&options);
 
         if (err < 0) {
-            av_log(NULL, AV_LOG_WARNING,
-                   "%s: could not find codec parameters\n", is->filename);
+            av_log(NULL, AV_LOG_WARNING, "%s: could not find codec parameters\n", is->filename);
             ret = -1;
             goto fail;
         }
     }
 
     if (avFormatContext->pb)
-        avFormatContext->pb->eof_reached = 0; // FIXME hack, ffplay maybe should not use avio_feof() to test for the end
+        // FIXME hack, ffplay maybe should not use avio_feof() to test for the end
+        avFormatContext->pb->eof_reached = 0;
 
     if (seek_by_bytes < 0)
         seek_by_bytes =
@@ -2319,43 +2330,45 @@ static int read_thread(void *arg) {
         AVStream *st = avFormatContext->streams[i];
         enum AVMediaType type = st->codecpar->codec_type;
         st->discard = AVDISCARD_ALL;
-        if (type >= 0 && wanted_stream_spec[type] && st_index[type] == -1)
+        if (type >= 0 && wanted_stream_spec[type] && stream_index[type] == -1)
             if (avformat_match_stream_specifier(avFormatContext, st, wanted_stream_spec[type]) > 0)
-                st_index[type] = i;
+                stream_index[type] = i;
     }
     for (i = 0; i < AVMEDIA_TYPE_NB; i++) {
-        if (wanted_stream_spec[i] && st_index[i] == -1) {
+        if (wanted_stream_spec[i] && stream_index[i] == -1) {
             av_log(NULL, AV_LOG_ERROR, "Stream specifier %s does not match any %s stream\n",
                    wanted_stream_spec[i],
                    av_get_media_type_string(i));
-            st_index[i] = INT_MAX;
+            stream_index[i] = INT_MAX;
         }
     }
 
     if (!video_disable)
-        st_index[AVMEDIA_TYPE_VIDEO] =
+        stream_index[AVMEDIA_TYPE_VIDEO] =
                 av_find_best_stream(avFormatContext, AVMEDIA_TYPE_VIDEO,
-                                    st_index[AVMEDIA_TYPE_VIDEO],
+                                    stream_index[AVMEDIA_TYPE_VIDEO],
                                     -1,
                                     NULL, 0);
     if (!audio_disable)
-        st_index[AVMEDIA_TYPE_AUDIO] =
+        stream_index[AVMEDIA_TYPE_AUDIO] =
                 av_find_best_stream(avFormatContext, AVMEDIA_TYPE_AUDIO,
-                                    st_index[AVMEDIA_TYPE_AUDIO],
-                                    st_index[AVMEDIA_TYPE_VIDEO],
+                                    stream_index[AVMEDIA_TYPE_AUDIO],
+                                    stream_index[AVMEDIA_TYPE_VIDEO],
                                     NULL, 0);
     if (!video_disable && !subtitle_disable)
-        st_index[AVMEDIA_TYPE_SUBTITLE] =
+        stream_index[AVMEDIA_TYPE_SUBTITLE] =
                 av_find_best_stream(avFormatContext, AVMEDIA_TYPE_SUBTITLE,
-                                    st_index[AVMEDIA_TYPE_SUBTITLE],
-                                    (st_index[AVMEDIA_TYPE_AUDIO] >= 0 ?
-                                     st_index[AVMEDIA_TYPE_AUDIO] :
-                                     st_index[AVMEDIA_TYPE_VIDEO]),
+                                    stream_index[AVMEDIA_TYPE_SUBTITLE],
+                                    (stream_index[AVMEDIA_TYPE_AUDIO] >= 0 ?
+                                     stream_index[AVMEDIA_TYPE_AUDIO] :
+                                     stream_index[AVMEDIA_TYPE_VIDEO]),
                                     NULL, 0);
+    printf("read_thread() video: %d, audio: %d, subtitle: %d\n",
+           stream_index[AVMEDIA_TYPE_VIDEO], stream_index[AVMEDIA_TYPE_AUDIO], stream_index[AVMEDIA_TYPE_SUBTITLE]);
 
     is->show_mode = show_mode;
-    if (st_index[AVMEDIA_TYPE_VIDEO] >= 0) {
-        AVStream *st = avFormatContext->streams[st_index[AVMEDIA_TYPE_VIDEO]];
+    if (stream_index[AVMEDIA_TYPE_VIDEO] >= 0) {
+        AVStream *st = avFormatContext->streams[stream_index[AVMEDIA_TYPE_VIDEO]];
         AVCodecParameters *codecpar = st->codecpar;
         AVRational sar = av_guess_sample_aspect_ratio(avFormatContext, st, NULL);
         if (codecpar->width)
@@ -2363,19 +2376,19 @@ static int read_thread(void *arg) {
     }
 
     /* open the streams */
-    if (st_index[AVMEDIA_TYPE_AUDIO] >= 0) {
-        stream_component_open(is, st_index[AVMEDIA_TYPE_AUDIO]);
+    if (stream_index[AVMEDIA_TYPE_AUDIO] >= 0) {
+        stream_component_open(is, stream_index[AVMEDIA_TYPE_AUDIO]);
     }
 
     ret = -1;
-    if (st_index[AVMEDIA_TYPE_VIDEO] >= 0) {
-        ret = stream_component_open(is, st_index[AVMEDIA_TYPE_VIDEO]);
+    if (stream_index[AVMEDIA_TYPE_VIDEO] >= 0) {
+        ret = stream_component_open(is, stream_index[AVMEDIA_TYPE_VIDEO]);
     }
     if (is->show_mode == SHOW_MODE_NONE)
         is->show_mode = ret >= 0 ? SHOW_MODE_VIDEO : SHOW_MODE_RDFT;
 
-    if (st_index[AVMEDIA_TYPE_SUBTITLE] >= 0) {
-        stream_component_open(is, st_index[AVMEDIA_TYPE_SUBTITLE]);
+    if (stream_index[AVMEDIA_TYPE_SUBTITLE] >= 0) {
+        stream_component_open(is, stream_index[AVMEDIA_TYPE_SUBTITLE]);
     }
 
     if (is->video_stream < 0 && is->audio_stream < 0) {
@@ -2587,10 +2600,17 @@ static VideoState *stream_open(const char *filename, AVInputFormat *iformat) {
     printf("stream_open() audio_volume: %d\n", startup_volume);// 128
     videoState->audio_volume = startup_volume;
 
-    //pthread_create(&videoState->read_thread, NULL, read_thread, videoState);
-    videoState->read_tid = SDL_CreateThread(read_thread, "read_thread", videoState);
+    /*videoState->read_tid = SDL_CreateThread(read_thread, "read_thread", videoState);
     if (!videoState->read_tid) {
         av_log(NULL, AV_LOG_FATAL, "SDL_CreateThread(): %s\n", SDL_GetError());
+        fail:
+        stream_close(videoState);
+        return NULL;
+    }*/
+    // 创建读线程
+    int ret = pthread_create(&videoState->read_thread, NULL, read_thread, videoState);
+    if (ret != 0) {
+        av_log(NULL, AV_LOG_FATAL, "pthread_create(): %s\n", strerror(ret));
         fail:
         stream_close(videoState);
         return NULL;
