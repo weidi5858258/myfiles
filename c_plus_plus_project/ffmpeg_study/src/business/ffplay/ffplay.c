@@ -277,6 +277,7 @@ static int decoder_decode_frame(Decoder *d, AVFrame *frame, AVSubtitle *avSubtit
 
         do {
             if (d->queue->nb_packets == 0)
+                printf("decoder_decode_frame() SDL_CondSignal\n");
                 SDL_CondSignal(d->empty_queue_cond);
             if (d->packet_pending) {
                 av_packet_move_ref(&pkt, &d->pkt);
@@ -942,6 +943,7 @@ static void stream_seek(VideoState *is, int64_t pos, int64_t rel, int seek_by_by
         if (seek_by_bytes)
             is->seek_flags |= AVSEEK_FLAG_BYTE;
         is->seek_req = 1;
+        printf("stream_seek() SDL_CondSignal\n");
         SDL_CondSignal(is->continue_read_thread);
     }
 }
@@ -2485,6 +2487,7 @@ static int read_thread(void *arg) {
                  stream_has_enough_packets(is->subtitle_st, is->subtitle_stream, &is->subtitleQ)))) {
             /* wait 10 ms */
             SDL_LockMutex(wait_mutex);
+            //printf("read_thread() SDL_CondWaitTimeout\n");
             SDL_CondWaitTimeout(is->continue_read_thread, wait_mutex, 10);
             SDL_UnlockMutex(wait_mutex);
             continue;
@@ -2517,6 +2520,7 @@ static int read_thread(void *arg) {
             if (avFormatContext->pb && avFormatContext->pb->error)
                 break;
             SDL_LockMutex(wait_mutex);
+            printf("read_thread() SDL_CondWaitTimeout ret < 0\n");
             SDL_CondWaitTimeout(is->continue_read_thread, wait_mutex, 10);
             SDL_UnlockMutex(wait_mutex);
             continue;
