@@ -36,120 +36,15 @@
 #define SDL_VOLUME_STEP (0.75)
 #define FF_QUIT_EVENT   (SDL_USEREVENT + 2)
 
-typedef struct VideoState {
-    pthread_t read_thread;
-    //SDL_Thread *read_tid;// 读线程id
-    AVInputFormat *iformat;
-    int abort_request;
-    int force_refresh;
-    int paused;
-    int last_paused;
-    int queue_attachments_req;
-    int seek_req;
-    int seek_flags;
-    int64_t seek_pos;
-    int64_t seek_rel;
-    int read_pause_return;
-    AVFormatContext *avFormatContext;
-    int realtime;
-
-    // 同步方式(以什么为基准进行同步,默认以音频为基准进行同步)
-    int av_sync_type;
-    Clock audClock;
-    Clock vidClock;
-    Clock extClock;
-
-    FrameQueue pictQ;
-    FrameQueue subpQ;
-    FrameQueue sampQ;
-
-    Decoder auddec;
-    Decoder viddec;
-    Decoder subdec;
-
-    // audio
-    int audio_stream;
-    int audio_clock_serial;
-    int audio_diff_avg_count;
-    double audio_clock;
-    double audio_diff_cum; /* used for AV difference average computation */
-    double audio_diff_avg_coef;
-    double audio_diff_threshold;
-    AVStream *audio_st;
-    PacketQueue audioQ;
-    int audio_hw_buf_size;
-    uint8_t *audio_buf;
-    uint8_t *audio_buf1;
-    unsigned int audio_buf_size; /* in bytes */
-    unsigned int audio_buf1_size;
-    int audio_buf_index; /* in bytes */
-    int audio_write_buf_size;
-    int audio_volume;// 音量
-    int muted;// 静音
-    struct AudioParams audio_src;
-#if CONFIG_AVFILTER
-    struct AudioParams audio_filter_src;
-#endif
-    struct AudioParams audio_tgt;
-    struct SwrContext *swr_ctx;
-    int frame_drops_early;
-    int frame_drops_late;
-
-    int16_t sample_array[SAMPLE_ARRAY_SIZE];
-    int sample_array_index;
-    int last_i_start;
-    RDFTContext *rdft;
-    int rdft_bits;
-    FFTSample *rdft_data;
-    int xpos;
-    double last_vis_time;
-    SDL_Texture *vis_texture;
-    SDL_Texture *sub_texture;
-    SDL_Texture *vid_texture;
-    // subtitle
-    int subtitle_stream;
-    AVStream *subtitle_st;
-    PacketQueue subtitleQ;
-    // video
-    double frame_timer;
-    double frame_last_returned_time;
-    double frame_last_filter_delay;
-    int video_stream;
-    AVStream *video_st;
-    PacketQueue videoQ;
-    double max_frame_duration;      // maximum duration of a frame - above this, we consider the jump a timestamp discontinuity
-    struct SwsContext *img_convert_ctx;
-    struct SwsContext *sub_convert_ctx;
-    int eof;
-
-    char *filename;
-    int width, height, xleft, ytop;
-    int step;
-
-#if CONFIG_AVFILTER
-    int vfilter_idx;
-    AVFilterContext *in_video_filter;   // the first filter in the video chain
-    AVFilterContext *out_video_filter;  // the last filter in the video chain
-    AVFilterContext *in_audio_filter;   // the first filter in the audio chain
-    AVFilterContext *out_audio_filter;  // the last filter in the audio chain
-    AVFilterGraph *agraph;              // audio filter graph
-#endif
-
-    int last_audio_stream, last_video_stream, last_subtitle_stream;
-
-    //SDL_cond *continue_read_thread;
-    pthread_mutex_t continue_read_thread_mutex;
-    pthread_cond_t continue_read_thread_cond;
-    enum ShowMode show_mode;
-} VideoState;
-
 static int screen_left = SDL_WINDOWPOS_CENTERED;
 static int screen_top = SDL_WINDOWPOS_CENTERED;
-
 static SDL_Window *window;
 static SDL_Renderer *renderer;
 static SDL_RendererInfo renderer_info = {0};
 static SDL_AudioDeviceID audio_device_id;
+static SDL_Texture *vis_texture;
+static SDL_Texture *sub_texture;
+static SDL_Texture *vid_texture;
 
 static const struct TextureFormatEntry {
     enum AVPixelFormat format;
@@ -492,7 +387,7 @@ static void video_image_display(VideoState *is) {
                         sp->width = vp->width;
                         sp->height = vp->height;
                     }
-                    if (realloc_texture(&is->sub_texture, SDL_PIXELFORMAT_ARGB8888, sp->width, sp->height,
+                    if (realloc_texture(&sub_texture, SDL_PIXELFORMAT_ARGB8888, sp->width, sp->height,
                                         SDL_BLENDMODE_BLEND, 1) < 0)
                         return;
 
@@ -512,10 +407,10 @@ static void video_image_display(VideoState *is) {
                             av_log(NULL, AV_LOG_FATAL, "Cannot initialize the conversion context\n");
                             return;
                         }
-                        if (!SDL_LockTexture(is->sub_texture, (SDL_Rect *) sub_rect, (void **) pixels, pitch)) {
+                        if (!SDL_LockTexture(sub_texture, (SDL_Rect *) sub_rect, (void **) pixels, pitch)) {
                             sws_scale(is->sub_convert_ctx, (const uint8_t *const *) sub_rect->data, sub_rect->linesize,
                                       0, sub_rect->h, pixels, pitch);
-                            SDL_UnlockTexture(is->sub_texture);
+                            SDL_UnlockTexture(sub_texture);
                         }
                     }
                     sp->uploaded = 1;
@@ -528,18 +423,18 @@ static void video_image_display(VideoState *is) {
     calculate_display_rect(&rect, is->xleft, is->ytop, is->width, is->height, vp->width, vp->height, vp->sar);
 
     if (!vp->uploaded) {
-        if (upload_texture(&is->vid_texture, vp->frame, &is->img_convert_ctx) < 0)
+        if (upload_texture(&vid_texture, vp->frame, &is->img_convert_ctx) < 0)
             return;
         vp->uploaded = 1;
         vp->flip_v = vp->frame->linesize[0] < 0;
     }
 
     set_sdl_yuv_conversion_mode(vp->frame);
-    SDL_RenderCopyEx(renderer, is->vid_texture, NULL, &rect, 0, NULL, vp->flip_v ? SDL_FLIP_VERTICAL : 0);
+    SDL_RenderCopyEx(renderer, vid_texture, NULL, &rect, 0, NULL, vp->flip_v ? SDL_FLIP_VERTICAL : 0);
     set_sdl_yuv_conversion_mode(NULL);
     if (sp) {
 #if USE_ONEPASS_SUBTITLE_RENDER
-        SDL_RenderCopy(renderer, is->sub_texture, NULL, &rect);
+        SDL_RenderCopy(renderer, sub_texture, NULL, &rect);
 #else
         int i;
         double xratio = (double)rect.w / (double)sp->width;
@@ -550,7 +445,7 @@ static void video_image_display(VideoState *is) {
                                .y = rect.y + sub_rect->y * yratio,
                                .w = sub_rect->w * xratio,
                                .h = sub_rect->h * yratio};
-            SDL_RenderCopy(renderer, is->sub_texture, sub_rect, &target);
+            SDL_RenderCopy(renderer, sub_texture, sub_rect, &target);
         }
 #endif
     }
@@ -643,7 +538,7 @@ static void video_audio_display(VideoState *s) {
             fill_rectangle(s->xleft, y, s->width, 1);
         }
     } else {
-        if (realloc_texture(&s->vis_texture, SDL_PIXELFORMAT_ARGB8888, s->width, s->height, SDL_BLENDMODE_NONE, 1) < 0)
+        if (realloc_texture(vis_texture, SDL_PIXELFORMAT_ARGB8888, s->width, s->height, SDL_BLENDMODE_NONE, 1) < 0)
             return;
 
         nb_display_channels = FFMIN(nb_display_channels, 2);
@@ -676,7 +571,7 @@ static void video_audio_display(VideoState *s) {
             }
             /* Least efficient way to do this, we should of course
              * directly access it but it is more than fast enough. */
-            if (!SDL_LockTexture(s->vis_texture, &rect, (void **) &pixels, &pitch)) {
+            if (!SDL_LockTexture(vis_texture, &rect, (void **) &pixels, &pitch)) {
                 pitch >>= 2;
                 pixels += pitch * s->height;
                 for (y = 0; y < s->height; y++) {
@@ -690,9 +585,9 @@ static void video_audio_display(VideoState *s) {
                     pixels -= pitch;
                     *pixels = (a << 16) + (b << 8) + ((a + b) >> 1);
                 }
-                SDL_UnlockTexture(s->vis_texture);
+                SDL_UnlockTexture(vis_texture);
             }
-            SDL_RenderCopy(renderer, s->vis_texture, NULL, NULL);
+            SDL_RenderCopy(renderer, vis_texture, NULL, NULL);
         }
         if (!s->paused)
             s->xpos++;
@@ -788,12 +683,12 @@ static void stream_close(VideoState *is) {
     sws_freeContext(is->img_convert_ctx);
     sws_freeContext(is->sub_convert_ctx);
     av_free(is->filename);
-    if (is->vis_texture)
-        SDL_DestroyTexture(is->vis_texture);
-    if (is->vid_texture)
-        SDL_DestroyTexture(is->vid_texture);
-    if (is->sub_texture)
-        SDL_DestroyTexture(is->sub_texture);
+    if (vis_texture)
+        SDL_DestroyTexture(vis_texture);
+    if (vid_texture)
+        SDL_DestroyTexture(vid_texture);
+    if (sub_texture)
+        SDL_DestroyTexture(sub_texture);
     av_free(is);
     printf("stream_close() end\n");
 }
@@ -1114,11 +1009,11 @@ static void video_refresh(void *opaque, double *remaining_time) {
                                 uint8_t *pixels;
                                 int pitch, j;
 
-                                if (!SDL_LockTexture(is->sub_texture, (SDL_Rect *) sub_rect, (void **) &pixels,
+                                if (!SDL_LockTexture(sub_texture, (SDL_Rect *) sub_rect, (void **) &pixels,
                                                      &pitch)) {
                                     for (j = 0; j < sub_rect->h; j++, pixels += pitch)
                                         memset(pixels, 0, sub_rect->w << 2);
-                                    SDL_UnlockTexture(is->sub_texture);
+                                    SDL_UnlockTexture(sub_texture);
                                 }
                             }
                         }
@@ -2982,9 +2877,9 @@ static void event_loop(VideoState *cur_stream) {
                         screen_height = cur_stream->height = event.window.data2;
                         printf("event_loop() SDL_WINDOWEVENT screen_width : %d\n", screen_width);
                         printf("event_loop() SDL_WINDOWEVENT screen_height: %d\n", screen_height);
-                        if (cur_stream->vis_texture) {
-                            SDL_DestroyTexture(cur_stream->vis_texture);
-                            cur_stream->vis_texture = NULL;
+                        if (vis_texture) {
+                            SDL_DestroyTexture(vis_texture);
+                            vis_texture = NULL;
                         }
                     case SDL_WINDOWEVENT_EXPOSED:
                         printf("event_loop() SDL_WINDOWEVENT SDL_WINDOWEVENT_EXPOSED\n");

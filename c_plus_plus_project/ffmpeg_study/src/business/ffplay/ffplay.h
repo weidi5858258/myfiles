@@ -187,6 +187,113 @@ enum ShowMode {
 };
 static enum ShowMode show_mode = SHOW_MODE_NONE;
 
+typedef struct VideoState {
+    pthread_t read_thread;
+    //SDL_Thread *read_tid;// 读线程id
+    AVInputFormat *iformat;
+    int abort_request;
+    int force_refresh;
+    int paused;
+    int last_paused;
+    int queue_attachments_req;
+    int seek_req;
+    int seek_flags;
+    int64_t seek_pos;
+    int64_t seek_rel;
+    int read_pause_return;
+    AVFormatContext *avFormatContext;
+    int realtime;
+
+    // 同步方式(以什么为基准进行同步,默认以音频为基准进行同步)
+    int av_sync_type;
+    Clock audClock;
+    Clock vidClock;
+    Clock extClock;
+
+    FrameQueue pictQ;
+    FrameQueue subpQ;
+    FrameQueue sampQ;
+
+    Decoder auddec;
+    Decoder viddec;
+    Decoder subdec;
+
+    // audio
+    int audio_stream;
+    int audio_clock_serial;
+    int audio_diff_avg_count;
+    double audio_clock;
+    double audio_diff_cum; /* used for AV difference average computation */
+    double audio_diff_avg_coef;
+    double audio_diff_threshold;
+    AVStream *audio_st;
+    PacketQueue audioQ;
+    int audio_hw_buf_size;
+    uint8_t *audio_buf;
+    uint8_t *audio_buf1;
+    unsigned int audio_buf_size; /* in bytes */
+    unsigned int audio_buf1_size;
+    int audio_buf_index; /* in bytes */
+    int audio_write_buf_size;
+    int audio_volume;// 音量
+    int muted;// 静音
+    struct AudioParams audio_src;
+#if CONFIG_AVFILTER
+    struct AudioParams audio_filter_src;
+#endif
+    struct AudioParams audio_tgt;
+    struct SwrContext *swr_ctx;
+    int frame_drops_early;
+    int frame_drops_late;
+
+    int16_t sample_array[SAMPLE_ARRAY_SIZE];
+    int sample_array_index;
+    int last_i_start;
+    RDFTContext *rdft;
+    int rdft_bits;
+    FFTSample *rdft_data;
+    int xpos;
+    double last_vis_time;
+    //SDL_Texture *vis_texture;
+    //SDL_Texture *sub_texture;
+    //SDL_Texture *vid_texture;
+    // subtitle
+    int subtitle_stream;
+    AVStream *subtitle_st;
+    PacketQueue subtitleQ;
+    // video
+    double frame_timer;
+    double frame_last_returned_time;
+    double frame_last_filter_delay;
+    int video_stream;
+    AVStream *video_st;
+    PacketQueue videoQ;
+    double max_frame_duration;      // maximum duration of a frame - above this, we consider the jump a timestamp discontinuity
+    struct SwsContext *img_convert_ctx;
+    struct SwsContext *sub_convert_ctx;
+    int eof;
+
+    char *filename;
+    int width, height, xleft, ytop;
+    int step;
+
+#if CONFIG_AVFILTER
+    int vfilter_idx;
+    AVFilterContext *in_video_filter;   // the first filter in the video chain
+    AVFilterContext *out_video_filter;  // the last filter in the video chain
+    AVFilterContext *in_audio_filter;   // the first filter in the audio chain
+    AVFilterContext *out_audio_filter;  // the last filter in the audio chain
+    AVFilterGraph *agraph;              // audio filter graph
+#endif
+
+    int last_audio_stream, last_video_stream, last_subtitle_stream;
+
+    //SDL_cond *continue_read_thread;
+    pthread_mutex_t continue_read_thread_mutex;
+    pthread_cond_t continue_read_thread_cond;
+    enum ShowMode show_mode;
+} VideoState;
+
 const char program_name[] = "ffplay";
 const int program_birth_year = 2003;
 static unsigned sws_flags = SWS_BICUBIC;
