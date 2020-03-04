@@ -86,11 +86,6 @@ static void decoder_init(Decoder *d,
 
 // 创建音频,视频,字幕三个不同的线程
 static int decoder_start(Decoder *d, int (*fn)(void *), const char *thread_name, void *arg) {
-    /*d->decoder_tid = SDL_CreateThread(fn, thread_name, arg);
-    if (!d->decoder_tid) {
-        av_log(NULL, AV_LOG_ERROR, "SDL_CreateThread(): %s\n", SDL_GetError());
-        return AVERROR(ENOMEM);
-    }*/
     packet_queue_start(d->queue);
     int ret = pthread_create(&d->decoder_thread, NULL, fn, arg);
     if (ret != 0) {
@@ -157,7 +152,6 @@ static int decoder_decode_frame(Decoder *d, AVFrame *frame, AVSubtitle *avSubtit
         do {
             if (d->queue->nb_packets == 0) {
                 //printf("decoder_decode_frame() pthread_cond_signal\n");
-                //SDL_CondSignal(d->empty_queue_cond);
                 pthread_cond_signal(d->empty_queue_cond);
             }
             if (d->packet_pending) {
@@ -209,8 +203,6 @@ static void decoder_abort(Decoder *d, FrameQueue *fq) {
     packet_queue_abort(d->queue);
     frame_queue_signal(fq);
     pthread_join(d->decoder_thread, NULL);
-    //SDL_WaitThread(d->decoder_tid, NULL);
-    //d->decoder_tid = NULL;
     packet_queue_flush(d->queue);
 }
 
@@ -656,7 +648,6 @@ static void stream_close(VideoState *is) {
     printf("stream_close() start\n");
     /* XXX: use a special url_shutdown call to abort parse cleanly */
     is->abort_request = 1;
-    //SDL_WaitThread(is->read_tid, NULL);
     pthread_join(is->read_thread, NULL);
 
     /* close each stream */
@@ -677,7 +668,6 @@ static void stream_close(VideoState *is) {
     frame_queue_destory(&is->pictQ);
     frame_queue_destory(&is->sampQ);
     frame_queue_destory(&is->subpQ);
-    //SDL_DestroyCond(is->continue_read_thread);
     pthread_mutex_destroy(&is->continue_read_thread_mutex);
     pthread_cond_destroy(&is->continue_read_thread_cond);
     sws_freeContext(is->img_convert_ctx);
@@ -827,7 +817,6 @@ static void stream_seek(VideoState *is, int64_t pos, int64_t rel, int seek_by_by
             is->seek_flags |= AVSEEK_FLAG_BYTE;
         is->seek_req = 1;
         printf("stream_seek() pthread_cond_signal\n");
-        //SDL_CondSignal(is->continue_read_thread);
         pthread_cond_signal(&is->continue_read_thread_cond);
     }
 }
@@ -972,11 +961,9 @@ static void video_refresh(void *opaque, double *remaining_time) {
             if (delay > 0 && time - is->frame_timer > AV_SYNC_THRESHOLD_MAX)
                 is->frame_timer = time;
 
-            //SDL_LockMutex(is->pictq.mutex);
             pthread_mutex_lock(&is->pictQ.pMutex);
             if (!isnan(vp->pts))
                 update_video_pts(is, vp->pts, vp->pos, vp->serial);
-            //SDL_UnlockMutex(is->pictq.mutex);
             pthread_mutex_unlock(&is->pictQ.pMutex);
 
             if (frame_queue_nb_remaining(&is->pictQ) > 1) {
@@ -2370,9 +2357,6 @@ static int read_thread(void *arg) {
              || (stream_has_enough_packets(is->audio_st, is->audio_stream, &is->audioQ) &&
                  stream_has_enough_packets(is->video_st, is->video_stream, &is->videoQ) &&
                  stream_has_enough_packets(is->subtitle_st, is->subtitle_stream, &is->subtitleQ)))) {
-            /*SDL_LockMutex(wait_mutex);
-            SDL_CondWaitTimeout(is->continue_read_thread, wait_mutex, 10);
-            SDL_UnlockMutex(wait_mutex);*/
             /* wait 10 ms */
             struct timespec timeToWait;
             struct timeval now;
@@ -2412,9 +2396,6 @@ static int read_thread(void *arg) {
             }
             if (avFormatContext->pb && avFormatContext->pb->error)
                 break;
-            /*SDL_LockMutex(wait_mutex);
-            SDL_CondWaitTimeout(is->continue_read_thread, wait_mutex, 10);
-            SDL_UnlockMutex(wait_mutex);*/
             /* wait 10 ms */
             struct timespec timeToWait;
             struct timeval now;
@@ -2503,10 +2484,6 @@ static VideoState *stream_open(const char *filename, AVInputFormat *iformat) {
         goto fail;
     }
 
-    /*if (!(videoState->continue_read_thread = SDL_CreateCond())) {
-        av_log(NULL, AV_LOG_FATAL, "SDL_CreateCond(): %s\n", SDL_GetError());
-        goto fail;
-    }*/
     pthread_mutex_init(&videoState->continue_read_thread_mutex, NULL);
     pthread_cond_init(&videoState->continue_read_thread_cond, NULL);
 
@@ -2526,13 +2503,6 @@ static VideoState *stream_open(const char *filename, AVInputFormat *iformat) {
     printf("stream_open() audio_volume: %d\n", startup_volume);// 128
     videoState->audio_volume = startup_volume;
 
-    /*videoState->read_tid = SDL_CreateThread(read_thread, "read_thread", videoState);
-    if (!videoState->read_tid) {
-        av_log(NULL, AV_LOG_FATAL, "SDL_CreateThread(): %s\n", SDL_GetError());
-        fail:
-        stream_close(videoState);
-        return NULL;
-    }*/
     // 创建读线程
     int ret = pthread_create(&videoState->read_thread, NULL, read_thread, videoState);
     if (ret != 0) {
