@@ -36,24 +36,6 @@
 #define SDL_VOLUME_STEP (0.75)
 #define FF_QUIT_EVENT   (SDL_USEREVENT + 2)
 
-// 音频,视频,字幕各有一个
-typedef struct Decoder {
-    AVPacket pkt;
-    PacketQueue *queue;
-    AVCodecContext *avctx;
-    int pkt_serial;
-    int finished;
-    int packet_pending;
-    int64_t start_pts;
-    AVRational start_pts_tb;
-    int64_t next_pts;
-    AVRational next_pts_tb;
-    // 共用VideoState中的SDL_cond*
-    SDL_cond *empty_queue_cond;
-    pthread_t decoder_thread;
-    //SDL_Thread *decoder_tid;
-} Decoder;
-
 typedef struct VideoState {
     pthread_t read_thread;
     //SDL_Thread *read_tid;// 读线程id
@@ -155,7 +137,9 @@ typedef struct VideoState {
 
     int last_audio_stream, last_video_stream, last_subtitle_stream;
 
-    SDL_cond *continue_read_thread;
+    //SDL_cond *continue_read_thread;
+    pthread_mutex_t continue_read_thread_mutex;
+    pthread_cond_t continue_read_thread_cond;
     enum ShowMode show_mode;
 } VideoState;
 
@@ -196,7 +180,7 @@ static const struct TextureFormatEntry {
 static void decoder_init(Decoder *d,
                          AVCodecContext *avctx,
                          PacketQueue *queue,
-                         SDL_cond *empty_queue_cond) {
+                         pthread_cond_t *empty_queue_cond) {
     memset(d, 0, sizeof(Decoder));
     d->avctx = avctx;
     d->queue = queue;
@@ -276,9 +260,11 @@ static int decoder_decode_frame(Decoder *d, AVFrame *frame, AVSubtitle *avSubtit
         }
 
         do {
-            if (d->queue->nb_packets == 0)
-                printf("decoder_decode_frame() SDL_CondSignal\n");
-                SDL_CondSignal(d->empty_queue_cond);
+            if (d->queue->nb_packets == 0) {
+                //printf("decoder_decode_frame() pthread_cond_signal\n");
+                //SDL_CondSignal(d->empty_queue_cond);
+                pthread_cond_signal(d->empty_queue_cond);
+            }
             if (d->packet_pending) {
                 av_packet_move_ref(&pkt, &d->pkt);
                 d->packet_pending = 0;
@@ -796,7 +782,9 @@ static void stream_close(VideoState *is) {
     frame_queue_destory(&is->pictQ);
     frame_queue_destory(&is->sampQ);
     frame_queue_destory(&is->subpQ);
-    SDL_DestroyCond(is->continue_read_thread);
+    //SDL_DestroyCond(is->continue_read_thread);
+    pthread_mutex_destroy(&is->continue_read_thread_mutex);
+    pthread_cond_destroy(&is->continue_read_thread_cond);
     sws_freeContext(is->img_convert_ctx);
     sws_freeContext(is->sub_convert_ctx);
     av_free(is->filename);
@@ -943,8 +931,9 @@ static void stream_seek(VideoState *is, int64_t pos, int64_t rel, int seek_by_by
         if (seek_by_bytes)
             is->seek_flags |= AVSEEK_FLAG_BYTE;
         is->seek_req = 1;
-        printf("stream_seek() SDL_CondSignal\n");
-        SDL_CondSignal(is->continue_read_thread);
+        printf("stream_seek() pthread_cond_signal\n");
+        //SDL_CondSignal(is->continue_read_thread);
+        pthread_cond_signal(&is->continue_read_thread_cond);
     }
 }
 
@@ -2126,6 +2115,7 @@ static int stream_component_open(VideoState *is, int stream_index) {
                  sample_rate,nb_channels,channel_layout
                  这三个值为什么要这样去得到?
                  这样filterContext是怎么来的变得重要了.
+                 is->out_audio_filter是从configure_audio_filters方法里被赋值的.
                  */
                 sample_rate = av_buffersink_get_sample_rate(filterContext);
                 nb_channels = av_buffersink_get_channels(filterContext);
@@ -2159,7 +2149,7 @@ static int stream_component_open(VideoState *is, int stream_index) {
             is->audio_stream = stream_index;
             is->audio_st = formatContext->streams[stream_index];
 
-            decoder_init(&is->auddec, codecContext, &is->audioQ, is->continue_read_thread);
+            decoder_init(&is->auddec, codecContext, &is->audioQ, &is->continue_read_thread_cond);
             if ((is->avFormatContext->iformat->flags & (AVFMT_NOBINSEARCH | AVFMT_NOGENSEARCH | AVFMT_NO_BYTE_SEEK)) &&
                 !is->avFormatContext->iformat->read_seek) {
                 is->auddec.start_pts = is->audio_st->start_time;
@@ -2174,7 +2164,7 @@ static int stream_component_open(VideoState *is, int stream_index) {
             is->video_stream = stream_index;
             is->video_st = formatContext->streams[stream_index];
 
-            decoder_init(&is->viddec, codecContext, &is->videoQ, is->continue_read_thread);
+            decoder_init(&is->viddec, codecContext, &is->videoQ, &is->continue_read_thread_cond);
             if ((ret = decoder_start(&is->viddec, video_thread, "video_decoder", is)) < 0)
                 goto out;
             is->queue_attachments_req = 1;
@@ -2184,7 +2174,7 @@ static int stream_component_open(VideoState *is, int stream_index) {
             is->subtitle_stream = stream_index;
             is->subtitle_st = formatContext->streams[stream_index];
 
-            decoder_init(&is->subdec, codecContext, &is->subtitleQ, is->continue_read_thread);
+            decoder_init(&is->subdec, codecContext, &is->subtitleQ, &is->continue_read_thread_cond);
             if ((ret = decoder_start(&is->subdec, subtitle_thread, "subtitle_decoder", is)) < 0)
                 goto out;
             break;
@@ -2485,11 +2475,19 @@ static int read_thread(void *arg) {
              || (stream_has_enough_packets(is->audio_st, is->audio_stream, &is->audioQ) &&
                  stream_has_enough_packets(is->video_st, is->video_stream, &is->videoQ) &&
                  stream_has_enough_packets(is->subtitle_st, is->subtitle_stream, &is->subtitleQ)))) {
-            /* wait 10 ms */
-            SDL_LockMutex(wait_mutex);
-            //printf("read_thread() SDL_CondWaitTimeout\n");
+            /*SDL_LockMutex(wait_mutex);
             SDL_CondWaitTimeout(is->continue_read_thread, wait_mutex, 10);
-            SDL_UnlockMutex(wait_mutex);
+            SDL_UnlockMutex(wait_mutex);*/
+            /* wait 10 ms */
+            struct timespec timeToWait;
+            struct timeval now;
+            gettimeofday(&now, NULL);
+            timeToWait.tv_sec = now.tv_sec + 5;
+            timeToWait.tv_nsec = (now.tv_usec + 1000UL * 10) * 1000UL;// 10ms
+            pthread_mutex_lock(&is->continue_read_thread_mutex);
+            //printf("read_thread() SDL_CondWaitTimeout\n");
+            pthread_cond_timedwait(&is->continue_read_thread_cond, &is->continue_read_thread_mutex, &timeToWait);
+            pthread_mutex_unlock(&is->continue_read_thread_mutex);
             continue;
         }
         if (!is->paused
@@ -2519,10 +2517,19 @@ static int read_thread(void *arg) {
             }
             if (avFormatContext->pb && avFormatContext->pb->error)
                 break;
-            SDL_LockMutex(wait_mutex);
-            printf("read_thread() SDL_CondWaitTimeout ret < 0\n");
+            /*SDL_LockMutex(wait_mutex);
             SDL_CondWaitTimeout(is->continue_read_thread, wait_mutex, 10);
-            SDL_UnlockMutex(wait_mutex);
+            SDL_UnlockMutex(wait_mutex);*/
+            /* wait 10 ms */
+            struct timespec timeToWait;
+            struct timeval now;
+            gettimeofday(&now, NULL);
+            timeToWait.tv_sec = now.tv_sec + 5;
+            timeToWait.tv_nsec = (now.tv_usec + 1000UL * 10) * 1000UL;// 10ms
+            pthread_mutex_lock(&is->continue_read_thread_mutex);
+            printf("read_thread() SDL_CondWaitTimeout ret < 0\n");
+            pthread_cond_timedwait(&is->continue_read_thread_cond, &is->continue_read_thread_mutex, &timeToWait);
+            pthread_mutex_unlock(&is->continue_read_thread_mutex);
             continue;
         }
 
@@ -2601,10 +2608,12 @@ static VideoState *stream_open(const char *filename, AVInputFormat *iformat) {
         goto fail;
     }
 
-    if (!(videoState->continue_read_thread = SDL_CreateCond())) {
+    /*if (!(videoState->continue_read_thread = SDL_CreateCond())) {
         av_log(NULL, AV_LOG_FATAL, "SDL_CreateCond(): %s\n", SDL_GetError());
         goto fail;
-    }
+    }*/
+    pthread_mutex_init(&videoState->continue_read_thread_mutex, NULL);
+    pthread_cond_init(&videoState->continue_read_thread_cond, NULL);
 
     init_clock(&videoState->vidclk, &videoState->videoQ.serial);
     init_clock(&videoState->audclk, &videoState->audioQ.serial);
@@ -3155,6 +3164,7 @@ int main(int argc, char **argv) {
     // 湖北卫视
     input_filename = "http://weblive.hebtv.com/live/hbws_bq/index.m3u8";
     input_filename = "/Users/alexander/Downloads/地狱男爵-血皇后崛起.mp4";
+    input_filename = "/Users/alexander/Movies/性教育.Sex.Education.S01E03.中英字幕.WEB.1080P-人人影视.mp4";
     if (!input_filename) {
         show_usage();
         av_log(NULL, AV_LOG_FATAL, "An input file must be specified\n");

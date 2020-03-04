@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <pthread.h>
+#include <sys/time.h>
 
 #include "libavutil/avstring.h"
 #include "libavutil/eval.h"
@@ -151,6 +152,25 @@ typedef struct FrameQueue {
     pthread_mutex_t pMutex;// "同步"作用
     pthread_cond_t pCond;  // "暂停"作用
 } FrameQueue;
+
+// 音频,视频,字幕各有一个
+typedef struct Decoder {
+    AVPacket pkt;
+    PacketQueue *queue;
+    AVCodecContext *avctx;
+    int pkt_serial;
+    int finished;
+    int packet_pending;
+    int64_t start_pts;
+    AVRational start_pts_tb;
+    int64_t next_pts;
+    AVRational next_pts_tb;
+    // 共用VideoState中的SDL_cond*
+    pthread_t decoder_thread;
+    pthread_cond_t *empty_queue_cond;
+    //SDL_cond *empty_queue_cond;
+    //SDL_Thread *decoder_tid;
+} Decoder;
 
 enum {
     AV_SYNC_AUDIO_MASTER, /* default choice */
