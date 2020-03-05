@@ -1644,6 +1644,7 @@ static int synchronize_audio(VideoState *is, int nb_samples) {
  * value.
  */
 static int audio_decode_frame(VideoState *is) {
+    //printf("audio_decode_frame() start\n");
     if (is->paused) {
         return -1;
     }
@@ -1765,6 +1766,7 @@ static int audio_decode_frame(VideoState *is) {
     }
 #endif
 
+    //printf("audio_decode_frame() end\n");
     return resampled_data_size;
 }
 
@@ -1819,14 +1821,15 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len) {
     is->audio_write_buf_size = is->audio_buf_size - is->audio_buf_index;
     /* Let's assume the audio driver that is used by SDL has two periods. */
     if (!isnan(is->audio_clock)) {
+        // is->audio_clock的值在audio_decode_frame方法中被赋值
         double pts = is->audio_clock -
                      (double) (2 * is->audio_hw_buf_size + is->audio_write_buf_size) / is->audio_tgt.bytes_per_sec;
         set_clock_at(&is->audClock,
                      pts,
                      is->audio_clock_serial,
                      audio_callback_time / 1000000.0);
-        //printf("sdl_audio_callback() pts: %lf, serial: %d\n", pts, is->audio_clock_serial);
         sync_clock_to_slave(&is->extClock, &is->audClock);
+        //printf("sdl_audio_callback() pts: %lf, serial: %d\n", pts, is->audio_clock_serial);
     }
 }
 
