@@ -156,8 +156,6 @@ typedef struct SpecifierOpt {
 } SpecifierOpt;
 
 typedef struct OptionDef {
-    const char *name;
-    int flags;
 #define HAS_ARG    0x0001
 #define OPT_BOOL   0x0002
 #define OPT_EXPERT 0x0004
@@ -180,6 +178,8 @@ typedef struct OptionDef {
 #define OPT_DOUBLE 0x20000
 #define OPT_INPUT  0x40000
 #define OPT_OUTPUT 0x80000
+    const char *name;
+    int flags;
      union {
         void *dst_ptr;
         int (*func_arg)(void *, const char *, const char *);

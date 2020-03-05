@@ -34,9 +34,11 @@
 #include "libswresample/swresample.h"
 
 #if CONFIG_AVFILTER
+
 # include "libavfilter/avfilter.h"
 # include "libavfilter/buffersink.h"
 # include "libavfilter/buffersrc.h"
+
 #endif
 
 #define MAX_QUEUE_SIZE (15 * 1024 * 1024)
@@ -51,7 +53,7 @@
 /* If a frame duration is longer than this, it will not be duplicated to compensate AV sync */
 #define AV_SYNC_FRAMEDUP_THRESHOLD 0.1
 /* no AV correction is done if too big error */
-#define AV_NOSYNC_THRESHOLD 10.0
+#define AV_NOSYNC_THRESHOLD 10.0 // 10秒
 
 /* maximum audio speed change to get correct sync */
 #define SAMPLE_CORRECTION_PERCENT_MAX 10
@@ -74,10 +76,10 @@
 
 #define USE_ONEPASS_SUBTITLE_RENDER 1
 
-#define VIDEO_PICTURE_QUEUE_SIZE 3
-#define SUBPICTURE_QUEUE_SIZE 16
+#define PICTURE_QUEUE_SIZE 3
 #define SAMPLE_QUEUE_SIZE 9
-#define FRAME_QUEUE_SIZE FFMAX(SAMPLE_QUEUE_SIZE, FFMAX(VIDEO_PICTURE_QUEUE_SIZE, SUBPICTURE_QUEUE_SIZE))
+#define SUBPICTURE_QUEUE_SIZE 16
+#define FRAME_QUEUE_SIZE FFMAX(SAMPLE_QUEUE_SIZE, FFMAX(PICTURE_QUEUE_SIZE, SUBPICTURE_QUEUE_SIZE))
 
 typedef struct AudioParams {
     // 采样率
@@ -92,28 +94,45 @@ typedef struct AudioParams {
 } AudioParams;
 
 typedef struct Clock {
+    // 初始化时为NAN
     double pts;           /* clock base */
     double pts_drift;     /* clock base minus time at which we updated the clock */
+    // 初始化时为av_gettime_relative() / 1000000.0;
     double last_updated;
+    // 初始化时为1.0
     double speed;
+    // 初始化时为-1
     int serial;           /* clock is based on a packet with this serial */
+    // 初始化时为0
     int paused;
+    // 指向PacketQueue的serial变量
+    // 指向当前数据包队列序列的指针，用于过时的时钟检测
     int *queue_serial;    /* pointer to the current packet queue serial, used for obsolete clock detection */
 } Clock;
 
 /* Common struct for handling all types of decoded data and allocated render buffers. */
 typedef struct Frame {
+    // 帧数据
     AVFrame *frame;
+    // 字幕
     AVSubtitle sub;
+    // 序列
     int serial;
+    // 帧的显示时间戳
     double pts;           /* presentation timestamp for the frame */
+    // 帧显示时长
     double duration;      /* estimated duration of the frame */
+    // 文件中的位置
     int64_t pos;          /* byte position of the frame in the input file */
     int width;
     int height;
+    // 格式
     int format;
-    AVRational sar;
+    // 额外参数
+    AVRational sample_aspect_ratio;
+    // 上载
     int uploaded;
+    // 反转
     int flip_v;
 } Frame;
 
@@ -131,24 +150,24 @@ typedef struct PacketQueue {
     int serial;
     int abort_request;
     int64_t duration;
-    //SDL_mutex *mutex;// "同步"作用
-    //SDL_cond *cond;  // "暂停"作用
     pthread_mutex_t pMutex;// "同步"作用
     pthread_cond_t pCond;  // "暂停"作用
 } PacketQueue;
 
 // 保存AVFrame
 typedef struct FrameQueue {
+    // 视频放3个
+    // 音频放9个
+    // 字幕放16个
     Frame queue[FRAME_QUEUE_SIZE];
-    int rindex;
-    int windex;
+    int read_index;
+    int write_index;
     int size;
     int max_size;
     int keep_last;
     int rindex_shown;
+    // 指向VideoState中的PacketQueue
     PacketQueue *pktQ;
-    //SDL_mutex *mutex;
-    //SDL_cond *cond;
     pthread_mutex_t pMutex;// "同步"作用
     pthread_cond_t pCond;  // "暂停"作用
 } FrameQueue;
@@ -158,22 +177,25 @@ typedef struct Decoder {
     AVPacket pkt;
     PacketQueue *queue;
     AVCodecContext *avctx;
+    // 包序列
     int pkt_serial;
     int finished;
+    // 是否有包在等待
     int packet_pending;
+    // 开始的时间戳
     int64_t start_pts;
+    // 开始的额外参数
     AVRational start_pts_tb;
+    // 下一帧时间戳
     int64_t next_pts;
+    // 下一帧的额外参数
     AVRational next_pts_tb;
-    // 共用VideoState中的SDL_cond*
     pthread_t decoder_thread;
     pthread_cond_t *empty_queue_cond;
-    //SDL_cond *empty_queue_cond;
-    //SDL_Thread *decoder_tid;
 } Decoder;
 
 enum {
-    AV_SYNC_AUDIO_MASTER, /* default choice */
+    AV_SYNC_AUDIO_MASTER,   /* default choice */
     AV_SYNC_VIDEO_MASTER,
     AV_SYNC_EXTERNAL_CLOCK, /* synchronize to an external clock */
 };
@@ -210,9 +232,13 @@ typedef struct VideoState {
     Clock vidClock;
     Clock extClock;
 
+    PacketQueue videoQ;
+    PacketQueue audioQ;
+    PacketQueue subtitleQ;
+
     FrameQueue pictQ;
-    FrameQueue subpQ;
     FrameQueue sampQ;
+    FrameQueue subpQ;
 
     Decoder auddec;
     Decoder viddec;
@@ -227,7 +253,6 @@ typedef struct VideoState {
     double audio_diff_avg_coef;
     double audio_diff_threshold;
     AVStream *audio_st;
-    PacketQueue audioQ;
     int audio_hw_buf_size;
     uint8_t *audio_buf;
     uint8_t *audio_buf1;
@@ -254,24 +279,19 @@ typedef struct VideoState {
     FFTSample *rdft_data;
     int xpos;
     double last_vis_time;
-    //SDL_Texture *vis_texture;
-    //SDL_Texture *sub_texture;
-    //SDL_Texture *vid_texture;
     // subtitle
     int subtitle_stream;
     AVStream *subtitle_st;
-    PacketQueue subtitleQ;
     // video
     double frame_timer;
     double frame_last_returned_time;
     double frame_last_filter_delay;
     int video_stream;
     AVStream *video_st;
-    PacketQueue videoQ;
     double max_frame_duration;      // maximum duration of a frame - above this, we consider the jump a timestamp discontinuity
     struct SwsContext *img_convert_ctx;
     struct SwsContext *sub_convert_ctx;
-    int eof;
+    int is_eof;
 
     char *filename;
     int width, height, xleft, ytop;
@@ -353,11 +373,13 @@ static int64_t audio_callback_time;
 static AVPacket flush_pkt;
 
 #if CONFIG_AVFILTER
+
 static int opt_add_vfilter(void *optctx, const char *opt, const char *arg) {
     GROW_ARRAY(vfilters_list, nb_vfilters);
     vfilters_list[nb_vfilters - 1] = arg;
     return 0;
 }
+
 #endif
 
 static inline
@@ -479,8 +501,9 @@ static int opt_codec(void *optctx, const char *opt, const char *arg) {
 }
 
 static double get_clock(Clock *c) {
-    if (*c->queue_serial != c->serial)
+    if (*c->queue_serial != c->serial) {
         return NAN;
+    }
     if (c->paused) {
         return c->pts;
     } else {
@@ -491,9 +514,9 @@ static double get_clock(Clock *c) {
 
 static void set_clock_at(Clock *c, double pts, int serial, double time) {
     c->pts = pts;
+    c->serial = serial;
     c->last_updated = time;
     c->pts_drift = c->pts - time;
-    c->serial = serial;
 }
 
 static void set_clock(Clock *c, double pts, int serial) {
@@ -507,17 +530,24 @@ static void set_clock_speed(Clock *c, double speed) {
 }
 
 static void init_clock(Clock *c, int *queue_serial) {
+    c->queue_serial = queue_serial;
     c->speed = 1.0;
     c->paused = 0;
-    c->queue_serial = queue_serial;
     set_clock(c, NAN, -1);
 }
 
+/***
+1、外部时钟pts非法，从属时钟（音频/视频）的pts有效时更新。
+2、外部时钟pts与从属时钟的时间差值超过AV_NOSYNC_THRESHOLD（10秒），则对外部时钟进行更新。
+ */
 static void sync_clock_to_slave(Clock *c, Clock *slave) {
     double clock = get_clock(c);
     double slave_clock = get_clock(slave);
-    if (!isnan(slave_clock) && (isnan(clock) || fabs(clock - slave_clock) > AV_NOSYNC_THRESHOLD))
+    /* 仅当下列条件满足时，才会更新外部时钟 */
+    if (!isnan(slave_clock)
+        && (isnan(clock) || fabs(clock - slave_clock) > AV_NOSYNC_THRESHOLD)) {
         set_clock(c, slave_clock, slave->serial);
+    }
 }
 
 /* return < 0 if aborted, 0 if no packet and > 0 if packet.  */
@@ -525,7 +555,6 @@ static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block, int *seria
     MyAVPacketList *pkt1;
     int ret;
 
-    //SDL_LockMutex(q->mutex);
     pthread_mutex_lock(&q->pMutex);
 
     for (;;) {
@@ -552,11 +581,9 @@ static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block, int *seria
             ret = 0;
             break;
         } else {
-            //SDL_CondWait(q->cond, q->mutex);
             pthread_cond_wait(&q->pCond, &q->pMutex);
         }
     }
-    //SDL_UnlockMutex(q->mutex);
     pthread_mutex_unlock(&q->pMutex);
     return ret;
 }
@@ -585,14 +612,11 @@ static int packet_queue_put_private(PacketQueue *q, AVPacket *pkt) {
     q->size += pkt1->pkt.size + sizeof(*pkt1);
     q->duration += pkt1->pkt.duration;
     /* XXX: should duplicate packet data in DV case */
-    //SDL_CondSignal(q->cond);
     pthread_cond_signal(&q->pCond);
     return 0;
 }
 
 static int packet_queue_put(PacketQueue *q, AVPacket *pkt) {
-    //SDL_LockMutex(q->mutex);
-    //SDL_UnlockMutex(q->mutex);
     int ret;
     pthread_mutex_lock(&q->pMutex);
     ret = packet_queue_put_private(q, pkt);
@@ -605,16 +629,6 @@ static int packet_queue_put(PacketQueue *q, AVPacket *pkt) {
 /* packet queue handling */
 static int packet_queue_init(PacketQueue *q) {
     memset(q, 0, sizeof(PacketQueue));
-    /*q->mutex = SDL_CreateMutex();
-    if (!q->mutex) {
-        av_log(NULL, AV_LOG_FATAL, "SDL_CreateMutex(): %s\n", SDL_GetError());
-        return AVERROR(ENOMEM);
-    }
-    q->cond = SDL_CreateCond();
-    if (!q->cond) {
-        av_log(NULL, AV_LOG_FATAL, "SDL_CreateCond(): %s\n", SDL_GetError());
-        return AVERROR(ENOMEM);
-    }*/
     pthread_mutex_init(&q->pMutex, NULL);
     pthread_cond_init(&q->pCond, NULL);
     q->abort_request = 1;
@@ -623,8 +637,6 @@ static int packet_queue_init(PacketQueue *q) {
 
 static void packet_queue_flush(PacketQueue *q) {
     MyAVPacketList *pkt, *pkt1;
-
-    //SDL_LockMutex(q->mutex);
     pthread_mutex_lock(&q->pMutex);
     for (pkt = q->first_pkt; pkt; pkt = pkt1) {
         pkt1 = pkt->next;
@@ -636,25 +648,19 @@ static void packet_queue_flush(PacketQueue *q) {
     q->nb_packets = 0;
     q->size = 0;
     q->duration = 0;
-    //SDL_UnlockMutex(q->mutex);
     pthread_mutex_unlock(&q->pMutex);
 }
 
 static void packet_queue_destroy(PacketQueue *q) {
     packet_queue_flush(q);
-    //SDL_DestroyMutex(q->mutex);
-    //SDL_DestroyCond(q->cond);
     pthread_mutex_destroy(&q->pMutex);
     pthread_cond_destroy(&q->pCond);
 }
 
 static void packet_queue_abort(PacketQueue *q) {
-    //SDL_LockMutex(q->mutex);
     pthread_mutex_lock(&q->pMutex);
     q->abort_request = 1;
-    //SDL_CondSignal(q->cond);
     pthread_cond_signal(&q->pCond);
-    //SDL_UnlockMutex(q->mutex);
     pthread_mutex_unlock(&q->pMutex);
 }
 
@@ -668,11 +674,9 @@ static int packet_queue_put_nullpacket(PacketQueue *q, int stream_index) {
 }
 
 static void packet_queue_start(PacketQueue *q) {
-    //SDL_LockMutex(q->mutex);
     pthread_mutex_lock(&q->pMutex);
     q->abort_request = 0;
     packet_queue_put_private(q, &flush_pkt);
-    //SDL_UnlockMutex(q->mutex);
     pthread_mutex_unlock(&q->pMutex);
 }
 
@@ -683,23 +687,19 @@ static void frame_queue_unref_item(Frame *vp) {
 
 static int frame_queue_init(FrameQueue *f, PacketQueue *pktq, int max_size, int keep_last) {
     memset(f, 0, sizeof(FrameQueue));
-    /*if (!(f->mutex = SDL_CreateMutex())) {
-        av_log(NULL, AV_LOG_FATAL, "SDL_CreateMutex(): %s\n", SDL_GetError());
-        return AVERROR(ENOMEM);
-    }
-    if (!(f->cond = SDL_CreateCond())) {
-        av_log(NULL, AV_LOG_FATAL, "SDL_CreateCond(): %s\n", SDL_GetError());
-        return AVERROR(ENOMEM);
-    }*/
     pthread_mutex_init(&f->pMutex, NULL);
     pthread_cond_init(&f->pCond, NULL);
     f->pktQ = pktq;
     f->max_size = FFMIN(max_size, FRAME_QUEUE_SIZE);
     f->keep_last = !!keep_last;
+    printf("frame_queue_init() max_size: %d, keep_last: %d\n", f->max_size, f->keep_last);
     int i;
-    for (i = 0; i < f->max_size; i++)
-        if (!(f->queue[i].frame = av_frame_alloc()))
+    for (i = 0; i < f->max_size; i++) {
+        // 为每一个AVFrame指针申请空间
+        if (!(f->queue[i].frame = av_frame_alloc())) {
             return AVERROR(ENOMEM);
+        }
+    }
     return 0;
 }
 
@@ -710,78 +710,65 @@ static void frame_queue_destory(FrameQueue *f) {
         frame_queue_unref_item(vp);
         av_frame_free(&vp->frame);
     }
-    //SDL_DestroyMutex(f->mutex);
-    //SDL_DestroyCond(f->cond);
     pthread_mutex_destroy(&f->pMutex);
     pthread_cond_destroy(&f->pCond);
 }
 
 static void frame_queue_signal(FrameQueue *f) {
-    /*SDL_LockMutex(f->mutex);
-    SDL_CondSignal(f->cond);
-    SDL_UnlockMutex(f->mutex);*/
     pthread_mutex_lock(&f->pMutex);
     pthread_cond_signal(&f->pCond);
     pthread_mutex_unlock(&f->pMutex);
 }
 
 static Frame *frame_queue_peek(FrameQueue *f) {
-    return &f->queue[(f->rindex + f->rindex_shown) % f->max_size];
+    return &f->queue[(f->read_index + f->rindex_shown) % f->max_size];
 }
 
 static Frame *frame_queue_peek_next(FrameQueue *f) {
-    return &f->queue[(f->rindex + f->rindex_shown + 1) % f->max_size];
+    return &f->queue[(f->read_index + f->rindex_shown + 1) % f->max_size];
 }
 
 static Frame *frame_queue_peek_last(FrameQueue *f) {
-    return &f->queue[f->rindex];
+    return &f->queue[f->read_index];
 }
 
 static Frame *frame_queue_peek_writable(FrameQueue *f) {
     /* wait until we have space to put a new frame */
-    //SDL_LockMutex(f->mutex);
     pthread_mutex_lock(&f->pMutex);
-    while (f->size >= f->max_size &&
-           !f->pktQ->abort_request) {
-        //SDL_CondWait(f->cond, f->mutex);
+    while (f->size >= f->max_size && !f->pktQ->abort_request) {
         pthread_cond_wait(&f->pCond, &f->pMutex);
     }
-    //SDL_UnlockMutex(f->mutex);
     pthread_mutex_unlock(&f->pMutex);
 
-    if (f->pktQ->abort_request)
+    if (f->pktQ->abort_request) {
         return NULL;
+    }
 
-    return &f->queue[f->windex];
+    return &f->queue[f->write_index];
 }
 
 static Frame *frame_queue_peek_readable(FrameQueue *f) {
     /* wait until we have a readable a new frame */
-    //SDL_LockMutex(f->mutex);
     pthread_mutex_lock(&f->pMutex);
-    while (f->size - f->rindex_shown <= 0 &&
-           !f->pktQ->abort_request) {
-        //SDL_CondWait(f->cond, f->mutex);
+    while (f->size - f->rindex_shown <= 0 && !f->pktQ->abort_request) {
         pthread_cond_wait(&f->pCond, &f->pMutex);
     }
-    //SDL_UnlockMutex(f->mutex);
     pthread_mutex_unlock(&f->pMutex);
 
-    if (f->pktQ->abort_request)
+    if (f->pktQ->abort_request) {
         return NULL;
+    }
 
-    return &f->queue[(f->rindex + f->rindex_shown) % f->max_size];
+    return &f->queue[(f->read_index + f->rindex_shown) % f->max_size];
 }
 
 static void frame_queue_push(FrameQueue *f) {
-    if (++f->windex == f->max_size)
-        f->windex = 0;
-    //SDL_LockMutex(f->mutex);
+    if (++f->write_index == f->max_size) {
+        f->write_index = 0;
+    }
     pthread_mutex_lock(&f->pMutex);
     f->size++;
-    //SDL_CondSignal(f->cond);
     pthread_cond_signal(&f->pCond);
-    //SDL_UnlockMutex(f->mutex);
     pthread_mutex_unlock(&f->pMutex);
 }
 
@@ -790,15 +777,13 @@ static void frame_queue_next(FrameQueue *f) {
         f->rindex_shown = 1;
         return;
     }
-    frame_queue_unref_item(&f->queue[f->rindex]);
-    if (++f->rindex == f->max_size)
-        f->rindex = 0;
-    //SDL_LockMutex(f->mutex);
+    frame_queue_unref_item(&f->queue[f->read_index]);
+    if (++f->read_index == f->max_size) {
+        f->read_index = 0;
+    }
     pthread_mutex_lock(&f->pMutex);
     f->size--;
-    //SDL_CondSignal(f->cond);
     pthread_cond_signal(&f->pCond);
-    //SDL_UnlockMutex(f->mutex);
     pthread_mutex_unlock(&f->pMutex);
 }
 
@@ -809,11 +794,45 @@ static int frame_queue_nb_remaining(FrameQueue *f) {
 
 /* return last shown position */
 static int64_t frame_queue_last_pos(FrameQueue *f) {
-    Frame *fp = &f->queue[f->rindex];
+    Frame *fp = &f->queue[f->read_index];
     if (f->rindex_shown && fp->serial == f->pktQ->serial)
         return fp->pos;
     else
         return -1;
+}
+
+static int get_master_sync_type(VideoState *is) {
+    if (is->av_sync_type == AV_SYNC_VIDEO_MASTER) {
+        if (is->video_st)
+            return AV_SYNC_VIDEO_MASTER;
+        else
+            return AV_SYNC_AUDIO_MASTER;
+    } else if (is->av_sync_type == AV_SYNC_AUDIO_MASTER) {
+        if (is->audio_st)
+            return AV_SYNC_AUDIO_MASTER;
+        else
+            return AV_SYNC_EXTERNAL_CLOCK;
+    } else {
+        return AV_SYNC_EXTERNAL_CLOCK;
+    }
+}
+
+/* get the current master clock value */
+static double get_master_clock(VideoState *is) {
+    double val;
+
+    switch (get_master_sync_type(is)) {
+        case AV_SYNC_VIDEO_MASTER:
+            val = get_clock(&is->vidClock);
+            break;
+        case AV_SYNC_AUDIO_MASTER:
+            val = get_clock(&is->audClock);
+            break;
+        default:
+            val = get_clock(&is->extClock);
+            break;
+    }
+    return val;
 }
 
 #endif //FFMPEG_STUDY_FFPLAY_H
