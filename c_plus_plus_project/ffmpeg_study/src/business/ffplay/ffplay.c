@@ -3117,6 +3117,7 @@ int main(int argc, char **argv) {
     input_filename = "/Users/alexander/Music/music/林锋 - 被爱伤过的人.mp3";
     input_filename = "/Users/alexander/Downloads/周華健-神話_情話.mp4";
     input_filename = "/Users/alexander/Downloads/小品-吃面.mp4";
+    input_filename = "http://vfx.mtime.cn/Video/2019/03/13/mp4/190313094901111138.mp4";
     if (!input_filename) {
         show_usage();
         av_log(NULL, AV_LOG_FATAL, "An input file must be specified\n");
