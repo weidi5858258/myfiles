@@ -336,7 +336,7 @@ static int display_disable;
 static int borderless;
 static int alwaysontop;
 static int startup_volume = 100;
-static int show_status = 1;
+static int show_status = 0;// 打印某些日志
 static int av_sync_type = AV_SYNC_AUDIO_MASTER;
 static int64_t start_time = AV_NOPTS_VALUE;
 static int64_t duration = AV_NOPTS_VALUE;
@@ -621,8 +621,9 @@ static int packet_queue_put(PacketQueue *q, AVPacket *pkt) {
     pthread_mutex_lock(&q->pMutex);
     ret = packet_queue_put_private(q, pkt);
     pthread_mutex_unlock(&q->pMutex);
-    if (pkt != &flush_pkt && ret < 0)
+    if (pkt != &flush_pkt && ret < 0) {
         av_packet_unref(pkt);
+    }
     return ret;
 }
 
