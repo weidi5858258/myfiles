@@ -105,8 +105,8 @@ typedef struct Clock {
     int serial;           /* clock is based on a packet with this serial */
     // 初始化时为0
     int paused;
-    // 指向PacketQueue的serial变量
     // 指向当前数据包队列序列的指针，用于过时的时钟检测
+    // 就是PacketQueue的serial值
     int *queue_serial;    /* pointer to the current packet queue serial, used for obsolete clock detection */
 } Clock;
 
@@ -116,7 +116,7 @@ typedef struct Frame {
     AVFrame *frame;
     // 字幕
     AVSubtitle sub;
-    // 序列
+    // 序列(Decoder的pkt_serial值)
     int serial;
     // 帧的显示时间戳
     double pts;           /* presentation timestamp for the frame */
@@ -135,26 +135,31 @@ typedef struct Frame {
     // 反转
     int flip_v;
 } Frame;
-
-typedef struct MyAVPacketList {
+// 一个Node(节点)
+// 原名:MyAVPacketList
+typedef struct AVPacketNode {
     AVPacket pkt;
-    struct MyAVPacketList *next;
+    struct AVPacketNode *next;
+    // 就是PacketQueue的serial值
     int serial;
-} MyAVPacketList;
+} AVPacketNode;
 
 // 保存AVPacket(音频,视频,字幕各一个Queue)
 typedef struct PacketQueue {
-    MyAVPacketList *first_pkt, *last_pkt;
+    AVPacketNode *first_pkt, *last_pkt;
+    // 队列中有多少个AVPacket
     int nb_packets;
+    // 队列中所有AVPacket的大小总和
     int size;
     int serial;
     int abort_request;
+    // 队列中所有AVPacket的时长总和
     int64_t duration;
     pthread_mutex_t pMutex;// "同步"作用
     pthread_cond_t pCond;  // "暂停"作用
 } PacketQueue;
 
-// 保存AVFrame
+// 保存AVFrame(音频,视频,字幕各一个Queue)
 typedef struct FrameQueue {
     // 视频放3个
     // 音频放9个
@@ -177,7 +182,7 @@ typedef struct Decoder {
     AVPacket pkt;
     PacketQueue *queue;
     AVCodecContext *avctx;
-    // 包序列
+    // 包序列(就是AVPacketNode的serial值)
     int pkt_serial;
     int finished;
     // 是否有包在等待
@@ -232,17 +237,17 @@ typedef struct VideoState {
     Clock vidClock;
     Clock extClock;
 
-    PacketQueue videoQ;
-    PacketQueue audioQ;
-    PacketQueue subtitleQ;
+    PacketQueue videoPQ;
+    PacketQueue audioPQ;
+    PacketQueue subtitlePQ;
 
-    FrameQueue pictQ;
-    FrameQueue sampQ;
-    FrameQueue subpQ;
+    FrameQueue pictFQ;
+    FrameQueue sampFQ;
+    FrameQueue subpFQ;
 
-    Decoder auddec;
-    Decoder viddec;
-    Decoder subdec;
+    Decoder audDecoder;
+    Decoder vidDecoder;
+    Decoder subDecoder;
 
     // audio
     int audio_stream;
@@ -552,7 +557,7 @@ static void sync_clock_to_slave(Clock *c, Clock *slave) {
 
 /* return < 0 if aborted, 0 if no packet and > 0 if packet.  */
 static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block, int *serial) {
-    MyAVPacketList *pkt1;
+    AVPacketNode *pkt1;
     int ret;
 
     pthread_mutex_lock(&q->pMutex);
@@ -589,28 +594,32 @@ static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block, int *seria
 }
 
 static int packet_queue_put_private(PacketQueue *q, AVPacket *pkt) {
-    MyAVPacketList *pkt1;
+    AVPacketNode *node;
 
     if (q->abort_request)
         return -1;
 
-    pkt1 = av_malloc(sizeof(MyAVPacketList));
-    if (!pkt1)
+    node = av_malloc(sizeof(AVPacketNode));
+    if (!node)
         return -1;
-    pkt1->pkt = *pkt;
-    pkt1->next = NULL;
-    if (pkt == &flush_pkt)
+
+    node->pkt = *pkt;
+    node->next = NULL;
+    // PacketQueue中的第一个node的pkt是flush_pkt
+    if (pkt == &flush_pkt) {
         q->serial++;
-    pkt1->serial = q->serial;
+        printf("packet_queue_put_private() q->serial: %d\n", q->serial);
+    }
+    node->serial = q->serial;
 
     if (!q->last_pkt)
-        q->first_pkt = pkt1;
+        q->first_pkt = node;
     else
-        q->last_pkt->next = pkt1;
-    q->last_pkt = pkt1;
+        q->last_pkt->next = node;
+    q->last_pkt = node;
     q->nb_packets++;
-    q->size += pkt1->pkt.size + sizeof(*pkt1);
-    q->duration += pkt1->pkt.duration;
+    q->size += node->pkt.size + sizeof(*node);
+    q->duration += node->pkt.duration;
     /* XXX: should duplicate packet data in DV case */
     pthread_cond_signal(&q->pCond);
     return 0;
@@ -637,7 +646,7 @@ static int packet_queue_init(PacketQueue *q) {
 }
 
 static void packet_queue_flush(PacketQueue *q) {
-    MyAVPacketList *pkt, *pkt1;
+    AVPacketNode *pkt, *pkt1;
     pthread_mutex_lock(&q->pMutex);
     for (pkt = q->first_pkt; pkt; pkt = pkt1) {
         pkt1 = pkt->next;
@@ -674,11 +683,14 @@ static int packet_queue_put_nullpacket(PacketQueue *q, int stream_index) {
     return packet_queue_put(q, pkt);
 }
 
+// 视频,音频,字幕都会调一次
 static void packet_queue_start(PacketQueue *q) {
+    printf("packet_queue_start() start\n");
     pthread_mutex_lock(&q->pMutex);
     q->abort_request = 0;
     packet_queue_put_private(q, &flush_pkt);
     pthread_mutex_unlock(&q->pMutex);
+    printf("packet_queue_start() end\n");
 }
 
 static void frame_queue_unref_item(Frame *vp) {
