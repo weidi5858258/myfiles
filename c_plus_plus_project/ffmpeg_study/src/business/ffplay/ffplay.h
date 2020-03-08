@@ -223,7 +223,7 @@ typedef struct VideoState {
     int paused;
     int last_paused;
     int queue_attachments_req;
-    int seek_req;
+    int seek_req;// 需要seek时为1,否则为0
     int seek_flags;
     int64_t seek_pos;
     int64_t seek_rel;

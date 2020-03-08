@@ -14,7 +14,8 @@ add_executable(
 #        include/MyHead.h
 #        include/decode_audio.h
 
-        src/business/ffplay/ffplay.c
+#        src/business/ffplay/ffplay.c
+        src/business/ffplay/ffplay_audio.c
         src/business/ffplay/cmdutils.c
 #        src/alexander_ffplay.c
 #        src/StudyFFmpeg.cpp
