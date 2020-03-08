@@ -1392,7 +1392,7 @@ static int audio_thread(void *arg) {
                                    decodedAVFrame->format, decodedAVFrame->channels)
                     || is->audio_filter_src.channel_layout != dec_channel_layout
                     || is->audio_filter_src.sample_rate != decodedAVFrame->sample_rate
-                    || is->auddec.pkt_serial != last_serial;
+                    || is->audDecoder.pkt_serial != last_serial;
             if (reconfigure) {
                 char buf1[1024], buf2[1024];
                 av_get_channel_layout_string(buf1, sizeof(buf1), -1, is->audio_filter_src.channel_layout);
@@ -1403,13 +1403,13 @@ static int audio_thread(void *arg) {
                        av_get_sample_fmt_name(is->audio_filter_src.sample_fmt), buf1, last_serial,
                        decodedAVFrame->sample_rate, decodedAVFrame->channels,
                        av_get_sample_fmt_name(decodedAVFrame->format), buf2,
-                       is->auddec.pkt_serial);
+                       is->audDecoder.pkt_serial);
 
                 is->audio_filter_src.sample_fmt = decodedAVFrame->format;
                 is->audio_filter_src.channels = decodedAVFrame->channels;
                 is->audio_filter_src.channel_layout = dec_channel_layout;
                 is->audio_filter_src.sample_rate = decodedAVFrame->sample_rate;
-                last_serial = is->auddec.pkt_serial;
+                last_serial = is->audDecoder.pkt_serial;
 
                 if ((ret = configure_audio_filters(is, afilters, 1)) < 0)
                     goto the_end;
@@ -1421,29 +1421,29 @@ static int audio_thread(void *arg) {
             while ((ret = av_buffersink_get_frame_flags(is->out_audio_filter, decodedAVFrame, 0)) >= 0) {
                 avRational = av_buffersink_get_time_base(is->out_audio_filter);
 #endif
-            // 从sampQ中取出一个Frame指针
-            if (!(af = frame_queue_peek_writable(&is->sampFQ))) {
-                goto the_end;
-            }
-            af->pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(avRational);
-            af->pos = decodedAVFrame->pkt_pos;
-            af->serial = is->audDecoder.pkt_serial;
-            // 当前帧包含的(单个声道)采样数/采样率就是当前帧的播放时长
-            af->duration = av_q2d(
-                    (AVRational) {decodedAVFrame->nb_samples, decodedAVFrame->sample_rate});
-            // 将frame数据拷入af->frame,af->frame指向音频frame队列尾部
-            av_frame_move_ref(af->frame, decodedAVFrame);
-            // 更新音频frame队列大小及写指针
-            frame_queue_push(&is->sampFQ);
-            //printf("audio_thread() frame_queue_push af->pts: %lf\n", af->pts);
+                // 从sampQ中取出一个Frame指针
+                if (!(af = frame_queue_peek_writable(&is->sampFQ))) {
+                    goto the_end;
+                }
+                af->pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(avRational);
+                af->pos = decodedAVFrame->pkt_pos;
+                af->serial = is->audDecoder.pkt_serial;
+                // 当前帧包含的(单个声道)采样数/采样率就是当前帧的播放时长
+                af->duration = av_q2d(
+                        (AVRational) {decodedAVFrame->nb_samples, decodedAVFrame->sample_rate});
+                // 将frame数据拷入af->frame,af->frame指向音频frame队列尾部
+                av_frame_move_ref(af->frame, decodedAVFrame);
+                // 更新音频frame队列大小及写指针
+                frame_queue_push(&is->sampFQ);
+                //printf("audio_thread() frame_queue_push af->pts: %lf\n", af->pts);
 #if CONFIG_AVFILTER
-            if (is->audioQ.serial != is->auddec.pkt_serial) {
-                break;
+                if (is->audioPQ.serial != is->audDecoder.pkt_serial) {
+                    break;
+                }
             }
-        }
-        if (ret == AVERROR_EOF) {
-            is->auddec.finished = is->auddec.pkt_serial;
-        }
+            if (ret == AVERROR_EOF) {
+                is->audDecoder.finished = is->audDecoder.pkt_serial;
+            }
 #endif
         }// if (got_frame)
     } while (ret >= 0 || ret == AVERROR(EAGAIN) || ret == AVERROR_EOF);
@@ -1490,7 +1490,7 @@ static int video_thread(void *arg) {
         if (last_w != decodedAVFrame->width
             || last_h != decodedAVFrame->height
             || last_format != decodedAVFrame->format
-            || last_serial != is->viddec.pkt_serial
+            || last_serial != is->vidDecoder.pkt_serial
             || last_vfilter_idx != is->vfilter_idx) {
             av_log(NULL, AV_LOG_DEBUG,
                    "Video frame changed from size:%dx%d format:%s serial:%d to size:%dx%d format:%s serial:%d\n",
@@ -1498,7 +1498,7 @@ static int video_thread(void *arg) {
                    (const char *) av_x_if_null(av_get_pix_fmt_name(last_format), "none"), last_serial,
                    decodedAVFrame->width, decodedAVFrame->height,
                    (const char *) av_x_if_null(av_get_pix_fmt_name(decodedAVFrame->format), "none"),
-                   is->viddec.pkt_serial);
+                   is->vidDecoder.pkt_serial);
             avfilter_graph_free(&graph);
             graph = avfilter_graph_alloc();
             if (!graph) {
@@ -1519,7 +1519,7 @@ static int video_thread(void *arg) {
             last_w = decodedAVFrame->width;
             last_h = decodedAVFrame->height;
             last_format = decodedAVFrame->format;
-            last_serial = is->viddec.pkt_serial;
+            last_serial = is->vidDecoder.pkt_serial;
             last_vfilter_idx = is->vfilter_idx;
             frame_rate = av_buffersink_get_frame_rate(filt_out);
         }
@@ -1534,7 +1534,7 @@ static int video_thread(void *arg) {
             ret = av_buffersink_get_frame_flags(filt_out, decodedAVFrame, 0);
             if (ret < 0) {
                 if (ret == AVERROR_EOF)
-                    is->viddec.finished = is->viddec.pkt_serial;
+                    is->vidDecoder.finished = is->vidDecoder.pkt_serial;
                 ret = 0;
                 break;
             }
@@ -1544,15 +1544,15 @@ static int video_thread(void *arg) {
                 is->frame_last_filter_delay = 0;
             tb = av_buffersink_get_time_base(filt_out);
 #endif
-        duration = (frame_rate.num && frame_rate.den ? av_q2d((AVRational) {frame_rate.den, frame_rate.num}) : 0);
-        pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(tb);
-        ret = queue_picture(is, decodedAVFrame, pts, duration,
-                            decodedAVFrame->pkt_pos, is->vidDecoder.pkt_serial);
-        av_frame_unref(decodedAVFrame);
+            duration = (frame_rate.num && frame_rate.den ? av_q2d((AVRational) {frame_rate.den, frame_rate.num}) : 0);
+            pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(tb);
+            ret = queue_picture(is, decodedAVFrame, pts, duration,
+                                decodedAVFrame->pkt_pos, is->vidDecoder.pkt_serial);
+            av_frame_unref(decodedAVFrame);
 #if CONFIG_AVFILTER
-        if (is->videoQ.serial != is->viddec.pkt_serial)
-            break;
-    }
+            if (is->videoPQ.serial != is->vidDecoder.pkt_serial)
+                break;
+        }
 #endif
 
         if (ret < 0) {
@@ -2997,8 +2997,8 @@ static const OptionDef options[] = {
          "x pos"},
         {"top", OPT_INT | HAS_ARG | OPT_EXPERT, {&screen_top}, "set the y position for the top of the window", "y pos"},
 #if CONFIG_AVFILTER
-{"vf", OPT_EXPERT | HAS_ARG, {.func_arg = opt_add_vfilter}, "set video filters", "filter_graph"},
-{"af", OPT_STRING | HAS_ARG, {&afilters}, "set audio filters", "filter_graph"},
+        {"vf", OPT_EXPERT | HAS_ARG, {.func_arg = opt_add_vfilter}, "set video filters", "filter_graph"},
+        {"af", OPT_STRING | HAS_ARG, {&afilters}, "set audio filters", "filter_graph"},
 #endif
         {"rdftspeed", OPT_INT | HAS_ARG | OPT_AUDIO | OPT_EXPERT, {&rdftspeed}, "rdft speed", "msecs"},
         {"showmode", HAS_ARG, {.func_arg = opt_show_mode}, "select show mode (0 = video, 1 = waves, 2 = RDFT)", "mode"},

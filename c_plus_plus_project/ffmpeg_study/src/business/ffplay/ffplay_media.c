@@ -1392,7 +1392,7 @@ static int audio_thread(void *arg) {
                                    decodedAVFrame->format, decodedAVFrame->channels)
                     || is->audio_filter_src.channel_layout != dec_channel_layout
                     || is->audio_filter_src.sample_rate != decodedAVFrame->sample_rate
-                    || is->auddec.pkt_serial != last_serial;
+                    || is->audDecoder.pkt_serial != last_serial;
             if (reconfigure) {
                 char buf1[1024], buf2[1024];
                 av_get_channel_layout_string(buf1, sizeof(buf1), -1, is->audio_filter_src.channel_layout);
@@ -1403,13 +1403,13 @@ static int audio_thread(void *arg) {
                        av_get_sample_fmt_name(is->audio_filter_src.sample_fmt), buf1, last_serial,
                        decodedAVFrame->sample_rate, decodedAVFrame->channels,
                        av_get_sample_fmt_name(decodedAVFrame->format), buf2,
-                       is->auddec.pkt_serial);
+                       is->audDecoder.pkt_serial);
 
                 is->audio_filter_src.sample_fmt = decodedAVFrame->format;
                 is->audio_filter_src.channels = decodedAVFrame->channels;
                 is->audio_filter_src.channel_layout = dec_channel_layout;
                 is->audio_filter_src.sample_rate = decodedAVFrame->sample_rate;
-                last_serial = is->auddec.pkt_serial;
+                last_serial = is->audDecoder.pkt_serial;
 
                 if ((ret = configure_audio_filters(is, afilters, 1)) < 0)
                     goto the_end;
@@ -1437,12 +1437,12 @@ static int audio_thread(void *arg) {
             frame_queue_push(&is->sampFQ);
             //printf("audio_thread() frame_queue_push af->pts: %lf\n", af->pts);
 #if CONFIG_AVFILTER
-            if (is->audioQ.serial != is->auddec.pkt_serial) {
+            if (is->audioPQ.serial != is->audDecoder.pkt_serial) {
                 break;
             }
         }
         if (ret == AVERROR_EOF) {
-            is->auddec.finished = is->auddec.pkt_serial;
+            is->audDecoder.finished = is->audDecoder.pkt_serial;
         }
 #endif
         }// if (got_frame)
@@ -1490,7 +1490,7 @@ static int video_thread(void *arg) {
         if (last_w != decodedAVFrame->width
             || last_h != decodedAVFrame->height
             || last_format != decodedAVFrame->format
-            || last_serial != is->viddec.pkt_serial
+            || last_serial != is->vidDecoder.pkt_serial
             || last_vfilter_idx != is->vfilter_idx) {
             av_log(NULL, AV_LOG_DEBUG,
                    "Video frame changed from size:%dx%d format:%s serial:%d to size:%dx%d format:%s serial:%d\n",
@@ -1498,7 +1498,7 @@ static int video_thread(void *arg) {
                    (const char *) av_x_if_null(av_get_pix_fmt_name(last_format), "none"), last_serial,
                    decodedAVFrame->width, decodedAVFrame->height,
                    (const char *) av_x_if_null(av_get_pix_fmt_name(decodedAVFrame->format), "none"),
-                   is->viddec.pkt_serial);
+                   is->vidDecoder.pkt_serial);
             avfilter_graph_free(&graph);
             graph = avfilter_graph_alloc();
             if (!graph) {
@@ -1519,7 +1519,7 @@ static int video_thread(void *arg) {
             last_w = decodedAVFrame->width;
             last_h = decodedAVFrame->height;
             last_format = decodedAVFrame->format;
-            last_serial = is->viddec.pkt_serial;
+            last_serial = is->vidDecoder.pkt_serial;
             last_vfilter_idx = is->vfilter_idx;
             frame_rate = av_buffersink_get_frame_rate(filt_out);
         }
@@ -1534,7 +1534,7 @@ static int video_thread(void *arg) {
             ret = av_buffersink_get_frame_flags(filt_out, decodedAVFrame, 0);
             if (ret < 0) {
                 if (ret == AVERROR_EOF)
-                    is->viddec.finished = is->viddec.pkt_serial;
+                    is->vidDecoder.finished = is->vidDecoder.pkt_serial;
                 ret = 0;
                 break;
             }
@@ -1550,7 +1550,7 @@ static int video_thread(void *arg) {
                             decodedAVFrame->pkt_pos, is->vidDecoder.pkt_serial);
         av_frame_unref(decodedAVFrame);
 #if CONFIG_AVFILTER
-        if (is->videoQ.serial != is->viddec.pkt_serial)
+        if (is->videoPQ.serial != is->vidDecoder.pkt_serial)
             break;
     }
 #endif
@@ -3082,7 +3082,7 @@ decoder_start方法,在decoder_start方法中再开启音频,视频,字幕(如�
  VideoState->video_st->codec->reordered_opaque ＊ av_q2d(VideoState->video_st->time_base)
  */
 /* Called from the main */
-int main2(int argc, char **argv) {
+int main(int argc, char **argv) {
     printf("main() start\n");
     // N-96855-ga439acee3f
     printf("main() version: %s\n", av_version_info());
