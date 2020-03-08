@@ -3080,10 +3080,9 @@ decoder_start方法,在decoder_start方法中再开启音频,视频,字幕(如�
 
  在播放过程中如何取得到当前的播放时间
  VideoState->video_st->codec->reordered_opaque ＊ av_q2d(VideoState->video_st->time_base)
- 作为备份
  */
 /* Called from the main */
-int main(int argc, char **argv) {
+int main2(int argc, char **argv) {
     printf("main() start\n");
     // N-96855-ga439acee3f
     printf("main() version: %s\n", av_version_info());
