@@ -506,7 +506,8 @@ static int opt_codec(void *optctx, const char *opt, const char *arg) {
 }
 
 static double get_clock(Clock *c) {
-    if (*c->queue_serial != c->serial) {
+    //printf("get_clock() serial: %d, queue_serial: %d\n", c->serial, *(c->queue_serial));
+    if (*(c->queue_serial) != c->serial) {
         return NAN;
     }
     if (c->paused) {
@@ -515,6 +516,39 @@ static double get_clock(Clock *c) {
         double time = av_gettime_relative() / 1000000.0;
         return c->pts_drift + time - (time - c->last_updated) * (1.0 - c->speed);
     }
+}
+
+static int get_master_sync_type(VideoState *is) {
+    if (is->av_sync_type == AV_SYNC_VIDEO_MASTER) {
+        if (is->video_st)
+            return AV_SYNC_VIDEO_MASTER;
+        else
+            return AV_SYNC_AUDIO_MASTER;
+    } else if (is->av_sync_type == AV_SYNC_AUDIO_MASTER) {
+        if (is->audio_st)
+            return AV_SYNC_AUDIO_MASTER;
+        else
+            return AV_SYNC_EXTERNAL_CLOCK;
+    } else {
+        return AV_SYNC_EXTERNAL_CLOCK;
+    }
+}
+
+/* get the current master clock value */
+static double get_master_clock(VideoState *is) {
+    double val;
+    switch (get_master_sync_type(is)) {
+        case AV_SYNC_VIDEO_MASTER:
+            val = get_clock(&is->vidClock);
+            break;
+        case AV_SYNC_AUDIO_MASTER:
+            val = get_clock(&is->audClock);
+            break;
+        default:
+            val = get_clock(&is->extClock);
+            break;
+    }
+    return val;
 }
 
 static void set_clock_at(Clock *c, double pts, int serial, double time) {
@@ -814,38 +848,5 @@ static int64_t frame_queue_last_pos(FrameQueue *f) {
         return -1;
 }
 
-static int get_master_sync_type(VideoState *is) {
-    if (is->av_sync_type == AV_SYNC_VIDEO_MASTER) {
-        if (is->video_st)
-            return AV_SYNC_VIDEO_MASTER;
-        else
-            return AV_SYNC_AUDIO_MASTER;
-    } else if (is->av_sync_type == AV_SYNC_AUDIO_MASTER) {
-        if (is->audio_st)
-            return AV_SYNC_AUDIO_MASTER;
-        else
-            return AV_SYNC_EXTERNAL_CLOCK;
-    } else {
-        return AV_SYNC_EXTERNAL_CLOCK;
-    }
-}
-
-/* get the current master clock value */
-static double get_master_clock(VideoState *is) {
-    double val;
-
-    switch (get_master_sync_type(is)) {
-        case AV_SYNC_VIDEO_MASTER:
-            val = get_clock(&is->vidClock);
-            break;
-        case AV_SYNC_AUDIO_MASTER:
-            val = get_clock(&is->audClock);
-            break;
-        default:
-            val = get_clock(&is->extClock);
-            break;
-    }
-    return val;
-}
 
 #endif //FFMPEG_STUDY_FFPLAY_H

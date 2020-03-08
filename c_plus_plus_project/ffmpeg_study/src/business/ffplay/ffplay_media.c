@@ -1114,7 +1114,8 @@ static int get_video_frame(VideoState *is, AVFrame *decodedAVFrame) {
         if (decodedAVFrame->pts != AV_NOPTS_VALUE)
             dpts = av_q2d(is->video_st->time_base) * decodedAVFrame->pts;
 
-        decodedAVFrame->sample_aspect_ratio = av_guess_sample_aspect_ratio(is->avFormatContext, is->video_st, decodedAVFrame);
+        decodedAVFrame->sample_aspect_ratio = av_guess_sample_aspect_ratio(is->avFormatContext, is->video_st,
+                                                                           decodedAVFrame);
 
         if (framedrop > 0 || (framedrop && get_master_sync_type(is) != AV_SYNC_VIDEO_MASTER)) {
             if (decodedAVFrame->pts != AV_NOPTS_VALUE) {
@@ -1421,29 +1422,29 @@ static int audio_thread(void *arg) {
             while ((ret = av_buffersink_get_frame_flags(is->out_audio_filter, decodedAVFrame, 0)) >= 0) {
                 avRational = av_buffersink_get_time_base(is->out_audio_filter);
 #endif
-            // 从sampQ中取出一个Frame指针
-            if (!(af = frame_queue_peek_writable(&is->sampFQ))) {
-                goto the_end;
-            }
-            af->pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(avRational);
-            af->pos = decodedAVFrame->pkt_pos;
-            af->serial = is->audDecoder.pkt_serial;
-            // 当前帧包含的(单个声道)采样数/采样率就是当前帧的播放时长
-            af->duration = av_q2d(
-                    (AVRational) {decodedAVFrame->nb_samples, decodedAVFrame->sample_rate});
-            // 将frame数据拷入af->frame,af->frame指向音频frame队列尾部
-            av_frame_move_ref(af->frame, decodedAVFrame);
-            // 更新音频frame队列大小及写指针
-            frame_queue_push(&is->sampFQ);
-            //printf("audio_thread() frame_queue_push af->pts: %lf\n", af->pts);
+                // 从sampQ中取出一个Frame指针
+                if (!(af = frame_queue_peek_writable(&is->sampFQ))) {
+                    goto the_end;
+                }
+                af->pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(avRational);
+                af->pos = decodedAVFrame->pkt_pos;
+                af->serial = is->audDecoder.pkt_serial;
+                // 当前帧包含的(单个声道)采样数/采样率就是当前帧的播放时长
+                af->duration = av_q2d(
+                        (AVRational) {decodedAVFrame->nb_samples, decodedAVFrame->sample_rate});
+                // 将frame数据拷入af->frame,af->frame指向音频frame队列尾部
+                av_frame_move_ref(af->frame, decodedAVFrame);
+                // 更新音频frame队列大小及写指针
+                frame_queue_push(&is->sampFQ);
+                //printf("audio_thread() frame_queue_push af->pts: %lf\n", af->pts);
 #if CONFIG_AVFILTER
-            if (is->audioPQ.serial != is->audDecoder.pkt_serial) {
-                break;
+                if (is->audioPQ.serial != is->audDecoder.pkt_serial) {
+                    break;
+                }
             }
-        }
-        if (ret == AVERROR_EOF) {
-            is->audDecoder.finished = is->audDecoder.pkt_serial;
-        }
+            if (ret == AVERROR_EOF) {
+                is->audDecoder.finished = is->audDecoder.pkt_serial;
+            }
 #endif
         }// if (got_frame)
     } while (ret >= 0 || ret == AVERROR(EAGAIN) || ret == AVERROR_EOF);
@@ -1544,15 +1545,15 @@ static int video_thread(void *arg) {
                 is->frame_last_filter_delay = 0;
             tb = av_buffersink_get_time_base(filt_out);
 #endif
-        duration = (frame_rate.num && frame_rate.den ? av_q2d((AVRational) {frame_rate.den, frame_rate.num}) : 0);
-        pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(tb);
-        ret = queue_picture(is, decodedAVFrame, pts, duration,
-                            decodedAVFrame->pkt_pos, is->vidDecoder.pkt_serial);
-        av_frame_unref(decodedAVFrame);
+            duration = (frame_rate.num && frame_rate.den ? av_q2d((AVRational) {frame_rate.den, frame_rate.num}) : 0);
+            pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(tb);
+            ret = queue_picture(is, decodedAVFrame, pts, duration,
+                                decodedAVFrame->pkt_pos, is->vidDecoder.pkt_serial);
+            av_frame_unref(decodedAVFrame);
 #if CONFIG_AVFILTER
-        if (is->videoPQ.serial != is->vidDecoder.pkt_serial)
-            break;
-    }
+            if (is->videoPQ.serial != is->vidDecoder.pkt_serial)
+                break;
+        }
 #endif
 
         if (ret < 0) {
@@ -2943,117 +2944,10 @@ static void event_loop(VideoState *cur_stream) {
     printf("event_loop() end\n");
 }
 
-static int dummy;
-
-static const OptionDef options[] = {
-        CMDUTILS_COMMON_OPTIONS
-        {"x",
-         HAS_ARG,
-         {.func_arg = opt_width},
-         "force displayed width",
-         "width"},
-        {"y", HAS_ARG, {.func_arg = opt_height}, "force displayed height", "height"},
-        {"s", HAS_ARG | OPT_VIDEO, {.func_arg = opt_frame_size}, "set frame size (WxH or abbreviation)", "size"},
-        {"fs", OPT_BOOL, {&is_full_screen}, "force full screen"},
-        {"an", OPT_BOOL, {&audio_disable}, "disable audio"},
-        {"vn", OPT_BOOL, {&video_disable}, "disable video"},
-        {"sn", OPT_BOOL, {&subtitle_disable}, "disable subtitling"},
-        {"ast", OPT_STRING | HAS_ARG | OPT_EXPERT, {&wanted_stream_spec[AVMEDIA_TYPE_AUDIO]},
-         "select desired audio stream", "stream_specifier"},
-        {"vst", OPT_STRING | HAS_ARG | OPT_EXPERT, {&wanted_stream_spec[AVMEDIA_TYPE_VIDEO]},
-         "select desired video stream", "stream_specifier"},
-        {"sst", OPT_STRING | HAS_ARG | OPT_EXPERT, {&wanted_stream_spec[AVMEDIA_TYPE_SUBTITLE]},
-         "select desired subtitle stream", "stream_specifier"},
-        {"ss", HAS_ARG, {.func_arg = opt_seek}, "seek to a given position in seconds", "pos"},
-        {"t", HAS_ARG, {.func_arg = opt_duration}, "play  \"duration\" seconds of audio/video", "duration"},
-        {"bytes", OPT_INT | HAS_ARG, {&seek_by_bytes}, "seek by bytes 0=off 1=on -1=auto", "val"},
-        {"seek_interval", OPT_FLOAT | HAS_ARG, {&seek_interval}, "set seek interval for left/right keys, in seconds",
-         "seconds"},
-        {"nodisp", OPT_BOOL, {&display_disable}, "disable graphical display"},
-        {"noborder", OPT_BOOL, {&borderless}, "borderless window"},
-        {"alwaysontop", OPT_BOOL, {&alwaysontop}, "window always on top"},
-        {"volume", OPT_INT | HAS_ARG, {&startup_volume}, "set startup volume 0=min 100=max", "volume"},
-        {"f", HAS_ARG, {.func_arg = opt_format}, "force format", "fmt"},
-        {"pix_fmt", HAS_ARG | OPT_EXPERT | OPT_VIDEO, {.func_arg = opt_frame_pix_fmt}, "set pixel format", "format"},
-        {"stats", OPT_BOOL | OPT_EXPERT, {&show_status}, "show status", ""},
-        {"fast", OPT_BOOL | OPT_EXPERT, {&fast}, "non spec compliant optimizations", ""},
-        {"genpts", OPT_BOOL | OPT_EXPERT, {&genpts}, "generate pts", ""},
-        {"drp", OPT_INT | HAS_ARG | OPT_EXPERT, {&decoder_reorder_pts}, "let decoder reorder pts 0=off 1=on -1=auto",
-         ""},
-        {"lowres", OPT_INT | HAS_ARG | OPT_EXPERT, {&lowres}, "", ""},
-        {"sync", HAS_ARG | OPT_EXPERT, {.func_arg = opt_sync},
-         "set audio-video sync. type (type=audio/video/ext)",
-         "type"},
-        {"autoexit", OPT_BOOL | OPT_EXPERT, {&autoexit}, "exit at the end", ""},
-        {"exitonkeydown", OPT_BOOL | OPT_EXPERT, {&exit_on_keydown}, "exit on key down", ""},
-        {"exitonmousedown", OPT_BOOL | OPT_EXPERT, {&exit_on_mousedown}, "exit on mouse down", ""},
-        {"loop", OPT_INT | HAS_ARG | OPT_EXPERT, {&loop}, "set number of times the playback shall be looped",
-         "loop count"},
-        {"framedrop", OPT_BOOL | OPT_EXPERT, {&framedrop}, "drop frames when cpu is too slow", ""},
-        {"infbuf", OPT_BOOL | OPT_EXPERT, {&infinite_buffer},
-         "don't limit the input buffer size (useful with realtime streams)", ""},
-        {"window_title", OPT_STRING | HAS_ARG, {&window_title}, "set window title", "window title"},
-        {"left", OPT_INT | HAS_ARG | OPT_EXPERT, {&screen_left}, "set the x position for the left of the window",
-         "x pos"},
-        {"top", OPT_INT | HAS_ARG | OPT_EXPERT, {&screen_top}, "set the y position for the top of the window", "y pos"},
-#if CONFIG_AVFILTER
-{"vf", OPT_EXPERT | HAS_ARG, {.func_arg = opt_add_vfilter}, "set video filters", "filter_graph"},
-{"af", OPT_STRING | HAS_ARG, {&afilters}, "set audio filters", "filter_graph"},
-#endif
-        {"rdftspeed", OPT_INT | HAS_ARG | OPT_AUDIO | OPT_EXPERT, {&rdftspeed}, "rdft speed", "msecs"},
-        {"showmode", HAS_ARG, {.func_arg = opt_show_mode}, "select show mode (0 = video, 1 = waves, 2 = RDFT)", "mode"},
-        {"default", HAS_ARG | OPT_AUDIO | OPT_VIDEO | OPT_EXPERT, {.func_arg = opt_default}, "generic catch all option",
-         ""},
-        {"i", OPT_BOOL, {&dummy}, "read specified file", "input_file"},
-        {"codec", HAS_ARG, {.func_arg = opt_codec}, "force decoder", "decoder_name"},
-        {"acodec", HAS_ARG | OPT_STRING | OPT_EXPERT, {&audio_codec_name}, "force audio decoder", "decoder_name"},
-        {"scodec", HAS_ARG | OPT_STRING | OPT_EXPERT, {&subtitle_codec_name}, "force subtitle decoder", "decoder_name"},
-        {"vcodec", HAS_ARG | OPT_STRING | OPT_EXPERT, {&video_codec_name}, "force video decoder", "decoder_name"},
-        {"autorotate", OPT_BOOL, {&autorotate}, "automatically rotate video", ""},
-        {"find_stream_info", OPT_BOOL | OPT_INPUT | OPT_EXPERT, {&find_stream_info},
-         "read and decode the streams to fill missing information with heuristics"},
-        {"filter_threads", HAS_ARG | OPT_INT | OPT_EXPERT, {&filter_nbthreads}, "number of filter threads per graph"},
-        {NULL,},
-};
-
 static void show_usage(void) {
     av_log(NULL, AV_LOG_INFO, "Simple media player\n");
     av_log(NULL, AV_LOG_INFO, "usage: %s [options] input_file\n", program_name);
     av_log(NULL, AV_LOG_INFO, "\n");
-}
-
-void show_help_default(const char *opt, const char *arg) {
-    av_log_set_callback(log_callback_help);
-    show_usage();
-    show_help_options(options, "Main options:", 0, OPT_EXPERT, 0);
-    show_help_options(options, "Advanced options:", OPT_EXPERT, 0, 0);
-    printf("\n");
-    show_help_children(avcodec_get_class(), AV_OPT_FLAG_DECODING_PARAM);
-    show_help_children(avformat_get_class(), AV_OPT_FLAG_DECODING_PARAM);
-#if !CONFIG_AVFILTER
-    show_help_children(sws_get_class(), AV_OPT_FLAG_ENCODING_PARAM);
-#else
-    show_help_children(avfilter_get_class(), AV_OPT_FLAG_FILTERING_PARAM);
-#endif
-    printf("\nWhile playing:\n"
-           "q, ESC              quit\n"
-           "f                   toggle full screen\n"
-           "p, SPC              pause\n"
-           "m                   toggle mute\n"
-           "9, 0                decrease and increase volume respectively\n"
-           "/, *                decrease and increase volume respectively\n"
-           "a                   cycle audio channel in the current program\n"
-           "v                   cycle video channel\n"
-           "t                   cycle subtitle channel in the current program\n"
-           "c                   cycle program\n"
-           "w                   cycle video filters or show modes\n"
-           "s                   activate frame-step mode\n"
-           "left/right          seek backward/forward 10 seconds or to custom interval if -seek_interval is set\n"
-           "down/up             seek backward/forward 1 minute\n"
-           "page down/page up   seek backward/forward 10 minutes\n"
-           "right mouse click   seek to percentage in file corresponding to fraction of width\n"
-           "left double-click   toggle full screen\n"
-    );
 }
 
 /***
@@ -3091,9 +2985,7 @@ int main(int argc, char **argv) {
     flush_pkt.data = (uint8_t *) &flush_pkt;
 
     init_dynload();
-    //av_log_set_flags(AV_LOG_SKIP_REPEATED);
-    av_log_set_flags(AV_LOG_QUIET);
-    parse_loglevel(argc, argv, options);
+    init_opts();
 
     /* register all codecs, demux and protocols */
 #if CONFIG_AVDEVICE
@@ -3101,14 +2993,8 @@ int main(int argc, char **argv) {
 #endif
     avformat_network_init();
 
-    init_opts();
-
     signal(SIGINT, sigterm_handler); /* Interrupt (ANSI).    */
     signal(SIGTERM, sigterm_handler); /* Termination (ANSI).  */
-
-    show_banner(argc, argv, options);
-
-    parse_options(NULL, argc, argv, options, opt_input_file);
 
     // 湖北卫视
     input_filename = "http://weblive.hebtv.com/live/hbws_bq/index.m3u8";
@@ -3200,9 +3086,7 @@ int main(int argc, char **argv) {
 
     event_loop(videoState);
 
-    /* never returns */
     printf("main() end\n");
-
     return 0;
 }
 
