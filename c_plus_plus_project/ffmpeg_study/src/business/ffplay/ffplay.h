@@ -99,11 +99,11 @@ typedef struct Clock {
     double pts_drift;     /* clock base minus time at which we updated the clock */
     // 初始化时为av_gettime_relative() / 1000000.0;
     double last_updated;
-    // 初始化时为1.0
+    // 初始化时为1.0(以外部时钟作为基准时钟时才设置速度)
     double speed;
     // 初始化时为-1
     int serial;           /* clock is based on a packet with this serial */
-    // 初始化时为0
+    // 初始化时为0,需要暂停时为1
     int paused;
     // 指向当前数据包队列序列的指针，用于过时的时钟检测
     // 就是PacketQueue的serial值
@@ -116,7 +116,7 @@ typedef struct Frame {
     AVFrame *frame;
     // 字幕
     AVSubtitle sub;
-    // 序列(Decoder的pkt_serial值)
+    // 就是Decoder的pkt_serial值
     int serial;
     // 帧的显示时间戳
     double pts;           /* presentation timestamp for the frame */
@@ -144,6 +144,14 @@ typedef struct AVPacketNode {
     int serial;
 } AVPacketNode;
 
+/***
+PacketQueue:serial(在packet_queue_put_private()时加1操作)
+影响
+AVPacketNode:serial(packet_queue_put_private()时由PacketQueue:serial直接赋值)
+Clock:queue_serial(init_clock()时传递指针,指向了PacketQueue:serial)
+Decoder:pkt_serial(packet_queue_get()时传递指针,指向了AVPacketNode:serial)
+Frame:serial(由Decoder:pkt_serial赋值)
+ */
 // 保存AVPacket(音频,视频,字幕各一个Queue)
 typedef struct PacketQueue {
     AVPacketNode *first_pkt, *last_pkt;
@@ -151,6 +159,12 @@ typedef struct PacketQueue {
     int nb_packets;
     // 队列中所有AVPacket的大小总和
     int size;
+    /***
+     如果从头到尾不seek,那么其值一直为1;每seek一次加1.
+     此值影响其他所有有关的serial值.
+     因为每次seek后,队列里有seek前的pkt和seek后的pkt,
+     此后要处理的是seek后的pkt,需要把seek前的pkt区别开.
+     */
     int serial;
     int abort_request;
     // 队列中所有AVPacket的时长总和
@@ -161,9 +175,11 @@ typedef struct PacketQueue {
 
 // 保存AVFrame(音频,视频,字幕各一个Queue)
 typedef struct FrameQueue {
-    // 视频放3个
-    // 音频放9个
-    // 字幕放16个
+    // 指向VideoState中的PacketQueue
+    PacketQueue *pktQ;
+    // 视频放3 个元素
+    // 音频放9 个元素
+    // 字幕放16个元素
     Frame queue[FRAME_QUEUE_SIZE];
     int read_index;
     int write_index;
@@ -171,8 +187,6 @@ typedef struct FrameQueue {
     int max_size;
     int keep_last;
     int rindex_shown;
-    // 指向VideoState中的PacketQueue
-    PacketQueue *pktQ;
     pthread_mutex_t pMutex;// "同步"作用
     pthread_cond_t pCond;  // "暂停"作用
 } FrameQueue;
@@ -181,8 +195,9 @@ typedef struct FrameQueue {
 typedef struct Decoder {
     AVPacket pkt;
     PacketQueue *queue;
+    // 视频,音频,字幕各不同
     AVCodecContext *avctx;
-    // 包序列(就是AVPacketNode的serial值)
+    // 就是AVPacketNode的serial值
     int pkt_serial;
     int finished;
     // 是否有包在等待
@@ -258,12 +273,12 @@ typedef struct VideoState {
     double audio_diff_avg_coef;
     double audio_diff_threshold;
     AVStream *audio_st;
-    int audio_hw_buf_size;
     uint8_t *audio_buf;
     uint8_t *audio_buf1;
     unsigned int audio_buf_size; /* in bytes */
     unsigned int audio_buf1_size;
     int audio_buf_index; /* in bytes */
+    int audio_hw_buf_size;
     int audio_write_buf_size;
     int audio_volume;// 音量
     int muted;// 静音
@@ -566,6 +581,7 @@ static void set_clock(Clock *c, double pts, int serial) {
 static void set_clock_speed(Clock *c, double speed) {
     set_clock(c, get_clock(c), c->serial);
     c->speed = speed;
+    printf("set_clock_speed() speed: %lf\n", speed);
 }
 
 static void init_clock(Clock *c, int *queue_serial) {
@@ -591,7 +607,7 @@ static void sync_clock_to_slave(Clock *c, Clock *slave) {
 
 /* return < 0 if aborted, 0 if no packet and > 0 if packet.  */
 static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block, int *serial) {
-    AVPacketNode *pkt1;
+    AVPacketNode *node;
     int ret;
 
     pthread_mutex_lock(&q->pMutex);
@@ -602,18 +618,18 @@ static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block, int *seria
             break;
         }
 
-        pkt1 = q->first_pkt;
-        if (pkt1) {
-            q->first_pkt = pkt1->next;
+        node = q->first_pkt;
+        if (node) {
+            q->first_pkt = node->next;
             if (!q->first_pkt)
                 q->last_pkt = NULL;
             q->nb_packets--;
-            q->size -= pkt1->pkt.size + sizeof(*pkt1);
-            q->duration -= pkt1->pkt.duration;
-            *pkt = pkt1->pkt;
+            q->size -= node->pkt.size + sizeof(*node);
+            q->duration -= node->pkt.duration;
+            *pkt = node->pkt;
             if (serial)
-                *serial = pkt1->serial;
-            av_free(pkt1);
+                *serial = node->serial;
+            av_free(node);
             ret = 1;
             break;
         } else if (!block) {
@@ -642,7 +658,7 @@ static int packet_queue_put_private(PacketQueue *q, AVPacket *pkt) {
     // PacketQueue中的第一个node的pkt是flush_pkt
     if (pkt == &flush_pkt) {
         q->serial++;
-        printf("packet_queue_put_private() q->serial: %d\n", q->serial);
+        printf("packet_queue_put_private() flush_pkt q->serial: %d\n", q->serial);
     }
     node->serial = q->serial;
 
@@ -872,80 +888,106 @@ static int decoder_start(Decoder *d, int (*fn)(void *), const char *thread_name,
 }
 
 /***
- *
+ * decodedAVFrame->pts会被修改,这个很关键
  * @param d
- * @param frame      解码后的帧.Subtitle时为NULL
- * @param avSubtitle 音视频时为NULL
+ * @param decodedAVFrame 解码后的帧(Subtitle时为NULL)
+ * @param avSubtitle     音视频时为NULL
  * @return
  */
-static int decoder_decode_frame(Decoder *d, AVFrame *frame, AVSubtitle *avSubtitle) {
+static int decoder_decode_frame(Decoder *d, AVFrame *decodedAVFrame, AVSubtitle *avSubtitle) {
     int ret = AVERROR(EAGAIN);
 
     for (;;) {
         AVPacket pkt;
-
+        // avcodec_receive_frame
         if (d->queue->serial == d->pkt_serial) {
             do {
-                if (d->queue->abort_request)
+                if (d->queue->abort_request) {
+                    if (d->avctx->codec_type == AVMEDIA_TYPE_AUDIO) {
+                        printf("decoder_decode_frame() abort_request return\n");
+                    }
                     return -1;
-
+                }
                 switch (d->avctx->codec_type) {
                     case AVMEDIA_TYPE_VIDEO:
-                        ret = avcodec_receive_frame(d->avctx, frame);
+                        ret = avcodec_receive_frame(d->avctx, decodedAVFrame);
                         if (ret >= 0) {
                             if (decoder_reorder_pts == -1) {
-                                frame->pts = frame->best_effort_timestamp;
+                                decodedAVFrame->pts = decodedAVFrame->best_effort_timestamp;
+                                //printf("decoder_decode_frame() pts1: %ld\n", decodedAVFrame->pts);
                             } else if (!decoder_reorder_pts) {
-                                frame->pts = frame->pkt_dts;
+                                decodedAVFrame->pts = decodedAVFrame->pkt_dts;
+                                printf("decoder_decode_frame() pts2: %ld\n", decodedAVFrame->pts);
                             }
                         }
                         break;
                     case AVMEDIA_TYPE_AUDIO:
-                        ret = avcodec_receive_frame(d->avctx, frame);
+                        ret = avcodec_receive_frame(d->avctx, decodedAVFrame);
                         if (ret >= 0) {
-                            AVRational tb = (AVRational) {1, frame->sample_rate};
-                            if (frame->pts != AV_NOPTS_VALUE)
-                                frame->pts = av_rescale_q(frame->pts, d->avctx->pkt_timebase, tb);
-                            else if (d->next_pts != AV_NOPTS_VALUE)
-                                frame->pts = av_rescale_q(d->next_pts, d->next_pts_tb, tb);
-                            if (frame->pts != AV_NOPTS_VALUE) {
-                                d->next_pts = frame->pts + frame->nb_samples;
+                            AVRational tb = (AVRational) {1, decodedAVFrame->sample_rate};
+                            if (decodedAVFrame->pts != AV_NOPTS_VALUE) {
+                                decodedAVFrame->pts = av_rescale_q(decodedAVFrame->pts, d->avctx->pkt_timebase, tb);
+                            } else if (d->next_pts != AV_NOPTS_VALUE) {
+                                decodedAVFrame->pts = av_rescale_q(d->next_pts, d->next_pts_tb, tb);
+                            }
+                            if (decodedAVFrame->pts != AV_NOPTS_VALUE) {
+                                d->next_pts = decodedAVFrame->pts + decodedAVFrame->nb_samples;
                                 d->next_pts_tb = tb;
                             }
                         }
+                        //printf("decoder_decode_frame() avcodec_receive_frame ret: %d\n", ret);
                         break;
                 }
-                if (ret == AVERROR_EOF) {
+                if (ret == AVERROR_EOF) {// AVERROR_EOF: -541478725
                     d->finished = d->pkt_serial;
                     avcodec_flush_buffers(d->avctx);
                     return 0;
                 }
-                if (ret >= 0)
+                if (ret >= 0) {
                     return 1;
-            } while (ret != AVERROR(EAGAIN));
+                }
+            } while (ret != AVERROR(EAGAIN));// AVERROR(EAGAIN): -35
         }
-
+        // 从队列中取出一个AVPacket
         do {
             if (d->queue->nb_packets == 0) {
                 //printf("decoder_decode_frame() pthread_cond_signal\n");
                 pthread_cond_signal(d->empty_queue_cond);
             }
-            if (d->packet_pending) {
+            if (!d->packet_pending) {
+                ret = packet_queue_get(d->queue, &pkt, 1, &d->pkt_serial);
+                // 上面代码执行后,d->pkt_serial为1
+                /*if (d->avctx->codec_type == AVMEDIA_TYPE_AUDIO) {
+                    printf("decoder_decode_frame() packet_queue_get ret     : %d\n", ret);
+                }*/
+                if (ret < 0) {
+                    return -1;
+                }
+            } else {
                 av_packet_move_ref(&pkt, &d->pkt);
                 d->packet_pending = 0;
-            } else {
-                if (packet_queue_get(d->queue, &pkt, 1, &d->pkt_serial) < 0)
-                    return -1;
             }
-        } while (d->queue->serial != d->pkt_serial);
-
-        if (pkt.data == flush_pkt.data) {
-            avcodec_flush_buffers(d->avctx);
-            d->finished = 0;
-            d->next_pts = d->start_pts;
-            d->next_pts_tb = d->start_pts_tb;
-        } else {
-            if (d->avctx->codec_type == AVMEDIA_TYPE_SUBTITLE) {
+            if (d->queue->serial == d->pkt_serial) {
+                break;
+            }
+            av_packet_unref(&pkt);
+        } while (1);
+        // avcodec_send_packet
+        if (pkt.data != flush_pkt.data) {
+            if (d->avctx->codec_type != AVMEDIA_TYPE_SUBTITLE) {
+                ret = avcodec_send_packet(d->avctx, &pkt);
+                /*if (d->avctx->codec_type == AVMEDIA_TYPE_AUDIO) {
+                    printf("decoder_decode_frame() avcodec_send_packet   ret: %d\n", ret);
+                }*/
+                if (ret == AVERROR(EAGAIN)) {
+                    av_log(d->avctx, AV_LOG_ERROR,
+                           "Receive_frame and send_packet both returned EAGAIN, which is an API violation.\n");
+                    d->packet_pending = 1;
+                    av_packet_move_ref(&d->pkt, &pkt);
+                }
+            } else {
+                // 字幕时
+                printf("decoder_decode_frame() AVMEDIA_TYPE_SUBTITLE\n");
                 int got_frame = 0;
                 ret = avcodec_decode_subtitle2(d->avctx, avSubtitle, &got_frame, &pkt);
                 if (ret < 0) {
@@ -957,15 +999,17 @@ static int decoder_decode_frame(Decoder *d, AVFrame *frame, AVSubtitle *avSubtit
                     }
                     ret = got_frame ? 0 : (pkt.data ? AVERROR(EAGAIN) : AVERROR_EOF);
                 }
-            } else {
-                if (avcodec_send_packet(d->avctx, &pkt) == AVERROR(EAGAIN)) {
-                    av_log(d->avctx, AV_LOG_ERROR,
-                           "Receive_frame and send_packet both returned EAGAIN, which is an API violation.\n");
-                    d->packet_pending = 1;
-                    av_packet_move_ref(&d->pkt, &pkt);
-                }
             }
             av_packet_unref(&pkt);
+        } else {
+            // 队列中取出第一个AVPacket时
+            avcodec_flush_buffers(d->avctx);
+            d->finished = 0;
+            d->next_pts = d->start_pts;// -9223372036854775808
+            d->next_pts_tb = d->start_pts_tb;
+            /*if (d->avctx->codec_type == AVMEDIA_TYPE_AUDIO) {
+                printf("decoder_decode_frame() start_pts : %ld\n", (long) d->start_pts);
+            }*/
         }
     }// for (;;) end
 }
