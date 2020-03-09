@@ -72,140 +72,6 @@ static const struct TextureFormatEntry {
         {AV_PIX_FMT_NONE,           SDL_PIXELFORMAT_UNKNOWN},
 };
 
-static void decoder_init(Decoder *d,
-                         AVCodecContext *avctx,
-                         PacketQueue *queue,
-                         pthread_cond_t *empty_queue_cond) {
-    memset(d, 0, sizeof(Decoder));
-    d->avctx = avctx;
-    d->queue = queue;
-    d->empty_queue_cond = empty_queue_cond;
-    d->start_pts = AV_NOPTS_VALUE;
-    d->pkt_serial = -1;
-}
-
-// 创建音频,视频,字幕三个不同的线程
-static int decoder_start(Decoder *d, int (*fn)(void *), const char *thread_name, void *arg) {
-    packet_queue_start(d->queue);
-    int ret = pthread_create(&d->decoder_thread, NULL, fn, arg);
-    if (ret != 0) {
-        av_log(NULL, AV_LOG_ERROR, "decoder_start() pthread_create(): %s\n", strerror(ret));
-        return AVERROR(ENOMEM);
-    }
-    return 0;
-}
-
-/***
- *
- * @param d
- * @param frame      解码后的帧.Subtitle时为NULL
- * @param avSubtitle 音视频时为NULL
- * @return
- */
-static int decoder_decode_frame(Decoder *d, AVFrame *frame, AVSubtitle *avSubtitle) {
-    int ret = AVERROR(EAGAIN);
-
-    for (;;) {
-        AVPacket pkt;
-
-        if (d->queue->serial == d->pkt_serial) {
-            do {
-                if (d->queue->abort_request)
-                    return -1;
-
-                switch (d->avctx->codec_type) {
-                    case AVMEDIA_TYPE_VIDEO:
-                        ret = avcodec_receive_frame(d->avctx, frame);
-                        if (ret >= 0) {
-                            if (decoder_reorder_pts == -1) {
-                                frame->pts = frame->best_effort_timestamp;
-                            } else if (!decoder_reorder_pts) {
-                                frame->pts = frame->pkt_dts;
-                            }
-                        }
-                        break;
-                    case AVMEDIA_TYPE_AUDIO:
-                        ret = avcodec_receive_frame(d->avctx, frame);
-                        if (ret >= 0) {
-                            AVRational tb = (AVRational) {1, frame->sample_rate};
-                            if (frame->pts != AV_NOPTS_VALUE)
-                                frame->pts = av_rescale_q(frame->pts, d->avctx->pkt_timebase, tb);
-                            else if (d->next_pts != AV_NOPTS_VALUE)
-                                frame->pts = av_rescale_q(d->next_pts, d->next_pts_tb, tb);
-                            if (frame->pts != AV_NOPTS_VALUE) {
-                                d->next_pts = frame->pts + frame->nb_samples;
-                                d->next_pts_tb = tb;
-                            }
-                        }
-                        break;
-                }
-                if (ret == AVERROR_EOF) {
-                    d->finished = d->pkt_serial;
-                    avcodec_flush_buffers(d->avctx);
-                    return 0;
-                }
-                if (ret >= 0)
-                    return 1;
-            } while (ret != AVERROR(EAGAIN));
-        }
-
-        do {
-            if (d->queue->nb_packets == 0) {
-                //printf("decoder_decode_frame() pthread_cond_signal\n");
-                pthread_cond_signal(d->empty_queue_cond);
-            }
-            if (d->packet_pending) {
-                av_packet_move_ref(&pkt, &d->pkt);
-                d->packet_pending = 0;
-            } else {
-                if (packet_queue_get(d->queue, &pkt, 1, &d->pkt_serial) < 0)
-                    return -1;
-            }
-        } while (d->queue->serial != d->pkt_serial);
-
-        if (pkt.data == flush_pkt.data) {
-            avcodec_flush_buffers(d->avctx);
-            d->finished = 0;
-            d->next_pts = d->start_pts;
-            d->next_pts_tb = d->start_pts_tb;
-        } else {
-            if (d->avctx->codec_type == AVMEDIA_TYPE_SUBTITLE) {
-                int got_frame = 0;
-                ret = avcodec_decode_subtitle2(d->avctx, avSubtitle, &got_frame, &pkt);
-                if (ret < 0) {
-                    ret = AVERROR(EAGAIN);
-                } else {
-                    if (got_frame && !pkt.data) {
-                        d->packet_pending = 1;
-                        av_packet_move_ref(&d->pkt, &pkt);
-                    }
-                    ret = got_frame ? 0 : (pkt.data ? AVERROR(EAGAIN) : AVERROR_EOF);
-                }
-            } else {
-                if (avcodec_send_packet(d->avctx, &pkt) == AVERROR(EAGAIN)) {
-                    av_log(d->avctx, AV_LOG_ERROR,
-                           "Receive_frame and send_packet both returned EAGAIN, which is an API violation.\n");
-                    d->packet_pending = 1;
-                    av_packet_move_ref(&d->pkt, &pkt);
-                }
-            }
-            av_packet_unref(&pkt);
-        }
-    }// for (;;) end
-}
-
-static void decoder_destroy(Decoder *d) {
-    av_packet_unref(&d->pkt);
-    avcodec_free_context(&d->avctx);
-}
-
-static void decoder_abort(Decoder *d, FrameQueue *fq) {
-    packet_queue_abort(d->queue);
-    frame_queue_signal(fq);
-    pthread_join(d->decoder_thread, NULL);
-    packet_queue_flush(d->queue);
-}
-
 static inline void fill_rectangle(int x, int y, int w, int h) {
     SDL_Rect rect;
     rect.x = x;
@@ -954,7 +820,7 @@ static void video_refresh(void *opaque, double *remaining_time) {
 
             pthread_mutex_lock(&is->pictFQ.pMutex);
             if (!isnan(vp->pts)) {
-                update_video_pts(is, vp->pts, vp->pos, vp->serial);
+                update_video_pts(is, vp->pts, vp->pkt_pos, vp->serial);
             }
             pthread_mutex_unlock(&is->pictFQ.pMutex);
 
@@ -1092,11 +958,10 @@ static int queue_picture(VideoState *is, AVFrame *decodedAVFrame, double pts,
     vp->uploaded = 0;
     vp->pts = pts;
     vp->duration = duration;
-    vp->pos = pos;
+    vp->pkt_pos = pos;
     vp->serial = serial;
-
     set_default_window_size(vp->width, vp->height, vp->sample_aspect_ratio);
-
+    // 保存decodedAVFrame
     av_frame_move_ref(vp->frame, decodedAVFrame);
     frame_queue_push(&is->pictFQ);
     return 0;
@@ -1427,9 +1292,9 @@ static int audio_thread(void *arg) {
                     goto the_end;
                 }
                 af->pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(avRational);
-                af->pos = decodedAVFrame->pkt_pos;
+                af->pkt_pos = decodedAVFrame->pkt_pos;
                 af->serial = is->audDecoder.pkt_serial;
-                // 当前帧包含的(单个声道)采样数/采样率就是当前帧的播放时长
+                // 当前帧(单个声道)采样数/采样率就是当前帧的播放时长
                 af->duration = av_q2d(
                         (AVRational) {decodedAVFrame->nb_samples, decodedAVFrame->sample_rate});
                 // 将frame数据拷入af->frame,af->frame指向音频frame队列尾部
@@ -1850,7 +1715,8 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len) {
     if (!isnan(is->audio_clock)) {
         // is->audio_clock的值在audio_decode_frame方法中被赋值
         double pts = is->audio_clock -
-                     (double) (2 * is->audio_hw_buf_size + is->audio_write_buf_size) / is->audio_tgt.bytes_per_sec;
+                     (double) (2 * is->audio_hw_buf_size + is->audio_write_buf_size)
+                     / is->audio_tgt.bytes_per_sec;
         set_clock_at(&is->audClock,
                      pts,
                      is->audio_clock_serial,
@@ -2948,6 +2814,8 @@ static void show_usage(void) {
     av_log(NULL, AV_LOG_INFO, "Simple media player\n");
     av_log(NULL, AV_LOG_INFO, "usage: %s [options] input_file\n", program_name);
     av_log(NULL, AV_LOG_INFO, "\n");
+    av_log(NULL, AV_LOG_FATAL, "An input file must be specified\n");
+    av_log(NULL, AV_LOG_FATAL, "Use -h to get full help or, even better, run 'man %s'\n", program_name);
 }
 
 /***
@@ -2981,6 +2849,24 @@ int main(int argc, char **argv) {
     // N-96855-ga439acee3f
     printf("main() version: %s\n", av_version_info());
 
+    // 湖北卫视
+    input_filename = "http://weblive.hebtv.com/live/hbws_bq/index.m3u8";
+    input_filename = "/Users/alexander/Downloads/地狱男爵-血皇后崛起.mp4";
+    input_filename = "/Users/alexander/Music/music/林锋 - 被爱伤过的人.mp3";
+    input_filename = "/Users/alexander/Downloads/周華健-神話_情話.mp4";
+    input_filename = "/Users/alexander/Downloads/小品-吃面.mp4";
+    input_filename = "http://vfx.mtime.cn/Video/2019/03/13/mp4/190313094901111138.mp4";
+    input_filename = "/Users/alexander/Downloads/千千阙歌.mp4";
+    if (!input_filename) {
+        show_usage();
+        exit(1);
+    }
+    // 全路径名称
+    printf("main() input_filename : %s\n", input_filename);
+
+    signal(SIGINT, sigterm_handler); /* Interrupt (ANSI).    */
+    signal(SIGTERM, sigterm_handler); /* Termination (ANSI).  */
+
     av_init_packet(&flush_pkt);
     flush_pkt.data = (uint8_t *) &flush_pkt;
 
@@ -2993,31 +2879,13 @@ int main(int argc, char **argv) {
 #endif
     avformat_network_init();
 
-    signal(SIGINT, sigterm_handler); /* Interrupt (ANSI).    */
-    signal(SIGTERM, sigterm_handler); /* Termination (ANSI).  */
-
-    // 湖北卫视
-    input_filename = "http://weblive.hebtv.com/live/hbws_bq/index.m3u8";
-    input_filename = "/Users/alexander/Downloads/地狱男爵-血皇后崛起.mp4";
-    input_filename = "/Users/alexander/Downloads/千千阙歌.mp4";
-    input_filename = "/Users/alexander/Music/music/林锋 - 被爱伤过的人.mp3";
-    input_filename = "/Users/alexander/Downloads/周華健-神話_情話.mp4";
-    input_filename = "/Users/alexander/Downloads/小品-吃面.mp4";
-    input_filename = "http://vfx.mtime.cn/Video/2019/03/13/mp4/190313094901111138.mp4";
-    if (!input_filename) {
-        show_usage();
-        av_log(NULL, AV_LOG_FATAL, "An input file must be specified\n");
-        av_log(NULL, AV_LOG_FATAL,
-               "Use -h to get full help or, even better, run 'man %s'\n", program_name);
-        exit(1);
-    }
-    // 全路径名称
-    printf("main() input_filename : %s\n", input_filename);
     printf("main() display_disable: %d\n", display_disable);// 0
+    printf("main() audio_disable  : %d\n", audio_disable);  //
+    int flags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
     if (display_disable) {
         video_disable = 1;
+        flags &= ~SDL_INIT_VIDEO;
     }
-    int flags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
     if (audio_disable) {
         flags &= ~SDL_INIT_AUDIO;
     } else {
@@ -3026,9 +2894,6 @@ int main(int argc, char **argv) {
         if (!SDL_getenv("SDL_AUDIO_ALSA_SET_BUFFER_SIZE")) {
             SDL_setenv("SDL_AUDIO_ALSA_SET_BUFFER_SIZE", "1", 1);
         }
-    }
-    if (display_disable) {
-        flags &= ~SDL_INIT_VIDEO;
     }
     if (SDL_Init(flags)) {
         av_log(NULL, AV_LOG_FATAL, "Could not initialize SDL - %s\n", SDL_GetError());
@@ -3045,7 +2910,8 @@ int main(int argc, char **argv) {
 #if SDL_VERSION_ATLEAST(2, 0, 5)
             flags |= SDL_WINDOW_ALWAYS_ON_TOP;
 #else
-            av_log(NULL, AV_LOG_WARNING, "Your SDL version doesn't support SDL_WINDOW_ALWAYS_ON_TOP. Feature will be inactive.\n");
+            av_log(NULL, AV_LOG_WARNING,
+                    "Your SDL version doesn't support SDL_WINDOW_ALWAYS_ON_TOP. Feature will be inactive.\n");
 #endif
         }
         printf("main() borderless     : %d\n", borderless);// 0
