@@ -112,7 +112,7 @@ typedef struct Clock {
 
 /* Common struct for handling all types of decoded data and allocated render buffers. */
 typedef struct Frame {
-    // 帧数据
+    // 解码帧
     AVFrame *frame;
     // 字幕
     AVSubtitle sub;
@@ -134,6 +134,8 @@ typedef struct Frame {
     int uploaded;
     // 反转
     int flip_v;
+    // 为了看流程设置的参数,没有实际意义
+    double relative_time;
 } Frame;
 // 一个Node(节点)
 // 原名:MyAVPacketList
@@ -160,7 +162,7 @@ typedef struct PacketQueue {
     // 队列中所有AVPacket的大小总和
     int size;
     /***
-     如果从头到尾不seek,那么其值一直为1;每seek一次加1.
+     如果从头到尾不seek,那么其值一直为1;每seek一次值加1.
      此值影响其他所有有关的serial值.
      因为每次seek后,队列里有seek前的pkt和seek后的pkt,
      此后要处理的是seek后的pkt,需要把seek前的pkt区别开.
@@ -694,7 +696,7 @@ static int packet_queue_init(PacketQueue *q) {
     q->abort_request = 1;
     return 0;
 }
-
+// 队列清空
 static void packet_queue_flush(PacketQueue *q) {
     AVPacketNode *pkt, *pkt1;
     pthread_mutex_lock(&q->pMutex);
@@ -790,7 +792,7 @@ static Frame *frame_queue_peek(FrameQueue *f) {
 static Frame *frame_queue_peek_next(FrameQueue *f) {
     return &f->queue[(f->read_index + f->rindex_shown + 1) % f->max_size];
 }
-
+// 指向最后一次使用过的Frame
 static Frame *frame_queue_peek_last(FrameQueue *f) {
     return &f->queue[f->read_index];
 }

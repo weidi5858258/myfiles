@@ -785,6 +785,9 @@ static void video_refresh(void *opaque, double *remaining_time) {
             /* dequeue the picture */
             lastvp = frame_queue_peek_last(&is->pictFQ);
             vp = frame_queue_peek(&is->pictFQ);
+            /*printf("video_refresh() relative_time: %lf, last_relative_time: %lf\n",
+                   vp->relative_time, lastvp->relative_time);*/
+
             // not run
             if (vp->serial != is->videoPQ.serial) {
                 printf("video_refresh() frame_queue_next\n");
@@ -961,6 +964,8 @@ static int queue_picture(VideoState *is, AVFrame *decodedAVFrame, double pts,
     vp->height = decodedAVFrame->height;
     vp->format = decodedAVFrame->format;
     vp->sample_aspect_ratio = decodedAVFrame->sample_aspect_ratio;
+    vp->relative_time = av_gettime_relative() / 1000000.0;
+    //printf("queue_picture() relative_time: %lf\n", vp->relative_time);
     set_default_window_size(vp->width, vp->height, vp->sample_aspect_ratio);
     // 保存decodedAVFrame
     av_frame_move_ref(vp->frame, decodedAVFrame);
@@ -1292,29 +1297,29 @@ static int audio_thread(void *arg) {
             while ((ret = av_buffersink_get_frame_flags(is->out_audio_filter, decodedAVFrame, 0)) >= 0) {
                 avRational = av_buffersink_get_time_base(is->out_audio_filter);
 #endif
-                // 从sampQ中取出一个Frame指针
-                if (!(af = frame_queue_peek_writable(&is->sampFQ))) {
-                    goto the_end;
-                }
-                af->pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(avRational);
-                af->pkt_pos = decodedAVFrame->pkt_pos;
-                af->serial = is->audDecoder.pkt_serial;
-                // 当前帧(单个声道)采样数/采样率就是当前帧的播放时长
-                af->duration = av_q2d(
-                        (AVRational) {decodedAVFrame->nb_samples, decodedAVFrame->sample_rate});
-                // 将frame数据拷入af->frame,af->frame指向音频frame队列尾部
-                av_frame_move_ref(af->frame, decodedAVFrame);
-                // 更新音频frame队列大小及写指针
-                frame_queue_push(&is->sampFQ);
-                //printf("audio_thread() frame_queue_push af->pts: %lf\n", af->pts);
+            // 从sampQ中取出一个Frame指针
+            if (!(af = frame_queue_peek_writable(&is->sampFQ))) {
+                goto the_end;
+            }
+            af->pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(avRational);
+            af->pkt_pos = decodedAVFrame->pkt_pos;
+            af->serial = is->audDecoder.pkt_serial;
+            // 当前帧(单个声道)采样数/采样率就是当前帧的播放时长
+            af->duration = av_q2d(
+                    (AVRational) {decodedAVFrame->nb_samples, decodedAVFrame->sample_rate});
+            // 将frame数据拷入af->frame,af->frame指向音频frame队列尾部
+            av_frame_move_ref(af->frame, decodedAVFrame);
+            // 更新音频frame队列大小及写指针
+            frame_queue_push(&is->sampFQ);
+            //printf("audio_thread() frame_queue_push af->pts: %lf\n", af->pts);
 #if CONFIG_AVFILTER
-                if (is->audioPQ.serial != is->audDecoder.pkt_serial) {
-                    break;
-                }
+            if (is->audioPQ.serial != is->audDecoder.pkt_serial) {
+                break;
             }
-            if (ret == AVERROR_EOF) {
-                is->audDecoder.finished = is->audDecoder.pkt_serial;
-            }
+        }
+        if (ret == AVERROR_EOF) {
+            is->audDecoder.finished = is->audDecoder.pkt_serial;
+        }
 #endif
         }// if (got_frame)
     } while (ret >= 0 || ret == AVERROR(EAGAIN) || ret == AVERROR_EOF);
@@ -1349,6 +1354,7 @@ static int video_thread(void *arg) {
         return AVERROR(ENOMEM);
 
     for (;;) {
+        // 得到解码帧decodedAVFrame
         ret = get_video_frame(is, decodedAVFrame);
         if (ret < 0) {
             goto the_end;
@@ -1416,19 +1422,19 @@ static int video_thread(void *arg) {
             tb = av_buffersink_get_time_base(filt_out);
 #endif
 
-            duration = (frame_rate.num && frame_rate.den)
-                       ? (av_q2d((AVRational) {frame_rate.den, frame_rate.num})) : 0;
-            pts = (decodedAVFrame->pts == AV_NOPTS_VALUE)
-                  ? NAN : decodedAVFrame->pts * av_q2d(tb);
-            // 把decodedAVFrame存进队列
-            ret = queue_picture(is, decodedAVFrame, pts, duration,
-                                decodedAVFrame->pkt_pos, is->vidDecoder.pkt_serial);
-            av_frame_unref(decodedAVFrame);
+        duration = (frame_rate.num && frame_rate.den)
+                   ? (av_q2d((AVRational) {frame_rate.den, frame_rate.num})) : 0;
+        pts = (decodedAVFrame->pts == AV_NOPTS_VALUE)
+              ? NAN : decodedAVFrame->pts * av_q2d(tb);
+        // 把解码帧decodedAVFrame存进队列
+        ret = queue_picture(is, decodedAVFrame, pts, duration,
+                            decodedAVFrame->pkt_pos, is->vidDecoder.pkt_serial);
+        av_frame_unref(decodedAVFrame);
 
 #if CONFIG_AVFILTER
-            if (is->videoPQ.serial != is->vidDecoder.pkt_serial)
-                break;
-        }
+        if (is->videoPQ.serial != is->vidDecoder.pkt_serial)
+            break;
+    }
 #endif
 
         if (ret < 0) {
@@ -2044,6 +2050,7 @@ static int read_thread(void *arg) {
     int i, err, ret, pkt_in_play_range = 0, scan_all_pmts_set = 0;
     int64_t pkt_ts, stream_start_time;
 
+    printf("read_thread() AVMEDIA_TYPE_NB: %d\n", AVMEDIA_TYPE_NB);// 5
     // st_index[0] AVMEDIA_TYPE_VIDEO
     // st_index[1] AVMEDIA_TYPE_AUDIO
     // st_index[2] AVMEDIA_TYPE_SUBTITLE
@@ -2863,13 +2870,29 @@ int main(int argc, char **argv) {
     // N-96855-ga439acee3f
     printf("main() version: %s\n", av_version_info());
 
-    // 湖北卫视
-    input_filename = "http://weblive.hebtv.com/live/hbws_bq/index.m3u8";
     input_filename = "/Users/alexander/Downloads/地狱男爵-血皇后崛起.mp4";
     input_filename = "/Users/alexander/Music/music/林锋 - 被爱伤过的人.mp3";
     input_filename = "/Users/alexander/Downloads/周華健-神話_情話.mp4";
     input_filename = "/Users/alexander/Downloads/小品-吃面.mp4";
     input_filename = "http://vfx.mtime.cn/Video/2019/03/13/mp4/190313094901111138.mp4";
+    // CCTV6-电影HD
+    input_filename = "http://ivi.bupt.edu.cn/hls/cctv6hd.m3u8";
+    // CCTV6高清
+    input_filename = "http://ivi.bupt.edu.cn/hls/cctv6hd.m3u8";
+    // CCTV5+高清
+    input_filename = "http://ivi.bupt.edu.cn/hls/cctv5phd.m3u8";
+    // CCTV3高清
+    input_filename = "http://ivi.bupt.edu.cn/hls/cctv3hd.m3u8";
+    // CCTV1高清
+    input_filename = "http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8";
+    // 东方卫视
+    input_filename = "rtmp://58.200.131.2:1935/livetv/dftv";
+    // 湖南卫视
+    input_filename = "rtmp://58.200.131.2:1935/livetv/hunantv";
+    // 广东卫视
+    input_filename = "rtmp://58.200.131.2:1935/livetv/gdtv";
+    // 广西卫视
+    input_filename = "rtmp://58.200.131.2:1935/livetv/gxtv";
     input_filename = "/Users/alexander/Downloads/千千阙歌.mp4";
     if (!input_filename) {
         show_usage();
