@@ -14,8 +14,10 @@ add_executable(
 #        include/MyHead.h
 #        include/decode_audio.h
 
+        src/business/ffplay/ffplay.h
         src/business/ffplay/ffplay_media.c
         src/business/ffplay/cmdutils.c
+
 #        src/business/ffplay/ffplay.c
 #        src/business/ffplay/ffplay_audio.c
 #        src/alexander_ffplay.c
@@ -27,7 +29,9 @@ add_executable(
 #        src/music_player2.cpp
 #        src/decode_audio.cpp
 #        src/StudyAgain.cpp
-        src/business/ffplay/ffplay.h src/business/ffplay/FFplayer.cpp src/business/ffplay/FFplayer.h)
+        src/business/ffplay/FFplayer.h
+        src/business/ffplay/FFplayer.cpp
+)
 # 要包含的头文件
 include_directories(
         include

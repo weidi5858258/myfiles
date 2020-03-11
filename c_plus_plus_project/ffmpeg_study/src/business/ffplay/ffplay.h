@@ -12,9 +12,15 @@
 #include <limits.h>
 #include <signal.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <secure/_stdio.h>
 #include <assert.h>
 #include <pthread.h>
 #include <sys/time.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "libavutil/avstring.h"
 #include "libavutil/eval.h"
@@ -34,11 +40,13 @@
 #include "libswresample/swresample.h"
 
 #if CONFIG_AVFILTER
-
 # include "libavfilter/avfilter.h"
 # include "libavfilter/buffersink.h"
 # include "libavfilter/buffersrc.h"
+#endif
 
+#ifdef __cplusplus
+}
 #endif
 
 #define MAX_QUEUE_SIZE (15 * 1024 * 1024)
@@ -397,7 +405,9 @@ static AVPacket flush_pkt;
 #if CONFIG_AVFILTER
 
 static int opt_add_vfilter(void *optctx, const char *opt, const char *arg) {
-    GROW_ARRAY(vfilters_list, nb_vfilters);
+    //GROW_ARRAY(vfilters_list, nb_vfilters);
+    vfilters_list = (const char **) grow_array(
+            vfilters_list, sizeof(*vfilters_list), &nb_vfilters, nb_vfilters + 1);
     vfilters_list[nb_vfilters - 1] = arg;
     return 0;
 }
@@ -476,10 +486,26 @@ static int opt_duration(void *optctx, const char *opt, const char *arg) {
 }
 
 static int opt_show_mode(void *optctx, const char *opt, const char *arg) {
-    show_mode = !strcmp(arg, "video") ? SHOW_MODE_VIDEO :
+    int cmp = strcmp(arg, "video");
+    if (!cmp) {
+        show_mode = SHOW_MODE_VIDEO;
+    } else {
+        cmp = strcmp(arg, "waves");
+        if (!cmp) {
+            show_mode = SHOW_MODE_WAVES;
+        } else {
+            cmp = strcmp(arg, "rdft");
+            if (!cmp) {
+                show_mode = SHOW_MODE_RDFT;
+            } else {
+                show_mode = (enum ShowMode) parse_number_or_die(opt, arg, OPT_INT, 0, SHOW_MODE_NB - 1);
+            }
+        }
+    }
+    /*show_mode = !strcmp(arg, "video") ? SHOW_MODE_VIDEO :
                 !strcmp(arg, "waves") ? SHOW_MODE_WAVES :
                 !strcmp(arg, "rdft") ? SHOW_MODE_RDFT :
-                parse_number_or_die(opt, arg, OPT_INT, 0, SHOW_MODE_NB - 1);
+                parse_number_or_die(opt, arg, OPT_INT, 0, SHOW_MODE_NB - 1);*/
     return 0;
 }
 
@@ -651,7 +677,7 @@ static int packet_queue_put_private(PacketQueue *q, AVPacket *pkt) {
     if (q->abort_request)
         return -1;
 
-    node = av_malloc(sizeof(AVPacketNode));
+    node = (AVPacketNode *) av_malloc(sizeof(AVPacketNode));
     if (!node)
         return -1;
 
@@ -696,6 +722,7 @@ static int packet_queue_init(PacketQueue *q) {
     q->abort_request = 1;
     return 0;
 }
+
 // 队列清空
 static void packet_queue_flush(PacketQueue *q) {
     AVPacketNode *pkt, *pkt1;
@@ -792,6 +819,7 @@ static Frame *frame_queue_peek(FrameQueue *f) {
 static Frame *frame_queue_peek_next(FrameQueue *f) {
     return &f->queue[(f->read_index + f->rindex_shown + 1) % f->max_size];
 }
+
 // 指向最后一次使用过的Frame
 static Frame *frame_queue_peek_last(FrameQueue *f) {
     return &f->queue[f->read_index];
@@ -879,7 +907,7 @@ static void decoder_init(Decoder *d,
 }
 
 // 创建音频,视频,字幕三个不同的线程
-static int decoder_start(Decoder *d, int (*fn)(void *), const char *thread_name, void *arg) {
+static int decoder_start(Decoder *d, void *(*fn)(void *), const char *thread_name, void *arg) {
     packet_queue_start(d->queue);
     int ret = pthread_create(&d->decoder_thread, NULL, fn, arg);
     if (ret != 0) {

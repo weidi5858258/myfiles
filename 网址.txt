@@ -170,6 +170,7 @@ https://www.zhihu.com/question/325943454 如何学习音视频开发?
 https://yq.aliyun.com/articles/550356?spm=a2c4e.11153940.0.0.61ad2013bCpwfi Android性能优化：这是一份全面&详细的内存优化指南
 https://www.jianshu.com/p/dad51f6c9c4d Android - 收藏集
 https://zh.wikipedia.org/wiki/%E9%9F%B3%E9%A2%91%E7%BC%96%E7%A0%81%E6%A0%BC%E5%BC%8F%E7%9A%84%E6%AF%94%E8%BE%83 音频编码格式的比较
+https://github.com/Tencent
 
 
 
