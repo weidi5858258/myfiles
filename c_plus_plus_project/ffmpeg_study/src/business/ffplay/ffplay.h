@@ -40,9 +40,11 @@ extern "C" {
 #include "libswresample/swresample.h"
 
 #if CONFIG_AVFILTER
+
 # include "libavfilter/avfilter.h"
 # include "libavfilter/buffersink.h"
 # include "libavfilter/buffersrc.h"
+
 #endif
 
 #ifdef __cplusplus
@@ -965,7 +967,10 @@ static int decoder_decode_frame(Decoder *d, AVFrame *decodedAVFrame, AVSubtitle 
                                 d->next_pts_tb = tb;
                             }
                         }
-                        //printf("decoder_decode_frame() avcodec_receive_frame ret: %d\n", ret);
+                        /*printf("decoder_decode_frame() avcodec_receive_frame AV_NOPTS_VALUE: %ld\n",
+                               (long) AV_NOPTS_VALUE);
+                        printf("decoder_decode_frame() avcodec_receive_frame pts: %ld, next_pts: %ld\n",
+                               (long) decodedAVFrame->pts, (long) d->next_pts);*/
                         break;
                 }
                 if (ret == AVERROR_EOF) {// AVERROR_EOF: -541478725

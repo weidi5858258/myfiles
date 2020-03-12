@@ -766,6 +766,8 @@ static void update_video_pts(VideoState *is, double pts, int64_t pos, int serial
     sync_clock_to_slave(&is->extClock, &is->vidClock);
 }
 
+double video_pts;
+
 /* called to display each frame */
 static void video_refresh(void *opaque, double *remaining_time) {
     VideoState *is = (VideoState *) opaque;
@@ -823,12 +825,13 @@ static void video_refresh(void *opaque, double *remaining_time) {
             last_duration = vp_duration(is, lastvp, vp);
             delay = compute_target_delay(last_duration, is);
             time = av_gettime_relative() / 1000000.0;
-            printf("handleVideoDataImpl() last_duration: %lf\n", last_duration);
+            /*printf("handleVideoDataImpl() last_duration: %lf\n", last_duration);
             printf("handleVideoDataImpl() time: %lf, frame_timer: %lf, delay: %lf\n",
-                   time, is->frame_timer, delay);
+                   time, is->frame_timer, delay);*/
             if (time < is->frame_timer + delay) {
                 *remaining_time = FFMIN(is->frame_timer + delay - time, *remaining_time);
                 //printf("video_refresh() *remaining_time: %lf\n", *remaining_time);
+                video_pts = vp->pts;
                 goto display;
             } else {
                 //printf("video_refresh() time: %lf %lf\n", time, (is->frame_timer + delay));
@@ -904,14 +907,17 @@ static void video_refresh(void *opaque, double *remaining_time) {
                 stream_toggle_pause(is);
             }
 
+            video_pts = vp->pts;
             /*printf("video_refresh() delay: %lf, duration: %lf, last_duration: %lf, "
                    "step: %d, paused: %d, serial: %d, serial: %d, serial: %d\n",
                    delay, duration, last_duration,
                    is->step, is->paused, vp->serial, lastvp->serial, is->videoQ.serial);*/
         }
 
+
         display:
         /* display picture */
+        printf("video_refresh() video_clock_pts: %lf\n", video_pts);
         if (!display_disable
             && is->force_refresh
             && is->show_mode == SHOW_MODE_VIDEO
@@ -1008,6 +1014,7 @@ static int get_video_frame(VideoState *is, AVFrame *decodedAVFrame) {
         decodedAVFrame->sample_aspect_ratio = av_guess_sample_aspect_ratio(
                 is->avFormatContext, is->video_st, decodedAVFrame);
         //printf("get_video_frame() get_master_sync_type(is)1: %d\n", get_master_sync_type(is));
+        // 判断是否需要弃帧
         if (framedrop > 0 || (framedrop && get_master_sync_type(is) != AV_SYNC_VIDEO_MASTER)) {
             //printf("get_video_frame() get_master_sync_type(is)2: %d\n", get_master_sync_type(is));
             if (decodedAVFrame->pts != AV_NOPTS_VALUE) {
@@ -1317,29 +1324,30 @@ static void *audio_thread(void *arg) {
             while ((ret = av_buffersink_get_frame_flags(is->out_audio_filter, decodedAVFrame, 0)) >= 0) {
                 avRational = av_buffersink_get_time_base(is->out_audio_filter);
 #endif
-                // 从sampQ中取出一个Frame指针
-                if (!(af = frame_queue_peek_writable(&is->sampFQ))) {
-                    goto the_end;
-                }
-                af->pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(avRational);
-                af->pkt_pos = decodedAVFrame->pkt_pos;
-                af->serial = is->audDecoder.pkt_serial;
-                // 当前帧(单个声道)采样数/采样率就是当前帧的播放时长
-                af->duration = av_q2d(
-                        (AVRational) {decodedAVFrame->nb_samples, decodedAVFrame->sample_rate});
-                // 将frame数据拷入af->frame,af->frame指向音频frame队列尾部
-                av_frame_move_ref(af->frame, decodedAVFrame);
-                // 更新音频frame队列大小及写指针
-                frame_queue_push(&is->sampFQ);
-                //printf("audio_thread() frame_queue_push af->pts: %lf\n", af->pts);
+            // 从sampQ中取出一个Frame指针
+            if (!(af = frame_queue_peek_writable(&is->sampFQ))) {
+                goto the_end;
+            }
+            af->pts = (decodedAVFrame->pts == AV_NOPTS_VALUE) ? NAN : decodedAVFrame->pts * av_q2d(avRational);
+            af->pkt_pos = decodedAVFrame->pkt_pos;
+            af->serial = is->audDecoder.pkt_serial;
+            // 当前帧(单个声道)采样数/采样率就是当前帧的播放时长
+            af->duration = av_q2d(
+                    (AVRational) {decodedAVFrame->nb_samples, decodedAVFrame->sample_rate});
+            // 将frame数据拷入af->frame,af->frame指向音频frame队列尾部
+            av_frame_move_ref(af->frame, decodedAVFrame);
+            // 更新音频frame队列大小及写指针
+            frame_queue_push(&is->sampFQ);
+            /*printf("audio_thread() frame_queue_push pts: %ld, af->pts: %lf\n",
+                   (long) decodedAVFrame->pts, af->pts);*/
 #if CONFIG_AVFILTER
-                if (is->audioPQ.serial != is->audDecoder.pkt_serial) {
-                    break;
-                }
+            if (is->audioPQ.serial != is->audDecoder.pkt_serial) {
+                break;
             }
-            if (ret == AVERROR_EOF) {
-                is->audDecoder.finished = is->audDecoder.pkt_serial;
-            }
+        }
+        if (ret == AVERROR_EOF) {
+            is->audDecoder.finished = is->audDecoder.pkt_serial;
+        }
 #endif
         }// if (got_frame)
     } while (ret >= 0 || ret == AVERROR(EAGAIN) || ret == AVERROR_EOF);
@@ -1443,19 +1451,19 @@ static void *video_thread(void *arg) {
             tb = av_buffersink_get_time_base(filt_out);
 #endif
 
-            duration = (frame_rate.num && frame_rate.den)
-                       ? (av_q2d((AVRational) {frame_rate.den, frame_rate.num})) : 0;
-            pts = (decodedAVFrame->pts == AV_NOPTS_VALUE)
-                  ? NAN : decodedAVFrame->pts * av_q2d(tb);
-            // 把解码帧decodedAVFrame存进队列
-            ret = queue_picture(is, decodedAVFrame, pts, duration,
-                                decodedAVFrame->pkt_pos, is->vidDecoder.pkt_serial);
-            av_frame_unref(decodedAVFrame);
+        duration = (frame_rate.num && frame_rate.den)
+                   ? (av_q2d((AVRational) {frame_rate.den, frame_rate.num})) : 0;
+        pts = (decodedAVFrame->pts == AV_NOPTS_VALUE)
+              ? NAN : decodedAVFrame->pts * av_q2d(tb);
+        // 把解码帧decodedAVFrame存进队列
+        ret = queue_picture(is, decodedAVFrame, pts, duration,
+                            decodedAVFrame->pkt_pos, is->vidDecoder.pkt_serial);
+        av_frame_unref(decodedAVFrame);
 
 #if CONFIG_AVFILTER
-            if (is->videoPQ.serial != is->vidDecoder.pkt_serial)
-                break;
-        }
+        if (is->videoPQ.serial != is->vidDecoder.pkt_serial)
+            break;
+    }
 #endif
 
         if (ret < 0) {
@@ -1684,7 +1692,7 @@ static int audio_decode_frame(VideoState *is) {
         is->audio_clock = af->pts + (double) af->frame->nb_samples / af->frame->sample_rate;
         // audio_decode_frame() serial: 1, audio_clock: 0.069660
         // audio_decode_frame() serial: 1, audio_clock: 0.092721
-        // printf("audio_decode_frame() serial: %d, audio_clock: %lf\n", af->serial, is->audio_clock);
+        //printf("audio_decode_frame() pts: %ld, audio_clock: %lf\n", (long) af->pts, is->audio_clock);
     } else {
         is->audio_clock = NAN;
     }
@@ -1760,6 +1768,7 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len) {
         double pts = is->audio_clock -
                      (double) (2 * is->audio_hw_buf_size + is->audio_write_buf_size)
                      / is->audio_tgt.bytes_per_sec;
+        printf("sdl_audio_callback() audio_clock_pts: %lf\n", pts);
         set_clock_at(&is->audClock,
                      pts,
                      is->audio_clock_serial,
