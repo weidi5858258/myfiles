@@ -2875,6 +2875,11 @@ static void show_usage(void) {
     av_log(NULL, AV_LOG_FATAL, "Use -h to get full help or, even better, run 'man %s'\n", program_name);
 }
 
+int read_thread_interrupt_cb(void *opaque) {
+
+    return 0;
+}
+
 /***
  read_thread(void *arg)
 	stream_component_open(VideoState *is, int stream_index)
@@ -2929,6 +2934,7 @@ int main(int argc, char **argv) {
     input_filename = "rtmp://58.200.131.2:1935/livetv/gxtv";
     // 东方卫视
     input_filename = "rtmp://58.200.131.2:1935/livetv/dftv";
+    input_filename = "https://cdn1.ibizastream.biz:441/free/1/playlist_dvr.m3u8";// *
     input_filename = "/Users/alexander/Downloads/千千阙歌.mp4";
     if (!input_filename) {
         show_usage();
