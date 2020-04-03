@@ -39,11 +39,11 @@ include_directories(
         /usr/local/include
         /usr/local/include/lame
         /usr/local/Cellar/sdl2/2.0.10/include/SDL2
-        /Users/alexander/mydev/tools/audio_video/ffmpeg_so/include
+        /Users/alexander/mydev/tools/audio_video/ffmpeg_macos/include
 )
 # 要包含的ffmpeg lib库
 set(FFMPEG_LIB_PATH
-        /Users/alexander/mydev/tools/audio_video/ffmpeg_so/lib)
+        /Users/alexander/mydev/tools/audio_video/ffmpeg_macos/lib)
 # 要包含的sdl2 lib库
 set(SDL2_LIB_PATH
         /usr/local/Cellar/sdl2/2.0.10/lib)
