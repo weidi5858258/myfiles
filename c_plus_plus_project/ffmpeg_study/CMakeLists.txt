@@ -62,6 +62,7 @@ target_link_libraries(
         -L${FFMPEG_LIB_PATH} -lpostproc
         -L${SDL2_LIB_PATH} -lSDL2
         -L${SDL2_LIB_PATH} -lSDL2main
+        -lpthread
 
         -L/usr/local/Cellar/x264/r2917_1/lib -lx264
         -L/usr/local/Cellar/x265/3.3/lib -lx265

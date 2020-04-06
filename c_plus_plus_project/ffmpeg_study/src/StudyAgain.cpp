@@ -103,10 +103,10 @@ struct Wrapper {
     // 单位: 秒
     int64_t timestamp = 0;
 
-    pthread_mutex_t readLockMutex;
-    pthread_cond_t readLockCondition;
-    pthread_mutex_t handleLockMutex;
-    pthread_cond_t handleLockCondition;
+    pthread_mutex_t readLockMutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t readLockCondition = PTHREAD_COND_INITIALIZER;
+    pthread_mutex_t handleLockMutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t handleLockCondition = PTHREAD_COND_INITIALIZER;
 };
 
 struct AudioWrapper {
@@ -177,6 +177,7 @@ struct VideoWrapper *videoWrapper = NULL;
 //static char *inFilePath2 = "http://xunlei.xiazai-zuida.com/1908/%E6%89%AB%E6%AF%922.HD1280%E9%AB%98%E6%B8%85%E5%9B%BD%E8%AF%AD%E4%B8%AD%E5%AD%97%E7%89%88.mp4";
 //static char *inFilePath2 = "http://xunleib.zuida360.com/1806/%E7%AA%81%E8%A2%AD.BD1280%E9%AB%98%E6%B8%85%E4%B8%AD%E5%AD%97%E7%89%88.mp4";
 static char *inFilePath2 = "http://vip.zuiku8.com/1808/%E9%9B%B6%E5%8F%B7%E7%97%85%E4%BA%BA.HD1280%E9%AB%98%E6%B8%85%E4%B8%AD%E8%8B%B1%E5%8F%8C%E5%AD%97%E7%89%88.mp4";
+//static char *inFilePath2 = "https://cdn1.ibizastream.biz:441/free/1/playlist_dvr.m3u8";
 //static char *inFilePath2 = "http://xunlei.jingpin88.com/20171026/cQ7hsCrN/mp4/cQ7hsCrN.mp4";
 
 // 自己电脑上的文件路径
@@ -2320,10 +2321,10 @@ void initAudio() {
     audioWrapper->father->queue2->allAVPacketsCount = 0;
     audioWrapper->father->queue2->allAVPacketsSize = 0;
 
-    audioWrapper->father->readLockMutex = PTHREAD_MUTEX_INITIALIZER;
-    audioWrapper->father->readLockCondition = PTHREAD_COND_INITIALIZER;
-    audioWrapper->father->handleLockMutex = PTHREAD_MUTEX_INITIALIZER;
-    audioWrapper->father->handleLockCondition = PTHREAD_COND_INITIALIZER;
+//    audioWrapper->father->readLockMutex = PTHREAD_MUTEX_INITIALIZER;
+//    audioWrapper->father->readLockCondition = PTHREAD_COND_INITIALIZER;
+//    audioWrapper->father->handleLockMutex = PTHREAD_MUTEX_INITIALIZER;
+//    audioWrapper->father->handleLockCondition = PTHREAD_COND_INITIALIZER;
 }
 
 void initVideo() {
@@ -2381,10 +2382,10 @@ void initVideo() {
     videoWrapper->father->queue2->allAVPacketsCount = 0;
     videoWrapper->father->queue2->allAVPacketsSize = 0;
 
-    videoWrapper->father->readLockMutex = PTHREAD_MUTEX_INITIALIZER;
-    videoWrapper->father->readLockCondition = PTHREAD_COND_INITIALIZER;
-    videoWrapper->father->handleLockMutex = PTHREAD_MUTEX_INITIALIZER;
-    videoWrapper->father->handleLockCondition = PTHREAD_COND_INITIALIZER;
+//    videoWrapper->father->readLockMutex = PTHREAD_MUTEX_INITIALIZER;
+//    videoWrapper->father->readLockCondition = PTHREAD_COND_INITIALIZER;
+//    videoWrapper->father->handleLockMutex = PTHREAD_MUTEX_INITIALIZER;
+//    videoWrapper->father->handleLockCondition = PTHREAD_COND_INITIALIZER;
 }
 
 int initAudioPlayer() {

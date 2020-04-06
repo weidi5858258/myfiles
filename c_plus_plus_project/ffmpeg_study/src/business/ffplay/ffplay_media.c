@@ -2112,6 +2112,7 @@ static int read_thread(void *arg) {
         scan_all_pmts_set = 1;
     }
     err = avformat_open_input(&avFormatContext, is->filename, is->iformat, &format_opts);
+    printf("avformat_open_input() err: %d\n", err);
     if (err < 0) {
         print_error(is->filename, err);
         ret = -1;
@@ -2908,7 +2909,7 @@ decoder_start方法,在decoder_start方法中再开启音频,视频,字幕(如�
 /* Called from the main */
 int main(int argc, char **argv) {
     printf("main() start\n");
-    // N-96855-ga439acee3f
+    // N-97129-gad91cf1f2f
     printf("main() version: %s\n", av_version_info());
 
     input_filename = "/Users/alexander/Downloads/地狱男爵-血皇后崛起.mp4";

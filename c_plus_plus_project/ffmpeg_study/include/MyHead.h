@@ -79,6 +79,9 @@ extern "C" {// 不能少
 #include <libavutil/error.h>
 #include <libavutil/time.h>
 
+#include <SDL.h>
+#include <SDL_thread.h>
+
 //#include <SDL2/SDL.h>
 //mp3 encode
 //#include <lame.h>
