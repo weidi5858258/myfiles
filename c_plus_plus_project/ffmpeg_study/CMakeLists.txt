@@ -1,12 +1,18 @@
 cmake_minimum_required(VERSION 3.9)
 project(ffmpeg_study)
 
-#set(CMAKE_CXX_STANDARD 11)
-#add_definitions(-std=c++11)
+set(CMAKE_CXX_STANDARD 11)
+add_definitions(-std=c++11)
 
 add_executable(
         ffmpeg_study
-#        main.cpp
+        main.cpp
+#        src/StudyAgain.cpp
+        src/business/alexander/ffmpeg.h
+        src/business/alexander/ffmpeg.cpp
+        src/business/alexander/MediaWrapper.hpp
+        src/business/alexander/MediaPlayer.h
+        src/business/alexander/MediaPlayer.cpp
 
 #        ffmpeg.cpp
 #        include/config.h
@@ -14,9 +20,12 @@ add_executable(
 #        include/MyHead.h
 #        include/decode_audio.h
 
-        src/business/ffplay/ffplay.h
-        src/business/ffplay/ffplay_media.c
-        src/business/ffplay/cmdutils.c
+        # ffplay的代码
+#        src/business/ffplay/ffplay.h
+#        src/business/ffplay/ffplay_media.c
+#        src/business/ffplay/cmdutils.c
+#        src/business/ffplay/FFplayer.h
+#        src/business/ffplay/FFplayer.cpp
 
 #        src/business/ffplay/ffplay.c
 #        src/business/ffplay/ffplay_audio.c
@@ -28,10 +37,7 @@ add_executable(
 #        src/music_player.cpp
 #        src/music_player2.cpp
 #        src/decode_audio.cpp
-#        src/StudyAgain.cpp
-        src/business/ffplay/FFplayer.h
-        src/business/ffplay/FFplayer.cpp
-)
+        src/business/alexander/MediaWrapper.hpp)
 # 要包含的头文件
 include_directories(
         include

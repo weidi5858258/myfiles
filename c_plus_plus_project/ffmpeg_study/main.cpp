@@ -1,5 +1,6 @@
 #include "./include/MyHead.h"
 //#include "decode_audio.h"
+#include "src/business/alexander/MediaPlayer.h"
 
 #ifdef MYSTUDY_FFMPEG_STUDYAGAIN
 #include "src/StudyAgain.cpp"
@@ -199,7 +200,7 @@ int main(int argc, char *argv[]) {
 //    alexander_playback_pcm();
 
 //    alexanderAudioPlayerWithSDL();
-    alexanderVideoPlayerWithSDL();
+//    alexanderVideoPlayerWithSDL();//
 //    alexander_music_player("/root/音乐/KuGou/冷漠、云菲菲 - 伤心城市.mp3");
 //    alexander_music_player("/root/音乐/alexander_music/冷漠、云菲菲 - 伤心城市.mp3");
 
@@ -210,6 +211,8 @@ int main(int argc, char *argv[]) {
     /*decode_audio da;
     char *name[] = {"/root/音乐/tdjm.aac", "/root/音乐/tdjm.pcm"};
     da.main_(2, name);*/
+
+    alexander_media::startPlayer();
 
     printf("------------------------------------------\n");
     printf("\n");
