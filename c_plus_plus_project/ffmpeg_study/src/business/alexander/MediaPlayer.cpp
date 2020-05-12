@@ -2510,18 +2510,296 @@ namespace alexander_media {
         return info;
     }
 
-    void startPlayer() {
-        //char filePath[] = "https://cdn1.ibizastream.biz:441/free/1/playlist_dvr.m3u8";// *
-        char filePath[] = "/Users/alexander/Downloads/千千阙歌.mp4";
-        memset(inFilePath, '\0', sizeof(inFilePath));
-        av_strlcpy(inFilePath, filePath, sizeof(inFilePath));
-        printf("startPlayer() filePath  : %s", inFilePath);
+    int GetH264Stream() {
+        printf("GetH264Stream() 1\n");
+        int ret;
+        AVFormatContext *ic = NULL;
+        AVFormatContext *avFormatContextVideoOutput = NULL;
 
-        int ret = initPlayer();
-        closeAudio();
-        closeVideo();
-        closeOther();
-        printf("startPlayer() ret: %d\n", ret);
+        uint8_t sps[100];
+        uint8_t pps[100];
+        int spsLength = 0;
+        int ppsLength = 0;
+        uint8_t startcode[4] = {00, 00, 00, 01};
+        const char OutPutPath[] = "/Users/alexander/Movies/带你进入四维空间.h264";
+        FILE *fp;
+        fp = fopen(OutPutPath, "wb+");
+
+        char *InputFileName = "/Users/alexander/Movies/带你进入四维空间.mp4";
+        ic = avformat_alloc_context();
+        if ((ret = avformat_open_input(&ic, InputFileName, NULL, NULL)) < 0) {
+            return ret;
+        }
+        if ((ret = avformat_find_stream_info(ic, NULL)) < 0) {
+            avformat_close_input(&ic);
+            return ret;
+        }
+        printf("GetH264Stream() 2\n");
+
+        int videoindex = -1, audioindex = -1;
+        for (int i = 0; i < ic->nb_streams; i++) {
+            if (ic->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
+                videoindex = i;
+            } else if (ic->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+                audioindex = i;
+            }
+        }
+        printf("GetH264Stream() videoindex: %d\n", videoindex);
+        /*spsLength = ic->streams[0]->codec->extradata[6] * 0xFF +
+                    ic->streams[0]->codec->extradata[7];
+        ppsLength = ic->streams[0]->codec->extradata[8 + spsLength + 1] * 0xFF +
+                    ic->streams[0]->codec->extradata[8 + spsLength + 2];*/
+
+        AVStream *avStream = ic->streams[videoindex];
+        spsLength = avStream->codec->extradata[6] * 0xFF +
+                    avStream->codec->extradata[7];
+        ppsLength = avStream->codec->extradata[8 + spsLength + 1] * 0xFF +
+                    avStream->codec->extradata[8 + spsLength + 2];
+
+        for (int i = 0; i < spsLength; i++) {
+            //sps[i] = ic->streams[0]->codec->extradata[i + 8];
+            sps[i] = avStream->codec->extradata[i + 8];
+        }
+
+        for (int i = 0; i < ppsLength; i++) {
+            //pps[i] = ic->streams[0]->codec->extradata[i + 8 + 2 + 1 + spsLength];
+            pps[i] = avStream->codec->extradata[i + 8 + 2 + 1 + spsLength];
+        }
+
+//        AVOutputFormat *ofmt = av_guess_format(NULL, OutPutPath, NULL);
+//        avFormatContextVideoOutput = avformat_alloc_context();
+//        avFormatContextVideoOutput->oformat = ofmt;
+        avformat_alloc_output_context2(&avFormatContextVideoOutput, NULL, NULL, OutPutPath);
+        if (!avFormatContextVideoOutput) {
+            printf("Could not create output context\n");
+            ret = AVERROR_UNKNOWN;
+        }
+        AVOutputFormat *ofmt = avFormatContextVideoOutput->oformat;
+        printf("GetH264Stream() 3\n");
+
+        for (int i = 0; i < ic->nb_streams; i++) {
+            AVStream *in_stream = ic->streams[i];
+            AVStream *out_stream = avformat_new_stream(avFormatContextVideoOutput, in_stream->codec->codec);
+            if (!out_stream) {
+                printf("Failed allocating output stream\n");
+                ret = AVERROR_UNKNOWN;
+            }
+
+            //ret = avcodec_copy_context(out_stream->codec, in_stream->codec);
+            ret = avcodec_parameters_copy(out_stream->codecpar, in_stream->codecpar);
+            if (ret < 0) {
+                printf("Failed to copy context from input to output stream codec context\n");
+            }
+            out_stream->codec->codec_tag = 0;
+            if (avFormatContextVideoOutput->oformat->flags & AVFMT_GLOBALHEADER) {
+                //out_stream->codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
+            }
+        }
+        printf("GetH264Stream() 4\n");
+
+        if (!(ofmt->flags & AVFMT_NOFILE)) {
+            ret = avio_open(&avFormatContextVideoOutput->pb, OutPutPath, AVIO_FLAG_WRITE);
+            if (ret < 0) {
+                printf("Could not open output file '%s'", OutPutPath);
+                return ret;
+            }
+        }
+        ret = avformat_write_header(avFormatContextVideoOutput, NULL);
+        printf("GetH264Stream() 5\n");
+
+        AVPacket pkt;
+        av_init_packet(&pkt);
+        pkt.data = NULL;
+        pkt.size = 0;
+
+        int flag = 1;
+        while (1) {
+            ret = av_read_frame(ic, &pkt);
+            if (ret < 0) {
+                break;
+            }
+            printf("GetH264Stream() ret: %d\n", ret);
+
+            if (pkt.stream_index == videoindex) {
+                printf("GetH264Stream() 7\n");
+                AVStream *in_stream, *out_stream;
+                in_stream = ic->streams[videoindex];
+                out_stream = avFormatContextVideoOutput->streams[videoindex];
+                if (flag) {
+                    fwrite(startcode, 4, 1, fp);
+                    fwrite(sps, spsLength, 1, fp);
+                    fwrite(startcode, 4, 1, fp);
+                    fwrite(pps, ppsLength, 1, fp);
+
+                    pkt.data[0] = 0x00;
+                    pkt.data[1] = 0x00;
+                    pkt.data[2] = 0x00;
+                    pkt.data[3] = 0x01;
+                    fwrite(pkt.data, pkt.size, 1, fp);
+
+                    flag = 0;
+                } else {
+                    pkt.data[0] = 0x00;
+                    pkt.data[1] = 0x00;
+                    pkt.data[2] = 0x00;
+                    pkt.data[3] = 0x01;
+                    fwrite(pkt.data, pkt.size, 1, fp);
+                }
+                printf("GetH264Stream() 8\n");
+
+                pkt.pts = av_rescale_q_rnd(pkt.pts, in_stream->time_base, out_stream->time_base,
+                                           (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                pkt.dts = av_rescale_q_rnd(pkt.dts, in_stream->time_base, out_stream->time_base,
+                                           (AVRounding) (AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                pkt.duration = av_rescale_q(pkt.duration, in_stream->time_base, out_stream->time_base);
+                pkt.pos = -1;
+                pkt.stream_index = 0;
+                printf("GetH264Stream() 9\n");
+                av_interleaved_write_frame(avFormatContextVideoOutput, &pkt);//
+                printf("GetH264Stream() 10\n");
+            }
+
+            av_free_packet(&pkt);
+        }
+        printf("GetH264Stream() 6\n");
+
+        fclose(fp);
+        fp = NULL;
+
+        av_write_trailer(avFormatContextVideoOutput);
+
+        avformat_free_context(ic);
+        avformat_free_context(avFormatContextVideoOutput);
+        ic = NULL;
+        avFormatContextVideoOutput = NULL;
+
+        return 0;
+    }
+
+#define PrintError(errnum) do{                            \
+    char errstr[512];                            \
+    av_strerror(errnum, errstr, sizeof(errstr));                \
+    av_log(NULL, AV_LOG_ERROR, "failed to open %s : %s\n", in, errstr);    \
+}while(0)
+
+    void test() {
+        AVFormatContext        *ifmt_ctx = NULL, *ofmt_ctx  = NULL;
+        AVOutputFormat        *output_fmt = NULL;
+        int             stream_index, errnum;
+        AVStream        *o_stream = NULL, *i_stream = NULL;
+        AVIOContext        *pb = NULL;
+        AVPacket        pkt;
+
+        //    av_register_all();
+        av_log_set_level(AV_LOG_INFO);
+
+        char *in = "/Users/alexander/Movies/带你进入四维空间.mp4";
+        const char out[] = "/Users/alexander/Movies/带你进入四维空间.h264";
+
+        /********打开多媒体文件*******/
+        if ((errnum = avformat_open_input(&ifmt_ctx, in, NULL, NULL)) < 0) {
+            PrintError(errnum);
+            goto __failed__;
+        }
+        /*********找到需要的流***********/
+        if (0 > (stream_index = av_find_best_stream(ifmt_ctx, AVMEDIA_TYPE_VIDEO /*AVMEDIA_TYPE_VIDEO*/, -1, -1, NULL, 0))) {
+
+            av_log(NULL, AV_LOG_ERROR, "find not best stream\n");
+            goto __failed__;
+        }
+        i_stream = ifmt_ctx->streams[stream_index];
+
+        /**********构造输出多媒体文件并设置默认参数**************/
+#if 1
+        if (0 > (errnum = avformat_alloc_output_context2(&ofmt_ctx, NULL, NULL, out))) {
+            PrintError(errnum);
+            goto __failed__;
+        }
+#else
+        ofmt_ctx = avformat_alloc_context();
+    output_fmt = av_guess_format(NULL, out, NULL);
+    if (!output_fmt) {
+        av_log(NULL, AV_LOG_DEBUG, "根据目标生成输出容器失败！\n");
+        exit(1);
+    }
+    ofmt_ctx->oformat = output_fmt;
+#endif
+
+        /*********在ofmt_ctx上构造流********/
+        if (!(o_stream = avformat_new_stream(ofmt_ctx, NULL))) {
+            av_log(NULL, AV_LOG_ERROR, "failed to new stream\n");
+            goto __failed__;
+        }
+        /**********初始化输出流的参数*********************/
+        if (0 > avcodec_parameters_copy(o_stream->codecpar, i_stream->codecpar)) {
+            av_log(NULL, AV_LOG_ERROR, "failed to copy stream codecpar\n");
+            goto __failed__;
+        }
+        o_stream->codecpar->codec_tag = 0;
+        /***********以只写方式打开输出文件***********/
+        pb = ofmt_ctx->pb;
+        if (0 > avio_open(&ofmt_ctx->pb, out, AVIO_FLAG_WRITE)) {
+            av_log(NULL, AV_LOG_ERROR, "failed to open avio\n");
+            goto __failed__;
+        }
+
+        /***********初始化pkt通用域**********/
+        av_init_packet(&pkt);
+        pkt.data = NULL;
+        pkt.size = 0;
+
+        /***********用默认值写头信息*************/
+        if (avformat_write_header(ofmt_ctx, NULL) < 0) {
+            av_log(NULL, AV_LOG_DEBUG, "写入头部信息失败！\n");
+            exit(1);
+        }
+
+
+        /**********写数据*********/
+        while(av_read_frame(ifmt_ctx, &pkt) >= 0) {
+            if (pkt.stream_index == stream_index) {        // 需要保证包是需要的流
+                pkt.dts = av_rescale_q_rnd(pkt.dts, i_stream->time_base, o_stream->time_base,
+                                           static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));        // 四舍五入方式,重新度量显示时间戳
+                pkt.pts = av_rescale_q_rnd(pkt.pts, i_stream->time_base, o_stream->time_base,
+                                           static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));        // 重四舍五入方式,新度量解码时间戳
+                pkt.duration = av_rescale_q(pkt.duration, i_stream->time_base, o_stream->time_base) ;    // 重新度量周期
+                pkt.pos = -1;        // 将该包的已读取位置置-1
+                pkt.stream_index = 0;
+                av_interleaved_write_frame(ofmt_ctx, &pkt);
+            }
+
+            av_packet_unref(&pkt);    // 将pkt.buf 引用计数减一
+        }
+
+        /*******写尾*******/
+        av_write_trailer(ofmt_ctx);
+
+        av_log(NULL, AV_LOG_DEBUG, "44\n");
+
+        __failed__:
+        if (ifmt_ctx)
+            avformat_close_input(&ifmt_ctx);
+        if (ofmt_ctx)
+            avformat_free_context(ofmt_ctx);
+        if (pb)
+            avio_close(pb);
+    }
+
+    void startPlayer() {
+//        char filePath[] = "https://cdn1.ibizastream.biz:441/free/1/playlist_dvr.m3u8";// *
+//        char filePath[] = "/Users/alexander/Downloads/千千阙歌.mp4";
+//        memset(inFilePath, '\0', sizeof(inFilePath));
+//        av_strlcpy(inFilePath, filePath, sizeof(inFilePath));
+//        printf("startPlayer() filePath  : %s", inFilePath);
+//        int ret = initPlayer();
+//        closeAudio();
+//        closeVideo();
+//        closeOther();
+//        printf("startPlayer() ret: %d\n", ret);
+
+        printf("startPlayer() start\n");
+        test();
+        printf("startPlayer() end\n");
     }
 
 }
