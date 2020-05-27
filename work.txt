@@ -1,3 +1,9 @@
+http://www.arm-cn.com/thread-1208-1-1.html
+Hikey 970 编译烧写 AOSP 9.0 (亲测整理)
+
+
+
+
 在2017年，Linux内核代码，谷歌贡献度是3%，而华为占1.5%。
 Android其实是具备公有性质，只要遵循Android的开源协议与开源机制，其他厂商完全可以在已经开源的 Android 之上发展自己的 Android 系统——只要遵循已经开源的 Android 的许可证约束即可。Android 系统主要使用的开源软件许可证有 GPL（Linux 内核）、LGPL（各种运行时函数库）、Apache（Dalvik 虚拟机及 Java 类库）。如果限制某些厂商不能用Andriod，显然也难以避免让其他OMD厂商、芯片厂商甚至软件开发商的利益以及上下游企业的利益受损，基于各自未来前景与利益考量，上下游参与开源联盟的企业也会抵制谷歌破坏开源协议的行为并作出一定的反制措施。
 Google移动服务（GMS）是由谷歌提供的一系列应用和服务，包括Gmail，Chrome，Google地图等，为非开源，获得授权需经过谷歌测试。
@@ -143,7 +149,8 @@ ramdisk.img
 build_kernel.sh这个脚本我是从下面这个网页里复制下来进行路径的修改后编译出boot.img文件.
 https://blog.csdn.net/rushdj/article/details/84329639
 
-从https://www.96boards.org/documentation/consumer/hikey/hikey970/build/linux-kernel.md.html
+从
+https://www.96boards.org/documentation/consumer/hikey/hikey970/build/linux-kernel.md.html
 这个网页中得到的build_kernel.sh脚本我也试了,同样需要修改有关的路径,然后生成boot.img文件.
 
 经过上面的操作,就得到了下面有关文件:

@@ -724,7 +724,7 @@ char str[1000] = {0};
 int st_index[5];
 memset(st_index, -1, sizeof(st_index));
 5.
-结构体的变量定义,内存初始化
+结构体变量定义,内存初始化
 typedef struct PacketQueue {
   MyAVPacketList *first_pkt, *last_pkt;
   int nb_packets;
@@ -766,7 +766,26 @@ SDL_UnlockMutex(mutex);
 SDL_LockMutex(mutex);
 SDL_CondSignal(cond);
 SDL_UnlockMutex(mutex);
+7.
+pthread_mutex_t readLockMutex;
+pthread_cond_t readLockCondition;
+readLockMutex = PTHREAD_MUTEX_INITIALIZER;
+readLockCondition = PTHREAD_COND_INITIALIZER;
+// 
+pthread_mutex_lock(&readLockMutex);
+pthread_cond_signal(&readLockCondition);
+pthread_mutex_unlock(&readLockMutex);
+// 
+pthread_mutex_lock(&readLockMutex);
+pthread_cond_wait(&readLockCondition, &readLockMutex);
+pthread_mutex_unlock(&readLockMutex);
+//
+pthread_mutex_destroy(&readLockMutex);
+pthread_cond_destroy(&readLockCondition); 
 
+pthread_mutex_lock(&q->pmutex);
+pthread_cond_signal(&q->pcond);
+pthread_mutex_unlock(&q->pmutex);
 
 
 AVFormatContext *avFormatContext = NULL;
@@ -865,19 +884,89 @@ Clock:queue_serial(init_clock()时传递指针,指向了PacketQueue:serial)
 Decoder:pkt_serial(packet_queue_get()时传递指针,指向了AVPacketNode:serial)
 Frame:serial(由Decoder:pkt_serial赋值)
 
+PacketQueue:serial ---> MyAVPacketList:serial(packet_queue_put_private)
+MyAVPacketList:serial ---> Decoder:pkt_serial(packet_queue_get)
+Frame:serial ---> Decoder:pkt_serial(video_thread audio_thread subtitle_thread)
+
+main ---> stream_open ---> frame_queue_init
+main ---> stream_open ---> packet_queue_init
+main ---> stream_open ---> init_clock
+main ---> stream_open ---> create_avformat_context ---> stream_component_open
+
+main ---> stream_open ---> decoder_start ---> packet_queue_start
+main ---> stream_open ---> decoder_start ---> video_thread(thread) ---> get_video_frame ---> decoder_decode_frame ---> packet_queue_get
+main ---> stream_open ---> decoder_start ---> packet_queue_start
+main ---> stream_open ---> decoder_start ---> audio_thread(thread) ---> decoder_decode_frame
+main ---> stream_open ---> decoder_start ---> packet_queue_start
+main ---> stream_open ---> decoder_start ---> subtitle_thread(thread) ---> decoder_decode_frame
+main ---> stream_open ---> read_thread2(thread) ---> packet_queue_put
+main ---> event_loop
+
+stream_close ---> stream_component_close
+stream_close ---> packet_queue_destroy ---> packet_queue_flush
+stream_close ---> frame_queue_destory
+
+stream_component_close ---> decoder_abort ---> packet_queue_abort
+stream_component_close ---> decoder_abort ---> frame_queue_signal
+stream_component_close ---> decoder_abort ---> packet_queue_flush
+stream_component_close ---> decoder_destroy
+
+video_image_display ---> frame_queue_peek_last
+video_image_display ---> frame_queue_peek
+video_refresh ---> frame_queue_peek
+video_refresh ---> frame_queue_peek_last
+video_refresh ---> frame_queue_peek_next
+video_refresh ---> frame_queue_next
+audio_decode_frame ---> frame_queue_next
+
+video_thread ---> queue_picture ---> frame_queue_peek_writable
+audio_thread ---> frame_queue_peek_writable
+subtitle_thread ---> frame_queue_peek_writable
+
+audio_decode_frame ---> frame_queue_peek_readable
+
+queue_picture ---> frame_queue_push
+audio_thread ---> frame_queue_push
+subtitle_thread ---> frame_queue_push
+
+
+音频流程解析:
+audio_thread
+
+
+
+
+sdl_audio_callback(回调函数)
+
+
+
+
+视频流程解析:
+video_thread
 
 
 
 
 
+event_loop(进程)
 
 
 
+什么时候会往PacketQueue中存储flush_pkt?
+1.初始化过程中
+decoder_start ---> packet_queue_start ---> packet_queue_put_private
+2.读线程中,avformat_seek_file成功时
+read_thread2 ---> packet_queue_put
+
+paused = 1 后,video_thread,audio_thread都不执行.read_thread2执行.
 
 
 
+#ifdef OS_ANDROID
+#else
+#endif
 
-
+printf("read_thread() show_mode = %d\n", show_mode);
 
 
 
