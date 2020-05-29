@@ -28,6 +28,9 @@ git clean -nfd
 git查看项目地址
 git remote -v
 
+Index       :之前修改的结果
+Working Tree:现在修改的结果
+
 git stash
 git pull
 git stash pop stash@{0}

@@ -10,15 +10,24 @@ Google移动服务（GMS）是由谷歌提供的一系列应用和服务，包�
 
 
 
+
+
 https://blog.csdn.net/bluewhalerobot/article/details/80429652
 hikey 970开发板刷官方的基础固件和Android系统
+
 一.首先下载下面两个文件
 git clone https://github.com/96boards-hikey/tools-images-hikey970
-(其实是个zip文件,不是rar文件)
 wget http://hihope.org/hihope/downLoadCenter/testDownFile?filename=20190403/hikey970_android_8_images.rar
-hikey970_android_8_images.rar这个文件解压后有3个文件,为buildinfo.txt文件,image目录和log目录.
+// 其实是个zip文件,不是rar文件
+hikey970_android_8_images.rar这个文件解压后有3个文件,为:
+buildinfo.txt文件
+image目录
+log目录
+
 二.把image里的所有文件复制到tools-images-hikey970文件夹中
+
 三.烧写分两种情况(开关不要弄错):
+
 1.烧基础固件
 烧好基础固件后也有了android系统,因此不需要再额外烧android系统.
 可能这个操作只需要做一次,以后只要单纯烧android系统就行了.
@@ -27,13 +36,23 @@ hikey970_android_8_images.rar这个文件解压后有3个文件,为buildinfo.txt
 	修改recovery-flash.sh脚本:
 	UEFI_BUILD_PATH=/home/qubo/tools-images-hikey970 ---> UEFI_BUILD_PATH=${PWD}
 	运行recovery-flash.sh脚本
+
 2.单纯烧android系统
 	开关: On Off On Off
-	进行tools-images-hikey970目录
+	进入tools-images-hikey970目录
 	fastboot flash boot boot.img
 	fastboot flash cache cache.img
 	fastboot flash system system.img
-	fastboot flash userdata userdata.img
+	fastboot flash userdata  userdata.img
+
+
+
+
+
+
+
+
+
 
 编译AOSP源码时先需要作下面的操作
 复制文件
@@ -398,4 +417,14 @@ wifi问题的解决方法
 
 
 
-
+hikey970 安卓系统，如何使用USB声卡？(好像问题没有解决)
+USB声卡安装在hikey970的Android系统上。如何将USB声卡设置为默认声卡，使普通的音频播放器可以用USB声卡播放音频。
+使用tinyplay，需要在播放时指定USB声卡，否则将默认使用HDMI。
+在ADB shell中，我们需要像这样输入tinyplay filename.wav-D 1。如果没有-D参数，就会使用默认的HDMI输出。
+尝试在/etc/asround.conf中添加以下内容：
+defaults.ctl.card 1
+defaults.pcm.card 1
+defaults.pcm.device 0
+还是没有在一号声卡上播放
+内核已经支持USB声卡。播放时指定1号USB声卡。声音正常。现在的问题是如何设置1号声卡作为默认声卡。
+如果不想修改Android源代码，可以通过修改配置文件来完成吗
