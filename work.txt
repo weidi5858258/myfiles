@@ -1,7 +1,8 @@
 http://www.arm-cn.com/thread-1208-1-1.html
 Hikey 970 编译烧写 AOSP 9.0 (亲测整理)
 
-
+应用场景
+深度学习， 机器人， 自动驾驶， 智慧城市
 
 
 在2017年，Linux内核代码，谷歌贡献度是3%，而华为占1.5%。
@@ -43,7 +44,7 @@ log目录
 	fastboot flash boot boot.img
 	fastboot flash cache cache.img
 	fastboot flash system system.img
-	fastboot flash userdata  userdata.img
+	fastboot flash userdata userdata.img
 
 
 

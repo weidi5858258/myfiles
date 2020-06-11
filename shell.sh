@@ -1557,6 +1557,18 @@ adb shell pm path com.miui.fm
 adb shell ls -alh /storage/3D5F-08A6/SonyTVCamera_photo
 ./system/vendor/bin/camera_recognition_daemon &
 
+# 手机
+adb push /root/mydev/workspace_github/myfiles/android/contents.txt /storage/1532-48AD/Android/data/com.weidi.usefragments/files/shared/
+# 电视
+adb push /root/mydev/workspace_github/myfiles/android/contents.txt /storage/37C8-3904/Android/data/com.weidi.usefragments/files/shared/
+
+adb -s 192.168.0.101:5555 shell am startservice \
+-n com.weidi.usefragments/com.weidi.usefragments.business.video_player.PlayerService \
+-a com.weidi.usefragments.business.video_player.PlayerService \
+--ei HandlePlayerService 1 \
+--es HandlePlayerServicePath "video/" \
+--es HandlePlayerServicePath ${content_path}
+
 mount
 # mount: '/system/' not in /proc/mounts
 mount -o remount,rw /dev/block/mmcblk0p13 /system
