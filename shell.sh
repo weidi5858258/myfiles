@@ -1562,12 +1562,28 @@ adb push /root/mydev/workspace_github/myfiles/android/contents.txt /storage/1532
 # 电视
 adb push /root/mydev/workspace_github/myfiles/android/contents.txt /storage/37C8-3904/Android/data/com.weidi.usefragments/files/shared/
 
+# 播放视频
 adb -s 192.168.0.101:5555 shell am startservice \
 -n com.weidi.usefragments/com.weidi.usefragments.business.video_player.PlayerService \
 -a com.weidi.usefragments.business.video_player.PlayerService \
 --ei HandlePlayerService 1 \
 --es HandlePlayerServicePath "video/" \
 --es HandlePlayerServicePath ${content_path}
+# 停止播放
+adb shell am startservice \
+-n com.weidi.usefragments/com.weidi.usefragments.business.video_player.PlayerService \
+-a com.weidi.usefragments.business.video_player.PlayerService \
+--ei HandlePlayerService 2
+# 停止服务
+adb shell am startservice \
+-n com.weidi.usefragments/com.weidi.usefragments.business.video_player.PlayerService \
+-a com.weidi.usefragments.business.video_player.PlayerService \
+--ei HandlePlayerService 3
+# 重新加载内容
+adb shell am startservice \
+-n com.weidi.usefragments/com.weidi.usefragments.business.video_player.PlayerService \
+-a com.weidi.usefragments.business.video_player.PlayerService \
+--ei HandlePlayerService 4
 
 mount
 # mount: '/system/' not in /proc/mounts
