@@ -1561,6 +1561,7 @@ adb shell ls -alh /storage/3D5F-08A6/SonyTVCamera_photo
 adb push /root/mydev/workspace_github/myfiles/android/contents.txt /storage/1532-48AD/Android/data/com.weidi.usefragments/files/shared/
 # 电视
 adb push /root/mydev/workspace_github/myfiles/android/contents.txt /storage/37C8-3904/Android/data/com.weidi.usefragments/files/shared/
+adb push /root/mydev/workspace_github/myfiles/android/contents.txt /storage/emulated/0/Android/data/com.weidi.usefragments/files/shared/
 
 # 播放视频
 adb -s 192.168.0.101:5555 shell am startservice \

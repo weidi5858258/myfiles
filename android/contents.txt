@@ -1,4 +1,5 @@
 /////////////////////////////////////////////////////////////////
+http://hls-ott-zhibo.wasu.tv/live/394/index.m3u8@@@@@@@@@@动物世界*
 // 直播系列
 // 高清
 http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8@@@@@@@@@@CCTV-1综合高清
@@ -169,18 +170,7 @@ http://125.210.152.18:9090/live/QSKX_1200.m3u8@@@@@@@@@@求索科学
 http://125.210.152.18:9090/live/QSDW_1200.m3u8@@@@@@@@@@求索动物
 http://125.210.152.18:9090/live/QSSH_1200.m3u8@@@@@@@@@@求索生活
 http://112.17.40.145/PLTV/88888888/224/3221226610/index.m3u8@@@@@@@@@@求索纪录
-http://hls-ott-zhibo.wasu.tv/live/394/index.m3u8@@@@@@@@@@动物世界*
-http://39.135.15.70:6610/PLTV/88888888/224/3221225765/1/index.m3u8?fmt=ts2hls@@@@@@@@@@怀旧剧场*
-http://39.135.15.70:6610/PLTV/88888888/224/3221225677/1/index.m3u8?fmt=ts2hls@@@@@@@@@@老 故 事*
-http://39.135.15.70:6610/PLTV/88888888/224/3221225675/1/index.m3u8?fmt=ts2hls@@@@@@@@@@文化精品*
-http://ott-live.olympicchannel.com/out/u/OC1_2.m3u8?fluxustv.m3u8@@@@@@@@@@奥林匹克高清*
-http://ott-live.olympicchannel.com/out/u/OC1_1.m3u8?fluxustv.m3u8@@@@@@@@@@奥林匹克蓝光*
-http://gdhj.chinashadt.com:2035/live/6.stream/chunklist_w2139490375.m3u8@@@@@@@@@@珠江卫视*
-http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c15_lb_chenglong_1080p_t10/c15_lb_chenglong_1080p_t10.m3u8@@@@@@@@@@温情影院*
-http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c16_lb_fengxiaogang_1080p_t10/c16_lb_fengxiaogang_1080p_t10.m3u8@@@@@@@@@@周末影院*
-http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c16_lb_xijudianying_1080p_t10/c16_lb_xijudianying_1080p_t10.m3u8@@@@@@@@@@欢乐剧场*
-http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c15_lb_dajuchongwen_1080p_t10/c15_lb_dajuchongwen_1080p_t10.m3u8@@@@@@@@@@收视冠军*
-http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c16_lb_haolaiwudapian_1080p_t10/c16_lb_haolaiwudapian_1080p_t10.m3u8@@@@@@@@@@贺岁影院*
+
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225905/1.m3u8@@@@@@@@@@中国教育1台
 http://cctvalih5ca.v.myalicdn.com/cstv/cetv2_2/index.m3u8@@@@@@@@@@中国教育2台
 http://cctvalih5ca.v.myalicdn.com/cstv/cetv3_2/index.m3u8@@@@@@@@@@中国教育3台
@@ -202,49 +192,58 @@ http://zhibo.hkstv.tv/livestream/mutfysrq.flv@@@@@@@@@@香港卫视
 http://121.31.30.90:8085/ysten-business/live/yangguangstv/yst.m3u8@@@@@@@@@@阳光卫视
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 http://ivi.bupt.edu.cn/hls/btv4.m3u8@@@@@@@@@@北京影视
 http://ivi.bupt.edu.cn/hls/btv9.m3u8@@@@@@@@@@北京新闻
 http://ivi.bupt.edu.cn/hls/btv3.m3u8@@@@@@@@@@北京科教
-http://223.110.245.153/ott.js.chinamobile.com/PLTV/3/224/3221225574/index.m3u8@@@@@@@@@@北京财经
 http://ivi.bupt.edu.cn/hls/btv7.m3u8@@@@@@@@@@北京生活
-http://223.110.245.163/ott.js.chinamobile.com/PLTV/3/224/3221227436/index.m3u8@@@@@@@@@@北京青年
-http://wuqiao.chinashadt.com:2035/live/di1.stream/playlist.m3u8@@@@@@@@@@河北经济
-http://111.40.205.87/PLTV/88888888/224/3221225623/index.m3u8@@@@@@@@@@河北经济
-http://121.31.30.90:8085/ysten-business/live/hebeistv/1.m3u8@@@@@@@@@@河北经济
-http://121.31.30.90:8085/ysten-business/live/hebeistv/yst.m3u8@@@@@@@@@@河北经济
-http://hbpx.chinashadt.com:2036/live/px4.stream/playlist.m3u8@@@@@@@@@@河北都市
-http://hbzx.chinashadt.com:2036/zhibo/stream:hbnm.stream/playlist.m3u8@@@@@@@@@@河北影视
-http://hbzx.chinashadt.com:2036/zhibo/stream:hbnm.stream_360p/playlist.m3u8@@@@@@@@@@河北影视
-http://111.40.205.87/PLTV/88888888/224/3221225615/index.m3u8@@@@@@@@@@河北公共
-http://121.31.30.90:8085/ysten-business/live/jiangxistv/1.m3u8@@@@@@@@@@河北公共
-http://223.110.245.170/PLTV/3/224/3221225536/index.m3u8@@@@@@@@@@河北农民
-http://m-tvlmedia.public.bcs.ysten.com/ysten-business/live/jiangxistv/1.m3u8@@@@@@@@@@河北农民
-http://223.110.245.170/ott.js.chinamobile.com/PLTV/3/224/3221225536/index.m3u8@@@@@@@@@@河北农民
-http://112.50.243.8/PLTV/88888888/224/3221225868/1.m3u8@@@@@@@@@@河北农民
-http://117.148.187.37/PLTV/88888888/224/3221226136/index.m3u8@@@@@@@@@@浙江民生
-http://ts1.ijntv.cn/jnyd/playlist.m3u8?_upt=34997bea1515232117@@@@@@@@@@浙江公共新闻
-http://223.110.245.159/ott.js.chinamobile.com/PLTV/3/224/3221227393/index.m3u8@@@@@@@@@@浙江经济生活
-http://223.110.245.163/ott.js.chinamobile.com/PLTV/3/224/3221227215/index.m3u8@@@@@@@@@@浙江经济生活
-http://125.210.152.18:9090/live/SZWSHD_H265.m3u8@@@@@@@@@@泉州综合
-http://live.zohi.tv/video/s10001-FZTV-1/index.m3u8@@@@@@@@@@福州综合
-http://live1.fzntv.cn/live/zohi_fztv1/playlist.m3u8@@@@@@@@@@福州综合
-http://121.31.30.90:8085/ysten-business/live/hdshenzhenstv/1.m3u8@@@@@@@@@@泉州综合
-http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=42&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@泉州综合
-http://live1.fzntv.cn/live/zohi_fztv2/playlist.m3u8@@@@@@@@@@福州影视
-http://live.zohi.tv/video/s10001-yspd-2/index.m3u8@@@@@@@@@@福州影视
-http://ls.qingting.fm/live/1862.m3u8@@@@@@@@@@福州生活
-http://live.zohi.tv/video/s10001-shpd-3/index.m3u8@@@@@@@@@@福州生活
-http://live1.fzntv.cn/live/zohi_fztv3/playlist.m3u8@@@@@@@@@@福州生活
-http://223.110.245.145/ott.js.chinamobile.com/PLTV/3/224/3221226093/index.m3u8@@@@@@@@@@叶县一套
-http://125.210.152.18:9090/live/CCTV10HD_H265.m3u8@@@@@@@@@@娄底综合
-http://112.50.243.8/PLTV/88888888/224/3221225830/1.m3u8@@@@@@@@@@娄底公共
-http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=53&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@娄底公共
-http://121.31.30.90:8085/ysten-business/live/cctv-11/1.m3u8@@@@@@@@@@娄底公共
-http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=79&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@陕西都市
-http://117.156.28.119/270000001111/1110000001/index.m3u8@@@@@@@@@@陕西都市
-http://stream.guihet.com/tv/sxdft.php?id=3221225973@@@@@@@@@@西安新闻
-http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=20&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@西安新闻
-http://111.12.83.13:6610/000000001000/Yulin/1.m3u8?livemode=1&IASHttpSessionId=SLB20002019031013092037863610@@@@@@@@@@西安新闻
+http://223.110.245.153/ott.js.chinamobile.com/PLTV/3/224/3221225574/index.m3u8@@@@@@@@@@北京卫视
+http://223.110.245.163/ott.js.chinamobile.com/PLTV/3/224/3221227436/index.m3u8@@@@@@@@@@北京卫视
+http://111.40.205.87/PLTV/88888888/224/3221225623/index.m3u8@@@@@@@@@@河北卫视
+http://hbpx.chinashadt.com:2036/live/px4.stream/playlist.m3u8@@@@@@@@@@河北卫视
+http://223.110.245.170/PLTV/3/224/3221225536/index.m3u8@@@@@@@@@@江西卫视
+http://112.50.243.8/PLTV/88888888/224/3221225868/1.m3u8@@@@@@@@@@江西卫视
+http://111.40.205.87/PLTV/88888888/224/3221225615/index.m3u8@@@@@@@@@@江西卫视
+http://m-tvlmedia.public.bcs.ysten.com/ysten-business/live/jiangxistv/1.m3u8@@@@@@@@@@江西卫视
+http://223.110.245.170/ott.js.chinamobile.com/PLTV/3/224/3221225536/index.m3u8@@@@@@@@@@江西卫视
+http://117.148.187.37/PLTV/88888888/224/3221226136/index.m3u8@@@@@@@@@@浙江卫视
+http://223.110.245.159/ott.js.chinamobile.com/PLTV/3/224/3221227393/index.m3u8@@@@@@@@@@浙江卫视
+http://223.110.245.163/ott.js.chinamobile.com/PLTV/3/224/3221227215/index.m3u8@@@@@@@@@@浙江卫视
+http://125.210.152.18:9090/live/SZWSHD_H265.m3u8@@@@@@@@@@深圳卫视
+http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=42&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@深圳卫视
+http://live.zohi.tv/video/s10001-FZTV-1/index.m3u8@@@@@@@@@@FZTV-1
+http://live1.fzntv.cn/live/zohi_fztv1/playlist.m3u8@@@@@@@@@@FZTV-1
+http://live.zohi.tv/video/s10001-yspd-2/index.m3u8@@@@@@@@@@FZTV-2
+http://live1.fzntv.cn/live/zohi_fztv2/playlist.m3u8@@@@@@@@@@FZTV-2
+http://ls.qingting.fm/live/1862.m3u8@@@@@@@@@@福州生活?
+http://live.zohi.tv/video/s10001-shpd-3/index.m3u8@@@@@@@@@@FZTV-3
+http://live1.fzntv.cn/live/zohi_fztv3/playlist.m3u8@@@@@@@@@@FZTV-3
+http://223.110.245.145/ott.js.chinamobile.com/PLTV/3/224/3221226093/index.m3u8@@@@@@@@@@厦门卫视
+http://112.50.243.8/PLTV/88888888/224/3221225830/1.m3u8@@@@@@@@@@天津
+http://hbzx.chinashadt.com:2036/zhibo/stream:hbnm.stream/playlist.m3u8@@@@@@@@@@CCTV-5体育
+http://hbzx.chinashadt.com:2036/zhibo/stream:hbnm.stream_360p/playlist.m3u8@@@@@@@@@@CCTV-5体育
+http://125.210.152.18:9090/live/CCTV10HD_H265.m3u8@@@@@@@@@@CCTV-10科教
+http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=53&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@CCTV-11戏曲
+http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=79&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@广东珠江
+http://117.156.28.119/270000001111/1110000001/index.m3u8@@@@@@@@@@酒泉
+http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=20&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@经济科教
+http://111.12.83.13:6610/000000001000/Yulin/1.m3u8?livemode=1&IASHttpSessionId=SLB20002019031013092037863610@@@@@@@@@@西安新闻???
 http://aldirect.hls.huya.com/huyalive/28466698-2689656358-11551986095088467968-3048959616-10057-A-1525510878-1_1200.m3u8@@@@@@@@@@西安白鸽
 http://stream.guihet.com/tv/sxdft.php?id=3221225974@@@@@@@@@@西安白鸽
 http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=237&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@西安白鸽
@@ -1244,6 +1243,17 @@ rtsp://113.136.42.39:554/PLTV/88888888/224/0/3221225551/iptv19033.smil@@@@@@@@@@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 // 小孩节目
 http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c16_lb_datouerzi_1080p_t10/c16_lb_datouerzi_1080p_t10.m3u8@@@@@@@@@@儿子爸爸!
 http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c15_lb_ergedaquan_1080p_t10/c15_lb_ergedaquan_1080p_t10.m3u8@@@@@@@@@@儿歌大全!
@@ -1290,9 +1300,6 @@ http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225910/1.m3
 http://121.31.30.90:8085/ysten-business/live/xuandongkaton/1.m3u8@@@@@@@@@@炫动卡通
 http://121.31.30.90:8085/ysten-business/live/xuandongkaton/yst.m3u8@@@@@@@@@@炫动卡通
 http://m-tvlmedia.public.bcs.ysten.com/ysten-business/live/xuandongkaton/1.m3u8@@@@@@@@@@炫动卡通
-http://nclive.grtn.cn/tvs5/sd/live.m3u8@@@@@@@@@@广东少儿*
-http://116.199.5.51:8114/00000000/hls/index.m3u8?Fsv_chan_hls_se_idx=227&FvSeid=1&Fsv_ctype=LIVES&Fsv_otype=1&Provider_id=&Pcontent_id=.m3u8@@@@@@@@@@广州少儿*
-http://ts2.ijntv.cn/jnse/sd1/live.m3u8?_upt=c3e918011515232399@@@@@@@@@@济南少儿*
 
 
 
@@ -1301,28 +1308,8 @@ http://ts2.ijntv.cn/jnse/sd1/live.m3u8?_upt=c3e918011515232399@@@@@@@@@@济南�
 
 
 
-http://qdntv96789.applinzi.com/96tv.php?633138330@@@@@@@@@@BBC经典*
-http://tv1.wanfudaluye.com/live/live.m3u8@@@@@@@@@@大愛1台*
-http://iptv.52qdg.com/iptv.php?id=tw&pamid=001@@@@@@@@@@大爱1台*
-http://iptv.52qdg.com/iptv.php?id=tw&pamid=002@@@@@@@@@@大爱2台*
-http://hk.tv0668.com/dl/hk520.php?id=31@@@@@@@@@@有线新闻*
-http://www.liveviptv.xyz/tv/tvb.php@@@@@@@@@@无线新闻*
-http://hk.tv0668.com/dl/hk520.php?id=9@@@@@@@@@@无线新闻*
-http://www.liveviptv.xyz/tv/tvb.php?vid=wxxw@@@@@@@@@@无线新闻*
-http://cczylive.chuangwanghulian.cn/live/zy_1531983996445.flv?auth_key=1593500458-57590819-0-3bc1f0bf55895038da448c64a71d09f1@@@@@@@@@@无线新闻*
-http://hk.tv0668.com/dl/hk520.php?id=1@@@@@@@@@@TVB翡翠*
-http://116.199.5.51:8114/index.m3u8?Fsv_chan_hls_se_idx=188&amp;FvSeid=1&amp;Fsv_ctype=LIVES&amp;Fsv_otype=1&amp;Provider_id=&amp;Pcontent_id=.m3u8@@@@@@@@@@TVB翡翠*
-http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Pcontent_id=&Provider_id=&Fsv_chan_hls_se_idx=12@@@@@@@@@@TVB明珠*
-http://116.199.5.51:8114/index.m3u8?Fsv_chan_hls_se_idx=12&FvSeid=1&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=12&Fsv_rate_id=2&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=.m3u8&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@TVB明珠*
-http://hk.tv0668.com/dl/hk520.php?id=13@@@@@@@@@@TVB明珠*
-http://hk.tv0668.com/dl/hk520.php?id=12@@@@@@@@@@TVB明珠*
-http://tvbilive14-i.akamaihd.net/hls/live/496347/CXHMovie/CXHMovie-01.m3u8@@@@@@@@@@TVB星河*
-http://qlive.fengshows.cn/live720p/PHK.flv?txSecret=daefe6664bbeadcfb4ee2338a48d041c&txTime=16f1ea41738@@@@@@@@@@凤凰香港*
-http://116.199.5.51:8114/hls/Fsv_chan_hls_se_idx=233&FvSeid=1&Fsv_ctype=LIVES&Fsv_otype=1&Provider_id=0&Pcontent_id=8114.m3u8@@@@@@@@@@星空卫视*
-http://116.199.5.51:8114/hls/Fsv_chan_hls_se_idx=12?FvSeid=1&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=12&Fsv_rate_id=2&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=0&Pcontent_id=8114.m3u8&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@翡翠明珠*
 http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=12&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@翡翠明珠
 http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=188&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv&_res_tag_=video@@@@@@@@@@翡翠综合
-
 http://hk.tv0668.com/dl/hk520.php?id=19@@@@@@@@@@耀才财经*
 http://202.69.67.66:443/webcast/bshdlive-mobile/playlist.m3u8@@@@@@@@@@耀才财经
 http://hls.jingchangkan.tv/jingchangkan/156722438_0HaM/index.m3u8@@@@@@@@@@亚旅卫视
@@ -1366,6 +1353,48 @@ http://112.17.40.145/PLTV/88888888/224/3221226596/index.m3u8@@@@@@@@@@百事通�
 http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=202&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@MTV音乐
 http://unilivemtveu-lh.akamaihd.net/i/mtvno_1@346424/index_3500_av-b.m3u8@@@@@@@@@@MTV音乐
 
+http://wuqiao.chinashadt.com:2035/live/di1.stream/playlist.m3u8@@@@@@@@@@河北经济*
+http://121.31.30.90:8085/ysten-business/live/hebeistv/1.m3u8@@@@@@@@@@河北经济*
+http://121.31.30.90:8085/ysten-business/live/hebeistv/yst.m3u8@@@@@@@@@@河北经济*
+http://121.31.30.90:8085/ysten-business/live/jiangxistv/1.m3u8@@@@@@@@@@河北公共*
+http://ts1.ijntv.cn/jnyd/playlist.m3u8?_upt=34997bea1515232117@@@@@@@@@@浙江公共新闻*
+http://121.31.30.90:8085/ysten-business/live/hdshenzhenstv/1.m3u8@@@@@@@@@@泉州综合*
+http://121.31.30.90:8085/ysten-business/live/cctv-11/1.m3u8@@@@@@@@@@娄底公共*
+http://stream.guihet.com/tv/sxdft.php?id=3221225973@@@@@@@@@@西安新闻*
+http://nclive.grtn.cn/tvs5/sd/live.m3u8@@@@@@@@@@广东少儿*
+http://116.199.5.51:8114/00000000/hls/index.m3u8?Fsv_chan_hls_se_idx=227&FvSeid=1&Fsv_ctype=LIVES&Fsv_otype=1&Provider_id=&Pcontent_id=.m3u8@@@@@@@@@@广州少儿*
+http://ts2.ijntv.cn/jnse/sd1/live.m3u8?_upt=c3e918011515232399@@@@@@@@@@济南少儿*
+http://hls-ott-zhibo.wasu.tv/live/394/index.m3u8@@@@@@@@@@动物世界*
+http://39.135.15.70:6610/PLTV/88888888/224/3221225765/1/index.m3u8?fmt=ts2hls@@@@@@@@@@怀旧剧场*
+http://39.135.15.70:6610/PLTV/88888888/224/3221225677/1/index.m3u8?fmt=ts2hls@@@@@@@@@@老 故 事*
+http://39.135.15.70:6610/PLTV/88888888/224/3221225675/1/index.m3u8?fmt=ts2hls@@@@@@@@@@文化精品*
+http://ott-live.olympicchannel.com/out/u/OC1_2.m3u8?fluxustv.m3u8@@@@@@@@@@奥林匹克高清*
+http://ott-live.olympicchannel.com/out/u/OC1_1.m3u8?fluxustv.m3u8@@@@@@@@@@奥林匹克蓝光*
+http://gdhj.chinashadt.com:2035/live/6.stream/chunklist_w2139490375.m3u8@@@@@@@@@@珠江卫视*
+http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c15_lb_chenglong_1080p_t10/c15_lb_chenglong_1080p_t10.m3u8@@@@@@@@@@温情影院*
+http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c16_lb_fengxiaogang_1080p_t10/c16_lb_fengxiaogang_1080p_t10.m3u8@@@@@@@@@@周末影院*
+http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c16_lb_xijudianying_1080p_t10/c16_lb_xijudianying_1080p_t10.m3u8@@@@@@@@@@欢乐剧场*
+http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c15_lb_dajuchongwen_1080p_t10/c15_lb_dajuchongwen_1080p_t10.m3u8@@@@@@@@@@收视冠军*
+http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c16_lb_haolaiwudapian_1080p_t10/c16_lb_haolaiwudapian_1080p_t10.m3u8@@@@@@@@@@贺岁影院*
+http://qdntv96789.applinzi.com/96tv.php?633138330@@@@@@@@@@BBC经典*
+http://tv1.wanfudaluye.com/live/live.m3u8@@@@@@@@@@大愛1台*
+http://iptv.52qdg.com/iptv.php?id=tw&pamid=001@@@@@@@@@@大爱1台*
+http://iptv.52qdg.com/iptv.php?id=tw&pamid=002@@@@@@@@@@大爱2台*
+http://hk.tv0668.com/dl/hk520.php?id=31@@@@@@@@@@有线新闻*
+http://www.liveviptv.xyz/tv/tvb.php@@@@@@@@@@无线新闻*
+http://hk.tv0668.com/dl/hk520.php?id=9@@@@@@@@@@无线新闻*
+http://www.liveviptv.xyz/tv/tvb.php?vid=wxxw@@@@@@@@@@无线新闻*
+http://cczylive.chuangwanghulian.cn/live/zy_1531983996445.flv?auth_key=1593500458-57590819-0-3bc1f0bf55895038da448c64a71d09f1@@@@@@@@@@无线新闻*
+http://hk.tv0668.com/dl/hk520.php?id=1@@@@@@@@@@TVB翡翠*
+http://116.199.5.51:8114/index.m3u8?Fsv_chan_hls_se_idx=188&amp;FvSeid=1&amp;Fsv_ctype=LIVES&amp;Fsv_otype=1&amp;Provider_id=&amp;Pcontent_id=.m3u8@@@@@@@@@@TVB翡翠*
+http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Pcontent_id=&Provider_id=&Fsv_chan_hls_se_idx=12@@@@@@@@@@TVB明珠*
+http://116.199.5.51:8114/index.m3u8?Fsv_chan_hls_se_idx=12&FvSeid=1&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=12&Fsv_rate_id=2&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=.m3u8&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@TVB明珠*
+http://hk.tv0668.com/dl/hk520.php?id=13@@@@@@@@@@TVB明珠*
+http://hk.tv0668.com/dl/hk520.php?id=12@@@@@@@@@@TVB明珠*
+http://tvbilive14-i.akamaihd.net/hls/live/496347/CXHMovie/CXHMovie-01.m3u8@@@@@@@@@@TVB星河*
+http://qlive.fengshows.cn/live720p/PHK.flv?txSecret=daefe6664bbeadcfb4ee2338a48d041c&txTime=16f1ea41738@@@@@@@@@@凤凰香港*
+http://116.199.5.51:8114/hls/Fsv_chan_hls_se_idx=233&FvSeid=1&Fsv_ctype=LIVES&Fsv_otype=1&Provider_id=0&Pcontent_id=8114.m3u8@@@@@@@@@@星空卫视*
+http://116.199.5.51:8114/hls/Fsv_chan_hls_se_idx=12?FvSeid=1&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=12&Fsv_rate_id=2&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=0&Pcontent_id=8114.m3u8&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@翡翠明珠*
 http://192.200.120.82:8080/ZZ_dongwuxingqiu/ZZ_dongwuxingqiu.m3u8@@@@@@@@@@动物星球*
 http://104.250.154.42:8080/ZZ_dongwuxingqiu/ZZ_dongwuxingqiu.m3u8@@@@@@@@@@动物星球*
 http://192.200.120.82:8080/ZZ_huanadianying/ZZ_huanadianying.m3u8@@@@@@@@@@华纳电影*
