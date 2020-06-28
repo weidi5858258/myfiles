@@ -972,7 +972,18 @@ printf("read_thread() show_mode = %d\n", show_mode);
 
 
 
+Android
 
+initPlayer ---> stream_open
+
+read_thread
+video_thread
+audio_thread
+subtitle_thread
+
+refresh_loop_wait_event ---> video_refresh ---> video_display ---> 
+video_audio_display
+video_image_display
 
 
 
