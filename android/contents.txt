@@ -1,5 +1,4 @@
 /////////////////////////////////////////////////////////////////
-http://hls-ott-zhibo.wasu.tv/live/394/index.m3u8@@@@@@@@@@动物世界*
 // 直播系列
 // 高清
 http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8@@@@@@@@@@CCTV-1综合高清
@@ -98,34 +97,33 @@ http://101.71.255.229:6610/zjhs/2/10105/index.m3u8?virtualDomain=zjhs.live_hls.z
 http://101.71.255.229:6610/zjhs/2/10104/index.m3u8?virtualDomain=zjhs.live_hls.zte.com@@@@@@@@@@爱悬疑
 http://101.71.255.229:6610/zjhs/2/10112/index.m3u8?virtualDomain=zjhs.live_hls.zte.com@@@@@@@@@@爱幼教
 http://101.71.255.229:6610/zjhs/2/10116/index.m3u8?virtualDomain=zjhs.live_hls.zte.com@@@@@@@@@@爱院线
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230130/index.m3u8@@@@@@@@@@爱青春
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230118/index.m3u8@@@@@@@@@@爱家庭
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230112/index.m3u8@@@@@@@@@@爱探索
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230106/index.m3u8@@@@@@@@@@爱科学
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230097/index.m3u8@@@@@@@@@@爱猎奇
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230092/index.m3u8@@@@@@@@@@爱谍战
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230077/index.m3u8@@@@@@@@@@爱娱乐
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230052/index.m3u8@@@@@@@@@@爱旅行
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230049/index.m3u8@@@@@@@@@@爱怀旧
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230034/index.m3u8@@@@@@@@@@爱体育
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230032/index.m3u8@@@@@@@@@@爱赛车
-http://112.17.40.140/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230005/index.m3u8?fmt=ts2hls@@@@@@@@@@爱浪漫
 
-http://112.17.40.140/PLTV/88888888/224/3221226491/index.m3u8@@@@@@@@@@凤凰卫视资讯台
+#http://112.17.40.140/ ---> http://112.17.40.12/
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230130/index.m3u8@@@@@@@@@@爱青春
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230118/index.m3u8@@@@@@@@@@爱家庭
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230112/index.m3u8@@@@@@@@@@爱探索
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230106/index.m3u8@@@@@@@@@@爱科学
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230097/index.m3u8@@@@@@@@@@爱猎奇
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230092/index.m3u8@@@@@@@@@@爱谍战
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230077/index.m3u8@@@@@@@@@@爱娱乐
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230052/index.m3u8@@@@@@@@@@爱旅行
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230049/index.m3u8@@@@@@@@@@爱怀旧
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230034/index.m3u8@@@@@@@@@@爱体育
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230032/index.m3u8@@@@@@@@@@爱赛车
+http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230005/index.m3u8?fmt=ts2hls@@@@@@@@@@爱浪漫
+
+http://112.17.40.12/PLTV/88888888/224/3221226491/index.m3u8@@@@@@@@@@凤凰卫视资讯台*
 http://117.169.124.37:6610/ysten-businessmobile/live/fhzixun/1.m3u8@@@@@@@@@@凤凰卫视资讯台
 http://117.169.120.138:8080/live/fhchinese/index.m3u8@@@@@@@@@@凤凰卫视中文台
 http://117.169.124.37:6610/ysten-businessmobile/live/fhchinese/1.m3u8@@@@@@@@@@凤凰卫视中文台
 
-#http://112.17.40.140/PLTV/88888888/224/3221226758/index.m3u8@@@@@@@@@@CCTV-4K高码
-#http://39.134.176.148/PLTV/88888888/224/3221226758/index.m3u8@@@@@@@@@@CCTV-4K高码
-#http://117.148.187.83/PLTV/88888888/224/3221226758/index.m3u8@@@@@@@@@@CCTV-4K高码
 http://112.17.40.12/PLTV/88888888/224/3221226758/1.m3u8@@@@@@@@@@CCTV-4K蓝码
-http://39.134.176.148/PLTV/88888888/224/3221226758/index.m3u8@@@@@@@@@@CCTV-4K蓝码
-http://117.148.187.83/PLTV/88888888/224/3221226758/index.m3u8@@@@@@@@@@CCTV-4K蓝码
+http://39.134.176.148/PLTV/88888888/224/3221226758/index.m3u8@@@@@@@@@@CCTV-4K蓝码*
+http://117.148.187.83/PLTV/88888888/224/3221226758/index.m3u8@@@@@@@@@@CCTV-4K蓝码*
 
 https://hls.cntv.baishancdnx.cn/asp/hls/8000/0303000a/3/default/9891cea600df4e8a83851b1b1ce23194/8000.m3u8@@@@@@@@@@美丽中国4K
 http://112.50.243.8/PLTV/88888888/224/3221226825/1.m3u8@@@@@@@@@@纯享4K频道
-http://112.17.40.145/PLTV/88888888/224/3221226718/index.m3u8@@@@@@@@@@百事4K频道
+http://112.17.40.145/PLTV/88888888/224/3221226718/index.m3u8@@@@@@@@@@百事4K频道*
 
 http://112.50.243.8/PLTV/88888888/224/3221226736/1.m3u8@@@@@@@@@@蓝光影视1台
 http://112.50.243.8/PLTV/88888888/224/3221225881/1.m3u8@@@@@@@@@@蓝光影视2台
@@ -134,9 +132,9 @@ http://112.50.243.8/PLTV/88888888/224/3221226712/1.m3u8@@@@@@@@@@蓝光影视4�
 http://112.50.243.8/PLTV/88888888/224/3221225893/1.m3u8@@@@@@@@@@蓝光影视5台
 http://112.50.243.8/PLTV/88888888/224/3221226692/1.m3u8@@@@@@@@@@蓝光影视6台
 http://112.50.243.8/PLTV/88888888/224/3221226754/1.m3u8@@@@@@@@@@蓝光影视7台
-http://112.17.40.145/PLTV/88888888/224/3221226608/index.m3u8@@@@@@@@@@蓝光影视8台
-http://112.17.40.145/PLTV/88888888/224/3221226606/index.m3u8@@@@@@@@@@蓝光影视9台
-http://112.17.40.145/PLTV/88888888/224/3221226360/index.m3u8@@@@@@@@@@蓝光影视10台
+http://112.17.40.145/PLTV/88888888/224/3221226608/index.m3u8@@@@@@@@@@蓝光影视8台*
+http://112.17.40.145/PLTV/88888888/224/3221226606/index.m3u8@@@@@@@@@@蓝光影视9台*
+http://112.17.40.12/PLTV/88888888/224/3221226360/index.m3u8@@@@@@@@@@蓝光影视10台
 http://stream.guihet.com/migu/index.php?id=625542369@@@@@@@@@@蓝光影视11台
 http://39.134.52.206/wh7f454c46tw2522585283_-1736190513/hwottcdn.ln.chinamobile.com/PLTV/88888890/224/3221226752/index.m3u8?icpid=88888890&RTS=1575014274&from=1&ocs=2_39.134.52.206_80&hms_devid=835&vqe=3@@@@@@@@@@蓝光影视12台
 http://112.50.243.8/PLTV/88888888/224/3221226732/1.m3u8@@@@@@@@@@蓝光动画13台
@@ -154,7 +152,8 @@ http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225927/1.m3
 http://scgctvshow.sctv.com/hdlive/emei/1.m3u8@@@@@@@@@@峨眉电影
 http://101.71.255.229:6610/zjhs/2/10037/z.m3u8?ZTEUPSTREAM=1&IASHttpSessionId=SLB4328320190321203540013412&m3u8_level=2&ztecid=10037&virtualDomain=zjhs.live_hls.zte.com&ispcode=3&tid=Q894B3E8EEZ3T19UG09L8B03GSWB&ts=1553493266@@@@@@@@@@歐美影院
 http://101.71.255.229:6610/zjhs/2/10052/z.m3u8?ZTEUPSTREAM=1&IASHttpSessionId=SLB4328320190321203540013412&m3u8_level=2&ztecid=10052&virtualDomain=zjhs.live_hls.zte.com&ispcode=3&tid=C3V7K4ET1VFDUJY6C1IASRV55G66&ts=1553493153@@@@@@@@@@亞洲影院
-http://jvc.flashapp.cn/baiducdnct.inter.iqiyi.com/tslive/c20_lb_mingzhentankenan_720p_t10/c20_lb_mingzhentankenan_720p_t10.m3u8@@@@@@@@@@侦探柯南
+http://jvc.flashapp.cn/baiducdnct.inter.iqiyi.com/tslive/c20_lb_mingzhentankenan_720p_t10/c20_lb_mingzhentankenan_720p_t10.m3u8@@@@@@@@@@侦探柯南*
+
 http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c16_lb_heibangdianying_1080p_t10/c16_lb_heibangdianying_1080p_t10.m3u8@@@@@@@@@@票房大片!
 http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c16_lb_jingnawuyechang_1080p_t10/c16_lb_jingnawuyechang_1080p_t10.m3u8@@@@@@@@@@惊悚午夜!
 http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c16_lb_donghuadianying_1080p_t10/c16_lb_donghuadianying_1080p_t10.m3u8@@@@@@@@@@动画电影!
@@ -169,27 +168,48 @@ http://101.72.196.41/r/baiducdnct.inter.iqiyi.com/tslive/c16_lb_jingdianjuchang_
 http://125.210.152.18:9090/live/QSKX_1200.m3u8@@@@@@@@@@求索科学
 http://125.210.152.18:9090/live/QSDW_1200.m3u8@@@@@@@@@@求索动物
 http://125.210.152.18:9090/live/QSSH_1200.m3u8@@@@@@@@@@求索生活
-http://112.17.40.145/PLTV/88888888/224/3221226610/index.m3u8@@@@@@@@@@求索纪录
+http://112.17.40.145/PLTV/88888888/224/3221226610/index.m3u8@@@@@@@@@@求索纪录*
 
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225905/1.m3u8@@@@@@@@@@中国教育1台
 http://cctvalih5ca.v.myalicdn.com/cstv/cetv2_2/index.m3u8@@@@@@@@@@中国教育2台
 http://cctvalih5ca.v.myalicdn.com/cstv/cetv3_2/index.m3u8@@@@@@@@@@中国教育3台
 http://cctvalih5ca.v.myalicdn.com/cstv/cetv4_2/index.m3u8@@@@@@@@@@中国教育4台
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225908/1.m3u8@@@@@@@@@@山东教育
-http://live-edu.wasu.tv/live/QiEFuDao-lv1.m3u8@@@@@@@@@@企鹅辅导一年级
-http://live-edu.wasu.tv/live/QiEFuDao-lv2.m3u8@@@@@@@@@@企鹅辅导二年级
-http://live-edu.wasu.tv/live/QiEFuDao-lv3.m3u8@@@@@@@@@@企鹅辅导三年级
-http://live-edu.wasu.tv/live/QiEFuDao-lv4.m3u8@@@@@@@@@@企鹅辅导四年级
-http://live-edu.wasu.tv/live/QiEFuDao-lv5.m3u8@@@@@@@@@@企鹅辅导五年级
-http://live-edu.wasu.tv/live/QiEFuDao-lv6.m3u8@@@@@@@@@@企鹅辅导六年级
-http://live-edu.wasu.tv/live/QiEFuDao-lv7.m3u8@@@@@@@@@@企鹅辅导初一
-http://live-edu.wasu.tv/live/QiEFuDao-lv8.m3u8@@@@@@@@@@企鹅辅导初二
-http://live-edu.wasu.tv/live/QiEFuDao-lv9.m3u8@@@@@@@@@@企鹅辅导初三
-http://live-edu.wasu.tv/live/QiEFuDao-lv10.m3u8@@@@@@@@@@企鹅辅导高一
-http://live-edu.wasu.tv/live/QiEFuDao-lv11.m3u8@@@@@@@@@@企鹅辅导高二
-http://live-edu.wasu.tv/live/QiEFuDao-lv12.m3u8@@@@@@@@@@企鹅辅导高三
+
+/////////////////////////////////////////////////////////////////
+http://ivi.bupt.edu.cn/hls/btv1hd.m3u8@@@@@@@@@@北京卫视高清
+http://ivi.bupt.edu.cn/hls/btv2hd.m3u8@@@@@@@@@@北京文艺高清
+http://ivi.bupt.edu.cn/hls/btv4hd.m3u8@@@@@@@@@@北京影视高清
+http://ivi.bupt.edu.cn/hls/btv9hd.m3u8@@@@@@@@@@北京新闻高清
+http://ivi.bupt.edu.cn/hls/btv11hd.m3u8@@@@@@@@@@北京冬奥纪实高清
+http://ivi.bupt.edu.cn/hls/docuchina.m3u8@@@@@@@@@@上海纪实高清
+http://ivi.bupt.edu.cn/hls/gedocu.m3u8@@@@@@@@@@金鹰纪实高清
+http://ivi.bupt.edu.cn/hls/zjhd.m3u8@@@@@@@@@@浙江卫视高清
+http://ivi.bupt.edu.cn/hls/hunanhd.m3u8@@@@@@@@@@湖南卫视高清
+http://ivi.bupt.edu.cn/hls/jshd.m3u8@@@@@@@@@@江苏卫视高清
+http://ivi.bupt.edu.cn/hls/dfhd.m3u8@@@@@@@@@@东方卫视高清
+http://ivi.bupt.edu.cn/hls/ahhd.m3u8@@@@@@@@@@安徽卫视高清
+http://ivi.bupt.edu.cn/hls/lnhd.m3u8@@@@@@@@@@辽宁卫视高清
+http://ivi.bupt.edu.cn/hls/szhd.m3u8@@@@@@@@@@深圳卫视高清
+http://ivi.bupt.edu.cn/hls/gdhd.m3u8@@@@@@@@@@广东卫视高清
+http://ivi.bupt.edu.cn/hls/hbhd.m3u8@@@@@@@@@@湖北卫视高清
+http://ivi.bupt.edu.cn/hls/cqhd.m3u8@@@@@@@@@@重庆卫视高清
+http://ivi.bupt.edu.cn/hls/schd.m3u8@@@@@@@@@@四川卫视高清
+http://ivi.bupt.edu.cn/hls/hebhd.m3u8@@@@@@@@@@河北卫视高清
+http://ivi.bupt.edu.cn/hls/jxhd.m3u8@@@@@@@@@@江西卫视高清
+http://ivi.bupt.edu.cn/hls/gxhd.m3u8@@@@@@@@@@广西卫视高清
+http://ivi.bupt.edu.cn/hls/jlhd.m3u8@@@@@@@@@@吉林卫视高清
+http://ivi.bupt.edu.cn/hls/lyhd.m3u8@@@@@@@@@@海南卫视高清
+http://ivi.bupt.edu.cn/hls/gzhd.m3u8@@@@@@@@@@贵州卫视高清
+http://ivi.bupt.edu.cn/hls/sdhd.m3u8@@@@@@@@@@山东卫视高清
+http://ivi.bupt.edu.cn/hls/tjhd.m3u8@@@@@@@@@@天津卫视高清
+http://ivi.bupt.edu.cn/hls/hljhd.m3u8@@@@@@@@@@黑龙江卫视高清
+http://ivi.bupt.edu.cn/hls/dnhd.m3u8@@@@@@@@@@福建东南卫视高清
+/////////////////////////////////////////////////////////////////
 http://zhibo.hkstv.tv/livestream/mutfysrq.flv@@@@@@@@@@香港卫视
 http://121.31.30.90:8085/ysten-business/live/yangguangstv/yst.m3u8@@@@@@@@@@阳光卫视
+
+
 
 
 
@@ -487,7 +507,7 @@ http://117.156.28.119/270000001111/1110000149/index.m3u8@@@@@@@@@@和政电视�
 http://39.134.52.180/PLTV/88888888/224/3221226073/index.m3u8@@@@@@@@@@咪咕体育
 http://39.134.52.180/PLTV/88888888/224/3221226097/index.m3u8@@@@@@@@@@咪咕视频
 http://xianning.live.cjyun.org/video/s10140-XNTV-1/index.m3u8@@@@@@@@@@咸宁综合频道
-http://112.17.40.140/PLTV/88888888/224/3221226358/index.m3u8@@@@@@@@@@嘉兴新闻综合
+http://112.17.40.12/PLTV/88888888/224/3221226358/index.m3u8@@@@@@@@@@嘉兴新闻综合
 http://118.122.239.157:1236/hls/hd-live.m3u8@@@@@@@@@@壤塘综合频道
 http://dayeyun.live.tempsource.cjyun.org/videotmp/s10102-TC1T.m3u8@@@@@@@@@@大冶一套
 http://dayeyun.live.tempsource.cjyun.org/videotmp/s10102-TC2T.m3u8@@@@@@@@@@大冶二套
@@ -569,7 +589,7 @@ http://60.255.230.66:3100/hls/qxlrwcbh/index.m3u8@@@@@@@@@@昭化综合频道
 http://60.255.230.66:3100/hls/vxsqwmob/index.m3u8@@@@@@@@@@昭化综合频道
 http://jzlive.jztvnews.com:8092/live/jzzh.m3u8@@@@@@@@@@晋中新闻频道
 http://117.148.187.37/PLTV/88888888/224/3221226170/index.m3u8@@@@@@@@@@杭州1综合
-http://112.17.40.140/PLTV/88888888/224/3221226170/index.m3u8@@@@@@@@@@杭州综合
+http://112.17.40.12/PLTV/88888888/224/3221226170/index.m3u8@@@@@@@@@@杭州综合
 http://stream2.jlntv.cn/sytv/sd/live.m3u8@@@@@@@@@@松原新闻综合
 http://stream.zzgd.tv/3/sd/live.m3u8@@@@@@@@@@枣庄公共频道
 http://hbzq.chinashadt.com:1937/live/1007.stream_360p/playlist.m3u8@@@@@@@@@@枣强综合
@@ -604,7 +624,7 @@ http://hnqf.chinashadt.com:2036/live/2.stream/playlist.m3u8@@@@@@@@@@清丰有�
 http://hnqf.chinashadt.com:2036/live/5.stream/playlist.m3u8@@@@@@@@@@清丰综合频道
 http://stream1.0763f.com/qygg/sd/live.m3u8@@@@@@@@@@清远公共
 http://stream1.0763f.com/qyzh/sd/live.m3u8@@@@@@@@@@清远综合
-http://112.17.40.140/PLTV/88888888/224/3221226726/index.m3u8@@@@@@@@@@游戏风云
+http://112.17.40.12/PLTV/88888888/224/3221226726/index.m3u8@@@@@@@@@@游戏风云
 http://117.156.28.119/270000001111/1110000145/index.m3u8@@@@@@@@@@灵台新闻综合
 http://tv.scwlqw.cn:3100/hls/kqcyufpi/index.m3u8@@@@@@@@@@犍为新闻综合
 http://hbxx.chinashadt.com:3299/live/stream%3Adi8.stream_360p/chunklist.m3u8@@@@@@@@@@献县2台
@@ -676,10 +696,10 @@ http://snlive.scsntv.com:8091/live/gggy.m3u8@@@@@@@@@@遂宁公共公益
 http://hnsd.chinashadt.com:2036/live/stream:shaodong.stream/playlist.m3u8@@@@@@@@@@邵东综合频道
 http://hndc.chinashadt.com:2036/live/stream:dctv-1.stream/playlist.m3u8@@@@@@@@@@郸城新闻综合
 http://hndc.chinashadt.com:2036/live/stream:dctv-2.stream/playlist.m3u8@@@@@@@@@@郸城经济生活
-http://112.17.40.140/PLTV/88888888/224/3221226825/index.m3u8@@@@@@@@@@都市剧场
+http://112.17.40.12/PLTV/88888888/224/3221226825/index.m3u8@@@@@@@@@@都市剧场
 http://stream.jinhua.com.cn/jykj/app/live.m3u8@@@@@@@@@@金华教育科技
 http://stream.jinhua.com.cn/dsnc/app/live.m3u8@@@@@@@@@@金华都市农村
-http://112.17.40.140/PLTV/88888888/224/3221226831/index.m3u8@@@@@@@@@@金鹰纪实
+http://112.17.40.12/PLTV/88888888/224/3221226831/index.m3u8@@@@@@@@@@金鹰纪实
 http://live.gxqztv.com/cspd1/sd/live.m3u8@@@@@@@@@@钦州综合频道
 http://gztr.chinashadt.com:2036/live/stream:tr2.stream/playlist.m3u8@@@@@@@@@@铜仁城市生活
 http://media.trrtv.com:8083/videos/live/53/2/XSpPeSTEmkFgY/XSpPeSTEmkFgY.m3u8@@@@@@@@@@铜仁城市生活
@@ -803,7 +823,7 @@ http://nclive.grtn.cn/nfgw/sd/live.m3u8@@@@@@@@@@南方购物频道
 http://nclive.grtn.cn/grfpd/sd/live.m3u8@@@@@@@@@@高尔夫频道
 http://nclive.grtn.cn/tvs1hd/hd/live.m3u8@@@@@@@@@@广东经济科教频道
 http://nclive.grtn.cn/tvs4/sd/live.m3u8@@@@@@@@@@广东影视频道
-http://112.17.40.140/PLTV/88888888/224/3221226410/index.m3u8@@@@@@@@@@山东卫视
+http://112.17.40.12/PLTV/88888888/224/3221226410/index.m3u8@@@@@@@@@@山东卫视
 http://ts1.ijntv.cn/jnds/sd/live.m3u8?_upt=77166fdb1578914580@@@@@@@@@@济南都市
 http://ts1.ijntv.cn/xwhd/hd/live.m3u8?_upt=6a29580f1578914837@@@@@@@@@@济南新闻综合
 http://ts1.ijntv.cn/jnyd/sd/live.m3u8?_upt=f16e45941578914456@@@@@@@@@@济南影视
@@ -985,7 +1005,7 @@ http://tv.nknews.org:80/tvhls/stream.m3u8@@@@@@@@@@北京财经
 http://121.31.30.90:8085/ysten-business/live/beijingstv/yst.m3u8@@@@@@@@@@北京生活
 http://ls.qingting.fm/live/1266.m3u8@@@@@@@@@@北京青年
 http://ls.qingting.fm/live/4546579.m3u8@@@@@@@@@@河北经济
-http://112.17.40.140/PLTV/88888888/224/3221226354/index.m3u8@@@@@@@@@@河北影视
+http://112.17.40.12/PLTV/88888888/224/3221226354/index.m3u8@@@@@@@@@@河北影视
 http://ls.qingting.fm/live/91019.m3u8@@@@@@@@@@河北公共
 http://zhjz.chinashadt.com:2036/live/1.stream/chunklist.m3u8@@@@@@@@@@河北农民
 http://hbcb.chinashadt.com:1936/live/tv2.stream/playlist.m3u8@@@@@@@@@@辽宁公共
@@ -1030,7 +1050,7 @@ http://wuxue.live.cjyun.org/video/s10107-wxtv1/index.m3u8@@@@@@@@@@芜湖公共�
 http://live.wjyanghu.com/live/CH1.m3u8@@@@@@@@@@芜湖教育频道
 http://ls.qingting.fm/live/267.m3u8@@@@@@@@@@六安新闻综合
 http://ls.qingting.fm/live/1794199.m3u8@@@@@@@@@@六安公共频道
-http://112.17.40.140/PLTV/88888888/224/3221226275/index.m3u8@@@@@@@@@@马鞍山新闻综合
+http://112.17.40.12/PLTV/88888888/224/3221226275/index.m3u8@@@@@@@@@@马鞍山新闻综合
 http://223.110.245.165/ott.js.chinamobile.com/PLTV/3/224/3221225854/index.m3u8@@@@@@@@@@滁州新闻综合
 http://hbpx.chinashadt.com:2036/live/px5.stream/playlist.m3u8@@@@@@@@@@滁州科教频道
 http://223.110.243.173/PLTV/3/224/3221227220/index.m3u8@@@@@@@@@@滁州公共频道
@@ -1070,7 +1090,7 @@ http://dslive.grtn.cn/czzh/sd/live.m3u8@@@@@@@@@@福安综合
 http://live.xtgdw.cn:1935/live/xtsh/playlist.m3u8@@@@@@@@@@甘南藏语频道
 http://qxlmlive.cbg.cn:1935/app_2/_definst_/ls_35.stream/playlist.m3u8@@@@@@@@@@敦煌综合频道
 http://223.110.245.147/ott.js.chinamobile.com/PLTV/3/224/3221226392/index.m3u8@@@@@@@@@@天水新闻综合
-http://112.17.40.140/PLTV/88888888/224/3221226533/index.m3u8@@@@@@@@@@天水公共频道
+http://112.17.40.12/PLTV/88888888/224/3221226533/index.m3u8@@@@@@@@@@天水公共频道
 http://121.31.30.90:8085/ysten-business/live/gansustv/yst.m3u8@@@@@@@@@@电白综合
 http://gddb.chinashadt.com:1935/live/video2.stream/playlist.m3u8@@@@@@@@@@电白视窗
 http://58.243.4.22:1935/live/yingshi/playlist.m3u8@@@@@@@@@@河池新闻综合
@@ -1198,7 +1218,7 @@ http://ls.qingting.fm/live/1288.m3u8@@@@@@@@@@农安新闻综合
 http://stream.ycgbtv.com.cn/ycxw/sd/live.m3u8@@@@@@@@@@银川生活
 http://118.122.239.157:1235/hls/hd-live.m3u8@@@@@@@@@@安多卫视
 http://live.hnzzzzzdst.com/channel1/sd/live.m3u8@@@@@@@@@@海南州藏语频道
-http://112.17.40.140/PLTV/88888888/224/3221226273/index.m3u8@@@@@@@@@@海西州综合频道
+http://112.17.40.12/PLTV/88888888/224/3221226273/index.m3u8@@@@@@@@@@海西州综合频道
 http://stream2.xiancity.cn/xatv1/sd/live.m3u8@@@@@@@@@@西安新闻综合
 http://stream2.xiancity.cn/xatv2/sd/live.m3u8@@@@@@@@@@西安白鸽都市
 http://stream2.xiancity.cn/xatv4/sd/live.m3u8@@@@@@@@@@西安文化影视
@@ -1265,7 +1285,7 @@ http://117.148.187.37/PLTV/88888888/224/3221226184/index.m3u8@@@@@@@@@@卡酷少
 http://121.31.30.90:8085/ysten-business/live/kakukaton/1.m3u8@@@@@@@@@@卡酷少儿
 http://121.31.30.90:8085/ysten-business/live/kakukaton/yst.m3u8@@@@@@@@@@卡酷少儿
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225907/1.m3u8@@@@@@@@@@卡酷少儿
-http://112.17.40.140/PLTV/88888888/224/3221226178/index.m3u8@@@@@@@@@@动漫电影
+http://112.17.40.12/PLTV/88888888/224/3221226178/index.m3u8@@@@@@@@@@动漫电影
 http://111.40.205.87/PLTV/88888888/224/3221225612/index.m3u8@@@@@@@@@@浙江少儿
 http://111.40.205.87/PLTV/88888888/224/3221225643/index.m3u8@@@@@@@@@@浙江少儿
 http://ls.qingting.fm/live/3701149.m3u8@@@@@@@@@@南京少儿
@@ -1282,10 +1302,10 @@ http://live1.fzntv.cn/live/zohi_fztv4/playlist.m3u8@@@@@@@@@@福州少儿
 http://ywotttv.bj.chinamobile.com/PLTV/88888888/224/3221225909/1.m3u8@@@@@@@@@@哈哈炫动
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225909/1.m3u8@@@@@@@@@@哈哈炫动
 http://live1.fzntv.cn/live/zohi_fztv4/playlist.m3u8@@@@@@@@@@FZTV少儿
-http://112.17.40.140/PLTV/88888888/224/3221226829/index.m3u8@@@@@@@@@@优优宝贝
+http://112.17.40.12/PLTV/88888888/224/3221226829/index.m3u8@@@@@@@@@@优优宝贝
 http://nclive.grtn.cn/jjkt/sd/live.m3u8@@@@@@@@@@嘉佳卡通
 http://39.134.52.180/PLTV/88888888/224/3221225701/index.m3u8@@@@@@@@@@嘉佳卡通
-http://112.17.40.140/PLTV/88888888/224/3221226461/index.m3u8@@@@@@@@@@嘉佳卡通
+http://112.17.40.12/PLTV/88888888/224/3221226461/index.m3u8@@@@@@@@@@嘉佳卡通
 http://223.82.250.72/live/jinyingkaton/1.m3u8@@@@@@@@@@金鹰卡通
 http://117.148.187.37/PLTV/88888888/224/3221226190/index.m3u8@@@@@@@@@@金鹰卡通
 http://121.31.30.90:8085/ysten-business/live/jinyingkaton/1.m3u8@@@@@@@@@@金鹰卡通
@@ -1528,7 +1548,18 @@ https://vcndstv.teleosmedia.com/stream/dstv/dstv/seglist_720p.m3u8@@@@@@@@@@Danc
 
 
 
-
+http://live-edu.wasu.tv/live/QiEFuDao-lv1.m3u8@@@@@@@@@@企鹅辅导一年级
+http://live-edu.wasu.tv/live/QiEFuDao-lv2.m3u8@@@@@@@@@@企鹅辅导二年级
+http://live-edu.wasu.tv/live/QiEFuDao-lv3.m3u8@@@@@@@@@@企鹅辅导三年级
+http://live-edu.wasu.tv/live/QiEFuDao-lv4.m3u8@@@@@@@@@@企鹅辅导四年级
+http://live-edu.wasu.tv/live/QiEFuDao-lv5.m3u8@@@@@@@@@@企鹅辅导五年级
+http://live-edu.wasu.tv/live/QiEFuDao-lv6.m3u8@@@@@@@@@@企鹅辅导六年级
+http://live-edu.wasu.tv/live/QiEFuDao-lv7.m3u8@@@@@@@@@@企鹅辅导初一
+http://live-edu.wasu.tv/live/QiEFuDao-lv8.m3u8@@@@@@@@@@企鹅辅导初二
+http://live-edu.wasu.tv/live/QiEFuDao-lv9.m3u8@@@@@@@@@@企鹅辅导初三
+http://live-edu.wasu.tv/live/QiEFuDao-lv10.m3u8@@@@@@@@@@企鹅辅导高一
+http://live-edu.wasu.tv/live/QiEFuDao-lv11.m3u8@@@@@@@@@@企鹅辅导高二
+http://live-edu.wasu.tv/live/QiEFuDao-lv12.m3u8@@@@@@@@@@企鹅辅导高三
 
 
 
@@ -1588,37 +1619,37 @@ http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226318/1.m3
 
 http://111.40.205.87/PLTV/88888888/224/3221225728/index.m3u8@@@@@@@@@@北京卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226224/1.m3u8@@@@@@@@@@北京卫视蓝光
-http://112.17.40.140/PLTV/88888888/224/3221226412/index.m3u8@@@@@@@@@@天津卫视蓝光
+http://112.17.40.12/PLTV/88888888/224/3221226412/index.m3u8@@@@@@@@@@天津卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226246/1.m3u8@@@@@@@@@@天津卫视蓝光
 http://39.135.15.70:6610/PLTV/88888888/224/3221226058/1/index.m3u8?fmt=ts2hls@@@@@@@@@@河北卫视蓝光
 http://223.110.245.149/ott.js.chinamobile.com/PLTV/3/224/3221225840/index.m3u8@@@@@@@@@@河北卫视超清
 http://112.50.243.8/PLTV/88888888/224/3221225828/1.m3u8@@@@@@@@@@东方卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226237/1.m3u8@@@@@@@@@@东方卫视蓝光
-http://112.17.40.140/PLTV/88888888/224/3221226553/index.m3u8@@@@@@@@@@湖南卫视蓝光
+http://112.17.40.12/PLTV/88888888/224/3221226553/index.m3u8@@@@@@@@@@湖南卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226241/1.m3u8@@@@@@@@@@湖南卫视蓝光
 http://223.110.243.173/PLTV/3/224/3221227215/index.m3u8@@@@@@@@@@浙江卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226247/1.m3u8@@@@@@@@@@浙江卫视蓝光
-http://112.17.40.140/PLTV/88888888/224/3221226414/index.m3u8@@@@@@@@@@江苏卫视蓝光
+http://112.17.40.12/PLTV/88888888/224/3221226414/index.m3u8@@@@@@@@@@江苏卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226242/1.m3u8@@@@@@@@@@江苏卫视蓝光
 http://117.169.124.37:6610/ysten-businessmobile/live/dongnanstv/yst.m3u8@@@@@@@@@@东南卫视蓝光
 http://hwottcdn.ln.chinamobile.com/PLTV/88888890/224/3221226046/index.m3u8@@@@@@@@@@东南卫视蓝光
-http://112.17.40.140/PLTV/88888888/224/3221226410/index.m3u8@@@@@@@@@@山东卫视蓝光
+http://112.17.40.12/PLTV/88888888/224/3221226410/index.m3u8@@@@@@@@@@山东卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226308/1.m3u8@@@@@@@@@@山东卫视蓝光
 http://223.110.243.171/PLTV/3/224/3221227211/index.m3u8@@@@@@@@@@湖北卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226310/1.m3u8@@@@@@@@@@湖北卫视蓝光
 http://223.110.245.147/ott.js.chinamobile.com/PLTV/3/224/3221225634/index.m3u8@@@@@@@@@@安徽卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226223/1.m3u8@@@@@@@@@@安徽卫视蓝光
-http://112.17.40.140/PLTV/88888888/224/3221226225/index.m3u8@@@@@@@@@@广东卫视蓝光
+http://112.17.40.12/PLTV/88888888/224/3221226225/index.m3u8@@@@@@@@@@广东卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226238/1.m3u8@@@@@@@@@@广东卫视蓝光
 http://223.110.243.171/PLTV/3/224/3221227217/index.m3u8@@@@@@@@@@深圳卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226245/1.m3u8@@@@@@@@@@深圳卫视蓝光
 http://ott.fj.chinamobile.com/PLTV/88888888/224/3221225947/1.m3u8@@@@@@@@@@辽宁卫视蓝光
 http://223.110.245.145/ott.js.chinamobile.com/PLTV/3/224/3221227410/index.m3u8@@@@@@@@@@辽宁卫视蓝光
-http://112.17.40.140/PLTV/88888888/224/3221226555/index.m3u8@@@@@@@@@@龙江卫视蓝光
+http://112.17.40.12/PLTV/88888888/224/3221226555/index.m3u8@@@@@@@@@@龙江卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226239/1.m3u8@@@@@@@@@@龙江卫视蓝光
 http://39.135.15.70:6610/PLTV/88888888/224/3221225753/1/1000.m3u8@@@@@@@@@@吉林卫视蓝光
 http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=25&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@吉林卫视蓝光
-http://112.17.40.140/PLTV/88888888/224/3221226557/index.m3u8@@@@@@@@@@江西卫视蓝光
+http://112.17.40.12/PLTV/88888888/224/3221226557/index.m3u8@@@@@@@@@@江西卫视蓝光
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226243/1.m3u8@@@@@@@@@@江西卫视蓝光
 http://ott.fj.chinamobile.com/PLTV/88888888/224/3221227006/1.m3u8@@@@@@@@@@四川卫视蓝光
 http://118.123.60.17:8112/syhjcms_hls/10000100000000050000000000000080@@@@@@@@@@四川卫视超清
@@ -1655,96 +1686,6 @@ http://39.135.15.70:6610/PLTV/88888888/224/3221225694/1/index.m3u8?fmt=ts2hls@@@
 http://39.135.15.70:6610/PLTV/88888888/224/3221225693/1/index.m3u8?fmt=ts2hls@@@@@@@@@@三沙卫视高清
 http://39.135.15.70:6610/PLTV/88888888/224/3221225695/1/index.m3u8?fmt=ts2hls@@@@@@@@@@康巴卫视高清
 http://39.135.15.70:6610/PLTV/88888888/224/3221225721/1/index.m3u8?fmt=ts2hls@@@@@@@@@@延边卫视高清
-
-http://aldirect.rtmp.huya.com/huyalive/94525224-2460685722-10568564701724147712-2789253838-10057-A-0-1.m3u8@@@@@@@@@@成   龙*
-http://aldirect.rtmp.huya.com/huyalive/30765679-2554414705-10971127618396487680-3048991636-10057-A-0-1.m3u8@@@@@@@@@@吴   京*
-http://aldirect.rtmp.huya.com/huyalive/29169025-2686219938-11537226783573147648-2847699096-10057-A-1524024759-1.m3u8@@@@@@@@@@甄子丹*
-http://aldirect.rtmp.huya.com/huyalive/94525224-2460686093-10568566295157014528-2789253848-10057-A-0-1.m3u8@@@@@@@@@@李连杰*
-http://aldirect.rtmp.huya.com/huyalive/94525224-2460685774-10568564925062447104-2789253840-10057-A-0-1_1200.m3u8@@@@@@@@@@周润发*
-http://aldirect.rtmp.huya.com/huyalive/94525224-2460685313-10568562945082523648-2789274524-10057-A-0-1_1200.m3u8@@@@@@@@@@周星驰*
-http://aldirect.rtmp.huya.com/src/94525224-2460686034-10568566041753944064-2789274542-10057-A-0-1.m3u8@@@@@@@@@@林正英*
-http://aldirect.rtmp.huya.com/huyalive/94525224-2467341872-10597152648291418112-2789274550-10057-A-0-1.m3u8@@@@@@@@@@刘德华*
-http://aldirect.rtmp.huya.com/huyalive/29106097-2689406282-11550912026846953472-2789274558-10057-A-0-1.m3u8@@@@@@@@@@洪金宝*
-http://aldirect.rtmp.huya.com/huyalive/30765679-2689675828-11552069718101721088-3048991626-10057-A-0-1_1200.m3u8@@@@@@@@@@徐   峥*
-http://aldirect.rtmp.huya.com/huyalive/30765679-2554414680-10971127511022305280-3048991634-10057-A-0-1.m3u8@@@@@@@@@@黄   渤*
-http://aldirect.rtmp.huya.com/src/94525224-2579730250-11079857056251904000-3048959666-10057-A-0-1.m3u8@@@@@@@@@@刘   涛*
-http://aldirect.rtmp.huya.com/huyalive/1448686695-1448686695-6222061977175326720-2847687574-10057-A-0-1.m3u8@@@@@@@@@@王   晶*
-http://aldirect.rtmp.huya.com/huyalive/30765679-2475713428-10633108207528050688-3048991608-10057-A-0-1.m3u8@@@@@@@@@@胡   军*
-http://aldirect.rtmp.huya.com/huyalive/29359996-2689277426-11550358594541060096-2847699098-10057-A-0-1.m3u8@@@@@@@@@@唐国强*
-http://aldirect.rtmp.huya.com/huyalive/29141112-2691519968-11559990239090966528-3049003118-10057-A-0-1.m3u8@@@@@@@@@@陈道明*
-http://aldirect.rtmp.huya.com/huyalive/30765679-2523417175-10837994240789708800-2789253884-10057-A-0-1_1200.m3u8@@@@@@@@@@苏有朋*
-http://aldirect.rtmp.huya.com/huyalive/30765679-2550665260-10955023874743336960-2789253862-10057-A-0-1.m3u8@@@@@@@@@@张卫健*
-http://aldirect.rtmp.huya.com/huyalive/94525224-2701055008-11600942924057018368-2847687618-10057-A-0-1_1200.m3u8@@@@@@@@@@陈小春*
-http://aldirect.rtmp.huya.com/huyalive/1448686638-1448686638-6222061732362190848-2789253842-10057-A-0-1.m3u8@@@@@@@@@@黄百鸣*
-http://aldirect.rtmp.huya.com/huyalive/29359996-2689607114-11551774593718943744-2847687530-10057-A-1525492553-1.m3u8@@@@@@@@@@古天乐*
-http://aldirect.rtmp.huya.com/huyalive/30765679-2523417522-10837995731143360512-2777068634-10057-A-0-1.m3u8@@@@@@@@@@郑伊健*
-http://aldirect.rtmp.huya.com/huyalive/30765679-2523427569-10838038882679783424-2789253886-10057-A-0-1.m3u8@@@@@@@@@@陈浩民*
-http://aldirect.rtmp.huya.com/huyalive/30765679-2475713500-10633108516765696000-2789274576-10057-A-0-1.m3u8@@@@@@@@@@李云龙*
-http://aldirect.rtmp.huya.com/backsrc/28466698-2689661800-11552009468300492800-3048991590-10057-A-0-1.m3u8@@@@@@@@@@易中天*
-http://aldirect.rtmp.huya.com/huyalive/29106097-2689444502-11551076180497006592-2789253868-10057-A-1525419311-1.m3u8@@@@@@@@@@岳云鹏*
-http://aldirect.rtmp.huya.com/huyalive/29359996-2689638862-11551910950340657152-2847687568-10057-A-0-1.m3u8@@@@@@@@@@吴亦凡*
-http://aldirect.rtmp.huya.com/huyalive/29106097-2689281338-11550375396453122048-2777038134-10057-A-0-1.m3u8@@@@@@@@@@小品轮播*
-/////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-http://ivi.bupt.edu.cn/hls/btv1hd.m3u8@@@@@@@@@@北京卫视高清
-http://ivi.bupt.edu.cn/hls/btv2hd.m3u8@@@@@@@@@@北京文艺高清
-http://ivi.bupt.edu.cn/hls/btv4hd.m3u8@@@@@@@@@@北京影视高清
-http://ivi.bupt.edu.cn/hls/btv9hd.m3u8@@@@@@@@@@北京新闻高清
-http://ivi.bupt.edu.cn/hls/btv11hd.m3u8@@@@@@@@@@北京冬奥纪实高清
-http://ivi.bupt.edu.cn/hls/docuchina.m3u8@@@@@@@@@@上海纪实高清
-http://ivi.bupt.edu.cn/hls/gedocu.m3u8@@@@@@@@@@金鹰纪实高清
-http://ivi.bupt.edu.cn/hls/zjhd.m3u8@@@@@@@@@@浙江卫视高清
-http://ivi.bupt.edu.cn/hls/hunanhd.m3u8@@@@@@@@@@湖南卫视高清
-http://ivi.bupt.edu.cn/hls/jshd.m3u8@@@@@@@@@@江苏卫视高清
-http://ivi.bupt.edu.cn/hls/dfhd.m3u8@@@@@@@@@@东方卫视高清
-http://ivi.bupt.edu.cn/hls/ahhd.m3u8@@@@@@@@@@安徽卫视高清
-http://ivi.bupt.edu.cn/hls/lnhd.m3u8@@@@@@@@@@辽宁卫视高清
-http://ivi.bupt.edu.cn/hls/szhd.m3u8@@@@@@@@@@深圳卫视高清
-http://ivi.bupt.edu.cn/hls/gdhd.m3u8@@@@@@@@@@广东卫视高清
-http://ivi.bupt.edu.cn/hls/hbhd.m3u8@@@@@@@@@@湖北卫视高清
-http://ivi.bupt.edu.cn/hls/cqhd.m3u8@@@@@@@@@@重庆卫视高清
-http://ivi.bupt.edu.cn/hls/schd.m3u8@@@@@@@@@@四川卫视高清
-http://ivi.bupt.edu.cn/hls/hebhd.m3u8@@@@@@@@@@河北卫视高清
-http://ivi.bupt.edu.cn/hls/jxhd.m3u8@@@@@@@@@@江西卫视高清
-http://ivi.bupt.edu.cn/hls/gxhd.m3u8@@@@@@@@@@广西卫视高清
-http://ivi.bupt.edu.cn/hls/jlhd.m3u8@@@@@@@@@@吉林卫视高清
-http://ivi.bupt.edu.cn/hls/lyhd.m3u8@@@@@@@@@@海南卫视高清
-http://ivi.bupt.edu.cn/hls/gzhd.m3u8@@@@@@@@@@贵州卫视高清
-http://ivi.bupt.edu.cn/hls/sdhd.m3u8@@@@@@@@@@山东卫视高清
-http://ivi.bupt.edu.cn/hls/tjhd.m3u8@@@@@@@@@@天津卫视高清
-http://ivi.bupt.edu.cn/hls/hljhd.m3u8@@@@@@@@@@黑龙江卫视高清
-http://ivi.bupt.edu.cn/hls/dnhd.m3u8@@@@@@@@@@福建东南卫视高清
 /////////////////////////////////////////////////////////////////
 // 非高清
 http://ivi.bupt.edu.cn/hls/btv3.m3u8@@@@@@@@@@北京科教
@@ -1767,6 +1708,7 @@ http://ivi.bupt.edu.cn/hls/gstv.m3u8@@@@@@@@@@甘肃卫视
 http://ivi.bupt.edu.cn/hls/sstv.m3u8@@@@@@@@@@三沙卫视
 http://ivi.bupt.edu.cn/hls/bttv.m3u8@@@@@@@@@@兵团卫视
 http://ivi.bupt.edu.cn/hls/ybtv.m3u8@@@@@@@@@@延边卫视
+
 #http://ivi.bupt.edu.cn/hls/cctv1.m3u8@@@@@@@@@@CCTV-1综合
 #http://ivi.bupt.edu.cn/hls/cctv2.m3u8@@@@@@@@@@CCTV-2财经
 #http://ivi.bupt.edu.cn/hls/cctv3.m3u8@@@@@@@@@@CCTV-3综艺
@@ -1787,34 +1729,6 @@ http://ivi.bupt.edu.cn/hls/ybtv.m3u8@@@@@@@@@@延边卫视
 #rtmp://58.200.131.2:1935/livetv/gxtv@@@@@@@@@@广西卫视
 #rtmp://58.200.131.2:1935/livetv/dftv@@@@@@@@@@东方卫视
 #rtmp://58.200.131.2:1935/livetv/hunantv@@@@@@@@@@湖南卫视
-/////////////////////////////////////////////////////////////////
-// 专题节目(都不能正常播放)
-#http://aldirect.hls.huya.com/huyalive/28466698-2689659358-11551998979990355968-2789274580-10057-A-0-1_1200.m3u8@@@@@@@@@@随便看看
-#https://aldirect.hls.huya.com/huyalive/29169025-2686221140-11537231946123837440-3049003146-10057-A-0-1_1200.m3u8@@@@@@@@@@三国演义
-#https://aldirect.hls.huya.com/huyalive/29141112-2689673336-11552059015043219456-3048991588-10057-A-0-1_1200.m3u8@@@@@@@@@@西游记(86版)
-#https://aldirect.hls.huya.com/huyalive/29169025-2686221704-11537234368485392384-2789274536-10057-A-0-1_1200.m3u8@@@@@@@@@@康熙微服私访记
-#https://aldirect.hls.huya.com/huyalive/29141112-2691519968-11559990239090966528-3049003118-10057-A-0-1_1200.m3u8@@@@@@@@@@康熙皇朝
-#http://aldirect.hls.huya.com/huyalive/94525224-2468571348-10602433207502635008-2789253864-10057-A-0-1_1200.m3u8@@@@@@@@@@铁齿铜牙纪晓岚
-#http://aldirect.hls.huya.com/huyalive/29106097-2689284984-11550391055903883264-2847699150-10057-A-0-1_1200.m3u8@@@@@@@@@@大宅门
-#https://aldirect.hls.huya.com/huyalive/30765679-2554414808-10971128060778119168-3048959636-10057-A-0-1_1200.m3u8@@@@@@@@@@大秦帝国
-#https://aldirect.hls.huya.com/huyalive/29169025-2686221304-11537232650498473984-2789253854-10057-A-0-1_1200.m3u8@@@@@@@@@@楚汉传奇
-#http://js.hls.huya.com/huyalive/30765679-2525901744-10848665383389364224-2847699200-10057-A-0-1_1200.m3u8@@@@@@@@@@宝莲灯前传
-#http://aldirect.hls.huya.com/huyalive/30765679-2475713500-10633108516765696000-2789274576-10057-A-0-1_1200.m3u8@@@@@@@@@@亮剑
-#https://aldirect.hls.huya.com/huyalive/94525224-2475824398-10633584820048887808-2847687532-10057-A-0-1_1200.m3u8@@@@@@@@@@猫和老鼠
-#http://js.hls.huya.com/huyalive/29106097-2689443426-11551071559112196096-2789253866-10057-A-0-1_1200.m3u8@@@@@@@@@@赵本山小品系列
-#http://aldirect.hls.huya.com/huyalive/29359996-2689607114-11551774593718943744-2847687530-10057-A-1525492553-1_1200.m3u8@@@@@@@@@@神雕侠侣(古天乐版)
-#https://aldirect.hls.huya.com/huyalive/29141112-2525901554-10848664567345577984-2847687634-10057-A-0-1_1200.m3u8@@@@@@@@@@倚天屠龙记(吴启华版)
-#http://aldirect.hls.huya.com/huyalive/30765679-2523417175-10837994240789708800-2789253884-10057-A-0-1_1200.m3u8@@@@@@@@@@倚天屠龙记(苏有朋版)
-#https://aldirect.hls.huya.com/huyalive/30765679-2475713428-10633108207528050688-3048991608-10057-A-0-1_1200.m3u8@@@@@@@@@@天龙八部
-#https://aldirect.hls.huya.com/huyalive/30765679-2554414889-10971128408670470144-3048991640-10057-A-0-1_1200.m3u8@@@@@@@@@@侠客行
-#http://al.hls.huya.com/huyalive/94525224-2460686093-10568566295157014528-2789253848-10057-A-0-1.m3u8@@@@@@@@@@电影轮播
-#http://aldirect.hls.huya.com/huyalive/29106097-2689453724-11551115788685410304-2847687506-10057-A-1525422901-1_1200.m3u8@@@@@@@@@@香港电影
-#http://tx.hls.huya.com/huyalive/30765679-2504742278-10757786168918540288-3049003128-10057-A-0-1.m3u8@@@@@@@@@@漫威电影
-#http://tx.hls.huya.com/huyalive/28466698-2689659358-11551998979990355968-2789274580-10057-A-0-1.m3u8@@@@@@@@@@战争电影
-#http://tx.hls.huya.com/huyalive/30765679-2480288304-10652757150331305984-2789274538-10057-A-1511757260-1.m3u8@@@@@@@@@@犯罪悬疑
-#http://tx.hls.huya.com/huyalive/28466698-2689661530-11552008308659322880-3049003102-10057-A-0-1.m3u8@@@@@@@@@@复仇犯罪
-#rtsp://113.136.42.39:554/PLTV/88888888/224/3221226033/10000100000000060000000001580493_0.smil@@@@@@@@@@相声小品
-#http://hls-ott-zhibo.wasu.tv/live/97_68611/index.m3u8@@@@@@@@@@电视剧
 /////////////////////////////////////////////////////////////////
 // 电影系列
 https://meiju9.qhqsnedu.com/20190815/igHxzD0W/2000kb/hls/index.m3u8@@@@@@@@@@007之幽灵党
@@ -2084,7 +1998,7 @@ http://youku1.dianfubang.com/20190222/JK8mJKS5/2000kb/hls/index.m3u8@@@@@@@@@@5
 http://youku1.dianfubang.com/20190602/BgPUCxWc/index.m3u8@@@@@@@@@@6
 /////////////////////////////////////////////////////////////////
 // 外国节目
-http://cdn-videos.akamaized.net/btv/desktop/akamai/europe/live/primary.m3u8@@@@@@@@@@美国Bloomberg TV Europe
+http://cdn-videos.akamaized.net/btv/desktop/akamai/europe/live/primary.m3u8@@@@@@@@@@美国Bloomberg TV Europe*
 http://live.cgtn.com/500/prog_index.m3u8@@@@@@@@@@美国CGTN (Opt-1)
 http://live.cgtn.com/1000/prog_index.m3u8@@@@@@@@@@美国CGTN (Opt-2)
 http://granicusliveus3-a.akamaihd.net/cityofbowie/G0466_001/playlist.m3u8@@@@@@@@@@美国Bowie TV
@@ -2103,4 +2017,64 @@ http://www.elahmad.com/tv/m3u8@@@@@@@@@@/dubaitv.m3u8@@@@@@@@@@?id=dubaione
 http://ns8.indexforce.com:1935/alsharqiyalive/mystream/playlist.m3u8@@@@@@@@@@伊拉克 Sharqiya News
 http://ns8.indexforce.com:1935/home/mystream/playlist.m3u8@@@@@@@@@@伊拉克 Al Sharqiya
 /////////////////////////////////////////////////////////////////
+http://aldirect.rtmp.huya.com/huyalive/94525224-2460685722-10568564701724147712-2789253838-10057-A-0-1.m3u8@@@@@@@@@@成   龙*
+http://aldirect.rtmp.huya.com/huyalive/30765679-2554414705-10971127618396487680-3048991636-10057-A-0-1.m3u8@@@@@@@@@@吴   京*
+http://aldirect.rtmp.huya.com/huyalive/29169025-2686219938-11537226783573147648-2847699096-10057-A-1524024759-1.m3u8@@@@@@@@@@甄子丹*
+http://aldirect.rtmp.huya.com/huyalive/94525224-2460686093-10568566295157014528-2789253848-10057-A-0-1.m3u8@@@@@@@@@@李连杰*
+http://aldirect.rtmp.huya.com/huyalive/94525224-2460685774-10568564925062447104-2789253840-10057-A-0-1_1200.m3u8@@@@@@@@@@周润发*
+http://aldirect.rtmp.huya.com/huyalive/94525224-2460685313-10568562945082523648-2789274524-10057-A-0-1_1200.m3u8@@@@@@@@@@周星驰*
+http://aldirect.rtmp.huya.com/src/94525224-2460686034-10568566041753944064-2789274542-10057-A-0-1.m3u8@@@@@@@@@@林正英*
+http://aldirect.rtmp.huya.com/huyalive/94525224-2467341872-10597152648291418112-2789274550-10057-A-0-1.m3u8@@@@@@@@@@刘德华*
+http://aldirect.rtmp.huya.com/huyalive/29106097-2689406282-11550912026846953472-2789274558-10057-A-0-1.m3u8@@@@@@@@@@洪金宝*
+http://aldirect.rtmp.huya.com/huyalive/30765679-2689675828-11552069718101721088-3048991626-10057-A-0-1_1200.m3u8@@@@@@@@@@徐   峥*
+http://aldirect.rtmp.huya.com/huyalive/30765679-2554414680-10971127511022305280-3048991634-10057-A-0-1.m3u8@@@@@@@@@@黄   渤*
+http://aldirect.rtmp.huya.com/src/94525224-2579730250-11079857056251904000-3048959666-10057-A-0-1.m3u8@@@@@@@@@@刘   涛*
+http://aldirect.rtmp.huya.com/huyalive/1448686695-1448686695-6222061977175326720-2847687574-10057-A-0-1.m3u8@@@@@@@@@@王   晶*
+http://aldirect.rtmp.huya.com/huyalive/30765679-2475713428-10633108207528050688-3048991608-10057-A-0-1.m3u8@@@@@@@@@@胡   军*
+http://aldirect.rtmp.huya.com/huyalive/29359996-2689277426-11550358594541060096-2847699098-10057-A-0-1.m3u8@@@@@@@@@@唐国强*
+http://aldirect.rtmp.huya.com/huyalive/29141112-2691519968-11559990239090966528-3049003118-10057-A-0-1.m3u8@@@@@@@@@@陈道明*
+http://aldirect.rtmp.huya.com/huyalive/30765679-2523417175-10837994240789708800-2789253884-10057-A-0-1_1200.m3u8@@@@@@@@@@苏有朋*
+http://aldirect.rtmp.huya.com/huyalive/30765679-2550665260-10955023874743336960-2789253862-10057-A-0-1.m3u8@@@@@@@@@@张卫健*
+http://aldirect.rtmp.huya.com/huyalive/94525224-2701055008-11600942924057018368-2847687618-10057-A-0-1_1200.m3u8@@@@@@@@@@陈小春*
+http://aldirect.rtmp.huya.com/huyalive/1448686638-1448686638-6222061732362190848-2789253842-10057-A-0-1.m3u8@@@@@@@@@@黄百鸣*
+http://aldirect.rtmp.huya.com/huyalive/29359996-2689607114-11551774593718943744-2847687530-10057-A-1525492553-1.m3u8@@@@@@@@@@古天乐*
+http://aldirect.rtmp.huya.com/huyalive/30765679-2523417522-10837995731143360512-2777068634-10057-A-0-1.m3u8@@@@@@@@@@郑伊健*
+http://aldirect.rtmp.huya.com/huyalive/30765679-2523427569-10838038882679783424-2789253886-10057-A-0-1.m3u8@@@@@@@@@@陈浩民*
+http://aldirect.rtmp.huya.com/huyalive/30765679-2475713500-10633108516765696000-2789274576-10057-A-0-1.m3u8@@@@@@@@@@李云龙*
+http://aldirect.rtmp.huya.com/backsrc/28466698-2689661800-11552009468300492800-3048991590-10057-A-0-1.m3u8@@@@@@@@@@易中天*
+http://aldirect.rtmp.huya.com/huyalive/29106097-2689444502-11551076180497006592-2789253868-10057-A-1525419311-1.m3u8@@@@@@@@@@岳云鹏*
+http://aldirect.rtmp.huya.com/huyalive/29359996-2689638862-11551910950340657152-2847687568-10057-A-0-1.m3u8@@@@@@@@@@吴亦凡*
+http://aldirect.rtmp.huya.com/huyalive/29106097-2689281338-11550375396453122048-2777038134-10057-A-0-1.m3u8@@@@@@@@@@小品轮播*
+// 专题节目(都不能正常播放)
+#https://aldirect.hls.huya.com/huyalive/29169025-2686221140-11537231946123837440-3049003146-10057-A-0-1_1200.m3u8@@@@@@@@@@三国演义
+#https://aldirect.hls.huya.com/huyalive/29141112-2689673336-11552059015043219456-3048991588-10057-A-0-1_1200.m3u8@@@@@@@@@@西游记(86版)
+#https://aldirect.hls.huya.com/huyalive/29169025-2686221704-11537234368485392384-2789274536-10057-A-0-1_1200.m3u8@@@@@@@@@@康熙微服私访记
+#https://aldirect.hls.huya.com/huyalive/29141112-2691519968-11559990239090966528-3049003118-10057-A-0-1_1200.m3u8@@@@@@@@@@康熙皇朝
+#https://aldirect.hls.huya.com/huyalive/30765679-2554414808-10971128060778119168-3048959636-10057-A-0-1_1200.m3u8@@@@@@@@@@大秦帝国
+#https://aldirect.hls.huya.com/huyalive/29169025-2686221304-11537232650498473984-2789253854-10057-A-0-1_1200.m3u8@@@@@@@@@@楚汉传奇
+#https://aldirect.hls.huya.com/huyalive/94525224-2475824398-10633584820048887808-2847687532-10057-A-0-1_1200.m3u8@@@@@@@@@@猫和老鼠
+#https://aldirect.hls.huya.com/huyalive/29141112-2525901554-10848664567345577984-2847687634-10057-A-0-1_1200.m3u8@@@@@@@@@@倚天屠龙记(吴启华版)
+#https://aldirect.hls.huya.com/huyalive/30765679-2523417175-10837994240789708800-2789253884-10057-A-0-1_1200.m3u8@@@@@@@@@@倚天屠龙记(苏有朋版)
+#https://aldirect.hls.huya.com/huyalive/30765679-2475713428-10633108207528050688-3048991608-10057-A-0-1_1200.m3u8@@@@@@@@@@天龙八部
+#https://aldirect.hls.huya.com/huyalive/30765679-2554414889-10971128408670470144-3048991640-10057-A-0-1_1200.m3u8@@@@@@@@@@侠客行
+
+#http://aldirect.hls.huya.com/huyalive/28466698-2689659358-11551998979990355968-2789274580-10057-A-0-1_1200.m3u8@@@@@@@@@@随便看看
+#http://aldirect.hls.huya.com/huyalive/94525224-2468571348-10602433207502635008-2789253864-10057-A-0-1_1200.m3u8@@@@@@@@@@铁齿铜牙纪晓岚
+#http://aldirect.hls.huya.com/huyalive/29106097-2689284984-11550391055903883264-2847699150-10057-A-0-1_1200.m3u8@@@@@@@@@@大宅门
+#http://aldirect.hls.huya.com/huyalive/30765679-2475713500-10633108516765696000-2789274576-10057-A-0-1_1200.m3u8@@@@@@@@@@亮剑
+#http://aldirect.hls.huya.com/huyalive/29359996-2689607114-11551774593718943744-2847687530-10057-A-1525492553-1_1200.m3u8@@@@@@@@@@神雕侠侣(古天乐版)
+#http://aldirect.hls.huya.com/huyalive/29106097-2689453724-11551115788685410304-2847687506-10057-A-1525422901-1_1200.m3u8@@@@@@@@@@香港电影
+
+#http://js.hls.huya.com/huyalive/30765679-2525901744-10848665383389364224-2847699200-10057-A-0-1_1200.m3u8@@@@@@@@@@宝莲灯前传
+#http://js.hls.huya.com/huyalive/29106097-2689443426-11551071559112196096-2789253866-10057-A-0-1_1200.m3u8@@@@@@@@@@赵本山小品系列
+
+#http://al.hls.huya.com/huyalive/94525224-2460686093-10568566295157014528-2789253848-10057-A-0-1.m3u8@@@@@@@@@@电影轮播
+#http://tx.hls.huya.com/huyalive/30765679-2504742278-10757786168918540288-3049003128-10057-A-0-1.m3u8@@@@@@@@@@漫威电影
+#http://tx.hls.huya.com/huyalive/28466698-2689659358-11551998979990355968-2789274580-10057-A-0-1.m3u8@@@@@@@@@@战争电影
+#http://tx.hls.huya.com/huyalive/30765679-2480288304-10652757150331305984-2789274538-10057-A-1511757260-1.m3u8@@@@@@@@@@犯罪悬疑
+#http://tx.hls.huya.com/huyalive/28466698-2689661530-11552008308659322880-3049003102-10057-A-0-1.m3u8@@@@@@@@@@复仇犯罪
+#rtsp://113.136.42.39:554/PLTV/88888888/224/3221226033/10000100000000060000000001580493_0.smil@@@@@@@@@@相声小品
+#http://hls-ott-zhibo.wasu.tv/live/97_68611/index.m3u8@@@@@@@@@@电视剧
+/////////////////////////////////////////////////////////////////
 #adb push /root/mydev/workspace_github/myfiles/android/contents.txt /storage/1532-48AD/Android/data/com.weidi.usefragments/files/shared/
+#adb push /Users/alexander/mydev/workspace_github/myfiles/android/contents.txt /storage/1532-48AD/Android/data/com.weidi.usefragments/files/shared/
