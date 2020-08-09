@@ -31,6 +31,7 @@ http://ivi.bupt.edu.cn/hls/cetv4.m3u8@@@@@@@@@@CETV-4中国教育电视台
 #http://cctvtxyh5ca.liveplay.myqcloud.com/cstv/cetv4_2/index.m3u8@@@@@@@@@@CETV-4中国教育电视台
 https://zb3.qhqsnedu.com/live/chingyinglam/playlist.m3u8@@@@@@@@@@林正英系列电影
 https://zb3.qhqsnedu.com/live/zhouxingxinga/playlist.m3u8@@@@@@@@@@周星驰系列电影
+http://tx.hls.huya.com/huyalive/94525224-2460685313-10568562945082523648-2789274524-10057-A-0-1.m3u8@@@@@@@@@@周星驰系列电影
 https://zb3.qhqsnedu.com/live/suduyujiqingxilie/playlist.m3u8@@@@@@@@@@速度与激情系列电影
 https://zb3.qhqsnedu.com/live/jiesen/playlist.m3u8@@@@@@@@@@斯坦森系列电影
 
@@ -1848,7 +1849,6 @@ https://meiju5.qhqsnedu.com/20190609/EC9Nyh4p/2000kb/hls/index.m3u8@@@@@@@@@@我
 https://meiju10.qhqsnedu.com/20200505/64czrPYd/index.m3u8@@@@@@@@@@倩女幽魂之人间情
 https://meiju9.qhqsnedu.com/20190817/cH8PtStw/2000kb/hls/index.m3u8@@@@@@@@@@釜山行
 https://meiju5.qhqsnedu.com/20190703/5Ibc81yW/index.m3u8@@@@@@@@@@僵尸世界大战
-https://fangao.qhqsnedu.com/video/20190901/600a4323da7c497a83fa86ccef0f3054/cloudv-transfer/555555552ss414325556p1658q129o3r_5fc0f538e01e442f83971edf40814c02_0_3.m3u8@@@@@@@@@@212
 https://fangao.qhqsnedu.com/video/20190901/00a65e463e4948299e436d54dc4f8e07/cloudv-transfer/55555555812232s35556p16536139o3r_d61565bd42a44fd0b0950bab238b976d_0_3.m3u8@@@@@@@@@@213
 https://fangao.qhqsnedu.com/video/20190901/71b25e0d115f45f0a6a2ba75520a8ca4/cloudv-transfer/555555557rr1so175556p16532549o3r_3d0c88357db341af938c054f6af9b2af_0_3.m3u8@@@@@@@@@@214
 https://fangao.qhqsnedu.com/video/20190901/512e9758f19c46158849cb62230a0d4c/cloudv-transfer/555555559772pqr95556p165010n9o3r_13e3f3f7db364b21b3d9f3540f42b958_0_3.m3u8@@@@@@@@@@215
