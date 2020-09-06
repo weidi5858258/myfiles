@@ -257,9 +257,9 @@ rtmp://58.200.131.2:1935/livetv/gxtv@@@@@@@@@@广西卫视(rtmp)
 http://112.50.243.8/PLTV/88888888/224/3221225836/1.m3u8@@@@@@@@@@广西卫视
 http://223.110.245.170/PLTV/3/224/3221225536/index.m3u8@@@@@@@@@@江西卫视
 http://112.50.243.8/PLTV/88888888/224/3221225868/1.m3u8@@@@@@@@@@江西卫视
-http://111.40.205.87/PLTV/88888888/224/3221225615/index.m3u8@@@@@@@@@@江西卫视
 http://m-tvlmedia.public.bcs.ysten.com/ysten-business/live/jiangxistv/1.m3u8@@@@@@@@@@江西卫视
 http://223.110.245.170/ott.js.chinamobile.com/PLTV/3/224/3221225536/index.m3u8@@@@@@@@@@江西卫视
+http://111.40.205.87/PLTV/88888888/224/3221225615/index.m3u8@@@@@@@@@@江西卫视*
 http://ivi.bupt.edu.cn/hls/sxrtv.m3u8@@@@@@@@@@山西卫视
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225895/1.m3u8@@@@@@@@@@山西卫视
 http://ivi.bupt.edu.cn/hls/sxtv.m3u8@@@@@@@@@@陕西卫视
@@ -1745,7 +1745,7 @@ http://live-edu.wasu.tv/live/QiEFuDao-lv12.m3u8@@@@@@@@@@企鹅辅导高三
 
 /////////////////////////////////////////////////////////////////
 // 电影系列
-https://meiju9.qhqsnedu.com/20190815/igHxzD0W/2000kb/hls/index.m3u8@@@@@@@@@@007之幽灵党
+https://meiju9.qhqsnedu.com/20190815/igHxzD0W/2000kb/hls/index.m3u8?wsSecret=e1dbe6c0dae565f785203149983f2e48&wsTime=1599297598@@@@@@@@@@007之幽灵党
 https://meiju10.qhqsnedu.com/20191108/KOVyXj4N/index.m3u8@@@@@@@@@@007之大破天幕杀机
 https://meiju9.qhqsnedu.com/20190813/a354Z6Fp/2000kb/hls/index.m3u8@@@@@@@@@@007之择日而亡
 https://meiju10.qhqsnedu.com/20200418/RKHFz2vN/index.m3u8@@@@@@@@@@007之大战皇家赌场
