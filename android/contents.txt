@@ -15,18 +15,21 @@ http://ivi.bupt.edu.cn/hls/cctv12hd.m3u8@@@@@@@@@@CCTV-12社会与法高清
 http://ivi.bupt.edu.cn/hls/cctv13.m3u8@@@@@@@@@@CCTV-13新闻
 http://ivi.bupt.edu.cn/hls/cctv14hd.m3u8@@@@@@@@@@CCTV-14少儿高清
 http://ivi.bupt.edu.cn/hls/cctv15.m3u8@@@@@@@@@@CCTV-15音乐
+http://ivi.bupt.edu.cn/hls/cctv16.m3u8@@@@@@@@@@CGTN
 http://ivi.bupt.edu.cn/hls/cctv17hd.m3u8@@@@@@@@@@CCTV-17农业农村高清
-http://ivi.bupt.edu.cn/hls/cgtnhd.m3u8@@@@@@@@@@CGTN高清
-http://ivi.bupt.edu.cn/hls/cgtndochd.m3u8@@@@@@@@@@CGTN-DOC高清
-http://ivi.bupt.edu.cn/hls/chchd.m3u8@@@@@@@@@@CHC高清电影
-rtmp://ivi.bupt.edu.cn:1935/livetv/chcatv@@@@@@@@@@CHC动作电影(rtmp)
 
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225927/1.m3u8@@@@@@@@@@黑莓电影
+http://scgctvshow.sctv.com/hdlive/emei/1.m3u8@@@@@@@@@@峨眉电影
 https://zb3.qhqsnedu.com/live/chingyinglam/playlist.m3u8@@@@@@@@@@林正英系列电影
 https://zb3.qhqsnedu.com/live/zhouxingxinga/playlist.m3u8@@@@@@@@@@周星驰系列电影
 http://tx.hls.huya.com/huyalive/94525224-2460685313-10568562945082523648-2789274524-10057-A-0-1.m3u8@@@@@@@@@@周星驰系列电影
 https://zb3.qhqsnedu.com/live/suduyujiqingxilie/playlist.m3u8@@@@@@@@@@速度与激情系列电影
 https://zb3.qhqsnedu.com/live/jiesen/playlist.m3u8@@@@@@@@@@斯坦森系列电影
 
+http://ivi.bupt.edu.cn/hls/cgtnhd.m3u8@@@@@@@@@@CGTN高清
+http://ivi.bupt.edu.cn/hls/cgtndochd.m3u8@@@@@@@@@@CGTN-DOC高清
+http://ivi.bupt.edu.cn/hls/chchd.m3u8@@@@@@@@@@CHC高清电影
+rtmp://ivi.bupt.edu.cn:1935/livetv/chcatv@@@@@@@@@@CHC动作电影(rtmp)
 
 
 
@@ -75,6 +78,32 @@ http://111.13.111.167/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226326/1.m3
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225919/1.m3u8@@@@@@@@@@NewTV怡伴健康
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225918/1.m3u8@@@@@@@@@@NewTV家庭剧场
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226288/1.m3u8@@@@@@@@@@NewTV动作电影
+
+http://112.50.243.8/PLTV/88888888/224/3221226736/1.m3u8@@@@@@@@@@影视1台
+http://112.50.243.8/PLTV/88888888/224/3221225881/1.m3u8@@@@@@@@@@影视2台
+http://112.50.243.8/PLTV/88888888/224/3221226708/1.m3u8@@@@@@@@@@影视3台
+http://112.50.243.8/PLTV/88888888/224/3221226712/1.m3u8@@@@@@@@@@影视4台
+http://112.50.243.8/PLTV/88888888/224/3221225893/1.m3u8@@@@@@@@@@影视5台
+http://112.50.243.8/PLTV/88888888/224/3221226692/1.m3u8@@@@@@@@@@影视6台
+http://112.50.243.8/PLTV/88888888/224/3221226754/1.m3u8@@@@@@@@@@影视7台
+http://112.17.40.145/PLTV/88888888/224/3221226608/index.m3u8@@@@@@@@@@影视8台
+http://112.17.40.145/PLTV/88888888/224/3221226606/index.m3u8@@@@@@@@@@影视9台
+http://112.17.40.12/PLTV/88888888/224/3221226360/index.m3u8@@@@@@@@@@影视10台
+http://112.50.243.8/PLTV/88888888/224/3221226732/1.m3u8@@@@@@@@@@动漫11台
+http://112.50.243.8/PLTV/88888888/224/3221226741/1.m3u8@@@@@@@@@@动漫12台
+http://112.50.243.8/PLTV/88888888/224/3221226743/1.m3u8@@@@@@@@@@动漫13台
+http://112.50.243.8/PLTV/88888888/224/3221226729/1.m3u8@@@@@@@@@@欢笑剧场
+http://112.50.243.8/PLTV/88888888/224/3221225944/1.m3u8@@@@@@@@@@冬奥纪实
+http://112.50.243.8/PLTV/88888888/224/3221225946/1.m3u8@@@@@@@@@@纪实人文
+http://112.50.243.8/PLTV/88888888/224/3221226140/1.m3u8@@@@@@@@@@极速汽车
+http://112.50.243.8/PLTV/88888888/224/3221226141/1.m3u8@@@@@@@@@@动漫秀场
+http://112.50.243.8/PLTV/88888888/224/3221225878/1.m3u8@@@@@@@@@@黑莓动画
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225914/1.m3u8@@@@@@@@@@黑莓动画
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225931/1.m3u8@@@@@@@@@@黑莓电竞
+http://112.50.243.8/PLTV/88888888/224/3221225891/1.m3u8@@@@@@@@@@黑莓电影
+http://101.71.255.229:6610/zjhs/2/10037/z.m3u8?ZTEUPSTREAM=1&IASHttpSessionId=SLB4328320190321203540013412&m3u8_level=2&ztecid=10037&virtualDomain=zjhs.live_hls.zte.com&ispcode=3&tid=Q894B3E8EEZ3T19UG09L8B03GSWB&ts=1553493266@@@@@@@@@@歐美影院
+http://101.71.255.229:6610/zjhs/2/10052/z.m3u8?ZTEUPSTREAM=1&IASHttpSessionId=SLB4328320190321203540013412&m3u8_level=2&ztecid=10052&virtualDomain=zjhs.live_hls.zte.com&ispcode=3&tid=C3V7K4ET1VFDUJY6C1IASRV55G66&ts=1553493153@@@@@@@@@@亞洲影院
+
 http://101.71.255.229:6610/zjhs/2/10110/index.m3u8?virtualDomain=zjhs.live_hls.zte.com@@@@@@@@@@爱电竞
 http://101.71.255.229:6610/zjhs/2/10107/index.m3u8?virtualDomain=zjhs.live_hls.zte.com@@@@@@@@@@爱动漫
 http://101.71.255.229:6610/zjhs/2/10111/index.m3u8?virtualDomain=zjhs.live_hls.zte.com@@@@@@@@@@爱都市
@@ -93,7 +122,6 @@ http://101.71.255.229:6610/zjhs/2/10105/index.m3u8?virtualDomain=zjhs.live_hls.z
 http://101.71.255.229:6610/zjhs/2/10104/index.m3u8?virtualDomain=zjhs.live_hls.zte.com@@@@@@@@@@爱悬疑
 http://101.71.255.229:6610/zjhs/2/10112/index.m3u8?virtualDomain=zjhs.live_hls.zte.com@@@@@@@@@@爱幼教
 http://101.71.255.229:6610/zjhs/2/10116/index.m3u8?virtualDomain=zjhs.live_hls.zte.com@@@@@@@@@@爱院线
-
 #http://112.17.40.140/ ---> http://112.17.40.12/
 http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230130/index.m3u8@@@@@@@@@@爱青春
 http://112.17.40.12/hwltc.tv.cdn.zj.chinamobile.com/PLTV/88888888/224/3221230118/index.m3u8@@@@@@@@@@爱家庭
@@ -118,41 +146,14 @@ http://223.110.245.136/PLTV/3/224/3221226975/index.m3u8@@@@@@@@@@香港台
 http://183.207.249.34/PLTV/3/224/3221226975/index.m3u8@@@@@@@@@@香港台
 http://zhibo.hkstv.tv/livestream/mutfysrq.flv@@@@@@@@@@香港卫视
 http://cctvtxyh5ca.liveplay.myqcloud.com/cstv/xianggangweishi_2_hd.m3u8@@@@@@@@@@香港卫视+
-
 http://112.17.40.12/PLTV/88888888/224/3221226758/1.m3u8@@@@@@@@@@CCTV-4K蓝码
 http://39.134.176.148/PLTV/88888888/224/3221226758/index.m3u8@@@@@@@@@@CCTV-4K蓝码
 http://117.148.187.83/PLTV/88888888/224/3221226758/index.m3u8@@@@@@@@@@CCTV-4K蓝码
-
 https://hls.cntv.baishancdnx.cn/asp/hls/8000/0303000a/3/default/9891cea600df4e8a83851b1b1ce23194/8000.m3u8@@@@@@@@@@美丽中国4K
 http://112.17.40.145/PLTV/88888888/224/3221226718/index.m3u8@@@@@@@@@@百事4K
 http://112.50.243.8/PLTV/88888888/224/3221226825/1.m3u8@@@@@@@@@@纯享4K
 
-http://112.50.243.8/PLTV/88888888/224/3221226736/1.m3u8@@@@@@@@@@影视1台
-http://112.50.243.8/PLTV/88888888/224/3221225881/1.m3u8@@@@@@@@@@影视2台
-http://112.50.243.8/PLTV/88888888/224/3221226708/1.m3u8@@@@@@@@@@影视3台
-http://112.50.243.8/PLTV/88888888/224/3221226712/1.m3u8@@@@@@@@@@影视4台
-http://112.50.243.8/PLTV/88888888/224/3221225893/1.m3u8@@@@@@@@@@影视5台
-http://112.50.243.8/PLTV/88888888/224/3221226692/1.m3u8@@@@@@@@@@影视6台
-http://112.50.243.8/PLTV/88888888/224/3221226754/1.m3u8@@@@@@@@@@影视7台
-http://112.17.40.145/PLTV/88888888/224/3221226608/index.m3u8@@@@@@@@@@影视8台
-http://112.17.40.145/PLTV/88888888/224/3221226606/index.m3u8@@@@@@@@@@影视9台
-http://112.17.40.12/PLTV/88888888/224/3221226360/index.m3u8@@@@@@@@@@影视10台
-http://112.50.243.8/PLTV/88888888/224/3221226732/1.m3u8@@@@@@@@@@动漫11台
-http://112.50.243.8/PLTV/88888888/224/3221226741/1.m3u8@@@@@@@@@@动漫12台
-http://112.50.243.8/PLTV/88888888/224/3221226743/1.m3u8@@@@@@@@@@动漫13台
-http://112.50.243.8/PLTV/88888888/224/3221226729/1.m3u8@@@@@@@@@@欢笑剧场
-http://112.50.243.8/PLTV/88888888/224/3221225944/1.m3u8@@@@@@@@@@冬奥纪实
-http://112.50.243.8/PLTV/88888888/224/3221225946/1.m3u8@@@@@@@@@@纪实人文
-http://112.50.243.8/PLTV/88888888/224/3221226140/1.m3u8@@@@@@@@@@极速汽车
-http://112.50.243.8/PLTV/88888888/224/3221226141/1.m3u8@@@@@@@@@@动漫秀场
-http://112.50.243.8/PLTV/88888888/224/3221225878/1.m3u8@@@@@@@@@@黑莓动画
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225914/1.m3u8@@@@@@@@@@黑莓动画
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225931/1.m3u8@@@@@@@@@@黑莓电竞
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225927/1.m3u8@@@@@@@@@@黑莓电影
-http://112.50.243.8/PLTV/88888888/224/3221225891/1.m3u8@@@@@@@@@@黑莓电影
-http://scgctvshow.sctv.com/hdlive/emei/1.m3u8@@@@@@@@@@峨眉电影
-http://101.71.255.229:6610/zjhs/2/10037/z.m3u8?ZTEUPSTREAM=1&IASHttpSessionId=SLB4328320190321203540013412&m3u8_level=2&ztecid=10037&virtualDomain=zjhs.live_hls.zte.com&ispcode=3&tid=Q894B3E8EEZ3T19UG09L8B03GSWB&ts=1553493266@@@@@@@@@@歐美影院
-http://101.71.255.229:6610/zjhs/2/10052/z.m3u8?ZTEUPSTREAM=1&IASHttpSessionId=SLB4328320190321203540013412&m3u8_level=2&ztecid=10052&virtualDomain=zjhs.live_hls.zte.com&ispcode=3&tid=C3V7K4ET1VFDUJY6C1IASRV55G66&ts=1553493153@@@@@@@@@@亞洲影院
+
 
 
 
@@ -182,19 +183,6 @@ http://101.71.255.229:6610/zjhs/2/10052/z.m3u8?ZTEUPSTREAM=1&IASHttpSessionId=SL
 
 /////////////////////////////////////////////////////////////////
 // 非高清
-http://ivi.bupt.edu.cn/hls/cetv1hd.m3u8@@@@@@@@@@CETV-1高清
-http://ivi.bupt.edu.cn/hls/cetv1.m3u8@@@@@@@@@@CETV-1中国教育电视台
-http://cctvtxyh5ca.liveplay.myqcloud.com/cstv/cetv1_2/index.m3u8@@@@@@@@@@CETV-1
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225905/1.m3u8@@@@@@@@@@CETV-1
-http://cctvtxyh5ca.liveplay.myqcloud.com/cstv/cetv2_2/index.m3u8@@@@@@@@@@CETV-2
-http://cctvalih5ca.v.myalicdn.com/cstv/cetv2_2/index.m3u8@@@@@@@@@@CETV-2
-http://ivi.bupt.edu.cn/hls/cetv3.m3u8@@@@@@@@@@CETV-3
-http://cctvtxyh5ca.liveplay.myqcloud.com/cstv/cetv3_2/index.m3u8@@@@@@@@@@CETV-3
-http://cctvalih5ca.v.myalicdn.com/cstv/cetv3_2/index.m3u8@@@@@@@@@@CETV-3
-http://ivi.bupt.edu.cn/hls/cetv4.m3u8@@@@@@@@@@CETV-4
-http://cctvtxyh5ca.liveplay.myqcloud.com/cstv/cetv4_2/index.m3u8@@@@@@@@@@CETV-4
-http://cctvalih5ca.v.myalicdn.com/cstv/cetv4_2/index.m3u8@@@@@@@@@@CETV-4
-
 http://ivi.bupt.edu.cn/hls/cctv1.m3u8@@@@@@@@@@CCTV-1综合
 http://ivi.bupt.edu.cn/hls/cctv2.m3u8@@@@@@@@@@CCTV-2财经
 http://ivi.bupt.edu.cn/hls/cctv3.m3u8@@@@@@@@@@CCTV-3综艺
@@ -206,16 +194,12 @@ http://ivi.bupt.edu.cn/hls/cctv9.m3u8@@@@@@@@@@CCTV-9纪录
 http://ivi.bupt.edu.cn/hls/cctv10.m3u8@@@@@@@@@@CCTV-10科教
 http://ivi.bupt.edu.cn/hls/cctv11.m3u8@@@@@@@@@@CCTV-11戏曲
 http://ivi.bupt.edu.cn/hls/cctv12.m3u8@@@@@@@@@@CCTV-12社会与法
-http://ivi.bupt.edu.cn/hls/cctv13.m3u8@@@@@@@@@@CCTV-13新闻
 http://223.110.241.130:6610/gitv/live1/G_CCTV-13-HQ/.m3u8@@@@@@@@@@CCTV-13新闻
 http://ivi.bupt.edu.cn/hls/cctv14.m3u8@@@@@@@@@@CCTV-14少儿
 http://ivi.bupt.edu.cn/hls/cctv15.m3u8@@@@@@@@@@CCTV-15音乐
-http://ivi.bupt.edu.cn/hls/cctv16.m3u8@@@@@@@@@@CGTN
 http://ivi.bupt.edu.cn/hls/cctv17.m3u8@@@@@@@@@@CCTV-17农业农村
-
-rtmp://58.200.131.2:1935/livetv/dftv@@@@@@@@@@东方卫视(rtmp)
-http://223.110.245.153/ott.js.chinamobile.com/PLTV/3/224/3221225574/index.m3u8@@@@@@@@@@北京卫视
-http://223.110.245.163/ott.js.chinamobile.com/PLTV/3/224/3221227436/index.m3u8@@@@@@@@@@北京卫视
+http://ivi.bupt.edu.cn/hls/gedocu.m3u8@@@@@@@@@@金鹰纪实高清
+http://ivi.bupt.edu.cn/hls/docuchina.m3u8@@@@@@@@@@纪实人文高清
 http://ivi.bupt.edu.cn/hls/btv1.m3u8@@@@@@@@@@北京卫视
 http://ivi.bupt.edu.cn/hls/btv2.m3u8@@@@@@@@@@北京文艺
 http://ivi.bupt.edu.cn/hls/btv3.m3u8@@@@@@@@@@北京科教
@@ -225,30 +209,62 @@ http://ivi.bupt.edu.cn/hls/btv7.m3u8@@@@@@@@@@北京生活
 http://ivi.bupt.edu.cn/hls/btv8.m3u8@@@@@@@@@@北京青年
 http://ivi.bupt.edu.cn/hls/btv9.m3u8@@@@@@@@@@北京新闻
 http://ivi.bupt.edu.cn/hls/btv10.m3u8@@@@@@@@@@北京卡酷少儿
-http://ivi.bupt.edu.cn/hls/btv11.m3u8@@@@@@@@@@冬奥纪实
+http://ivi.bupt.edu.cn/hls/btv11.m3u8@@@@@@@@@@北京冬奥纪实
+http://ivi.bupt.edu.cn/hls/xmtv.m3u8@@@@@@@@@@厦门卫视
+http://ivi.bupt.edu.cn/hls/hntv.m3u8@@@@@@@@@@河南卫视
+http://ivi.bupt.edu.cn/hls/gstv.m3u8@@@@@@@@@@甘肃卫视
+http://ivi.bupt.edu.cn/hls/qhtv.m3u8@@@@@@@@@@青海卫视
+http://ivi.bupt.edu.cn/hls/yntv.m3u8@@@@@@@@@@云南卫视
+http://ivi.bupt.edu.cn/hls/sxtv.m3u8@@@@@@@@@@陕西卫视
+http://ivi.bupt.edu.cn/hls/nxtv.m3u8@@@@@@@@@@宁夏卫视
+http://ivi.bupt.edu.cn/hls/xztv.m3u8@@@@@@@@@@西藏卫视
+http://ivi.bupt.edu.cn/hls/xjtv.m3u8@@@@@@@@@@新疆卫视
+http://ivi.bupt.edu.cn/hls/sstv.m3u8@@@@@@@@@@三沙卫视
+http://ivi.bupt.edu.cn/hls/bttv.m3u8@@@@@@@@@@兵团卫视
+http://ivi.bupt.edu.cn/hls/ybtv.m3u8@@@@@@@@@@延边卫视
+http://ivi.bupt.edu.cn/hls/lntv.m3u8@@@@@@@@@@辽宁卫视
+http://ivi.bupt.edu.cn/hls/sxrtv.m3u8@@@@@@@@@@山西卫视
+http://ivi.bupt.edu.cn/hls/nmtv.m3u8@@@@@@@@@@内蒙古卫视
+http://ivi.bupt.edu.cn/hls/hljtv.m3u8@@@@@@@@@@黑龙江卫视
+
+http://ivi.bupt.edu.cn/hls/cetv1hd.m3u8@@@@@@@@@@CETV-1高清
+http://ivi.bupt.edu.cn/hls/cetv1.m3u8@@@@@@@@@@CETV-1中国教育电视台
+http://cctvtxyh5ca.liveplay.myqcloud.com/cstv/cetv1_2/index.m3u8@@@@@@@@@@CETV-1
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225905/1.m3u8@@@@@@@@@@CETV-1
+http://cctvalih5ca.v.myalicdn.com/cstv/cetv2_2/index.m3u8@@@@@@@@@@CETV-2
+http://cctvtxyh5ca.liveplay.myqcloud.com/cstv/cetv2_2/index.m3u8@@@@@@@@@@CETV-2
+http://ivi.bupt.edu.cn/hls/cetv3.m3u8@@@@@@@@@@CETV-3
+http://cctvalih5ca.v.myalicdn.com/cstv/cetv3_2/index.m3u8@@@@@@@@@@CETV-3
+http://cctvtxyh5ca.liveplay.myqcloud.com/cstv/cetv3_2/index.m3u8@@@@@@@@@@CETV-3
+http://ivi.bupt.edu.cn/hls/cetv4.m3u8@@@@@@@@@@CETV-4
+http://cctvalih5ca.v.myalicdn.com/cstv/cetv4_2/index.m3u8@@@@@@@@@@CETV-4
+http://cctvtxyh5ca.liveplay.myqcloud.com/cstv/cetv4_2/index.m3u8@@@@@@@@@@CETV-4
+
+
+
+
+
+rtmp://58.200.131.2:1935/livetv/dftv@@@@@@@@@@东方卫视(rtmp)
+http://223.110.245.153/ott.js.chinamobile.com/PLTV/3/224/3221225574/index.m3u8@@@@@@@@@@北京卫视
+http://223.110.245.163/ott.js.chinamobile.com/PLTV/3/224/3221227436/index.m3u8@@@@@@@@@@北京卫视
 http://ivi.bupt.edu.cn/hls/sdetv.m3u8@@@@@@@@@@山东教育卫视(音视频不同步)
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225908/1.m3u8@@@@@@@@@@山东教育卫视
 http://117.148.187.37/PLTV/88888888/224/3221226136/index.m3u8@@@@@@@@@@浙江卫视
 http://223.110.245.159/ott.js.chinamobile.com/PLTV/3/224/3221227393/index.m3u8@@@@@@@@@@浙江卫视
 http://223.110.245.163/ott.js.chinamobile.com/PLTV/3/224/3221227215/index.m3u8@@@@@@@@@@浙江卫视
 http://223.110.245.145/ott.js.chinamobile.com/PLTV/3/224/3221226093/index.m3u8@@@@@@@@@@厦门卫视
-http://ivi.bupt.edu.cn/hls/xmtv.m3u8@@@@@@@@@@厦门卫视
 http://112.17.40.12/PLTV/88888888/224/3221226553/index.m3u8@@@@@@@@@@湖南卫视高清
 rtmp://58.200.131.2:1935/livetv/hunantv@@@@@@@@@@湖南卫视(rtmp)
 http://112.50.243.8/PLTV/88888888/224/3221225855/1.m3u8@@@@@@@@@@海南卫视
-http://ivi.bupt.edu.cn/hls/hntv.m3u8@@@@@@@@@@河南卫视
 http://223.110.245.157/ott.js.chinamobile.com/PLTV/3/224/3221225815/index.m3u8@@@@@@@@@@河南卫视
 http://223.110.245.149/ott.js.chinamobile.com/PLTV/3/224/3221225840/index.m3u8@@@@@@@@@@河北卫视
 http://111.40.205.87/PLTV/88888888/224/3221225623/index.m3u8@@@@@@@@@@河北卫视
 http://hbpx.chinashadt.com:2036/live/px4.stream/playlist.m3u8@@@@@@@@@@河北卫视
 http://223.110.245.149/ott.js.chinamobile.com/PLTV/3/224/3221225787/index.m3u8@@@@@@@@@@贵州卫视
-http://ivi.bupt.edu.cn/hls/gstv.m3u8@@@@@@@@@@甘肃卫视
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225877/1.m3u8@@@@@@@@@@甘肃卫视
 http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=142&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@甘肃卫视
-http://ivi.bupt.edu.cn/hls/qhtv.m3u8@@@@@@@@@@青海卫视
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225893/1.m3u8@@@@@@@@@@青海卫视
 http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid=5abd1660af1babb4&Fsv_filetype=1&Fsv_ctype=LIVES&Fsv_cid=0&Fsv_chan_hls_se_idx=206&Fsv_rate_id=0&Fsv_SV_PARAM1=0&Fsv_ShiftEnable=0&Fsv_ShiftTsp=0&Provider_id=&Pcontent_id=&Fsv_CMSID=&Fsv_otype=1@@@@@@@@@@青海卫视
-http://ivi.bupt.edu.cn/hls/yntv.m3u8@@@@@@@@@@云南卫视
 http://223.110.245.159/ott.js.chinamobile.com/PLTV/3/224/3221225838/index.m3u8@@@@@@@@@@云南卫视
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225902/1.m3u8@@@@@@@@@@云南卫视
 http://125.210.152.18:9090/live/SZWSHD_H265.m3u8@@@@@@@@@@深圳卫视
@@ -260,23 +276,14 @@ http://112.50.243.8/PLTV/88888888/224/3221225868/1.m3u8@@@@@@@@@@江西卫视
 http://m-tvlmedia.public.bcs.ysten.com/ysten-business/live/jiangxistv/1.m3u8@@@@@@@@@@江西卫视
 http://223.110.245.170/ott.js.chinamobile.com/PLTV/3/224/3221225536/index.m3u8@@@@@@@@@@江西卫视
 http://111.40.205.87/PLTV/88888888/224/3221225615/index.m3u8@@@@@@@@@@江西卫视*
-http://ivi.bupt.edu.cn/hls/sxrtv.m3u8@@@@@@@@@@山西卫视
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225895/1.m3u8@@@@@@@@@@山西卫视
-http://ivi.bupt.edu.cn/hls/sxtv.m3u8@@@@@@@@@@陕西卫视
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225896/1.m3u8@@@@@@@@@@陕西卫视
-http://ivi.bupt.edu.cn/hls/nxtv.m3u8@@@@@@@@@@宁夏卫视
 http://223.110.245.151/ott.js.chinamobile.com/PLTV/3/224/3221225842/index.m3u8@@@@@@@@@@宁夏卫视
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225892/1.m3u8@@@@@@@@@@宁夏卫视
-http://ivi.bupt.edu.cn/hls/xztv.m3u8@@@@@@@@@@西藏卫视
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225900/1.m3u8@@@@@@@@@@西藏卫视
-http://ivi.bupt.edu.cn/hls/xjtv.m3u8@@@@@@@@@@新疆卫视
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225901/1.m3u8@@@@@@@@@@新疆卫视
-http://ivi.bupt.edu.cn/hls/nmtv.m3u8@@@@@@@@@@内蒙古卫视
 http://223.110.245.161/ott.js.chinamobile.com/PLTV/3/224/3221225836/index.m3u8@@@@@@@@@@内蒙古卫视
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225891/1.m3u8@@@@@@@@@@内蒙古卫视
-http://ivi.bupt.edu.cn/hls/sstv.m3u8@@@@@@@@@@三沙卫视
-http://ivi.bupt.edu.cn/hls/bttv.m3u8@@@@@@@@@@兵团卫视
-http://ivi.bupt.edu.cn/hls/ybtv.m3u8@@@@@@@@@@延边卫视
 http://121.31.30.90:8085/ysten-business/live/yangguangstv/yst.m3u8@@@@@@@@@@阳光卫视
 
 
@@ -330,8 +337,6 @@ http://ivi.bupt.edu.cn/hls/btv4hd.m3u8@@@@@@@@@@北京影视高清
 http://ivi.bupt.edu.cn/hls/btv9hd.m3u8@@@@@@@@@@北京新闻高清
 http://ivi.bupt.edu.cn/hls/btv11hd.m3u8@@@@@@@@@@北京冬奥纪实高清
 http://ivi.bupt.edu.cn/hls/dfhd.m3u8@@@@@@@@@@东方卫视高清
-http://ivi.bupt.edu.cn/hls/docuchina.m3u8@@@@@@@@@@上海纪实高清
-http://ivi.bupt.edu.cn/hls/gedocu.m3u8@@@@@@@@@@金鹰纪实高清
 http://ivi.bupt.edu.cn/hls/zjhd.m3u8@@@@@@@@@@浙江卫视高清
 http://ivi.bupt.edu.cn/hls/hunanhd.m3u8@@@@@@@@@@湖南卫视高清
 http://ivi.bupt.edu.cn/hls/hbhd.m3u8@@@@@@@@@@湖北卫视高清
@@ -352,6 +357,8 @@ http://ivi.bupt.edu.cn/hls/tjhd.m3u8@@@@@@@@@@天津卫视高清
 http://ivi.bupt.edu.cn/hls/hebhd.m3u8@@@@@@@@@@河北卫视高清
 http://ivi.bupt.edu.cn/hls/hljhd.m3u8@@@@@@@@@@黑龙江卫视高清
 http://ivi.bupt.edu.cn/hls/dnhd.m3u8@@@@@@@@@@福建东南卫视高清
+
+
 
 http://112.50.243.8/PLTV/88888888/224/3221225828/1.m3u8@@@@@@@@@@东方卫视高清
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226237/1.m3u8@@@@@@@@@@东方卫视高清
@@ -501,7 +508,7 @@ http://116.199.5.52:8114/00000000/index.m3u8?&Fsv_ctype=LIVES&Fsv_otype=1&FvSeid
 http://hwottcdn.ln.chinamobile.com/PLTV/88888890/224/3221226029/index.m3u8@@@@@@@@@@仙桃新闻综合
 http://m-tvlmedia.public.bcs.ysten.com/ysten-business/live/yunnanstv/1.m3u8@@@@@@@@@@仙桃生活文体
 http://121.31.30.90:8085/ysten-business/live/neimenggustv/yst.m3u8@@@@@@@@@@利川公共频道
-http://ivi.bupt.edu.cn/hls/btv1hd.m3u8@@@@@@@@@@南京影视
+
 http://live.nbs.cn/channels/njtv/shpd/flv:500k/live@@@@@@@@@@南京生活
 http://223.110.243.173/PLTV/3/224/3221227246/index.m3u8@@@@@@@@@@南京娱乐
 http://stream.guihet.com/tv/sxdft.php?id=3221225956@@@@@@@@@@南京娱乐
@@ -528,13 +535,11 @@ http://aod.xjbs.com.cn:1935/live/my/32K/tzwj_video.m3u8@@@@@@@@@@晋中公共频
 http://111.40.205.76/PLTV/88888888/224/3221225656/index.m3u8@@@@@@@@@@兴县综合频道
 http://117.169.120.140:8080/live/hdshandongstv/.m3u8@@@@@@@@@@巴中公共频道
 http://aldirect.hls.huya.com/huyalive/29169025-2686220742-11537230236726853632-3048959612-10057-A-1524131613-1_1200.m3u8@@@@@@@@@@九寨沟新闻综合
-http://ivi.bupt.edu.cn/hls/ahhd.m3u8@@@@@@@@@@宣汉城市公众
+
 http://116.199.5.51:8114/00000000/hls/index.m3u8?Fsv_chan_hls_se_idx=120&FvSeid=1&Fsv_ctype=LIVES&Fsv_otype=1&Provider_id=&Pcontent_id=.m3u8@@@@@@@@@@安州电视剧频道
 http://w1.livecdn.yicai.com/hls/live/CBN_hd/live.m3u8@@@@@@@@@@绵竹新闻综合
 http://112.50.243.8/PLTV/88888888/224/3221225843/1.m3u8@@@@@@@@@@峨边电视台
 http://221.238.209.44:81/hls/live1.m3u8@@@@@@@@@@西青新闻综合
-http://ivi.bupt.edu.cn/hls/btv5.m3u8@@@@@@@@@@博州汉语综合
-http://ivi.bupt.edu.cn/hls/btv8.m3u8@@@@@@@@@@博州维语综合
 http://klmyyun.chinavas.com/hls/fuhai2.m3u8@@@@@@@@@@福海汉语综合
 http://www.ynbit.cn:1935/cyds-mlyn/livestream/playlist.m3u8@@@@@@@@@@美丽云南
 http://live.hhtv.cc:9099/ch1/ch1.m3u8@@@@@@@@@@红河州新闻综合
@@ -556,7 +561,6 @@ http://stream2.jinhua.com.cn/jjsh/app/live.m3u8@@@@@@@@@@金华公共频道
 http://m-tvlmedia.public.bcs.ysten.com/ysten-business/live/chongqingstv/1.m3u8@@@@@@@@@@金华都市农村
 http://ls.qingting.fm/live/1612.m3u8@@@@@@@@@@金华都市农村
 http://live2.hzitv.cn/tslslive/z6NexHK/hls/live_sd.m3u8@@@@@@@@@@湖州公共民生
-http://ivi.bupt.edu.cn/hls/szhd.m3u8@@@@@@@@@@温州经济科教
 http://hls.dhtv.cn:8080/live/v3_13.m3u8@@@@@@@@@@温州都市生活
 http://112.50.243.8/PLTV/88888888/224/3221225848/1.m3u8@@@@@@@@@@温州都市生活
 http://223.110.245.157/ott.js.chinamobile.com/PLTV/3/224/3221225997/index.m3u8@@@@@@@@@@温州公共频道
@@ -590,7 +594,6 @@ http://stream.smntv.cn/smtv2/sd/live.m3u8@@@@@@@@@@三明公共频道
 http://stream.smntv.cn/smtv1/sd/live.m3u8@@@@@@@@@@三明新闻综合
 http://fjsh.chinashadt.com:1935/live/fjds.stream/playlist.m3u8@@@@@@@@@@上杭综合频道
 http://116.199.5.51:8114/00000000/hls/index.m3u8?Fsv_chan_hls_se_idx=16&FvSeid=1&Fsv_ctype=LIVES&Fsv_otype=1&Provider_id=&Pcontent_id=.m3u8@@@@@@@@@@上海东方卫视
-http://ivi.bupt.edu.cn/hls/dfhd.m3u8@@@@@@@@@@上海东方卫视
 http://pdlive.lyuncloud.com/pdlive/pdtv/index.m3u8@@@@@@@@@@上海浦东
 http://bililive.kksmg.com/hls/sdi7000/playlist.m3u8@@@@@@@@@@上海这一刻陆家嘴
 http://bililive.kksmg.com/hls/sdi7000/playlist.m3u8?wsSession=14d4afa57497cbd7234253cd-154201925578539&wsIPSercert=acb4b8c47a67df44337edea131d91dac&wsMonitor=-1@@@@@@@@@@上海这一刻陆家嘴
@@ -905,7 +908,6 @@ http://hbhh.chinashadt.com:2111/live/hhtv.stream/playlist.m3u8@@@@@@@@@@黄骅�
 http://hbhh.chinashadt.com:2111/live/hhtv2.stream/playlist.m3u8@@@@@@@@@@黄骅二套
 http://111.40.205.87/PLTV/88888888/224/3221225658/index.m3u8@@@@@@@@@@黑龙江卫视
 http://112.50.243.8/PLTV/88888888/224/3221225940/3.m3u8@@@@@@@@@@黑龙江卫视
-http://ivi.bupt.edu.cn/hls/hljtv.m3u8@@@@@@@@@@黑龙江卫视
 http://m-tvlmedia.public.bcs.ysten.com/ysten-business/live/hdheilongjiangstv/1.m3u8@@@@@@@@@@黑龙江卫视
 http://223.82.250.72/live/hdheilongjiangstv/1.m3u8@@@@@@@@@@黑龙江卫视HD
 http://112.50.243.8/PLTV/88888888/224/3221225862/1.m3u8@@@@@@@@@@黑龙江卫视高清
@@ -918,7 +920,6 @@ http://yslk.chinashadt.com:1635/live/stream:di2.stream/playlist.m3u8@@@@@@@@@@�
 http://stream.lytv.net.cn/1/sd/live.m3u8@@@@@@@@@@龙岩公共
 http://223.82.250.72/live/shanxi1stv/1.m3u8@@@@@@@@@@陕西卫视
 http://39.134.52.184/hwottcdn.ln.chinamobile.com/PLTV/88888890/224/3221226021/index.m3u8@@@@@@@@@@陕西卫视
-http://ivi.bupt.edu.cn/hls/sxtv.m3u8@@@@@@@@@@陕西卫视
 http://stream.snrtv.com/sxtvs-star.m3u8@@@@@@@@@@陕西卫视
 http://stream.snrtv.com/sxtvs-3.m3u8@@@@@@@@@@陕西生活
 http://stream.snrtv.com/sxtvs-2.m3u8@@@@@@@@@@陕西都市
@@ -1297,7 +1298,6 @@ http://117.148.187.37/PLTV/88888888/224/3221226162/index.m3u8@@@@@@@@@@滦县综
 http://223.110.245.159/ott.js.chinamobile.com/PLTV/3/224/3221227191/index.m3u8@@@@@@@@@@滦县综艺频道
 http://tv.jrsncn.com:9001/hls/live/live1/stream.m3u8@@@@@@@@@@高碑店一套
 http://hblq.chinashadt.com:2036/live/stream:luquan1.stream/playlist.m3u8@@@@@@@@@@鹿泉一套
-http://ivi.bupt.edu.cn/hls/xztv.m3u8@@@@@@@@@@赵县电视一套
 http://zhjz.chinashadt.com:2036/live/1.stream/playlist.m3u8@@@@@@@@@@晋州新闻频道
 http://hbsz.chinashadt.com:2036/live/stream:sztv.stream/playlist.m3u8@@@@@@@@@@深州综合频道
 http://117.158.206.60:9080/live/live29_tzwj_500k.m3u8@@@@@@@@@@郑州地铁2频道
@@ -1315,7 +1315,6 @@ http://118.122.224.176:8091/live/xwzh.m3u8@@@@@@@@@@恩施公共
 http://xiaogan.live.cjyun.org/video/s10139-xg/index.m3u8@@@@@@@@@@孝感新闻综合
 http://huanggang.live.cjyun.org/video/s10120-xwzh.m3u8@@@@@@@@@@黄冈新闻频道
 http://hbgt.chinashadt.com:1935/live/stream:gtzh.stream_720p/playlist.m3u8@@@@@@@@@@黄冈公共频道
-http://ivi.bupt.edu.cn/hls/yntv.m3u8@@@@@@@@@@仙桃新闻综合
 http://uni6rtmp.tulix.tv:1935/vbstv/vbsabr.smil/chunklist_w439903609_b1228800.m3u8@@@@@@@@@@利川新闻综合
 http://uni6rtmp.tulix.tv:1935/vbstv/vbsabr.smil/chunklist_w1847269952_b204800.m3u8@@@@@@@@@@利川公共频道
 http://xiaochang.live.cjyun.org/video/s10128-xcxw/index.m3u8@@@@@@@@@@孝昌新闻党建
@@ -1340,7 +1339,6 @@ http://218.77.102.118:1935/live/zonghe/playlist.m3u8@@@@@@@@@@娄底综合频道
 http://117.169.120.140:8080/live/hdtianjinstv/.m3u8@@@@@@@@@@娄底公共频道
 http://hnyz.chinashadt.com:2036/live/stream:tv1.stream/playlist.m3u8@@@@@@@@@@宜章新闻综合
 http://hnyz.chinashadt.com:2036/live/stream:tv2.stream/playlist.m3u8@@@@@@@@@@宜章社会法制
-http://ivi.bupt.edu.cn/hls/lntv.m3u8@@@@@@@@@@邵东综合频道
 http://hnsf.chinashadt.com:2036/zhuanma/tv1.stream_360p/playlist.m3u8@@@@@@@@@@双峰电视一套
 http://live.nbs.cn/channels/njtv/xwzh/m3u8:500k/live.m3u8@@@@@@@@@@南京新闻综合
 http://ls.qingting.fm/live/28138.m3u8@@@@@@@@@@南京影视
