@@ -58,26 +58,26 @@ http://112.17.40.145/PLTV/88888888/224/3221226610/index.m3u8@@@@@@@@@@求索纪�
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226295/1.m3u8@@@@@@@@@@明星大片
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226302/1.m3u8@@@@@@@@@@海外综合
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226233/1.m3u8@@@@@@@@@@NewTV超级电影
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226231/1.m3u8@@@@@@@@@@NewTV超级综艺
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226232/1.m3u8@@@@@@@@@@NewTV超级体育
-http://111.13.111.167/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225864/1.m3u8@@@@@@@@@@NewTV超级电视剧
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226298/1.m3u8@@@@@@@@@@NewTV中国功夫
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226296/1.m3u8@@@@@@@@@@NewTV金牌综艺
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226304/1.m3u8@@@@@@@@@@NewTV农业致富
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226286/1.m3u8@@@@@@@@@@NewTV潮妈辣婆
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226248/1.m3u8@@@@@@@@@@NewTV炫舞未来
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226297/1.m3u8@@@@@@@@@@NewTV武搏世界
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226288/1.m3u8@@@@@@@@@@NewTV动作电影
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226293/1.m3u8@@@@@@@@@@NewTV精品记录
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226294/1.m3u8@@@@@@@@@@NewTV惊梀悬疑
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226299/1.m3u8@@@@@@@@@@NewTV爱情喜剧
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226293/1.m3u8@@@@@@@@@@NewTV精品记录
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226328/1.m3u8@@@@@@@@@@NewTV精品体育
 http://111.13.111.167/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226331/1.m3u8@@@@@@@@@@NewTV精品大剧
 http://111.13.111.167/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226323/1.m3u8@@@@@@@@@@NewTV古装剧场
 http://111.13.111.167/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226324/1.m3u8@@@@@@@@@@NewTV军旅剧场
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225918/1.m3u8@@@@@@@@@@NewTV家庭剧场
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226304/1.m3u8@@@@@@@@@@NewTV农业致富
+http://111.13.111.167/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225864/1.m3u8@@@@@@@@@@NewTV超级电视剧
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226298/1.m3u8@@@@@@@@@@NewTV中国功夫
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226286/1.m3u8@@@@@@@@@@NewTV潮妈辣婆
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226248/1.m3u8@@@@@@@@@@NewTV炫舞未来
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226297/1.m3u8@@@@@@@@@@NewTV武搏世界
 http://111.13.111.167/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226326/1.m3u8@@@@@@@@@@NewTV军事评论
 http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225919/1.m3u8@@@@@@@@@@NewTV怡伴健康
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221225918/1.m3u8@@@@@@@@@@NewTV家庭剧场
-http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226288/1.m3u8@@@@@@@@@@NewTV动作电影
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226296/1.m3u8@@@@@@@@@@NewTV金牌综艺
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226231/1.m3u8@@@@@@@@@@NewTV超级综艺
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226232/1.m3u8@@@@@@@@@@NewTV超级体育
+http://111.13.111.242/otttv.bj.chinamobile.com/PLTV/88888888/224/3221226328/1.m3u8@@@@@@@@@@NewTV精品体育
 
 http://112.50.243.8/PLTV/88888888/224/3221226736/1.m3u8@@@@@@@@@@影视1台
 http://112.50.243.8/PLTV/88888888/224/3221225881/1.m3u8@@@@@@@@@@影视2台
@@ -146,12 +146,12 @@ http://223.110.245.136/PLTV/3/224/3221226975/index.m3u8@@@@@@@@@@香港台
 http://183.207.249.34/PLTV/3/224/3221226975/index.m3u8@@@@@@@@@@香港台
 http://zhibo.hkstv.tv/livestream/mutfysrq.flv@@@@@@@@@@香港卫视
 http://cctvtxyh5ca.liveplay.myqcloud.com/cstv/xianggangweishi_2_hd.m3u8@@@@@@@@@@香港卫视+
+https://hls.cntv.baishancdnx.cn/asp/hls/8000/0303000a/3/default/9891cea600df4e8a83851b1b1ce23194/8000.m3u8@@@@@@@@@@美丽中国4K
+http://112.50.243.8/PLTV/88888888/224/3221226825/1.m3u8@@@@@@@@@@纯享4K
+http://112.17.40.145/PLTV/88888888/224/3221226718/index.m3u8@@@@@@@@@@百事4K
 http://112.17.40.12/PLTV/88888888/224/3221226758/1.m3u8@@@@@@@@@@CCTV-4K蓝码
 http://39.134.176.148/PLTV/88888888/224/3221226758/index.m3u8@@@@@@@@@@CCTV-4K蓝码
 http://117.148.187.83/PLTV/88888888/224/3221226758/index.m3u8@@@@@@@@@@CCTV-4K蓝码
-https://hls.cntv.baishancdnx.cn/asp/hls/8000/0303000a/3/default/9891cea600df4e8a83851b1b1ce23194/8000.m3u8@@@@@@@@@@美丽中国4K
-http://112.17.40.145/PLTV/88888888/224/3221226718/index.m3u8@@@@@@@@@@百事4K
-http://112.50.243.8/PLTV/88888888/224/3221226825/1.m3u8@@@@@@@@@@纯享4K
 
 
 
