@@ -27,9 +27,14 @@ add_executable(
         src/GuessNumber.cpp
 #        src/HandleAndroidString.cpp
         src/thread_pool_active.c
-        #       src/thread_pool_simple.c
+#       src/thread_pool_simple.c
         main.cpp
-        include/TestRegularExpression.hpp include/TestClass.hpp include/TestString.hpp include/TestThread.hpp include/TestSTL.hpp include/TestMemory.hpp)
+        include/TestRegularExpression.hpp
+        include/TestClass.hpp
+        include/TestString.hpp
+        include/TestThread.hpp
+        include/TestSTL.hpp
+        include/TestMemory.hpp)
 
 #                   下面是加载一些头文件及库文件
 ################################################################

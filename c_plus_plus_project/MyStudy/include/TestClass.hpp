@@ -5,6 +5,8 @@
 #ifndef MYSTUDY_TESTCLASS_HPP
 #define MYSTUDY_TESTCLASS_HPP
 
+#include <cstring>
+
 namespace alexander {
     // 爷爷类
     class Grandpa {
