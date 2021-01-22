@@ -590,6 +590,54 @@ void test_lseek(void) {
 }
 
 int test() {
+    // gethostbyaddr(...) 通过本机IP地址,才能获取本机主机名；如果是局域网内其他IP地址,则获取不了
+    const char *ip = "192.168.0.107";
+    struct in_addr addr;
+    inet_aton(ip, &addr);
+    struct hostent *pHost = gethostbyaddr((void *) &addr, sizeof(addr), AF_INET);
+    if (pHost == NULL) {
+        printf("\ngethostbyaddr() Error. [%s]\n", hstrerror(h_errno));// Unknown host
+        return -1;
+    }
+    printf("HostName1: [%s]\n", pHost->h_name);
+
+    //
+    unsigned int inet_addr_ret = inet_addr(ip);
+    pHost = gethostbyaddr((char *) &inet_addr_ret, sizeof(inet_addr_ret), PF_INET);
+    if (pHost != NULL) {
+        // cscsh-5109u23887
+        printf("HostName2: [%s]\n", pHost->h_name);
+    }
+
+    // gethostname(...) 只能获取本机主机名
+    char buf[1024] = {0};
+    int iRet = gethostname(buf, 1024);
+    if (iRet != 0) {
+        perror("gethostname()");
+        return -1;
+    }
+    printf("HostName3: [%s]\n", buf);
+    buf[strlen(buf) + 1] = '\0';
+    struct hostent *host = gethostbyname(buf);
+    printf("HostName4: [%s]\n", host->h_name);
+
+    for (int i = 0; pHost->h_aliases[i]; i++) {
+        printf("\t[%s]\n", pHost->h_aliases[i]);
+    }
+
+    if (pHost->h_addrtype == AF_INET)// 2
+        printf("host address type: AF_INET\n");
+    if (pHost->h_addrtype == AF_INET6)// 10
+        printf("host address type: AF_INET6\n");
+    printf("length of address: [%d]\n", pHost->h_length);
+
+    printf("list of addresses:\n");
+    if (pHost->h_addrtype == AF_INET) {
+        for (int i = 0; pHost->h_addr_list[i]; i++) {
+            printf("\t\t\t\t\t[%s]\n", inet_ntoa(*((struct in_addr *) pHost->h_addr_list[i])));
+        }
+    }
+
 
 }
 

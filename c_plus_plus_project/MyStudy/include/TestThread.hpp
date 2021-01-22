@@ -8,8 +8,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include <pthread.h>
 #include <zconf.h>
+
+#include <pthread.h>
+#include <semaphore.h>
+
+struct WdThread {
+    pthread_t thread;
+};
+struct WdMutex {
+    pthread_mutex_t mutex;
+};
+struct WdSem {
+    sem_t sem;
+};
+typedef struct WdThread WdThread;
+typedef struct WdMutex WdMutex;
+typedef struct WdSem WdSem;
 
 namespace alexander {
 

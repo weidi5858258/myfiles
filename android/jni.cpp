@@ -4,6 +4,15 @@
 #include "core_jni_helpers.h"
 
 /***
+https://source.android.google.cn/setup/build/downloading
+
+在jni层能用的类有:
+#include <media/stagefright/foundation/AString.h>
+AString(const char *name能直接传给参数const AString &name)
+#include <utils/KeyedVector.h>
+KeyedVector<AString, sp<Capabilities> > mCaps;
+
+
 在Android底层打印日志时的输出格式有：
 打印以0x开关的enum常量时使用%#x，不要使用#%x(可能是写错的)
 %s   : String8(mOpPackageName).string()
@@ -1386,6 +1395,534 @@ root@WEIDI5858258:/mnt/d/android_source/android_n# make -j4
 
  NDK so库文件位置:
  /Users/alexander/mydev/tools/android_sdk/android-ndk-r16b/platforms/android-27/arch-arm/usr/lib
+
+jclass,jmethodID,jfieldID变量都是可以初始化为NULL.
+
+java端native方法参数 ---> 对应jni标识
+Object ---> Ljava/lang/Object;
+String ---> Ljava/lang/String;
+FileDescriptor ---> Ljava/io/FileDescriptor;
+int    ---> I
+long ---> J
+byte ---> B
+boolean[] ---> [Z
+
+java端native方法返回值 ---> 对应jni标识
+void ---> V
+boolean ---> Z
+
+////////////////////////////////////////////注册jni方法(一般App开发中不需要这样子去做)
+文件: android_media_JetPlayer.cpp
+#include <jni.h>
+#include <JNIHelp.h>
+#include "core_jni_helpers.h"
+// java
+private native final boolean native_setup(Object Jet_this, int maxTracks, int trackBufferSize);
+// jni
+static jboolean android_media_JetPlayer_setup(JNIEnv *env, jobject thiz, jobject weak_this,
+                                                jint maxTracks, jint trackBufferSize)
+static const JNINativeMethod gMethods[] = {
+        // name,         signature,                 funcPtr
+        {"native_setup", "(Ljava/lang/Object;II)Z", (void *) android_media_JetPlayer_setup},
+};
+int register_android_media_JetPlayer(JNIEnv *env) {
+    // RegisterMethodsOrDie在core_jni_helpers.h中定义(实际上是AndroidRuntime::registerNativeMethods(...))
+    return RegisterMethodsOrDie(env, "android/media/JetPlayer", gMethods, NELEM(gMethods));
+}
+java端调用native_setup(...)方法时,就会调用到jni层的android_media_JetPlayer_setup方法
+
+// 为java端的long属性(mNativePlayerInJavaObj)设置jni层的一个对象
+// java端定义
+private long mNativePlayerInJavaObj;
+// jni端定义
+static const char *const kClassPathName = "android/media/JetPlayer";
+#define JAVA_NATIVEJETPLAYERINJAVAOBJ_FIELD_NAME "mNativePlayerInJavaObj"
+jclass jetPlayerClass = FindClassOrDie(env, kClassPathName);
+jclass jetClass = MakeGlobalRefOrDie(env, jetPlayerClass);
+jfieldID nativePlayerInJavaObj = GetFieldIDOrDie(env, jetPlayerClass, JAVA_NATIVEJETPLAYERINJAVAOBJ_FIELD_NAME, "J");
+JetPlayer *lpJet = new JetPlayer(env->NewGlobalRef(weak_this), maxTracks, trackBufferSize);
+// set(为什么要像下面这样子set一下,然后get再使用,而不直接使用lpJet对象呢?)
+env->SetLongField(thiz, nativePlayerInJavaObj, (jlong) lpJet);
+env->SetLongField(weak_this, nativePlayerInJavaObj, 0);
+// get
+JetPlayer *lpJet = (JetPlayer *) env->GetLongField(thiz, nativePlayerInJavaObj);
+if (lpJet == NULL) {
+    jniThrowException(env, "java/lang/IllegalStateException", "Unable to retrieve JetPlayer pointer for openFile()");
+    jniThrowException(env, "java/lang/IllegalArgumentException",
+                String8::format("Failed to initialize %s, error %#x", tmp, err));
+    return JNI_FALSE;
+} else {
+    lpJet->release();
+    delete lpJet;
+}
+
+文件: android_media_MediaPlayer.cpp
+#include <stdio.h>
+#include <unistd.h>
+#include <assert.h>
+extern int register_android_media_JetPlayer(JNIEnv *env);
+// java端调用System.loadLibrary()加载一个库的时候会执行JNI_OnLoad(...)方法
+jint JNI_OnLoad(JavaVM* vm, void* reserved) {
+    javaVM = vm;
+    JNIEnv* env = NULL;
+    jint result = -1;
+
+    if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
+        ALOGE("ERROR: GetEnv failed\n");
+        goto bail;
+    }
+    assert(env != NULL);
+
+    if (register_android_media_JetPlayer(env) < 0) {
+        ALOGE("ERROR: JetPlayer native registration failed");
+        goto bail;
+    }
+
+    // success -- return valid version number
+    result = JNI_VERSION_1_4;
+
+    bail:
+    return result;
+}
+////////////////////////////////////////////
+
+JavaVM* AndroidRuntime::getJavaVM() {
+    return javaVM;
+}
+
+JNIEnv* AndroidRuntime::getJNIEnv() {
+    JNIEnv* env = nullptr;
+    if (javaVM->GetEnv((void**)(&env), JNI_VERSION_1_6) != JNI_OK) {
+        return nullptr;
+    }
+    if (javaVM->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+        return JNI_ERR;
+    }
+    return env;
+}
+
+jclass system = FindClassOrDie(env, "java/lang/System");
+
+static vector<string> parseCsv(JNIEnv* env, jstring csvJString) {
+    // jstring ---> const char*
+    const char* charArray = env->GetStringUTFChars(csvJString, 0);
+    const char* charArray = env->GetStringUTFChars(csvJString, NULL);
+    if (charArray == NULL) {
+        // Out of memory
+    }
+    // const char* ---> string
+    string csvString(charArray);
+    // ...
+    env->ReleaseStringUTFChars(csvJString, charArray);
+    return result;
+}
+
+JNIEnv *env = AndroidRuntime::getJNIEnv();
+if (env) {
+    env->CallStaticVoidMethod(...);
+    if (env->ExceptionCheck()) {
+        env->ExceptionDescribe();
+        env->ExceptionClear();
+    }
+} else {
+    ALOGE("JET jetPlayerEventCallback(): No JNI env for JET event callback, can't post event.");
+    return;
+}
+
+在java端调用native方法的对象被传递到jni层时,
+最好这样使用new WeakReference<FFMPEG>(this).
+参数: jobject weak_this;
+jobject ffmpegJavaObject = weak_this;// error 直接赋值是不OK的
+jobject ffmpegJavaObject = reinterpret_cast<jobject>(env->NewGlobalRef(weak_this));
+
+// jintArray
+参数: jintArray jSampleRate;
+if (jSampleRate == 0) {
+    ALOGE("Error creating AudioTrack: invalid sample rates");
+    return (jint) AUDIO_JAVA_ERROR;
+}
+int* sampleRates = env->GetIntArrayElements(jSampleRate, NULL);
+if (sampleRates == NULL) {
+    ALOGE("...");
+    return (jint) AUDIO_JAVA_ERROR;
+}
+int sampleRateInHertz = sampleRates[0];
+env->ReleaseIntArrayElements(jSampleRate, sampleRates, JNI_ABORT);
+参数: jintArray jSession;
+if (jSession == NULL) {
+    ALOGE("Error creating AudioTrack: invalid session ID pointer");
+    return (jint) AUDIO_JAVA_ERROR;
+}
+jint* nSession = (jint *) env->GetPrimitiveArrayCritical(jSession, NULL);
+if (nSession == NULL) {
+    ALOGE("Error creating AudioTrack: Error retrieving session id pointer");
+    return (jint) AUDIO_JAVA_ERROR;
+}
+audio_session_t sessionId = (audio_session_t) nSession[0];
+env->ReleasePrimitiveArrayCritical(jSession, nSession, 0);
+nSession = NULL;
+
+// jbooleanArray
+参数: jbooleanArray muteArray;
+if (muteArray == NULL) {
+    ALOGE("...");
+    return (jint) AUDIO_JAVA_ERROR;
+}
+jboolean *muteTracks = NULL;
+muteTracks = env->GetBooleanArrayElements(muteArray, NULL);
+if (muteTracks == NULL) {
+    ALOGE("android_media_JetPlayer_queueSegment(): failed to read track mute mask.");
+    return JNI_FALSE;
+}
+muteTracks[0] = JNI_TRUE;
+muteTracks[1] = JNI_FALSE;
+...
+env->ReleaseBooleanArrayElements(muteArray, muteTracks, 0);
+
+// jstring
+参数: jstring name;
+if (name == NULL) {
+    jniThrowException(env, "java/lang/NullPointerException", NULL);
+    return;
+}
+const char *tmp = env->GetStringUTFChars(name, NULL);// nullptr
+if (tmp == NULL) {
+    return;
+}
+...
+env->ReleaseStringUTFChars(name, tmp);
+
+
+typedef struct {
+    EAS_U32     libVersion;
+    EAS_BOOL    checkedVersion;
+} S_EAS_LIB_CONFIG;// 写在这里可以直接使用
+static const S_EAS_LIB_CONFIG* pLibConfig = NULL;
+
+
+Mutex mMutex;
+Condition mCondition;
+
+frameworks/av/media/libaaudio
+frameworks/av/media/libaudioclient
+frameworks/av/media/libaudiofoundation
+frameworks/av/media/libaudiohal
+frameworks/av/media/libaudioprocessing
+frameworks/av/media/libmedia
+frameworks/av/media/libmediahelper
+frameworks/av/media/libmediametrics
+frameworks/av/media/libmediaplayerservice
+frameworks/av/media/libmediatranscoding
+
+// 虚拟继承
+struct AHandler          : public         RefBase {}
+struct MediaCodec        : public         AHandler{}
+class MediaCodecBuffer   : public         RefBase { 有些类也不一定是用virtual继承RefBase }
+class IMediaDeathNotifier: public virtual RefBase {//
+class IMediaDeathNotifier: virtual public RefBase {
+    public:
+        IMediaDeathNotifier() {}
+        virtual ~IMediaDeathNotifier() {}
+        virtual ~MediaCodecBuffer() = default;
+    private:
+        MediaCodecBuffer() = delete;
+}
+class MediaPlayer : public BnMediaPlayerClient,
+                    public virtual IMediaDeathNotifier {
+    public:
+        MediaPlayer();
+        ~MediaPlayer();
+}
+// 使用
+#include <utils/StrongPointer.h>
+sp<MediaPlayer> mp = new MediaPlayer();
+if (mp == NULL) {
+    jniThrowException(env, "java/lang/RuntimeException", "Out of memory");
+    return;
+}
+setMediaPlayer(env, thiz, mp);
+
+// 函数定义
+status_t MediaCodec::getBufferAndFormat(
+            size_t portIndex, size_t index, sp<MediaCodecBuffer> *buffer, sp<AMessage> *format) {...}
+sp<AMessage> format;// 此时format != NULL
+getBufferAndFormat(kPortIndexInput, index, buffer, &format);
+// 在android中的基本用法(在底层差不多是这种模式)
+static Mutex sLock;
+static sp<MediaPlayer> setMediaPlayer(JNIEnv* env, jobject thiz, const sp<MediaPlayer>& player) {
+    Mutex::Autolock l(sLock);
+    sp<MediaPlayer> old = (MediaPlayer*)env->GetLongField(thiz, fields.context);
+    if (player.get()) {
+        player->incStrong((void*)setMediaPlayer);
+    }
+    if (old != 0) {
+        old->decStrong((void*)setMediaPlayer);
+    }
+    env->SetLongField(thiz, fields.context, (jlong)player.get());
+    return old;
+}
+static sp<MediaPlayer> getMediaPlayer(JNIEnv* env, jobject thiz) {
+    Mutex::Autolock l(sLock);
+    MediaPlayer* const p = (MediaPlayer*)env->GetLongField(thiz, fields.context);
+    return sp<MediaPlayer>(p);
+}
+static void android_media_MediaPlayer_start(JNIEnv *env, jobject thiz) {
+    ALOGV("start");
+    sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
+    if (mp == NULL ) {
+        jniThrowException(env, "java/lang/IllegalStateException", NULL);
+        return;
+    }
+    process_media_player_call( env, thiz, mp->start(), NULL, NULL );
+}
+
+static sp<JMediaCodec> setMediaCodec(
+        JNIEnv *env, jobject thiz, const sp<JMediaCodec> &codec, bool release = true) {
+    sp<JMediaCodec> old = (JMediaCodec *)env->CallLongMethod(thiz, gFields.lockAndGetContextID);
+    if (codec != NULL) {
+        codec->incStrong(thiz);
+    }
+    if (old != NULL) {
+        if (release) {
+            old->release();
+        }
+        old->decStrong(thiz);
+    }
+    env->CallVoidMethod(thiz, gFields.setAndUnlockContextID, (jlong)codec.get());
+    return old;
+}
+static sp<JMediaCodec> getMediaCodec(JNIEnv *env, jobject thiz) {
+    sp<JMediaCodec> codec = (JMediaCodec *)env->CallLongMethod(thiz, gFields.lockAndGetContextID);
+    env->CallVoidMethod(thiz, gFields.setAndUnlockContextID, (jlong)codec.get());
+    return codec;
+}
+
+
+class IInterface : public virtual RefBase
+class BpRefBase : public virtual RefBase
+class BpHwRefBase : public virtual RefBase
+class [[clang::lto_visibility_public]] IBinder : public virtual RefBase
+
+// const char *message, status_t opStatus
+char msg[256];
+sprintf(msg, "%s: status=0x%X", message, opStatus);
+
+怎样输出jlong类型的值?
+#include <stdint.h>
+#include <inttypes.h>
+jlong nativeAudioTrack
+ALOGV("nativeAudioTrack=0x%" PRIX64 ", %d, %p", nativeAudioTrack, ...);
+
+frameworks/base/core/jni/android_media_AudioTrack.cpp
+frameworks/av/media/libaudioclient/AudioTrack.cpp
+
+write(@NonNull byte[] audioData, int offsetInBytes, int sizeInBytes)
+write(audioData, offsetInBytes, sizeInBytes, WRITE_BLOCKING)
+native_write_byte(audioData, offsetInBytes, sizeInBytes, mAudioFormat, writeMode == WRITE_BLOCKING)
+(void *)android_media_AudioTrack_writeArray<jbyteArray>
+(void *)android_media_AudioTrack_writeArray<jshortArray>
+(void *)android_media_AudioTrack_writeArray<jfloatArray>
+// 用了模板(byte[], short[], float[])
+android_media_AudioTrack_writeArray(JNIEnv *env, jobject thiz,
+                                                T javaAudioData,
+                                                jint offsetInSamples,
+                                                jint sizeInSamples,
+                                                jint javaAudioFormat,
+                                                jboolean isWriteBlocking)
+auto cAudioData = env->GetFloatArrayElements(javaAudioData, NULL);
+if (cAudioData == NULL) {
+    ALOGE("Error retrieving source of audio data to play");
+    return (jint)AUDIO_JAVA_BAD_VALUE; // out of memory or no data to load
+}
+jint samplesWritten = writeToTrack(const sp<AudioTrack>& track, jint javaAudioFormat, const T *cAudioData,
+                         jint offsetInSamples, jint sizeInSamples, bool blocking)
+env->ReleaseFloatArrayElements(javaAudioData, cAudioData, 0);
+
+static constexpr const char *stateToString(State state) {
+    switch (state) {
+        case STATE_ACTIVE:          return "STATE_ACTIVE";
+        case STATE_STOPPED:         return "STATE_STOPPED";
+        case STATE_PAUSED:          return "STATE_PAUSED";
+        case STATE_PAUSED_STOPPING: return "STATE_PAUSED_STOPPING";
+        case STATE_FLUSHED:         return "STATE_FLUSHED";
+        case STATE_STOPPING:        return "STATE_STOPPING";
+        default:                    return "UNKNOWN";
+    }
+}
+
+std::vector<std::string> names;
+bool hasSecure = false;
+bool hasNonSecure = false;
+for (const std::string &name : names) {
+    if (name.length() >= 7 && name.substr(name.length() - 7) == ".secure") {
+        hasSecure = true;
+    } else {
+        hasNonSecure = true;
+    }
+}
+
+jni层抛异常
+#include <nativehelper/ScopedLocalRef.h>
+static void throwCryptoException(JNIEnv *env, status_t err, const char *msg) {
+    ScopedLocalRef<jclass> clazz(env, env->FindClass("android/media/MediaCodec$CryptoException"));
+    CHECK(clazz.get() != NULL);
+    jmethodID constructID = env->GetMethodID(clazz.get(), "<init>", "(ILjava/lang/String;)V");
+    CHECK(constructID != NULL);
+    const char *defaultMsg = "Unknown Error";
+    switch (err) {
+        case ERROR_DRM_NO_LICENSE:
+            err = gCryptoErrorCodes.cryptoErrorNoKey;
+            defaultMsg = "Crypto key not available";
+            break;
+        default:
+            break;
+    }
+    jstring msgObj = env->NewStringUTF(msg != NULL ? msg : defaultMsg);
+    jthrowable exception = (jthrowable)env->NewObject(clazz.get(), constructID, err, msgObj);
+    env->Throw(exception);
+}
+
+static jthrowable createCodecException(JNIEnv *env, status_t err, int32_t actionCode, const char *msg = NULL) {
+    ScopedLocalRef<jclass> clazz(env, env->FindClass("android/media/MediaCodec$CodecException"));
+    CHECK(clazz.get() != NULL);
+    const jmethodID ctor = env->GetMethodID(clazz.get(), "<init>", "(IILjava/lang/String;)V");
+    CHECK(ctor != NULL);
+    ScopedLocalRef<jstring> msgObj(env, env->NewStringUTF(msg != NULL ? msg : String8::format("Error %#x", err)));
+    // translate action code to Java equivalent
+    switch (actionCode) {
+    case ACTION_CODE_TRANSIENT:
+        actionCode = gCodecActionCodes.codecActionTransient;
+        break;
+    case ACTION_CODE_RECOVERABLE:
+        actionCode = gCodecActionCodes.codecActionRecoverable;
+        break;
+    default:
+        actionCode = 0;  // everything else is fatal
+        break;
+    }
+    switch (err) {
+        case NO_MEMORY:
+            err = gCodecErrorCodes.errorInsufficientResource;
+            break;
+        case DEAD_OBJECT:
+            err = gCodecErrorCodes.errorReclaimed;
+            break;
+        default:
+            break;
+    }
+    return (jthrowable)env->NewObject(clazz.get(), ctor, err, actionCode, msgObj.get());
+}
+
+android_media_MediaCodec.cpp
+    JMediaCodec
+        sp<MediaCodec> mCodec
+            sp<MediaCodecPlugin> mPlugin = new MediaCodecPlugin();
+java:
+MediaCodec
+    public static MediaCodec createByCodecName(@NonNull String name)
+        new MediaCodec(name, false, false);
+            native_setup(name, nameIsType, encoder);
+C++:
+static void android_media_MediaCodec_native_setup(JNIEnv *env, jobject thiz,
+        jstring name, jboolean nameIsType, jboolean encoder)
+    sp<JMediaCodec> codec = new JMediaCodec(env, thiz, tmp, nameIsType, encoder);
+        sp<MediaCodec> mCodec = MediaCodec::CreateByComponentName(mLooper, name, &mInitStatus);
+            sp<MediaCodec> codec = new MediaCodec(looper, pid, uid);
+
+
+gFields.postEventFromNativeID ---> "postEventFromNative"
+private void postEventFromNative(int what, int arg1, int arg2, Object obj)
+what = EVENT_CALLBACK
+private void handleCallback(@NonNull Message msg)
+
+#include <media/stagefright/foundation/AMessage.h>
+#include <media/stagefright/foundation/AHandler.h>
+#include <media/stagefright/foundation/ALooper.h>
+struct AMessage;
+struct AHandler;
+struct ALooper;
+
+std::vector<BufferInfo> mPortBuffers[2];
+// 使用一
+uint64_t size = 0;
+size_t portNum = sizeof(mPortBuffers) / sizeof((mPortBuffers)[0]);// 重点
+for (size_t i = 0; i < portNum; ++i) {
+    size += mPortBuffers[i].size() * mVideoWidth * mVideoHeight * 3 / 2;
+}
+// 使用二
+std::vector<BufferInfo> &buffers = mPortBuffers[portIndex];
+
+// 类中属性,可以这样初始化
+bool mGraphicOutput{false};
+// 类中属性
+std::shared_ptr<const std::vector<const BufferInfo>> mInputBuffers;
+std::shared_ptr<const std::vector<const BufferInfo>> mOutputBuffers;
+// 使用
+std::shared_ptr<const std::vector<const BufferInfo>> inputBuffers(std::atomic_load(&mInputBuffers));
+for (const BufferInfo &elem : *inputBuffers) {
+    array->push_back(elem.mClientBuffer);
+}
+
+long ---> jlong ---> int64_t
+
+int64_t mLastActivityTimeUs;
+// 赋值
+mLastActivityTimeUs = -1ll;
+if (mLastActivityTimeUs < 0ll) {
+}
+
+AString componentName;
+AString tmp;
+for (const AString &codecName : {componentName, tmp}) {}
+
+#include <stdio.h>
+#include <string.h>
+int strncmp(const char *str1, const char *str2, size_t n)
+如果返回值 < 0，则表示 str1 小于 str2。
+如果返回值 > 0，则表示 str2 小于 str1。
+如果返回值 = 0，则表示 str1 等于 str2。
+
+参数中的参数是定义成指针还是定义成引用?
+如果方法体中只用到这个参数的值,那么定义成引用,如果要对这个参数重新赋值,那么定义成指针.
+status_t MediaCodec::PostAndAwaitResponse(const sp<AMessage> &msg, sp<AMessage> *response){}
+
+struct MediaCodec : public AHandler
+sp<AMessage> msg      = new AMessage(kWhatInit, this);
+sp<AMessage> response = new AMessage;
+sp<AMessage> response;
+msg->setSize("index", bufferIndex);                 // size_t
+msg->setInt64("timeUs", 0LL);                       // int64_t
+msg->setInt32("flags", BUFFER_FLAG_CODECCONFIG);    // int32_t
+msg->setDouble("timeUs", );                         // double
+msg->setFloat("timeUs", );                          // float
+msg->setString("componentName", name);              // const AString &
+                            AString errorDetailMsg;
+msg->setPointer("errorDetailMsg", &errorDetailMsg); // void *
+msg->setPointer("key", (void *) key);
+msg->setObject("c2buffer", obj);                    // const sp<RefBase> &
+msg->setMessage("tunings", new AMessage);           // const sp<AMessage> &
+status_t status = msg->postAndAwaitResponse(&response);
+
+sp<ALooper> mLooper;
+mLooper = new ALooper;
+mLooper->setName("MediaCodec_looper");
+mLooper->start(
+        false,      // runOnCallingThread
+        true,       // canCallJava
+        ANDROID_PRIORITY_VIDEO);
+
+// input
+dequeueInputBuffer
+getInputBuffer
+queueInputBuffer
+// output
+dequeueOutputBuffer
+getOutputBuffer
+releaseOutputBuffer
+
+frameworks/av/include/media/stagefright/media/stagefright/MediaCodec.h
+
+frameworks/av/media/libstagefright/MediaCodec.cpp
 
 */
 

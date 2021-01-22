@@ -365,6 +365,26 @@ int test_start_client(char *server_ip) {
         exit(EXIT_FAILURE);
     }
 
+    struct sockaddr_in addr_local;
+    socklen_t length = sizeof(struct sockaddr_in);
+    int iRet = getsockname(remote_server_sock_fd, (struct sockaddr *) &addr_local, &length);
+    if (iRet == -1) {
+        fprintf(stderr, "getsockname error: %s\n", strerror(errno));
+    } else {
+        fprintf(stdout, "IP Addr: [%s:%d]\n", inet_ntoa(addr_local.sin_addr), ntohs(addr_local.sin_port));
+    }
+
+    struct hostent *hptr;
+    //if ((hptr = gethostbyaddr((void *) &client_addr.sin_addr, 4, AF_INET)) == NULL) {
+    if ((hptr = gethostbyaddr((void *) &server_addr.sin_addr, sizeof(server_addr.sin_addr), AF_INET)) == NULL) {
+        printf("h_errno: %d\n", h_errno);
+        exit(EXIT_FAILURE);
+    }
+    if (hptr != NULL) {
+        // 正式主机名
+        printf("主机名(HostName): %s\n", hptr->h_name);
+    }
+
     // process_server_with_read_write(remote_server_sock_fd);
     // process_server_with_recv_send(remote_server_sock_fd);
     process_server_with_readv_writev(remote_server_sock_fd);
@@ -561,6 +581,8 @@ int test_start_client(int argc, char **argv) {
 
 void LinuxSocket::studyHard() {
 
-    test_start_client("127.0.0.1");
+    //test_start_client("127.0.0.1");
+    test_start_client("192.168.0.137");
+    //test_start_client("43.82.112.164");
 
 }

@@ -2,8 +2,10 @@
 
 /////////////////////////////实现/////////////////////////////
 
+int test_start_server(void);
+
 void LinuxSocket::studyHard() {
-    //test_start_server();
+    test_start_server();
 }
 
 void sig_process(int signo) {
@@ -268,6 +270,7 @@ void writeMsg() {
 
  */
 int test_start_server(void) {
+    printf("当前进程id: %d\n", getpid());
     // local_server_sock_fd为服务端的socket描述符
     // remote_client_sock  为客户端的socket描述符
     int local_server_sock_fd = -1, remote_client_sock_fd = -1;
@@ -335,15 +338,15 @@ int test_start_server(void) {
     memset(&client_addr, 0, sizeof(struct sockaddr_in));
     // 设置服务端地址
     // 清零
-    /*bzero(reinterpret_cast<char *>(&server_addr),
-          sizeof(server_addr));*/
+    /*bzero(reinterpret_cast<char *>(&server_addr), sizeof(server_addr));*/
     bzero(&server_addr, sizeof(server_addr));
     // 设置协议族,意思就是打算采用什么协议族.跟socket()函数中的__domain参数要一致
     server_addr.sin_family = AF_INET;
     // 设置为本地地址
-    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+//    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     // 将字符串的IP地址转化为网络字节序
-    // server_addr.sin_addr.s_addr = inet_addr("192.168.1.105");
+    server_addr.sin_addr.s_addr = inet_addr("192.168.0.107");
+//    server_addr.sin_addr.s_addr = inet_addr("43.82.112.164");
     // 服务器端口(65535).地址结构的端口地址,网络字节序(PORT为主机字节序,需要转化为网络字节序)
     // 我想使用这个端口之前,应不应该判断一下这个端口可不可以使用,有没有被其他进程占用
     server_addr.sin_port = htons(PORT);
@@ -388,8 +391,35 @@ int test_start_server(void) {
             exit(EXIT_FAILURE);
         }
 
-        printf("server local_server_sock_fd: %d\n", local_server_sock_fd);
-        printf("server local_server_sock_fd: %d\n", remote_client_sock_fd);
+        printf("server  local_server_sock_fd: %d\n", local_server_sock_fd);
+        printf("server remote_client_sock_fd: %d\n", remote_client_sock_fd);
+
+        struct sockaddr_in guest;
+        char serv_ip[20], guest_ip[20];
+        socklen_t guest_len = sizeof(guest);
+        guest_len = sizeof(client_addr);
+        //getsockname(remote_client_sock_fd, (sockaddr *) &guest, &guest_len);
+        //getpeername(remote_client_sock_fd, (sockaddr *) &guest, &guest_len);
+        getpeername(remote_client_sock_fd, (sockaddr *) &client_addr, &guest_len);
+        //inet_ntop(AF_INET, &guest.sin_addr, guest_ip, sizeof(guest_ip));
+        inet_ntop(AF_INET, &client_addr.sin_addr, guest_ip, sizeof(guest_ip));
+        printf("host: %s %s %s[%d]\n",
+               guest_ip,
+               inet_ntoa(client_addr.sin_addr),
+               inet_ntoa(guest.sin_addr),
+               ntohs(guest.sin_port));
+
+        // 把主机信息保存在hostent中
+        struct hostent *hptr;
+        //if ((hptr = gethostbyaddr((void *) &client_addr.sin_addr, 4, AF_INET)) == NULL) {
+        if ((hptr = gethostbyaddr((void *) &client_addr.sin_addr, sizeof(client_addr.sin_addr), AF_INET)) == NULL) {
+            printf("h_errno: %d\n", h_errno);
+            exit(EXIT_FAILURE);
+        }
+        if (hptr != NULL) {
+            // 正式主机名
+            printf("主机名(HostName): %s\n", hptr->h_name);
+        }
 
         // 建立一个新的进程处理到来的连接
         pid_t pid = fork();
@@ -400,7 +430,7 @@ int test_start_server(void) {
         }
 
         if (pid == 0) {
-            printf("子进程\n");
+            printf("2.父进程新创建的子进程id: %d\n", getpid());
             /***
              子进程关闭local_server_sock处理任务,
              使其回到TIME_WAIT状态值.
@@ -411,7 +441,7 @@ int test_start_server(void) {
             // process_client_with_readv_writev(remote_client_sock_fd);
             process_client_with_recvmsg_sendmsg(remote_client_sock_fd);
         } else {
-            printf("父进程.新创建的进程id: %d\n", pid);
+            printf("1.父进程新创建的子进程id: %d\n", pid);
             /***
              在父进程中关闭连接的套接字描述符,
              只是把remote_client_sock的引用数减少1,

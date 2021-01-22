@@ -8,31 +8,51 @@
 #include "MyHead.h"
 #include "Test.h"
 #else
+
 #include "../include/MyHead.h"
 #include "../include/Test.h"
+#include <linux/kernel.h>
+
 #endif
 
+//////////////////////////////////////////////////before
 #ifndef MYSTUDY_B0
 #define MYSTUDY_B0
-
 #ifdef WIN32
 #include "B0.cpp"
 #else
+
 #include "../src/B0.cpp"
+
 #endif
-
 #endif //MYSTUDY_B0
+//////////////////////////////////////////////////after
 
+//////////////////////////////////////////////////before
 #ifndef MYSTUDY_POINTER
 #define MYSTUDY_POINTER
-
 #ifdef WIN32
 #include "Pointer.cpp"
 #else
-#include "../src/Pointer.cpp"
-#endif
 
+#include "../src/Pointer.cpp"
+
+#endif
 #endif //MYSTUDY_POINTER
+//////////////////////////////////////////////////after
+
+// 指针函数
+typedef void *(*WdThreadFunc)(void *);
+
+struct WdThread {
+    WdThreadFunc pFunc;
+    void *pArgu;
+};
+typedef struct WdThread WdThread;
+// 一般这样: WdThread  m_thread;
+// 不要这样: WdThread* m_thread;
+
+
 
 typedef struct stud {
     int num;

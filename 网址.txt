@@ -173,7 +173,8 @@ https://zh.wikipedia.org/wiki/%E9%9F%B3%E9%A2%91%E7%BC%96%E7%A0%81%E6%A0%BC%E5%B
 https://github.com/Tencent
 https://blog.csdn.net/xuanwolanxue/article/details/73498744 avformat的简单应用	
 https://mbd.baidu.com/newspage/data/landingsuper?context=%7B%22nid%22%3A%22news_9283654698787117075%22%7D&n_type=0&p_from=1 一文搞定移动端适配
-
+https://blog.csdn.net/doris_d/article/details/102854998 通过Notification解决Android8.0下后台无定位的问题，兼容Android 9、Android 10
+https://blog.csdn.net/doris_d/article/details/102941696 Android 10 定位问题，获取NMEA（支持5.0~10.0）
 
 
 
