@@ -582,7 +582,7 @@ int test_start_client(int argc, char **argv) {
 void LinuxSocket::studyHard() {
 
     //test_start_client("127.0.0.1");
-    test_start_client("192.168.0.137");
+    test_start_client("192.168.0.119");
     //test_start_client("43.82.112.164");
 
 }

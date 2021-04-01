@@ -31,6 +31,10 @@ git remote -v
 Index       :之前修改的结果
 Working Tree:现在修改的结果
 
+git clone http://43.82.112.226:8888/mw1/twocastplayer.git
+git clone "https://www.tool.sony.biz/tv-gerrit/sony/android/dtcp-ip"
+git push origin HEAD:refs/for/master
+
 git stash
 git pull
 git stash pop stash@{0}

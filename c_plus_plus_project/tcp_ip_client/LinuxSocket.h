@@ -35,7 +35,8 @@
 #define _FILE_OFFSET_BITS 64
 
 // 侦听端口地址
-#define PORT 8888
+//#define PORT 8888
+#define PORT 41824
 
 using namespace std;
 

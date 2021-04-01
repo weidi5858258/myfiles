@@ -74,6 +74,22 @@ void *user;
 const audio_offload_info_t *offloadInfo;
 const sp<IMemory> &sharedBuffer;
 uint32_t(streamType)
+
+char *av_strdup(const char *s)
+{
+    char *ptr = NULL;
+    if (s) {
+        size_t len = strlen(s) + 1;// 关键点
+        ptr = av_realloc(NULL, len);
+        if (ptr)
+            memcpy(ptr, s, len);
+    }
+    return ptr;
+}
+
+char filename[1024];
+av_strlcpy(filename, filename ? filename : "", sizeof(filename));
+
 */
 
 /***
@@ -1599,6 +1615,76 @@ typedef struct {
 } S_EAS_LIB_CONFIG;// 写在这里可以直接使用
 static const S_EAS_LIB_CONFIG* pLibConfig = NULL;
 
+video/raw
+video/hevc
+    OMX.MTK.VIDEO.DECODER.HEVC
+    OMX.MTK.VIDEO.DECODER.HEVC.secure
+    OMX.qcom.video.decoder.hevc.secure
+    OMX.qcom.video.decoder.hevc
+    OMX.google.hevc.decoder
+    c2.android.hevc.decoder
+video/avc
+    OMX.MTK.VIDEO.DECODER.AVC
+    OMX.MTK.VIDEO.DECODER.AVC.secure
+    OMX.qcom.video.decoder.avc
+    OMX.qcom.video.decoder.avc.secure
+    OMX.google.h264.decoder
+    c2.android.avc.decoder
+video/3gpp
+    OMX.MTK.VIDEO.DECODER.H263
+    OMX.qcom.video.decoder.h263
+    OMX.google.h263.decoder
+    c2.android.h263.decoder
+video/mp4v-es
+    OMX.MTK.VIDEO.DECODER.MPEG4
+    OMX.qcom.video.decoder.mpeg4
+    OMX.google.mpeg4.decoder
+    c2.android.mpeg4.decoder
+video/mpeg2
+    OMX.MTK.VIDEO.DECODER.MPEG2
+    OMX.MTK.VIDEO.DECODER.MPEG2.secure
+    OMX.qcom.video.decoder.mpeg2
+    OMX.qcom.video.decoder.mpeg2.secure
+    OMX.google.mpeg2.decoder
+video/x-vnd.on2.vp8
+    OMX.MTK.VIDEO.DECODER.VP8
+    OMX.qcom.video.decoder.vp8
+    OMX.google.vp8.decoder
+    c2.android.vp8.decoder
+video/x-vnd.on2.vp9
+    OMX.MTK.VIDEO.DECODER.VP9
+    OMX.MTK.VIDEO.DECODER.VP9.secure
+    OMX.qcom.video.decoder.vp9
+    OMX.qcom.video.decoder.vp9.secure
+    OMX.google.vp9.decoder
+    c2.android.vp9.decoder
+
+audio/raw
+    OMX.google.raw.decoder
+    c2.android.raw.decoder
+audio/flac
+    OMX.qti.audio.decoder.flac
+    OMX.google.flac.decoder
+    c2.android.flac.decoder
+audio/mpeg
+    OMX.google.mp3.decoder
+    c2.android.mp3.decoder
+audio/ac3
+    OMX.MTK.AUDIO.DECODER.DSPAC3
+audio/eac3
+    OMX.MTK.AUDIO.DECODER.DSPEAC3
+audio/ac4
+audio/mpeg-L2
+    OMX.MTK.AUDIO.DECODER.DSPMP2
+audio/mp4a-latm
+    OMX.google.aac.decoder
+    c2.android.aac.decoder
+audio/x-ms-wma
+    OMX.MTK.AUDIO.DECODER.DSPWMA
+audio/vorbis
+    OMX.google.vorbis.decoder
+    c2.android.vorbis.decoder
+
 
 Mutex mMutex;
 Condition mCondition;
@@ -1871,6 +1957,8 @@ mLastActivityTimeUs = -1ll;
 if (mLastActivityTimeUs < 0ll) {
 }
 
+sp<ICrypto> crypto;此时crypto为NULL
+const char *name(可以直接赋值给AString变量,即AString codecName = name)
 AString componentName;
 AString tmp;
 for (const AString &codecName : {componentName, tmp}) {}
@@ -1911,6 +1999,106 @@ mLooper->start(
         true,       // canCallJava
         ANDROID_PRIORITY_VIDEO);
 
+MediaCodec异步解码过程
+------------------------------------------------
+native_init();
+第一步
+String codecName = "OMX.qcom.video.decoder.avc";
+第二步
+MediaCodec codec = MediaCodec.createByCodecName(codecName)
+    new MediaCodec(codecName, false[nameIsType], false[encoder]);
+        native_setup(codecName, nameIsType, encoder);
+            sp<JMediaCodec> codec = new JMediaCodec(env, thiz, codecName, nameIsType, encoder);
+                mCodec = MediaCodec::CreateByComponentName(mLooper, codecName, &mInitStatus);
+                    const status_t ret = codec->init(name);
+第三步
+codec.setCallback(Callback cb, Handler handler);
+    // 底层并没有保存或者使用这个Callback对象,只是用它判断是否为null
+    native_setCallback(cb);
+        status_t err = codec->setCallback(cb);
+            if (cb != NULL) {
+                mCallbackNotification = new AMessage(kWhatCallbackNotify, this);
+            }
+            mCodec->setCallback(mCallbackNotification);
+                sp<AMessage> callback;
+                CHECK(msg->findMessage("callback", &callback));
+                sp<AMessage> mCallback = callback;
+第四步
+codec.configure(MediaFormat format, Surface surface, MediaCrypto crypto, int flags);
+    configure(format, surface, crypto, null, 0[decoder]);
+        native_configure(keys, values, surface, crypto, descramblerBinder, flags);
+            err = codec->configure(format, bufferProducer, crypto, descrambler, flags);
+                mSurfaceTextureClient = new Surface(bufferProducer, true[controlledByApp]);
+                mCodec->configure(format, mSurfaceTextureClient, crypto, descrambler, flags);
+第五步
+codec.start();
+    native_start();
+        status_t err = codec->start();
+    ByteBuffer[] buffers = getBuffers(input);// true and false
+        jobjectArray buffers;
+        status_t err = codec->getBuffers(env, input, &buffers);
+            sp<MediaCodecBuffer> buffer;
+            status_t err = mCodec->getInputBuffer(index, &buffer)
+            status_t err = mCodec->getOutputBuffer(index, &buffer)
+    if (input) {
+        mCachedInputBuffers = buffers;
+    } else {
+        mCachedOutputBuffers = buffers;
+    }
+
+public ByteBuffer getInputBuffer(int index)
+public ByteBuffer getOutputBuffer(int index)
+    ByteBuffer newBuffer = getBuffer(true [input], index);
+    ByteBuffer newBuffer = getBuffer(false[input], index);
+        jobject buffer;
+        status_t err = codec->getBuffer(env, input, index, &buffer);
+            sp<MediaCodecBuffer> buffer;
+            status_t err = mCodec->getInputBuffer(index, &buffer);
+            status_t err = mCodec->getOutputBuffer(index, &buffer);
+
+然后关注以下几个接口就行了(都是public void)
+第一个接口
+onInputBufferAvailable(MediaCodec codec, int roomIndex)
+    ByteBuffer room = codec.getInputBuffer(roomIndex);
+    room.put(data, 0, size);
+    codec.queueInputBuffer(roomIndex, 0, size, presentationTimeUs, 0[flags]);
+第二个接口
+onOutputBufferAvailable(MediaCodec codec, int roomIndex, MediaCodec.BufferInfo roomInfo)
+    ByteBuffer room = codec.getOutputBuffer(roomIndex);
+    ......
+    codec.releaseOutputBuffer(roomIndex, true[video]/false[audio]);
+第三个接口
+onError(MediaCodec mediaCodec, MediaCodec.CodecException e)
+第四个接口
+onOutputFormatChanged(MediaCodec mediaCodec, MediaFormat mediaFormat)
+
+异步回调
+由MediaCodec类的mCallback(sp<AMessage>)传递过来的(见上面第三步的过程)
+发送消息:
+sp<AMessage> msg = mCallback->dup();
+msg->setInt32("callbackID", CB_INPUT_AVAILABLE);
+msg->setInt32("index", index);
+msg->post();
+接收消息:
+void JMediaCodec::onMessageReceived(const sp<AMessage> &msg)
+    case kWhatCallbackNotify: {
+        handleCallback(msg);
+    }
+
+void JMediaCodec::handleCallback(const sp<AMessage> &msg) ---> postEventFromNative(...)
+底层回调接口
+private void postEventFromNative(int what, int arg1, int arg2, Object obj)
+    handleCallback(msg);
+        case CB_INPUT_AVAILABLE:
+            mCallback.onInputBufferAvailable(mCodec, index);
+        case CB_OUTPUT_AVAILABLE:
+            mCallback.onOutputBufferAvailable(mCodec, index, info);
+        case CB_ERROR:
+            mCallback.onError(mCodec, (MediaCodec.CodecException) msg.obj);
+        case CB_OUTPUT_FORMAT_CHANGE:
+            mCallback.onOutputFormatChanged(mCodec, new MediaFormat((Map<String, Object>) msg.obj));
+------------------------------------------------
+
 // input
 dequeueInputBuffer
 getInputBuffer
@@ -1922,8 +2110,34 @@ releaseOutputBuffer
 
 frameworks/av/include/media/stagefright/media/stagefright/MediaCodec.h
 
+frameworks/av/media/libstagefright/MediaCodec.cpp分析
+------------------------------------------------
+frameworks/base/media/jni/android_media_MediaCodec.cpp
+    JMediaCodec::JMediaCodec(...)
+        mCodec = MediaCodec::CreateByComponentName(mLooper, codecName, &mInitStatus);
 frameworks/av/media/libstagefright/MediaCodec.cpp
+    sp<MediaCodec> MediaCodec::CreateByComponentName(...)
+        sp<MediaCodec> codec = new MediaCodec(looper, pid, uid);
+        const status_t ret = codec->init(name);
+            sp<CodecBase> mCodec = GetCodecBase(componentName, owner);
+            mCodec->setCallback(
+                std::unique_ptr<CodecBase::CodecCallback>(new CodecCallback(new AMessage(kWhatCodecNotify, this))));
+            std::shared_ptr<BufferChannelBase> mBufferChannel = mCodec->getBufferChannel();
 
+            mCodec->initiateStart();
+            mCodec->signalResume();
+            mCodec->setSurface(mReleaseSurface->getSurface());
+            mCodec->initiateShutdown(false);
+            mCodec->signalEndOfInputStream();
+            mCodec->signalFlush();
+            mCodec->signalRequestIDRFrame();
+            mCodec->id()
+            mCodec->signalSetParameters(params);
+            mCodec->initiateAllocateComponent(format);
+            mCodec->initiateConfigureComponent(format);
+            mCodec->initiateCreateInputSurface();
+            mCodec->initiateSetInputSurface(static_cast<PersistentSurface *>(obj.get()));
+------------------------------------------------
 */
 
 
