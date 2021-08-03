@@ -36,7 +36,8 @@
 
 // 侦听端口地址
 //#define PORT 8888
-#define PORT 41824
+//#define PORT 41824
+#define PORT 5858
 
 using namespace std;
 

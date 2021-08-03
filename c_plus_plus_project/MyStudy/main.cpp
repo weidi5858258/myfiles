@@ -111,6 +111,20 @@ int main(int argc, char **argv) {
     testMemory.testCalloc();
     testMemory.testRealloc();
 
+    /*char pBuff[] = "USER-AGENT: Linux/4.4.78+, UPnP/1.0, Portable SDK for UPnP devices/1.6.20";
+    char *m_pUserAgent = new char[100];
+    memset(m_pUserAgent, '0', 100);
+    memcpy(m_pUserAgent, pBuff, 99);
+    m_pUserAgent[100] = '\0';
+    printf("MintHttpConnection::ReceiveLine m_pUserAgent: \n%s\n", m_pUserAgent);
+    if (m_pUserAgent) {
+        delete[] m_pUserAgent;
+        m_pUserAgent = NULL;
+    }
+    strlwr(pBuff);
+    if (pTmpBuff != NULL && strstr(pTmpBuff, "user-agent") != NULL) {
+    }*/
+
     printf("------------------------------------------\n");
     printf("\n");
     return 0;

@@ -58,15 +58,3 @@ iostream
 linux/in.h
 -
 
-/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/TransferFile.cpp
-TransferFile.h
-/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/TransferFile.h
-
-/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/TransferFile.h
-LinuxSocket.h
-/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/LinuxSocket.h
-
-/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/main.cpp
-LinuxSocket.h
-/root/mydev/workspace_github/myfiles/c_plus_plus_project/tcp_ip_client/LinuxSocket.h
-

@@ -345,7 +345,7 @@ int test_start_server(void) {
     // 设置为本地地址
 //    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     // 将字符串的IP地址转化为网络字节序
-    server_addr.sin_addr.s_addr = inet_addr("192.168.0.107");
+    server_addr.sin_addr.s_addr = inet_addr("192.168.0.106");
 //    server_addr.sin_addr.s_addr = inet_addr("43.82.112.164");
     // 服务器端口(65535).地址结构的端口地址,网络字节序(PORT为主机字节序,需要转化为网络字节序)
     // 我想使用这个端口之前,应不应该判断一下这个端口可不可以使用,有没有被其他进程占用
@@ -393,6 +393,11 @@ int test_start_server(void) {
 
         printf("server  local_server_sock_fd: %d\n", local_server_sock_fd);
         printf("server remote_client_sock_fd: %d\n", remote_client_sock_fd);
+
+        char device_name[100];
+        memset(device_name, 0, sizeof(device_name));
+        read(remote_client_sock_fd, device_name, 100);
+        printf("server device_name: %s\n", device_name);
 
         struct sockaddr_in guest;
         char serv_ip[20], guest_ip[20];

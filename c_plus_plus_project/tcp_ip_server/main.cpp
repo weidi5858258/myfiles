@@ -655,10 +655,10 @@ int main(int argc, char *argv[]) {
 
 //    howToCreateChildProcess();
 
-//    LinuxSocket linuxSocket;
-//    linuxSocket.studyHard();
+    LinuxSocket linuxSocket;
+    linuxSocket.studyHard();
 
-    test();
+//    test();
 
     printf("---------------------------------------------------\n");
     printf("\n");

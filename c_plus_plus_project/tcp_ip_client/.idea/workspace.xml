@@ -12,14 +12,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="58b7534b-ff1f-4466-82c5-3ef8f3c8eade" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/../../android/jni.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../android/jni.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MyStudy/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../MyStudy/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LinuxSocket.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/LinuxSocket.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LinuxSocket.h" beforeDir="false" afterPath="$PROJECT_DIR$/LinuxSocket.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/CXX.includecache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/LinuxSocket.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/LinuxSocket.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/TransferFile.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/TransferFile.cpp.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/main.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tcp_ip_client.dir/main.cpp.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/tcp_ip_client" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/tcp_ip_client" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../git.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../git.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,6 +216,9 @@
       <workItem from="1610612438040" duration="2844000" />
       <workItem from="1610679308887" duration="2037000" />
       <workItem from="1616119857990" duration="955000" />
+      <workItem from="1624857525974" duration="294000" />
+      <workItem from="1624870749176" duration="3263000" />
+      <workItem from="1624929117429" duration="2880000" />
     </task>
     <servers />
   </component>
@@ -265,11 +270,6 @@
           <url>file://$PROJECT_DIR$/LinuxSocket.cpp</url>
           <line>252</line>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/LinuxSocket.cpp</url>
-          <line>70</line>
-          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

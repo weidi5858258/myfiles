@@ -58,7 +58,7 @@
 //开启大文件支持宏开关
 #define _FILE_OFFSET_BITS 64
 
-#define PORT 8888
+#define PORT 5858
 #define BACKLOG 2
 #define DATA_BUFFER 1024
 
