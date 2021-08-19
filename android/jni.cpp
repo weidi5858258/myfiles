@@ -6,6 +6,85 @@
 /***
 https://source.android.google.cn/setup/build/downloading
 
+# 下面的库是android系统提供的,可以直接使用的
+find_library(log-lib
+        log)
+find_library(android-lib
+        android)
+find_library(c-lib
+        c)
+find_library(m-lib
+        m)
+find_library(z-lib
+        z)
+find_library(compiler_rt-extras-lib
+        compiler_rt-extras)
+find_library(dl-lib
+        dl)
+find_library(EGL-lib
+        EGL)
+find_library(GLESv1_CM-lib
+        GLESv1_CM)
+find_library(GLESv2-lib
+        GLESv2)
+find_library(jnigraphics-lib
+        jnigraphics)
+find_library(OpenMAXAL-lib
+        OpenMAXAL)
+find_library(OpenSLES-lib
+        OpenSLES)
+find_library(stdc++-lib
+        stdc++)
+
+# 下面的库是区分sdk版本的
+# android-18
+find_library(GLESv3-lib
+        GLESv3)
+# android-21
+find_library(mediandk-lib
+        mediandk)
+# android-24
+find_library(camera2ndk-lib
+        camera2ndk)
+find_library(vulkan-lib
+        vulkan)
+# android-26
+find_library(nativewindow-lib
+        nativewindow)
+find_library(sync-lib
+        sync)
+# android-27
+find_library(aaudio-lib
+        aaudio)
+find_library(neuralnetworks-lib
+        neuralnetworks)
+# android-29
+find_library(amidi-lib
+        amidi)
+find_library(binder_ndk-lib
+        binder_ndk)
+
+target_link_libraries(
+        socket
+
+        # ${log-lib}是log库的路径
+        ${log-lib}
+        ${android-lib}
+        ${mediandk-lib}
+        ${OpenMAXAL-lib}
+)
+
+ 宏                 ABI版本
+arm                armeabi
+arm                armeabi-v7
+aarch64            arm64-v8a
+i386               x86
+_x86_64            x86_64
+#if defined(__arm64__) || defined(__aarch64__)
+// todo
+#endif
+
+
 在jni层能用的类有:
 #include <media/stagefright/foundation/AString.h>
 AString(const char *name能直接传给参数const AString &name)
@@ -2138,6 +2217,91 @@ frameworks/av/media/libstagefright/MediaCodec.cpp
             mCodec->initiateCreateInputSurface();
             mCodec->initiateSetInputSurface(static_cast<PersistentSurface *>(obj.get()));
 ------------------------------------------------
+
+
+
+
+const char* pName;
+size_t nKeyLen = strlen(pName) + 1;// 关键点
+char*        pKey;
+pKey = new char[nKeyLen];
+strncpy(pKey, pName, nKeyLen);
+......
+delete       pKey;// 关键点
+pKey = NULL;
+
+int         nSize;
+void*       pData;
+pData = new char[nSize];
+delete (char *)pData;// 关键点
+pData = NULL;
+
+typedef struct PplShm {
+    pplList* pList;
+    bool     bAttached;
+} PplShm;
+// 定义函数
+PplShmCreate(const char* pName, int nSize, PplShm** ppShm) {
+    PplAssert(ppShm != NULL);
+    PplAssert(*ppShm == NULL);
+    *ppShm = new PplShm;// 关键点
+    PplAssert(*ppShm != NULL);
+    if (*ppShm == NULL) {
+        break;
+    }
+    (*ppShm)->pList = pList->pNext;
+    (*ppShm)->bAttached = false;
+
+    PPL_LOG((__FILE__, __LINE__, PPL_LOG_INFO,
+                "PplShmCreate Count = %d, ShmAddress = %p\n", ++count, &(*ppShm)));
+    
+    ......
+    delete *ppShm;// 关键点
+    *ppShm = NULL;
+}
+// 使用函数
+PplShm* m_pShmID = NULL;
+PplShmCreate(m_pShmPathName, sizeof(vnac_shm), &m_pShmID);
+
+Android的底层库libutils
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 */
 
 
