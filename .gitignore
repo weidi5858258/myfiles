@@ -1,5 +1,7 @@
 .git
 .gitmodules
+.push_git.sh
+.git_push_impl.sh
 c_plus_plus_project/grammar/.idea
 c_plus_plus_project/grammar/cmake-build-debug
 c_plus_plus_project/grammar/cmake-build-debug-mingw

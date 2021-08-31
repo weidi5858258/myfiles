@@ -3,7 +3,7 @@
 set current_time [lindex $argv 0]
 # send "${current_time}\n"
 set username "weidi5858258@sina.com"
-set password "wangliwei1986"
+set password "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"
 #
 spawn git add .
 sleep 15

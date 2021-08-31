@@ -592,8 +592,8 @@ javaAudioRecordFields.nativeCallbackCookie = NULL;
 javaAudioRecordFields.nativeDeviceCallback = NULL;
 static const char *const kClassPathName = "android/media/AudioRecord";
 // 找到java类
-jclass audioRecordClass = FindClassOrDie(env, kClassPathName);
 jclass audioRecordClass = env->FindClass(kClassPathName);
+jclass audioRecordClass = FindClassOrDie(env, kClassPathName);
 // 实际是这样调用的
 FindClassOrDie(...) -> env->FindClass(...)
 javaAudioRecordFields.postNativeEventInJava = GetStaticMethodIDOrDie(env,
@@ -631,8 +631,7 @@ setAudioRecord(env, thiz, lpRecorder);
 // 下面两个方法好像是固定写法
 static sp<AudioRecord> setAudioRecord(JNIEnv *env, jobject thiz, const sp<AudioRecord> &ar) {
     Mutex::Autolock l(sLock);
-    sp<AudioRecord> old =
-            (AudioRecord *) env->GetLongField(thiz, javaAudioRecordFields.nativeRecorderInJavaObj);
+    sp<AudioRecord> old = (AudioRecord *) env->GetLongField(thiz, javaAudioRecordFields.nativeRecorderInJavaObj);
     if (ar.get()) {
         ar->incStrong((void *) setAudioRecord);
     }
@@ -644,8 +643,7 @@ static sp<AudioRecord> setAudioRecord(JNIEnv *env, jobject thiz, const sp<AudioR
 }
 static sp<AudioRecord> getAudioRecord(JNIEnv *env, jobject thiz) {
     Mutex::Autolock l(sLock);
-    AudioRecord *const ar =
-            (AudioRecord *) env->GetLongField(thiz, javaAudioRecordFields.nativeRecorderInJavaObj);
+    AudioRecord *const ar = (AudioRecord *) env->GetLongField(thiz, javaAudioRecordFields.nativeRecorderInJavaObj);
     return sp<AudioRecord>(ar);
 }
 
@@ -684,10 +682,6 @@ static inline jint nativeToJavaStatus(status_t status) {
 从底层返回给java层一般用jini.
 
 
-
-*/
-
-
 struct fields_t {
     jfieldID context;
 
@@ -720,6 +714,10 @@ sp<JMediaExtractor> extractor = new JMediaExtractor(env, thiz);
 if (extractor != NULL) {
     extractor->incStrong(thiz);
 }
+
+*/
+
+
 
 /***
 # our headers include libnativewindow's public headers
@@ -1393,7 +1391,8 @@ LOCAL_SRC_FILES:= \
 
 audio流程:
 /root/mydev/android_source/hikey970/aosp/frameworks/base/core/jni/android_media_AudioTrack.cpp
-假如是进程A
+假如是
+进程A
 /root/mydev/android_source/hikey970/aosp/frameworks/av/media/libaudioclient/AudioTrack.cpp
 // 得到IAudioFlinger的Bp端(客户端)对象
 const sp<IAudioFlinger> &audioFlinger = AudioSystem::get_audio_flinger();
@@ -1413,9 +1412,6 @@ class AudioFlinger : public BinderService<AudioFlinger>, public BnAudioFlinger {
 IAudioFlinger的Bn端调用到子类AudioFlinger的createTrack(...)方法
 在这个方法中,创建TrackHandle对象(class TrackHandle : public android::BnAudioTrack)然后返回该对象,
 并使用IBinder传递给进程A.
-
-
-
 */
 
 
@@ -1497,7 +1493,7 @@ java端native方法参数 ---> 对应jni标识
 Object ---> Ljava/lang/Object;
 String ---> Ljava/lang/String;
 FileDescriptor ---> Ljava/io/FileDescriptor;
-int    ---> I
+int  ---> I
 long ---> J
 byte ---> B
 boolean[] ---> [Z
@@ -1543,8 +1539,7 @@ env->SetLongField(weak_this, nativePlayerInJavaObj, 0);
 JetPlayer *lpJet = (JetPlayer *) env->GetLongField(thiz, nativePlayerInJavaObj);
 if (lpJet == NULL) {
     jniThrowException(env, "java/lang/IllegalStateException", "Unable to retrieve JetPlayer pointer for openFile()");
-    jniThrowException(env, "java/lang/IllegalArgumentException",
-                String8::format("Failed to initialize %s, error %#x", tmp, err));
+    jniThrowException(env, "java/lang/IllegalArgumentException", String8::format("Failed to initialize %s, error %#x", tmp, err));
     return JNI_FALSE;
 } else {
     lpJet->release();
@@ -2219,7 +2214,13 @@ frameworks/av/media/libstagefright/MediaCodec.cpp
 ------------------------------------------------
 
 
+char* sz1 = new char[5];
+if(sz1!= NULL)
+delete[] sz1;
 
+char* sz2 = new char;
+if(sz2!= NULL)
+delete sz2;
 
 const char* pName;
 size_t nKeyLen = strlen(pName) + 1;// 关键点
@@ -2265,9 +2266,20 @@ PplShmCreate(m_pShmPathName, sizeof(vnac_shm), &m_pShmID);
 
 Android的底层库libutils
 
-
-
-
+sp<Surface> android_view_Surface_getSurface(JNIEnv* env, jobject surfaceObj) {
+    sp<Surface> sur;
+    jobject lock = env->GetObjectField(surfaceObj, gSurfaceClassInfo.mLock);
+    if (env->MonitorEnter(lock) == JNI_OK) {
+        sur = reinterpret_cast<Surface *>(env->GetLongField(surfaceObj, gSurfaceClassInfo.mNativeObject));
+        env->MonitorExit(lock);
+    }
+    env->DeleteLocalRef(lock);
+    return sur;
+}
+sp<Surface> surface(android_view_Surface_getSurface(env, jsurface));
+if (surface != NULL) {
+    sp<IGraphicBufferProducer> bufferProducer = surface->getIGraphicBufferProducer();
+}
 
 
 
