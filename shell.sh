@@ -1557,6 +1557,10 @@ adb shell pm path com.miui.fm
 adb shell ls -alh /storage/3D5F-08A6/SonyTVCamera_photo
 ./system/vendor/bin/camera_recognition_daemon &
 
+adb shell
+ps -A | grep wdplayer 查看"wdplayer"App pid(进程号)
+ls -al /proc/pid/fd 查到进程号后,查看跟这个进程号有关的句柄
+
 # 手机
 adb push /root/mydev/workspace_github/myfiles/android/contents.txt /storage/1532-48AD/Android/data/com.weidi.usefragments/files/shared/
 # 三星Note 2
