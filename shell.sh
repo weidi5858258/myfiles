@@ -1515,6 +1515,9 @@ echo $currentTimeStamp
 
 grep keydl -rn *
 
+#授予某个应用有android.permission.CHANGE_CONFIGURATION权限
+adb shell pm grant packagename android.permission.CHANGE_CONFIGURATION
+
 # C++层log的输出，如果不全，可以调整log的级别：
 # 至少改成>=1
 adb shell dumpsys media.camera -v 1
@@ -1560,6 +1563,8 @@ adb shell ls -alh /storage/3D5F-08A6/SonyTVCamera_photo
 adb shell
 ps -A | grep wdplayer 查看"wdplayer"App pid(进程号)
 ls -al /proc/pid/fd 查到进程号后,查看跟这个进程号有关的句柄
+
+adb shell input keyevent 4 // 后退；
 
 # 手机
 adb push /root/mydev/workspace_github/myfiles/android/contents.txt /storage/1532-48AD/Android/data/com.weidi.usefragments/files/shared/
@@ -2194,10 +2199,6 @@ IFS=$'\n'
 startHere
 
 IFS=${IFS_old}
-
-
-#授予某个应用有android.permission.CHANGE_CONFIGURATION权限
-adb shell pm grant packagename android.permission.CHANGE_CONFIGURATION
 
 #可以通过下面的命令来查找Zygote进程的源码：
 find ./ -nameAndroid.mk -exec grep -l app_process {}\;
