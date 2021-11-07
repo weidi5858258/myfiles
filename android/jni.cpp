@@ -2222,14 +2222,21 @@ char* sz2 = new char;
 if(sz2!= NULL)
 delete sz2;
 
-const char* pName;
+const char* pName = "...";
 size_t nKeyLen = strlen(pName) + 1;// 关键点
-char*        pKey;
+char *pKey = NULL;
 pKey = new char[nKeyLen];
 strncpy(pKey, pName, nKeyLen);
 ......
 delete       pKey;// 关键点
 pKey = NULL;
+
+host->av_val = "ivi.bupt.edu.cn:1935/livetv/chcatv";
+host->av_len = 15;
+char *hostname = NULL;
+hostname = malloc(host->av_len + 1);
+memcpy(hostname, host->av_val, host->av_len);// hostname(内容不包括引号): "ivi.bupt.edu.cn"
+hostname[host->av_len] = '\0';// 关键点(因为只复制了15个字符，所以最后一个结束符需要自己手动设定)
 
 int         nSize;
 void*       pData;
@@ -2282,15 +2289,35 @@ if (surface != NULL) {
 }
 
 
+#include <strings.h>
+定义
+int strncasecmp(const char *s1, const char *s2, size_t n);//忽略大小写的比较
+描述
+strncasecmp()用来比较参数s1 和s2 字符串前n个字符，比较时会自动忽略大小写的差异。
+若参数s1 和s2 字符串相同则返回0。s1 若大于s2 则返回大于0 的值，s1 若小于s2 则返回小于0 的值。
 
+#include <string.h>
+extern char *strstr(char *str1, const char *str2);
+返回值：若str2是str1的子串，则返回str2在str1的首次出现的地址；如果str2不是str1的子串，则返回NULL。
+char str[]="1234xyz";
+char *str1=strstr(str,"34");
+cout << str1 << endl;
+显示的是: 34xyz
 
-
-
-
-
-
-
-
+struct sockaddr_in service;
+memset(&service, 0, sizeof(struct sockaddr_in));
+service.sin_family = AF_INET;// 2
+service.sin_port = htons(1935);
+service.sin_addr.s_addr = inet_addr("ivi.bupt.edu.cn");
+if (service.sin_addr.s_addr == INADDR_NONE) {
+    struct hostent *host = gethostbyname("ivi.bupt.edu.cn");
+    if (host == NULL || host->h_addr == NULL) {
+        RTMP_Log(RTMP_LOGERROR, "Problem accessing the DNS. (addr: %s)", hostname);
+        ret = FALSE;
+        goto finish;
+    }
+    service->sin_addr = *(struct in_addr *) host->h_addr;
+}
 
 
 
