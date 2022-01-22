@@ -1514,6 +1514,7 @@ currentTimeStamp=`date -d "$currentTime" +%s`
 echo $currentTimeStamp
 
 grep keydl -rn *
+find . -name "*.log" | xargs rm -rf
 
 #授予某个应用有android.permission.CHANGE_CONFIGURATION权限
 adb shell pm grant packagename android.permission.CHANGE_CONFIGURATION
@@ -1565,6 +1566,18 @@ ps -A | grep wdplayer 查看"wdplayer"App pid(进程号)
 ls -al /proc/pid/fd 查到进程号后,查看跟这个进程号有关的句柄
 
 adb shell input keyevent 4 // 后退；
+
+dumpsys activity activities        # 查看当前运行的有哪些Activity
+dumpsys package com.weidi.wdplayer # 查看跟"com.weidi.wdplayer"这个包名有关的所有信息
+
+调节多媒体音量
+adb shell media volume --show --stream 3 --get
+adb shell media volume --show --stream 3 --set 音量值
+
+# 从手机中导出某个apk
+adb shell "pm path com.oneplus.card"
+# package:/data/app/com.oneplus.card-ZVxh9dso3JMidGpjmhSXCQ==/base.apk
+adb pull /data/app/com.oneplus.card-ZVxh9dso3JMidGpjmhSXCQ==/base.apk ./com.oneplus.card.apk
 
 # 手机
 adb push /root/mydev/workspace_github/myfiles/android/contents.txt /storage/1532-48AD/Android/data/com.weidi.usefragments/files/shared/
@@ -1624,6 +1637,8 @@ adb logcat -c;
 local parameter2=$2;	
 # adb logcat > ${currentDir}/${mySonyTempLog} &
 adb logcat > ${currentDir}/${parameter2}".log" &
+
+adb logcat -s baidu_alexander
 
 adb shell pm grant packagename android.permission.CHANGE_CONFIGURATION
 
@@ -2127,6 +2142,7 @@ echo "OS Architecture = $OSArch"
 
 ps -A -Z | grep ""
 grep "" -rn *
+grep "Launcher2" ./ -rn # 在当前目录及子目录下搜索包含"Launcher2"字符串的所有文件
 
 apt update 
 apt upgrade 
@@ -2406,3 +2422,49 @@ for i in `seq ${lines}`;
 do
 	echo ${array_class_name[${i}]}
 done
+
+
+###
+没有源码,只把编译好的apk编译进系统中
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+$(warning "MyApp of LOCAL_PATH is $(LOCAL_PATH)")
+LOCAL_MODULE := MyApp
+LOCAL_MODULE_TAGS := optional
+不管是user还是eng版本都会编译此app
+LOCAL_SRC_FILES := $(LOCAL_MODULE).apk
+LOCAL_MODULE_CLASS := APPS
+LOCAL_MODULE_SUFFIS := $(COMMON_ANDROID_PACKAGE_SUFFIX)
+需要什么签名,PRESIGNED表示当前的apk已经签过名了.还有platform
+LOCAL_CERTIFICATE := PRESIGNED
+include $(BUILD_PREBUILT)
+###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
