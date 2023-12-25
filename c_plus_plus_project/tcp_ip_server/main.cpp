@@ -637,8 +637,46 @@ int test() {
             printf("\t\t\t\t\t[%s]\n", inet_ntoa(*((struct in_addr *) pHost->h_addr_list[i])));
         }
     }
+}
 
+int test2() {
+    typedef unsigned short char16;
+    typedef unsigned int uint32;
+    char *path = "/root/mydev/files/valid.txt";
+    uint32 len = 0;
+    uint32 *num = &len;
+    FILE *fp = fopen(path, "rb");
+    char16 utf16header;
+    uint32 read = fread(&utf16header, sizeof(char16), 1, fp);
+    // 0xfeff: 65279
+    printf("DictBuilder::read_valid_hanzis() read: %d\n", read);
+    if (read != 1 || 0xfeff != utf16header) {
+        fclose(fp);
+        return NULL;
+    }
+    fseek(fp, 0, SEEK_END);
+    *num = ftell(fp) / sizeof(char16);
+    printf("DictBuilder::read_valid_hanzis() num: %d\n", *num);
+    assert(*num >= 1);
+    *num -= 1;
+    printf("DictBuilder::read_valid_hanzis() num: %d\n", *num);
+    char16 *hzs = new char16[*num];
+    if (NULL == hzs) {
+        fclose(fp);
+        return NULL;
+    }
+    fseek(fp, 2, SEEK_SET);
 
+    // sizeof(char16): 2(每次读取2个字节，读*num次)
+    if (fread(hzs, sizeof(char16), *num, fp) != *num) {
+        fclose(fp);
+        delete[] hzs;
+        return NULL;
+    }
+    fclose(fp);
+    delete[] hzs;
+
+    return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -655,10 +693,10 @@ int main(int argc, char *argv[]) {
 
 //    howToCreateChildProcess();
 
-    LinuxSocket linuxSocket;
-    linuxSocket.studyHard();
+//    LinuxSocket linuxSocket;
+//    linuxSocket.studyHard();
 
-//    test();
+    test2();
 
     printf("---------------------------------------------------\n");
     printf("\n");

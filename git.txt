@@ -67,7 +67,7 @@ git restore README.md
 
 git rebase --abort
 
-把branchA merge to branchB上
+把 branchA merge to branchB 上
 git checkout branchB
 git merge --no-ff branchA
 
@@ -131,3 +131,46 @@ git push --set-upstream origin master
 
 weidi5858258@sina.com
 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
+
+
+
+
+//修改Git默认编辑器为vim
+git config --global core.editor vim
+git config --global core.editor gedit
+
+[user]
+	email = weidi5858258@sina.com
+	name = weidi5858258
+[color]
+	ui = auto
+[safe]
+	directory = /root/mydev/android/input-method
+	directory = /root/mydev/android/frameworks
+	directory = /root/mydev/c_plus_plus/frameworks
+	directory = /root/mydev/1up/git/SimpleFC
+	directory = /root/mydev/1up/git/android
+[pull]
+	rebase = true
+[core]
+	editor = gedit # 修改编辑器
+
+
+当merge代码时出现 merging-state 时,先解决所有冲突问题,然后输入下面的命令:
+git merge --continue
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

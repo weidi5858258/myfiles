@@ -6,6 +6,7 @@ if(!0){
     // 条件的意思为"是0"的时候怎样
 }
 if(!NULL){
+    // 是空指针的时候
 }
 
 自己定义的C++类的析构函数应设置为virtual
@@ -156,9 +157,24 @@ srand(std::chrono::system_clock::to_time_t(
 
 
 dynamic_cast<son>(father)
+static_cast
+reinterpret_cast // 主要用在两个完全没有联系的类型之间的转换，可以实现指针和整数之间的转换；
+    int i_val = 100;
+    int* i_ptr = &i_val;
+    int reinterpret_val = reinterpret_cast<int>(i_ptr); // 将整数指针转换为整数
+const_cast // 函数的参数是非const类型,但是传递的实参是const类型,这样直接传参是不行的,此时就需要 const_cast 转换一下了
+    const myClass* c = new myClass();
+    cout << c->a << endl;
+    //c->a = 100; // failed,const常量不能修改
+    myClass* cc = const_cast<myClass*>(c);
+    cc->a = 100; // success
+
+dynamic_cast主要用在存在多态类的转换，用于保证安全转换。
+static_cast不能进行不相关类之间的转换可以实现上行转换和下行转换；继承父类和子类之间的上行转换和下行转换，不保证安全；能够进行void * 到其他指针的任意转换；能够将 int float double以及枚举类型的转换；实现转换到右值引用；
+const_cast通常用作去除变量的const属性，对于原生类型，修改对应的值可能比较麻烦，但是对于大部分类型，是可以进行修改的，一般是通过转换为指针或者引用进行修改；
+reinterpret_cast主要用在两个完全没有联系的类型之间的转换，可以实现指针和整数之间的转换；
+
 typeid()
-
-
 
 int a = 100;
 void *p = (void *) (&a);
@@ -1439,7 +1455,7 @@ struct stud *r_create() {
 
 
 
-///////////////////////////STL///////////////////////////
+///////////////////////////STL 集合///////////////////////////
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1494,6 +1510,7 @@ list：双链表,从任何地方快速插入与删除
 vector<string> vt;
 deque<int> dq;
 list<student> lt;
+
 C<T> c:创建一个名为c的容器,容器类型为C,如vector
 或list,T为容器内元素的类型.适用于所有容器.
 C c2(c)：创建一个c容器的副本,c2和c必须具有相同的容器类型和元素类型,适用于所有容器.
@@ -1504,7 +1521,7 @@ n个个数,值为t,t的类型必须是容器C的元素类型或可以转换为�
 C c(n):创建一个名为c的容器,元素为n个初始化元素的值,元素类型为值n的类型,只适用于顺序容器.
 
 函数：
-a)begin和end
+a) begin和end
 返回容器的迭代器,通过迭代器我们可以访问容器内的元素.
 std::vector<int>::iterator iter = c.begin();
 c.begin();
@@ -1554,14 +1571,10 @@ c.pop_front()：删除容器的第一个元素,返回void,只
 c.pop_back()：删除容器的最后一个元素,返回void.
 
 f)赋值操作
-c1 = c2：删除c1的所有元素,将c2的所有元素复制
-给c1,c1和c2的容器类型及元素类型必须相同.
-c1.swap(c2)：交换c1和c2中的所有元素,c1和c2的容器
-类型及元素类型必须相同.
-c.assign(b, e)：重新给c赋值,内容为b和e所标记范围内
-的元素,b和e必须不是指向c中的元素的迭代器.
-c.assign(n, t)：将c中的元素重新调转为n个值为t的
-元素.
+c1 = c2：删除c1的所有元素,将c2的所有元素复制给c1,c1和c2的容器类型及元素类型必须相同.
+c1.swap(c2)：交换c1和c2中的所有元素,c1和c2的容器类型及元素类型必须相同.
+c.assign(b, e)：重新给c赋值,内容为b和e所标记范围内的元素,b和e必须不是指向c中的元素的迭代器.
+c.assign(n, t)：将c中的元素重新调转为n个值为t的元素.
 
 1-2.关联容器
 set：快速查找,不允许有重复的值
@@ -1579,7 +1592,8 @@ queue：先进先出
     
 C++ map注意事项
 1、在map中,由key查找value时,首先要判断map中是否包含key.
-2、如果不检查,直接返回map[key],可能会出现意想不到的行为.如果map包含key,没有问题,如果map不包含key,使用下标有一个危险的副作用,会在map中插入一个key的元素,value取默认值,返回value.也就是说,map[key]不可能返回null.
+2、如果不检查,直接返回map[key],可能会出现意想不到的行为.如果map包含key,没有问题,如果map不包含key,使用下标有一个危险的副作用,会在map中插入一个key的元素,value取默认值,返回value.
+   也就是说,map[key]不可能返回null.
 3、map提供了两种方式,查看是否包含key,m.count(key),m.find(key).
 4、m.count(key)：由于map不包含重复的key,因此m.count(key)取值为0,或者1,表示是否包含.
 5、m.find(key)：返回迭代器,判断是否存在.
@@ -1593,27 +1607,64 @@ C++ map注意事项
 1 iter = m.find(key);
 2 if(iter!=m.end())
 3 {
-4     return iter->second;
+4     return iter->second; // 表示key存在于m中
 5 }
 6 return null;
 这里需要注意：前一种方法很直观,但是效率差很多.因为前面的方法,需要执行两次查找.因此,推荐使用后一种方法.
 
-2、迭代器
-3、算法
-4、仿函数
-
-下面是具体使用部分:
-map<string, string> nameAndContentMap;
-// 插入元素
-nameAndContentMap.insert(
-	map<string, string>::value_type("", ""));
-// map输出元素
-for (map<string, string>::iterator iter = nameAndContentMap.begin();
-	iter != nameAndContentMap.end();
-	++iter) {
-    // 键:iter->first 值:iter->second
-    cout << iter->first << " = " << iter->second << endl;
+std::map<int, std::string> testMap;
+// 保存值
+// 1.
+if (testMap.find(10) == testMap.end()) { //
+    testMap.insert(std::pair<int, std::string>(10, "hello"));
 }
+testMap.insert(std::pair<int, std::string>(10, "world")); // 没有替换掉原来的值
+printf("test: %s\n", testMap[10].c_str()); // hello
+// 2.
+testMap.insert(std::map<int, std::string>::value_type(20, "haha"));
+// 3.
+testMap[30] = "yaya";
+testMap[10] = "mama"; // 能够替换掉原来的值
+
+// 循环输出
+// 1.
+std::map<int, std::string>::iterator iter;
+for (iter = testMap.begin(); iter != testMap.end(); ++iter) {
+    printf("%d = %s\n", iter->first, iter->second.c_str());
+}
+
+// 删除key是20的值,返回"1"说明删除成功了
+int ret = testMap.erase(20);
+printf("ret = %d\n", ret); // 1
+// 删除key是200的值,返回"0"说明删除失败了,因为没有这个key
+ret = testMap.erase(200);
+printf("ret = %d\n", ret); // 0
+
+// 全部删除
+testMap.clear();
+testMap.erase(testMap.begin(), testMap.end());
+
+// 2.
+std::map<int, std::string>::reverse_iterator riter;
+for (riter = testMap.rbegin(); riter != testMap.rend(); ++riter) {
+    printf("%d = %s\n", riter->first, riter->second.c_str());
+}
+// 3.
+size_t size = testMap.size();
+for (int i = 1; i <= size; i++) { // 不能使用这种方式,因为i的值不是key,所以取不到相应的value
+    printf("%s\n", testMap[i].c_str());
+}
+
+
+
+
+
+
+
+
+
+
+
 // vector输出元素
 vector<string> localDestFileContentVector;
 localDestFileContentVector.push_back("");
@@ -1647,11 +1698,12 @@ for (auto tempStr : testVector) {
     cout << tempStr << endl;
 }
 //根据元素查找索引
-std::vector<string>::iterator iter = 
-	std::find(std::begin(testVector),
-	           std::end(testVector),
-	           "test4");
-auto index = std::distance(std::begin(testVector), iter);
+std::vector<string>::iterator iter = std::find(std::begin(testVector), std::end(testVector), "test4");
+if(iter != testVector.end()){
+    // 找到了
+}
+
+auto index = std::distance(std::begin(testVector), iter); // "test4" 在testVector中的什么位置
 cout << "index: " << index << endl;
 //根据索引修改元素
 testVector[index] = "test10";
@@ -2206,8 +2258,8 @@ detach()
 joinable()
 使用说明:
 join()让主线程等待子线程的完成
-detach()让主线程与子线程分离,子线程就成了后台线程.
-如果主线程退出了,子线程就不再执行.
+detach()让主线程与子线程分离,子线程就成了后台线程.如果主线程退出了,子线程就不再执行.
+
 joinable()条件判断.
 返回true时,线程对象可以join()或者detach();
 返回false时,线程对象不能join()或者detach().
@@ -2215,6 +2267,7 @@ joinable()条件判断.
 如果调用了detach()后也不能再调用join()或者detach().
 因此最好的做法是调用join()或者detach()之前,
 先调用joinable()方法判断一下,返回true时再调用.
+
 第一种使用线程方法:
 1.
 void testThread() {
@@ -2227,9 +2280,10 @@ if (childThread.joinable()) {
 }
 
 第二种使用线程方法:
-1.创建类,void operator()() {...}这个方法少不了
+1.创建类
 class MyThread {
 public:
+    // void operator()() {...}这个方法少不了
     // 如果没有这个方法,那么使用MyThread类创建的对象就不是可调用对象.
     // 如果不是可调用对象,那么这个类就是普通类,不能作为线程对象的参数.
     void operator()() {
@@ -2244,14 +2298,27 @@ if (childThread.joinable()) {
     childThread.join();
 }
 
-第三种使用线程方法:
+第三种使用线程方法(适用于临时任务):
 用lambda表达式.
-auto testThread = [] {
+auto testThread = []() { // ()可省略
     cout << "我是子线程,现在正在执行任务..." << endl;
+    // #include <unistd.h> // usleep
+    usleep(1000 * 1000 * 5); // 5s
 };
 thread childThread(testThread);
 if (childThread.joinable()) {
     childThread.join();
+}
+
+std::thread childThread([]() {
+    std::cout << "我是子线程,现在正在执行任务..." << std::endl;
+    usleep(1000 * 1000 * 5); // 5s
+});
+printf("test8\n"); // 比线程的代码先执行
+if (childThread.joinable()) {
+    childThread.join(); // 等待线程执行完后,再往下执行
+} else {
+
 }
 
 
@@ -2427,7 +2494,7 @@ void test_pthread(void) {
     pthread_attr_setschedparam(&attr, &param);
     for (int i = 0; i < PTHREADS_NUM; ++i) {
         printf("&p_tids\[%d\] = %p\n", i, &p_tids[i]);
-        int ret = pthread_create(&p_tids[i], &attr, say_hello_thread, NULL);
+        int ret = pthread_create(&p_tids[i], &attr, say_hello_thread, NULL); // NULL是say_hello_thread的参数
         if (ret != 0) {
             printf("pthread_create error: error_code = %d\n", ret);
         }
@@ -2970,16 +3037,52 @@ if (mCameraFd < 0) {
 
 
 
+Vector<AudioSessionRef*> mAudioSessionRefs;
+size_t num = mAudioSessionRefs.size();
+for (size_t i = 0; i < num; i++) {
+    AudioSessionRef *ref = mAudioSessionRefs.itemAt(i);
+    if (ref->mSessionid == audioSession) {
+        return true;
+    }
+}
+
+
+if (std::string audioPolicyXmlConfigFile = audio_get_audio_policy_config_file(); !audioPolicyXmlConfigFile.empty()) {}
 
 
 
+std::shared_ptr<EngineLibrary> EngineLibrary::load(std::string libraryPath)
+{
+    std::shared_ptr<EngineLibrary> engLib(new EngineLibrary());
+    return engLib->init(std::move(libraryPath)) ? engLib : nullptr;
+}
+
+std::string libraryPath;
+ALOGD("Loaded engine from %s", libraryPath.c_str());
+
+using CreateAudioPolicyManagerInstance = AudioPolicyInterface* (*)(AudioPolicyClientInterface*);
+CreateAudioPolicyManagerInstance mCreateAudioPolicyManager;
+AudioPolicyInterface *mAudioPolicyManager;
+mAudioPolicyManager = mCreateAudioPolicyManager(mAudioPolicyClient);
+
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wweak-vtables"
+#endif
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
 
 
-
-
-
-
+char            mCycleMs[16];   // cycle_ms + suffix
+char            mLoadUs[16];    // load_us + suffix
+const char *cycleMs = "cycle_ms";
+const char *loadUs = "load_us";
+strlcpy(mCycleMs, cycleMs, sizeof(mCycleMs));
+strlcpy(mLoadUs, loadUs, sizeof(mLoadUs));
 
 
 
@@ -3002,12 +3105,1144 @@ if (mCameraFd < 0) {
 
 
 
+const String8& keyValuePairs;
+ALOGV("ThreadBase::setParameters() %s", keyValuePairs.string());
+
+const char* sAudioHALVersions[] = {
+    "7.0",
+    "6.0",
+    "5.0",
+    "4.0",
+    nullptr
+};
+for (auto version = sAudioHALVersions; version != nullptr; ++version) {
+    void* rawInterface = nullptr;
+    if (hasHalService(package, *version, interface) && createHalService(*version, interface, &rawInterface)) {
+        return rawInterface;
+    }
+}
+
+Vector< sp<ConfigEvent> >     mPendingConfigEvents;
+sp<ConfigEvent> configEvent = (ConfigEvent *)new PrioConfigEvent(pid, tid, prio, forApp);
+sendConfigEvent_l(configEvent);
+// 看形参的定义
+status_t AudioFlinger::ThreadBase::sendConfigEvent_l(sp<ConfigEvent>& event) {
+    mPendingConfigEvents.add(event);
+} 
+
+sp<ThreadBase> thread = ...;
+PlaybackThread *playbackThread = (PlaybackThread *)thread.get(); // get()的用法
+sp<NBAIO_Sink> mPipeSink;
+MonoPipe *pipe = (MonoPipe *)mPipeSink.get();
+
+class AudioIoDescriptor : public RefBase {}
+sp<AudioIoDescriptor> desc = new AudioIoDescriptor(); // 如果想使用智能指针,那么这个类必须继承于 RefBase,这样在其他任何地方new对象后,不需要程序员主动去释放内存了
+
+class MyBase : public RefBase {
+    public:
+        MyBase() {}
+        virtual ~MyBase() {}
+}
+
+std::map<uid_t, std::pair<ssize_t /* previous */, ssize_t /* current */>> mBatteryCounter;
+for (auto it = mBatteryCounter.begin(); it != mBatteryCounter.end();) {
+    const uid_t uid = it->first;
+    ssize_t &previous = it->second.first;
+    ssize_t &current = it->second.second;
+}
+std::map<audio_module_handle_t, ModuleConnections> mInsertedModules;
+for (auto& module : mInsertedModules) {
+    module.second.streams.erase(stream);
+}
+
+sp<ConfigEvent> configEvent = (ConfigEvent *)new CheckOutputStageEffectsEvent();
+
+
+const char* name = (std::string("AudioFlinger::Client(") + std::to_string(pid) + ")").c_str();
+std::string testString{};
+testString.append("hello").append("_").append(std::to_string(100)).append(" ").append(std::to_string(8.8));
+
+
+class BnMemoryHeap : public BnInterface<IMemoryHeap>
+class MemoryHeapBase : public virtual BnMemoryHeap
+sp<IMemoryHeap>             mHeap;
+mHeap(sp<MemoryHeapBase>::make(size, flags, name)) // make()的用法
+
+sp<IMemory>         mCblkMemory;
+audio_track_cblk_t* mCblk = static_cast<audio_track_cblk_t *>(mCblkMemory->unsecurePointer());
+new(mCblk) audio_track_cblk_t(); // 这是啥语法
+void*               mBuffer;
+mBuffer = (char*)mCblk + sizeof(audio_track_cblk_t); // 
+memset(mBuffer, 0, bufferSize);
+
+
+static inline std::vector<std::string> audio_get_configuration_paths() {
+    // 想不明白为什么要这么写?
+    static const std::vector<std::string> paths = []() {
+        char value[PROPERTY_VALUE_MAX] = {}; // PROPERTY_VALUE_MAX = 92 value[0] = '\0', value[1] = '\0', ... value[91] = '\0' 这样也能达到初始化
+        bool va_aosp = property_get_bool("ro.vendor.qti.va_aosp.support", false);
+        std::vector<std::string> ret;
+        if (property_get("ro.boot.product.vendor.sku", value, "") <= 0) {
+            ret = std::vector<std::string>({"/odm/etc", "/vendor/etc", "/system/etc"});
+        } else {
+            ret = std::vector<std::string>({
+                    "/odm/etc",
+                    std::string("/vendor/etc/audio/sku_") + value +
+                           (va_aosp ? "_qssi" : ""),
+                    std::string("/vendor/etc/audio/sku_") + value,
+                    "/vendor/etc", "/system/etc"});
+        }
+        if (va_aosp) {
+            ret.insert(ret.end() - 2, "/vendor/etc/audio");
+        }
+        return ret;
+    }();
+    return paths;
+}
+
+
+ActiveTracks<Track>    mActiveTracks;
+std::vector<sp<Track>> activeTracks;
+activeTracks.insert(activeTracks.end(), mActiveTracks.begin(), mActiveTracks.end());
+
+std::vector<std::string> mActiveTracks;
+std::vector<std::string> activeTracks;
+// mActiveTracks[0] = "a"; // error 队列中没有元素时,是不能这样使用的
+mActiveTracks.push_back("a");
+mActiveTracks.push_back("b");
+mActiveTracks.push_back("c");
+mActiveTracks.push_back("d");
+mActiveTracks.push_back("e");
+mActiveTracks[2] = "f";
+for (int i = 0; i < mActiveTracks.size(); i++) {
+    printf("%s\n", mActiveTracks[i].c_str());
+}
+activeTracks.insert(activeTracks.end(), mActiveTracks.begin(), mActiveTracks.end()); // 把mActiveTracks中的所有元素复制到activeTracks去
+for (int i = 0; i < activeTracks.size(); i++) {
+    printf("%s\n", activeTracks[i].c_str());
+}
+
+
+/* The return value is undefined if the channel mask is invalid. */
+static inline uint32_t audio_channel_mask_get_bits(audio_channel_mask_t channel)
+{
+    return channel & ((1 << AUDIO_CHANNEL_COUNT_MAX) - 1);
+}
+/* The return value is undefined if the channel mask is invalid. */
+static inline audio_channel_representation_t audio_channel_mask_get_representation(audio_channel_mask_t channel)
+{
+    // The right shift should be sufficient, but also "and" for safety in case mask is not 32 bits
+    return (audio_channel_representation_t)((channel >> AUDIO_CHANNEL_COUNT_MAX) & ((1 << AUDIO_CHANNEL_REPRESENTATION_LOG2) - 1));
+}
+
+
+ATRACE_BEGIN("write");
+// ...
+ATRACE_END();
+
+const int64_t lastIoBeginNs = systemTime();
+// ...
+const int64_t lastIoEndNs = systemTime();
+
+void* mSinkBuffer;  
+effect_buffer_t *sinkBuffer() const 
+{
+    return reinterpret_cast<effect_buffer_t *>(mSinkBuffer); 
+};
+
+原子变量
+std::atomic<float> mMasterBalance{};
+void setMasterBalance(float balance) override {
+   mMasterBalance.store(balance); // 保存float值
+   float value = mMasterBalance.load(); // 取出保存过的float值
+}
+std::atomic<float> mMasterBalance{10.6};
+printf("%f\n", mMasterBalance.load());
+mMasterBalance.store(8.8);
+printf("%f\n", mMasterBalance.load());
+mMasterBalance.exchange(3.1415926);
+printf("%f\n", mMasterBalance.load());
+
+std::atomic_bool mCheckOutputStageEffects{};
+void setCheckOutputStageEffects() override {
+    mCheckOutputStageEffects.store(true);
+}
+if (mCheckOutputStageEffects.exchange(false)) {
+    checkOutputStageEffects();
+}
+if (mCheckOutputStageEffects.load()) {
+    continue;
+}
+
+
+TeePatches  mTeePatches;
+void forEachTeePatchTrack(F f) { // F 相当于 Callback
+    for (auto& tp : mTeePatches) {
+        f(tp.patchTrack); 
+    }
+};
+使用
+forEachTeePatchTrack([](auto patchTrack) { patchTrack->start(); });
+forEachTeePatchTrack([](auto patchTrack) { patchTrack->destroy(); });
 
 
 
 
 
 
+size_t processDeletedTrackIds(std::function<void(int)> f) { // 这个void说明function函数不能有返回值
+    for (const int trackId : mDeletedTrackIds) {
+        f(trackId);
+    }
+    return mDeletedTrackIds.size();
+}
+使用
+(void)mTracks.processDeletedTrackIds([this](int trackId) {
+    if (mAudioMixer->exists(trackId)) {
+        mAudioMixer->destroy(trackId);
+    }
+    // 此匿名函数没有返回值
+});
+
+// 定义静态方法
+static AudioPolicyInterface* createAudioPolicyManager(AudioPolicyClientInterface *clientInterface)
+{
+    AudioPolicyManager *apm = new AudioPolicyManager(clientInterface);
+    status_t status = apm->initialize();
+    if (status != NO_ERROR) {
+        delete apm;
+        apm = nullptr;
+    }
+    return apm;
+}
+static void destroyAudioPolicyManager(AudioPolicyInterface *interface)
+{
+    delete interface;
+}
+// 定义函数指针
+using CreateAudioPolicyManagerInstance = AudioPolicyInterface* (*)(AudioPolicyClientInterface*);
+using DestroyAudioPolicyManagerInstance = void (*)(AudioPolicyInterface*);
+// 定义变量
+CreateAudioPolicyManagerInstance mCreateAudioPolicyManager;
+DestroyAudioPolicyManagerInstance mDestroyAudioPolicyManager;
+// 赋值
+mCreateAudioPolicyManager = createAudioPolicyManager;
+mDestroyAudioPolicyManager = destroyAudioPolicyManager;
+// 使用
+// 1.
+mAudioPolicyClient = new AudioPolicyClient(this);
+mAudioPolicyManager = mCreateAudioPolicyManager(mAudioPolicyClient); // 相当于调用了 createAudioPolicyManager(mAudioPolicyClient) 方法
+// 2.
+mCreateAudioPolicyManager = reinterpret_cast<CreateAudioPolicyManagerInstance>(dlsym(mLibraryHandle, "createAudioPolicyManager"));
+// 3.
+mCreateAudioPolicyManager = nullptr;
+
+bool createHalService(const std::string& version, const std::string& interface, void** rawInterface) {
+    const std::string libName = "libaudiohal@" + version + ".so"; // libaudiohal@7.0.so
+    const std::string factoryFunctionName = "create" + interface; // 
+    constexpr int dlMode = RTLD_LAZY;
+    void* handle = nullptr;
+    dlerror(); // clear
+    handle = dlopen(libName.c_str(), dlMode);
+    if (handle == nullptr) {
+        const char* error = dlerror();
+        ALOGE("Failed to dlopen %s: %s", libName.c_str(), error != nullptr ? error : "unknown error");
+        return false;
+    }
+    void* (*factoryFunction)();
+    *(void **)(&factoryFunction) = dlsym(handle, factoryFunctionName.c_str());
+    if (!factoryFunction) {
+        const char* error = dlerror();
+        ALOGE("Factory function %s not found in library %s: %s", factoryFunctionName.c_str(), libName.c_str(), error != nullptr ? error : "unknown error");
+        dlclose(handle);
+        return false;
+    }
+    *rawInterface = (*factoryFunction)();
+    ALOGW_IF(!*rawInterface, "Factory function %s from %s returned nullptr", factoryFunctionName.c_str(), libName.c_str());
+    return true;
+}
+
+// 1. 首先得有函数
+static std::string getName(int age) {
+    return "yaya";
+}
+// 2. 再定义这个函数相对应的函数指针
+std::string (*fun_ptr)(int) = nullptr;
+// 3. 给这个函数指针赋值
+fun_ptr = getName;
+// 4. 使用这个函数指针
+printf("%s\n", fun_ptr(10).c_str());
+
+const char* sAudioHALVersions[] = {
+    "7.0",
+    "6.0",
+    "5.0",
+    "4.0",
+    nullptr // 用于判断是否到结尾了
+};
+for (auto version = sAudioHALVersions; version != nullptr; ++version) {
+    void* rawInterface = nullptr;
+    if (hasHalService(package, *version, interface)
+            && createHalService(*version, interface, &rawInterface)) {
+        return rawInterface;
+    }
+}
+
+std::shared_ptr<EngineLibrary> EngineLibrary::load(std::string libraryPath)
+{
+    std::shared_ptr<EngineLibrary> engLib(new EngineLibrary()); // 
+    return engLib->init(std::move(libraryPath)) ? engLib : nullptr;
+}
+
+// 定义
+DeviceVector mSupportedDevices;
+const DeviceVector &getSupportedDevices() const { return mSupportedDevices; } // 类成员函数的定义,前后两个const保证类成员变量不被修改,返回引用类型,防止拷贝,减少内存消耗
+// 使用
+const DeviceVector &supportedDevices = outProfile->getSupportedDevices();
+
+DeviceVector DeviceVector::filter(const DeviceVector &devices) const
+{
+    DeviceVector filteredDevices;
+    for (const auto &device : *this) {
+        if (devices.contains(device)) {
+            filteredDevices.add(device);
+        }
+    }
+    return filteredDevices;
+}
+
+
+
+std::string value(reinterpret_cast<const char*>(xmlValue.get()));
+
+const char * const traits = sharedBuffer == 0 ? "" : "static";
+
+// 参数的定义
+status_t AudioFlinger::moveAuxEffectToIo(int EffectId, const sp<PlaybackThread>& dstThread, sp<PlaybackThread> *srcThread) {}
+// 参数的传递
+sp<ThreadBase> thread = mThread.promote(); // wp ---> sp
+if (thread == nullptr) {
+    return DEAD_OBJECT;
+}
+PlaybackThread *playbackThread = (PlaybackThread *)thread.get(); // sp ---> void*
+sp<PlaybackThread> dstThread = (PlaybackThread *)thread.get();   // sp ---> void*
+sp<PlaybackThread> srcThread;
+sp<AudioFlinger> af = mClient->audioFlinger();
+status_t status = af->moveAuxEffectToIo(EffectId, dstThread, &srcThread);
+
+void test() {
+    // 相当于定义一个方法
+    auto loadProcessingChain = [](auto& processingChain, auto& streams) {
+        for (auto& stream : processingChain) {
+            auto effectDescs = std::make_unique<EffectDescVector>(); // effectDescs 就是 EffectDescVector 对象,使用的是 EffectDescVector 的无参构造函数
+            for (auto& effect : stream.effects) {
+                effectDescs->mEffects.add(new EffectDesc{effect.get().name.c_str(), effect.get().uuid});
+            }
+            streams.add(stream.type, effectDescs.release());
+        }
+    };
+    // 使用
+    loadProcessingChain(result.parsedConfig->preprocess, mInputSources);
+    loadProcessingChain(result.parsedConfig->postprocess, mOutputStreams);
+}
+
+
+class Foo {
+    public:
+        Foo(int x, int y) : m_x(x), m_y(y) {}
+        void Print() { std::cout << "m_x = " << m_x << ", m_y = " << m_y << std::endl; }
+    private:
+        int m_x;
+        int m_y;
+};
+int main() {
+    auto ptr = std::make_unique<Foo>(1, 2);
+    ptr->Print();
+    return 0;
+}
+
+创建对象
+// 优先使用 std::make_unique 和 std::make_shared 而不是直接使用new
+auto upw1(std::make_unique<Widget>());    // 使用make函数
+std::unique_ptr<Widget> upw2(new Widget); // 不使用make函数
+
+auto spw1(std::make_shared<Widget>());    // 使用make函数
+std::shared_ptr<Widget> spw2(new Widget); // 不使用make函数
+
+std::unique_ptr<Widget> widget = std::make_unique<Widget>(构造参数列表);
+std::shared_ptr<Widget> widget = std::make_shared<Widget>(构造参数列表);
+
+// get获取原始指针
+std::unique_ptr<int> a = std::make_unique<int>(666);
+int* b = a.get();
+std::cout << b << std::endl;
+
+// reset释放智能指针
+std::unique_ptr<int> a = std::make_unique<int>(666);
+a.reset(); // 释放内存，同时将a置0，所以不会出现悬挂指针的问题
+std::cout << a << std::endl;
+
+// release将指针置0
+std::unique_ptr<int> a = std::make_unique<int>(666);
+// 虽然这个函数名叫release，但是并不会真的释放内存，只是把指针置0
+// 而原来的那片装着666的内存依然存在，但是该函数会返回装着666的内存地址
+// 综上：相当于先get，然后再reset
+int* b = a.release();
+std::cout << a << std::endl;
+std::cout << b << std::endl;
+
+std::future<void> mDefaultDeviceEffectFuture;
+void AudioPolicyEffects::initDefaultDeviceEffects() {...}
+mDefaultDeviceEffectFuture = std::async(std::launch::async, &AudioPolicyEffects::initDefaultDeviceEffects, this);
+
+void* mExternalData;
+effect_buffer_t *buffer = nullptr;
+buffer = reinterpret_cast<effect_buffer_t*>(mExternalData);
+
+std::shared_ptr<EngineLibrary> EngineLibrary::load(std::string libraryPath)
+{
+    std::shared_ptr<EngineLibrary> engLib(new EngineLibrary());
+    return engLib->init(std::move(libraryPath)) ? engLib : nullptr;
+}
+
+class HwModuleCollection : public Vector<sp<HwModule> > {}
+HwModuleCollection mHwModules;
+HwModuleCollection mHwModulesAll;
+for (const auto& hwModule : mHwModulesAll) {
+    if (std::find(mHwModules.begin(), mHwModules.end(), hwModule) != mHwModules.end()) { // 表示 hwModule 这个值在 mHwModules 中找到了
+        continue;
+    }
+}
+
+typedef StateQueue<FastMixerState> FastMixerStateQueue;
+FastMixerStateQueue mSQ;
+FastMixerStateQueue* FastMixer::sq()
+{
+    return &mSQ;
+}
+FastMixerStateQueue *sq = mFastMixer->sq();
+FastMixerState *state = sq->begin();
+// ...
+sq->end();
+sq->push(FastMixerStateQueue::BLOCK_UNTIL_PUSHED);
+
+class AudioMixerBase
+{
+    using process_hook_t = void(AudioMixerBase::*)();
+    process_hook_t mHook = &AudioMixerBase::process__nop;
+    void AudioMixerBase::process__nop()
+    {
+        // ...
+    }
+    void invalidate() 
+    {
+        mHook = &AudioMixerBase::process__validate;
+    }
+    // 使用
+    (this->*mHook)(); // 本来使用函数指针进行调用时,是这样的,(*mHook)(); 由于函数指针指向的是一个对象的方法,因此使用"this->"进行指向操作
+}
+
+std::unique_ptr<int32_t[]> mOutputTemp;
+std::unique_ptr<int32_t[]> mResampleTemp;
+if (mOutputTemp.get() == nullptr) {
+    mOutputTemp.reset(new int32_t[MAX_NUM_CHANNELS * mFrameCount]);
+}
+if (mResampleTemp.get() == nullptr) {
+    mResampleTemp.reset(new int32_t[MAX_NUM_CHANNELS * mFrameCount]);
+}
+int32_t * const outTemp = mOutputTemp.get();
+
+std::unordered_map<void * /* mainBuffer */, std::vector<int /* name */>> mGroups;
+for (const auto &pair : mGroups) {
+    const auto &key_ = pair.first;
+    const auto &value_ = pair.second;
+    for (const int name : value_) {
+        const std::shared_ptr<TrackBase> &t = mTracks[name];
+        TrackBase* t_ptr = t.get();
+    }
+}
+
+std::map<int /* name */, std::shared_ptr<TrackBase>> mTracks;
+const std::shared_ptr<TrackBase> &t1 = mTracks[group[0]];
+
+struct TrackBase;
+using hook_t = void(TrackBase::*)(int32_t* output, size_t numOutFrames, int32_t* temp, int32_t* aux);
+hook_t      hook;
+
+
+
+&((char *) mBuffers)[1024]
+
+
+std::unordered_map<void * /* mainBuffer */, std::vector<int /* name */>> mGroups;
+mGroups[t->mainBuffer].emplace_back(name); // key is t->mainBuffer, value is std::vector, name add to std::vector.
+    [0]: {first:0x0000007c58def640, second:size=1}
+        first: 0x0000007c58def640
+        second: 
+            [0]: 57
+
+
+
+
+const std::shared_ptr<TrackBase> &t = mTracks[name];
+(t.get()->*t->hook)(outTemp, numFrames, mResampleTemp.get() /* naked ptr */, aux);
+(t.get()->*t->hook) // 什么意思?
+
+
+使用 Callback
+using WriterCallback = std::function<void(const WriteStatus& writeStatus)>;
+status_t callWriterThread(
+            WriteCommand cmd, const char* cmdName,
+            const uint8_t* data, size_t dataSize, WriterCallback callback);
+status = callWriterThread(WriteCommand::WRITE, "write", static_cast<const uint8_t*>(buffer), bytes,
+            [&] (const WriteStatus& writeStatus) {
+                *written = writeStatus.reply.written;
+            });
+
+std::string AudioMixerBase::trackNames() const
+{
+    std::stringstream ss;
+    for (const auto &pair : mTracks) {
+        ss << pair.first << " ";
+    }
+    return ss.str();
+}
+
+if (!mIsOut || (mAvailToClient + stepCount >= minimum)) {
+    ALOGV("mAvailToClient=%zu stepCount=%zu minimum=%zu", mAvailToClient, stepCount, minimum);
+    int32_t old = android_atomic_or(CBLK_FUTEX_WAKE, &cblk->mFutex); // cblk->mFutex = 1
+    if (!(old & CBLK_FUTEX_WAKE)) {
+        // 通知客户端可以写数据了,具体体现在 cblk->u.mStreaming.mRear 这个值变化了,比原来大了,说明有数据已经写入了
+        (void) syscall(__NR_futex, &cblk->mFutex, mClientInServer ? FUTEX_WAKE_PRIVATE : FUTEX_WAKE, 1);
+    }
+}
+
+
+std::shared_ptr<AudioMixerBase::TrackBase> AudioMixer::preCreateTrack()
+{
+    return std::make_shared<Track>(); // 创建对象
+}
+auto t = preCreateTrack();
+
+std::unique_ptr<PassthruBufferProvider> mReformatBufferProvider;
+mReformatBufferProvider.reset(new ReformatBufferProvider(...)); // 把 mReformatBufferProvider 设置为 ReformatBufferProvider 对象
+AudioBufferProvider* bufferProvider = mReformatBufferProvider.get();
+
+void AudioMixer::setParameter(int name, int target, int param, void *value)
+{
+    const std::shared_ptr<Track> &track = getTrack(name);
+    int valueInt = static_cast<int>(reinterpret_cast<uintptr_t>(value));
+    int32_t *valueBuf = reinterpret_cast<int32_t*>(value);
+}
+effect_buffer_t *mainBuffer() const { return mMainBuffer; }
+mAudioMixer->setParameter(trackId, AudioMixer::TRACK, AudioMixer::MAIN_BUFFER, (void *)track->mainBuffer());
+
+
+
+template <size_t ...N>
+static constexpr auto square_nums(size_t index, std::index_sequence<N...>) {
+    constexpr auto nums = std::array{N * N ...};
+    return nums[index];
+}
+template <size_t N>
+constexpr static auto const_nums(size_t index) {
+    return square_nums(index, std::make_index_sequence<N>{});
+}
+int main() {
+    static_assert(const_nums<101>(100) == 100 * 100); 
+}
+
+std::unique_ptr<AudioResampler> mResampler;
+mResampler.reset(AudioResampler::create(mMixerInFormat, resamplerChannelCount, devSampleRate, quality));
+bool doesResample() const {
+    return mResampler.get() != nullptr;
+}
+
+
+std::unique_ptr<int32_t[]> mOutputTemp;
+std::unique_ptr<int32_t[]> mResampleTemp;
+if (mOutputTemp.get() == nullptr) {
+    mOutputTemp.reset(new int32_t[MAX_NUM_CHANNELS * mFrameCount]);
+}
+if (mResampleTemp.get() == nullptr) {
+    mResampleTemp.reset(new int32_t[MAX_NUM_CHANNELS * mFrameCount]);
+}
+
+std::vector<sp<IDevicesFactory>> mDeviceFactories;
+sp<IDevicesFactory> factory;
+mDeviceFactories.push_back(factory);
+
+status_t DevicesFactoryHalHybrid::openDevice(const char *name, sp<DeviceHalInterface> *device) {}
+sp<DeviceHalInterface> dev; // {m_ptr:0x0000000000000000}
+int rc = mDevicesFactoryHal->openDevice(name, &dev); // 注意传参
+
+Return<void> ret = factory->openDevice(
+                hidlId,
+                [&](Result r, const sp<IDevice>& result) {
+                    retval = r;
+                    if (retval == Result::OK) {
+                        *device = new DeviceHalHidl(result);
+                    }
+                }); // 相当于 Callback
+
+[](){} 与 [&](){} 之间的区别
+[](){} 与 []{}() 都是lambda表达式的用法
+int c = [](int n){
+    return [n](int x){ 
+        return n + x;
+    }(1);
+};
+int a = c(2);
+
+int c = [](int n){
+    return [n]{ 
+        return 1;
+    }();
+}(2);
+
+status_t DevicesFactoryHalLocal::openDevice(const char *name, sp<DeviceHalInterface> *device) {
+    *device = new DeviceHalLocal(dev); // 注意 *device
+}
+
+
+AudioResampler* AudioResampler::create() { return ; }
+std::unique_ptr<AudioResampler> mResampler;
+if (mResampler.get() == nullptr) {
+    mResampler.reset(AudioResampler::create());
+}
+
+shared_ptr<string> p1 = make_shared<string>(10, '9');
+shared_ptr<string> p2 = make_shared<string>("hello");
+shared_ptr<string> p3 = make_shared<string>();
+
+#include <iostream>
+#include <memory>
+using namespace std;
+int main() {
+    unique_ptr<int> iPtr = make_unique<int>(8);
+    cout<<*iPtr<<endl;    //输出：8
+    return 0;
+}
+
+audio_format_t format = AUDIO_FORMAT_PCM_16_BIT;
+std::vector<audio_format_t> formats = {format};
+if (format != AUDIO_FORMAT_PCM_16_BIT) {
+    formats.push_back(AUDIO_FORMAT_PCM_16_BIT);
+}
+
+uint32_t sampleRate = 44100;
+std::vector<uint32_t> sampleRates = {sampleRate};
+static const uint32_t SR_44100 = 44100;
+static const uint32_t SR_48000 = 48000;
+if (sampleRate != SR_48000) {
+    sampleRates.push_back(SR_48000);
+}
+if (sampleRate != SR_44100) {
+    sampleRates.push_back(SR_44100);
+}
+
+
+int test_sp_wp() {
+    android::sp<MyTest> test1;
+    android::wp<MyTest> test2;
+
+    {
+        // 一律使用 make(...) 函数来创建对象,不要犹豫,不要怀疑,就这么用
+        test1 = android::sp<MyTest>::make(); // ---> onFirstRef() 推荐做法
+        // test1 = new MyTest();             // ---> onFirstRef() 也是可以的
+        test1->logIt();
+
+        //test2 = android::sp<MyTest>::make(); //  ---> onFirstRef() 即使升级为sp后,也是个NULL指针.因此不能使用make函数来创建wp对象.不要使用
+        test2 = new MyTest();                  // !---> onFirstRef() 如果是wp类型,并且是直接new对象的话,那么 onFirstRef() 这个函数不会被调用,析构函数也可能不会被调用
+        /*android::sp<MyTest> test3 = test2.promote(); // 1.这步操作后,其析构函数才会被调用 2.如果在这里升级为sp后,那么出了这个作用域,test2对象就被销毁了,下面的test4就是NULL指针
+        if (test3 != 0) {
+            test3->logIt(); // 在作用域中,因此能执行
+        }*/
+    }
+
+    printf("==========================================\n");
+
+    test1->logIt();
+
+    {
+        android::sp<MyTest> test4 = test2.promote();
+        if (test4 != 0) {
+            test4->logIt(); // 如果上面的 test2.promote() 这步没有,那么这里能执行
+        }
+    } // 出了这个作用域,test2对象已经被销毁了.下面的test5就执行不了了
+
+    android::sp<MyTest> test5 = test2.promote();
+    if (test5 != 0) {
+        test5->logIt(); // 不会被执行,因为在上面的小区域中,test2就被销毁了
+    }
+
+    /*
+    总结:
+        1.sp对象使用make函数来创建,这是推荐的.
+        2.wp对象使用new来创建.
+        3.使用wp对象的局限性很大,因此它在局部区域使用外(这个局部区域中不能再另外有局部区域.比如test4对象那里,那里使用后,test5就为NULL了),其他地方尽量少用,因为不知道什么时候对象就已经被销毁了.
+
+        纵上所述,应使用sp来接收make函数创建的对象.
+    */
+}
+
+函数指针的使用
+using EngineInstance = std::unique_ptr<EngineInterface, std::function<void (EngineInterface*)>>;
+void *mLibraryHandle = nullptr;
+EngineInterface* (*mCreateEngineInstance)() = nullptr; // "mCreateEngineInstance" 是函数指针, "EngineInterface*" 是这个函数指针所指向的函数的返回值, 最后的 "()" 是这个函数指针所指向的函数的参数,当前是没有参数
+void (*mDestroyEngineInstance)(EngineInterface*) = nullptr; // "mDestroyEngineInstance" 是函数指针, "void" 是这个函数指针所指向的函数的返回值,当前是无返回值, 最后的 "(EngineInterface*)" 是这个函数指针所指向的函数的参数
+// 使用
+mLibraryHandle = dlopen(path, 0); // "libaudiopolicyenginedefault.so"
+mCreateEngineInstance = (EngineInterface* (*)())dlsym(mLibraryHandle, "createEngineInstance"); // "dlsym" 的返回值是 "void*", 因此需要强制转化一下, 强制转化时这个函数指针就不用再写了
+mDestroyEngineInstance = (void (*)(EngineInterface*))dlsym(mLibraryHandle, "destroyEngineInstance");
+
+C++ "[](){}" 该形式是C++中的lambda函数（匿名函数）
+[] 不截取任何变量
+[&] 截取外部作用域中所有变量，并作为引用在函数体中使用
+[=] 截取外部作用域中所有变量，并拷贝一份在函数体中使用
+[=, &foo] 截取外部作用域中所有变量，并拷贝一份在函数体中使用，但是对foo变量使用引用
+[bar] 截取bar变量并且拷贝一份在函数体重使用，同时不截取其他变量
+[x, &y] x按值传递，y按引用传递
+[this] 截取当前类中的this指针。如果已经使用了&或者=就默认添加此选项。
+
+shared_from_this enable_shared_from_this
+https://blog.csdn.net/KingOfMyHeart/article/details/116277453
+
+DeviceVector mSupportedDevices;
+const DeviceVector &getSupportedDevices() const { return mSupportedDevices; } // 注意返回值类型
+
+std::unique_ptr (C++11 独占式和auto_ptr作用相同, 比auto_ptr更安全)
+std::shared_ptr (C++11)
+std::weak_ptr (C++11)
+std::make_shared (C++11)
+std::make_unique (C++14)
+这些都是线程安全的
+
+PermissionController::PermissionController() {}
+PermissionController{}.getPackagesForUid(attributionSource.uid, packages);
+
+std::vector<std::string> packages;
+packages.push_back("a");
+packages.push_back("b");
+packages.push_back("c");
+std::string opPackageLegacy = "b";
+if (std::find_if(packages.begin(), packages.end(),
+                [&opPackageLegacy](const std::string& package) {
+                    printf("package: %s\n", package.c_str());
+                    return opPackageLegacy == package;
+                }) == packages.end())
+{
+    printf("Does not find it\n");
+}
+
+audio_source_t source;
+AudioSource hidlSource;
+if (status_t status = HidlUtils::audioSourceFromHal(source, &hidlSource); status != OK) {
+    return status;
+}
+SinkMetadata sinkMetadata = {{{ .source = std::move(hidlSource), .gain = 1 }}};
+
+
+void AudioMixer::setParameter(int name, int target, int param, void *value)
+{
+    int valueInt = static_cast<int>(reinterpret_cast<uintptr_t>(value));
+    int32_t *valueBuf = reinterpret_cast<int32_t*>(value);
+
+    AudioMixerBase::setParameter(name, target, param, value);
+}
+void AudioMixerBase::setParameter(int name, int target, int param, void *value)
+{
+    int valueInt = static_cast<int>(reinterpret_cast<uintptr_t>(value));
+    int32_t *valueBuf = reinterpret_cast<int32_t*>(value);
+
+    if (track->setResampler(uint32_t(valueInt), mSampleRate)) {
+
+    }
+}
+// 使用
+uint32_t reqSampleRate = proxy->getSampleRate(); // 44100/48000
+mAudioMixer->setParameter(
+                trackId,
+                AudioMixer::RESAMPLE,
+                AudioMixer::SAMPLE_RATE,
+                (void *)(uintptr_t)reqSampleRate); // 为什么要这样转化?
+// uintptr_t
+int a = 100;
+uintptr_t b = (uintptr_t) a;
+void *p = (void *) b;
+printf("a: %d\n", a); // 100
+printf("b: %d\n", b); // 100
+printf("p: %d\n", p); // 100
+
+std::vector<std::string> packages;
+packages.push_back("a");
+packages.push_back("b");
+packages.push_back("c");
+std::string opPackageLegacy = "d";
+if (std::find_if(packages.begin(), packages.end(),
+                 [&opPackageLegacy](const std::string& package) {
+                     printf("package: %s\n", package.c_str());
+                     return opPackageLegacy == package;
+                 }) == packages.end())
+{
+    printf("Does not find it\n");
+}
+
+const int a = 100;
+int *p = const_cast<int *>(&a);
+printf("a1: %d\n", a);  // 100
+printf("p1: %d\n", *p); // 100
+*p = 1000;
+printf("a2: %d\n", a);  // 100
+printf("p2: %d\n", *p); // 1000
+
+
+int *temp = new int[5]{0};
+temp[0] = 0;
+temp[1] = 1;
+temp[2] = 2;
+temp[3] = 3;
+temp[4] = 4;
+printf("temp: %d\n", *temp);
+printf("temp: %d\n", *(++temp)); // 代码没错,也能正常执行
+printf("temp: %d\n", *(temp++)); // 代码没错,也能正常执行
+delete[] temp; // 由于 "++temp / temp++" 改变了temp的首地址,因此使用 "delete[]" 时,因为要连续删除5个地址,因此把其他内容的地址给删除了,就发生了异常
+printf("temp: %d\n", *(temp + 1));
+printf("temp: %d\n", *(temp + 2));
+printf("temp: %d\n", *(temp + 3));
+printf("temp: %d\n", *(temp + 4));
+
+int *temp = new int[5]{10};
+printf("temp: %d\n", *temp);       // 10
+printf("temp: %d\n", *(temp + 1)); // 0
+printf("temp: %d\n", *(temp + 2)); // 0
+printf("temp: %d\n", *(temp + 3)); // 0
+printf("temp: %d\n", *(temp + 4)); // 0
+delete[] temp;
+
+
+const修饰成员函数和对象
+1. const修饰的成员函数成为  常函数
+   1-1. 用const修饰的成员函数时，const修饰this指针指向的内存区域，成员函数体内不可以修改本类中的任何普通成员变量
+   1-2. 当成员变量类型符前用mutable修饰时例外。
+//const修饰成员函数
+class Person{
+public:
+    Person(){
+        this->mAge = 0;
+        this->mID = 0;
+    }
+    //在函数括号后面加上const,修饰成员变量不可修改,除了mutable修饰的变量
+    void sonmeOperate() const{
+        //this->mAge = 200; //mAge不可修改
+        this->mID = 10;//mID可以修改，因为在定义mID时前面加了mutable进行修饰
+    }
+    void ShowPerson(){
+        cout << "ID:" << mID << " mAge:" << mAge << endl;
+    }
+private:
+    int mAge;
+    mutable int mID;
+};
+int main(){
+ 
+    Person person;
+    person.sonmeOperate();
+    person.ShowPerson();
+ 
+    system("pause");
+    return EXIT_SUCCESS;
+}
+
+2. const修饰的对象称之为   常对象
+    2-1. 常对象只能调用const的成员函数(常函数)，不能调用普通成员函数
+    2-2. 常对象可访问 const 或非 const 数据成员，但是不能修改，除非成员用mutable修饰
+class Person{
+public:
+    Person(){
+        this->mAge = 0;
+        this->mID = 0;
+    }
+    void ChangePerson() const{
+        mAge = 100;
+        mID = 100;
+    }
+    void ShowPerson(){
+        this->mAge = 1000;
+        cout << "ID:" << this->mID << " Age:" << this->mAge << endl;
+    }
+ 
+public:
+    int mAge;
+    mutable int mID;
+};
+void test(){    
+    const Person person;
+    //1. 可访问数据成员
+    cout << "Age:" << person.mAge << endl;
+    //person.mAge = 300; //不可修改
+    person.mID = 1001; //但是可以修改mutable修饰的成员变量
+    //2. 只能访问const修饰的函数
+    //person.ShowPerson();
+    person.ChangePerson();
+}
+
+
+// 关注最后一个参数的传递
+void AudioMixer::setParameter(int name, int target, int param, void *value)
+{
+    int valueInt = static_cast<int>(reinterpret_cast<uintptr_t>(value));
+    int32_t *valueBuf = reinterpret_cast<int32_t*>(value);
+}
+// 1.
+float vlf, vrf, vaf;
+mAudioMixer->setParameter(trackId, param, AudioMixer::VOLUME0, &vlf);
+mAudioMixer->setParameter(trackId, param, AudioMixer::VOLUME1, &vrf);
+mAudioMixer->setParameter(trackId, param, AudioMixer::AUXLEVEL, &vaf);
+float mHapticMaxAmplitude = NAN;
+mAudioMixer->setParameter(trackId, AudioMixer::TRACK, AudioMixer::HAPTIC_MAX_AMPLITUDE, (void *)(&(track->mHapticMaxAmplitude)));
+// 2.
+audio_format_t format() const { return mFormat; }
+mAudioMixer->setParameter(trackId, AudioMixer::TRACK, AudioMixer::FORMAT, (void *)track->format());
+// 3.
+audio_channel_mask_t channelMask() const { return mChannelMask; }
+mAudioMixer->setParameter(trackId, AudioMixer::TRACK, AudioMixer::CHANNEL_MASK, (void *)(uintptr_t)track->channelMask());
+// 4.
+audio_channel_mask_t    mChannelMask;
+audio_channel_mask_t    mHapticChannelMask = AUDIO_CHANNEL_NONE;
+mAudioMixer->setParameter(trackId, AudioMixer::TRACK, AudioMixer::MIXER_CHANNEL_MASK, (void *)(uintptr_t)(mChannelMask | mHapticChannelMask));
+// 5.
+uint32_t reqSampleRate = proxy->getSampleRate(); // 44100/48000
+mAudioMixer->setParameter(trackId, AudioMixer::RESAMPLE, AudioMixer::SAMPLE_RATE, (void *)(uintptr_t)reqSampleRate);
+// 6.
+audio_playback_rate_t playbackRate = proxy->getPlaybackRate();
+mAudioMixer->setParameter(trackId, AudioMixer::TIMESTRETCH, AudioMixer::PLAYBACK_RATE, &playbackRate);
+
+
+
+struct Buffer {
+    Buffer() : raw(NULL), frameCount(0) { }
+    union {
+        void*       raw;
+        short*      i16;
+        int8_t*     i8;
+    };
+    size_t frameCount;
+};
+int32_t*    mainBuffer;
+int32_t*    auxBuffer;
+template <int MIXTYPE, typename TO, typename TI, typename TA>
+void AudioMixerBase::process__noResampleOneTrack()
+{
+    TO* out = reinterpret_cast<TO*>(t->mainBuffer);
+    TA* aux = reinterpret_cast<TA*>(t->auxBuffer);
+
+    const TI *in = reinterpret_cast<TI*>(b.raw); // b.raw 是 void*
+    t->volumeMix<MIXTYPE, std::is_same_v<TI, float>, false> (out, outFrames, in, aux, ramp); // <MIXTYPE, std::is_same_v<TI, float>, false> 对应 int MIXTYPE, bool USEFLOATVOL, bool ADJUSTVOL 这三个参数
+}
+
+template <int MIXTYPE, bool USEFLOATVOL, bool ADJUSTVOL, typename TO, typename TI, typename TA>
+void AudioMixerBase::TrackBase::volumeMix(TO *out, size_t outFrames, const TI *in, TA *aux, bool ramp)
+{
+    // mMixerChannelCount = 2, outFrames = 256, aux = nullptr, mVolume = {0.118032612, 0.118032612}, mAuxLevel = 0
+    volumeMulti<MIXTYPE>(mMixerChannelCount, out, outFrames, in, aux, mVolume, mAuxLevel);
+}
+
+template <int MIXTYPE, typename TO, typename TI, typename TV, typename TA, typename TAV>
+static void volumeMulti(uint32_t channels, TO* out, size_t frameCount, const TI* in, TA* aux, const TV *vol, TAV vola)
+{
+    // std::make_index_sequence<FCC_LIMIT>() 这句代码只是为了生成 "... Is"
+    static constexpr auto volumeMultiArray = makeVMArray<MIXTYPE, TO, TI, TV, TA, TAV>(std::make_index_sequence<12>()); // std::make_index_sequence<FCC_LIMIT>()
+    if (channels > 0 && channels <= volumeMultiArray.size()) {
+        volumeMultiArray[channels - 1](out, frameCount, in, aux, vol, vola);
+    } else {
+        ALOGE("%s: invalid channel count:%d", __func__, channels);
+    }
+}
+
+template <int MIXTYPE, typename TO, typename TI, typename TV, typename TA, typename TAV, std::size_t ... Is>
+static constexpr auto makeVMArray(std::index_sequence<Is...>)
+{
+    using F = void(*)(TO*, size_t, const TI*, TA*, const TV*, TAV);
+    return std::array<F, sizeof...(Is)>{
+            { &volumeMulti<MIXTYPE_MONOVOL(MIXTYPE, Is + 1), Is + 1, TO, TI, TV, TA, TAV> ... }
+        };
+}
+
+
+soInit(JNIEnv * env, jobject obj, jint lang, jstring jpkgName, jstring romName, jstring jbiosPath)
+{
+    so_fbaInit = dlsym(dll, "fbaInit");
+    so_fbaGetRomInfo = dlsym(dll, "fbaGetRomInfo");
+    char *name = (*env)->GetStringUTFChars(env, romName, NULL);
+    const char *biosPath = (*env)->GetStringUTFChars(env, jbiosPath, NULL);
+    so_fbaInit(0, nlang, biosPath);
+    if (so_fbaGetRomInfo(name, 6) == -1) //not support
+    {
+        ret = -1;
+    }
+}
+char* romName;
+char path[256];
+sprintf(path, "/mnt/sdcard/fba/.romdata/%s.dat", romName);
+
+so_fbaInit = dlsym(dll, "fbaInit");
+
+const void *test(int what, int argc, void *argv[]) {
+    return (void *) ((uintptr_t) (-1));
+}
+const void *ret = test(1, 4, argv);
+int ret_ = static_cast<int>(reinterpret_cast<uintptr_t>(ret)); // very very very important
+
+const void *test(int what, int argc, void *argv[]) {
+    return nullptr;
+    return (void *) ((uintptr_t) (0));
+}
+const void *ret = test(1, 4, argv); // 小心为nullptr的情况
+if (ret == nullptr) {
+    printf("ret is nullptr\n");
+    int ret_int = static_cast<int>(reinterpret_cast<uintptr_t>(ret));
+    printf("ret_int = %d\n", ret_int); // 
+    return 0;
+}
+
+// 定义结构体
+struct scrcpy_cli_args {
+    struct scrcpy_options opts;
+    bool help;
+    bool version;
+};
+
+// 对结构体成员变量直接赋值
+struct scrcpy_cli_args args = {
+    .opts = scrcpy_options_default,
+    .help = false,
+    .version = false,
+};
+
+static void sc_server_on_connection_failed(struct sc_server *server, void *userdata) {
+    //
+}
+static void sc_server_on_connected(struct sc_server *server, void *userdata) {
+    //
+}
+static void sc_server_on_disconnected(struct sc_server *server, void *userdata) {
+    //
+}
+// 函数指针的结构体
+struct sc_server_callbacks {
+    void (*on_connection_failed)(struct sc_server *server, void *userdata);
+
+    void (*on_connected)(struct sc_server *server, void *userdata);
+
+    void (*on_disconnected)(struct sc_server *server, void *userdata);
+};
+// 赋值(函数定义在上面)
+static const struct sc_server_callbacks cbs = {
+    .on_connection_failed = sc_server_on_connection_failed,
+    .on_connected = sc_server_on_connected,
+    .on_disconnected = sc_server_on_disconnected,
+};
+
+typedef struct sc_mutex {
+    SDL_mutex *mutex;
+#ifndef NDEBUG
+    sc_atomic_thread_id locker;
+#endif
+} sc_mutex;
+// sc_mutex 就是代表 struct sc_mutex
+
+#include <stdio.h>
+FILE *fp;
+fp = std::fopen("/data/data/com.xiaoyou.abgames/files/data/test.pcm", "wb");
+std::fwrite(audio_buffer_queue[audio_play_index], AUDIO_BUFFER_SIZE, 1, fp);
+
+#if defined FBNEO_DEBUG
+#endif
+
+#if 1 && defined FBNEO_DEBUG
+#endif
+
+#if defined (FBNEO_DEBUG)
+#endif
+
+#define中#表示将传入参数字符串化，##表示将两个字符串连在一起。
+例如：
+#define PASTER( n ) printf(“array[”#n"] = %d\n ", array##n)
+所以PASTER(11);相当于 printf(“array[11] = %d\n”, array11)
+
+
+unsigned char   UINT8;
+signed char     INT8;
+unsigned short  UINT16;
+signed short    INT16;
+unsigned int    UINT32;
+signed int      INT32;
+signed int64    INT64;
+unsigned int64  UINT64;
+
+
+########################################SDL2########################################
+
+SDL_Window* sdlWindow;
+SDL_Renderer* sdlRenderer = NULL;
+SDL_Texture* sdlTexture = NULL;
+sdlWindow = SDL_CreateWindow(
+            Windowtitle,
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
+            display_w,
+            display_h,
+            screenFlags);
+sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, renderflags);
+
+screenFlags = SDL_GetWindowFlags(sdlWindow);
+SDL_RestoreWindow(sdlWindow);
+
+#if defined(UBUNTU)
+            SDL_SetWindowSize(sdlWindow, display_w * 2, display_h * 2); // 窗口的实际大小
+#elif defined(__ANDROID__)
+            // 在手机上,相当于 Surface 的大小
+            SDL_SetWindowSize(sdlWindow, 1400, 1017);
+#endif
+
+// 画面刚好填充满整个窗口(缩放)
+SDL_RenderSetLogicalSize(sdlRenderer, display_w, display_h);
+// 窗口位于屏幕的什么位置(现在是位于屏幕的中心位置)
+SDL_SetWindowPosition(sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
+sdlTexture = SDL_CreateTexture(sdlRenderer,
+            SDL_PIXELFORMAT_RGB888,
+            SDL_TEXTUREACCESS_STREAMING,
+            nVidImageWidth, nVidImageHeight);
+
+
+可能重新设置显示内容的大小
+SDL_RestoreWindow(sdlWindow);       // If started fullscreen, switching to window can get maximized
+SDL_SetWindowSize(sdlWindow, display_h * 2, display_w * 2);
+SDL_RenderSetLogicalSize(sdlRenderer, display_h, display_w);
+dstrect.x = (display_h - display_w) / 2;
+dstrect.y = (display_w - display_h) / 2;
+
+
+SDL_Event event;
+while (SDL_PollEvent(&event))
+    switch (event.type)
+        case SDL_QUIT:
+        case SDL_WINDOWEVENT:
+            switch (event.window.event) 
+                case SDL_WINDOWEVENT_MINIMIZED:
+                case SDL_WINDOWEVENT_FOCUS_LOST:
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.sym)
+                case SDLK_F1:
+                case SDLK_TAB:
+        case SDL_KEYUP:
+            switch (event.key.keysym.sym)
+                case SDLK_F12:
+
+char path[1024];
+snprintf(path, sizeof(path), "%s/lib%s.so", dir, lib);
 
 
 
