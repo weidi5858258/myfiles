@@ -159,7 +159,7 @@ git config --global core.editor gedit
 当merge代码时出现 merging-state 时,先解决所有冲突问题,然后输入下面的命令:
 git merge --continue
 
-
+git status --ignored
 
 
 

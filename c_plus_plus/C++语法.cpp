@@ -4184,26 +4184,43 @@ unsigned int64  UINT64;
 
 ########################################SDL2########################################
 
-SDL_Window* sdlWindow;
-SDL_Renderer* sdlRenderer = NULL;
-SDL_Texture* sdlTexture = NULL;
+SDL_Window* sdlWindow = nullptr;
+SDL_Renderer* sdlRenderer = nullptr;
+SDL_Surface* sdlSurface = nullptr;
+SDL_Texture* sdlTexture = nullptr;
+
+int flags = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_AUDIO;
+if (SDL_Init(flags) < 0) {
+    LOGE("Failed to init SDL: %s", SDL_GetError());
+    exit(-1);
+}
+if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
+    systemMessage(0, "Failed to init joystick support: %s", SDL_GetError());
+}
+
 sdlWindow = SDL_CreateWindow(
             Windowtitle,
             SDL_WINDOWPOS_CENTERED,
-            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED, // 窗口位置
             display_w,
-            display_h,
-            screenFlags);
+            display_h,              // 窗口大小
+            SDL_WINDOW_SHOWN);
+// SDL_RENDERER_ACCELERATED(0) 硬件加速
+// SDL_RENDERER_PRESENTVSYNC 保证帧率在60左右
+Uint32 renderflags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+// -1 表示使用第一块显卡
 sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, renderflags);
+sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+SDL_SetRenderDrawBlendMode(sdlRenderer, SDL_BLENDMODE_NONE);
 
 screenFlags = SDL_GetWindowFlags(sdlWindow);
 SDL_RestoreWindow(sdlWindow);
 
 #if defined(UBUNTU)
-            SDL_SetWindowSize(sdlWindow, display_w * 2, display_h * 2); // 窗口的实际大小
+    SDL_SetWindowSize(sdlWindow, display_w * 2, display_h * 2); // 窗口的实际大小
 #elif defined(__ANDROID__)
-            // 在手机上,相当于 Surface 的大小
-            SDL_SetWindowSize(sdlWindow, 1400, 1017);
+    // 在手机上,相当于 Surface 的大小
+    SDL_SetWindowSize(sdlWindow, 1400, 1017);
 #endif
 
 // 画面刚好填充满整个窗口(缩放)
@@ -4211,11 +4228,33 @@ SDL_RenderSetLogicalSize(sdlRenderer, display_w, display_h);
 // 窗口位于屏幕的什么位置(现在是位于屏幕的中心位置)
 SDL_SetWindowPosition(sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
-sdlTexture = SDL_CreateTexture(sdlRenderer,
-            SDL_PIXELFORMAT_RGB888,
-            SDL_TEXTUREACCESS_STREAMING,
-            nVidImageWidth, nVidImageHeight);
+// 下面是一些组合搭配
+sdlSurface = SDL_CreateRGBSurface(0, destWidth, destHeight, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STREAMING, destWidth, destHeight);
 
+sdlSurface = IMG_LoadJPG_RW(SDL_RWFromFile("***.jpg", "rb"));
+sdlTexture = SDL_CreateTextureFromSurface(sdlRenderer, sdlSurface);
+SDL_FreeSurface(sdlSurface); // 这种情况下可以释放了
+sdlSurface = NULL;
+int width = 0;
+int height = 0;
+SDL_QueryTexture(sdlTexture, NULL, NULL, &width, &height);
+
+sdlSurface = SDL_CreateRGBSurfaceWithFormat(0, destWidth, destHeight, 16, SDL_PIXELFORMAT_RGB565);
+sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, destWidth, destHeight);
+
+#define inline_font_width  128
+#define inline_font_height 64
+sdlSurface = SDL_CreateRGBSurface(0, inline_font_width, inline_font_height, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+
+// 加载图片并得到 SDL_Texture 对象.第一种方式
+sdlTexture = IMG_LoadTexture(sdlRenderer, imgPath); // 此种方法得不到图片的宽高
+// 加载图片并得到 SDL_Texture 对象.第二种方式
+SDL_Surface* tmpSurface = IMG_Load(imgPath);
+sdlTexture = SDL_CreateTextureFromSurface(sdlRenderer, tmpSurface);
+int w = tmpSurface->w;
+int h = tmpSurface->h;
+SDL_FreeSurface(tmpSurface);
 
 可能重新设置显示内容的大小
 SDL_RestoreWindow(sdlWindow);       // If started fullscreen, switching to window can get maximized
@@ -4225,31 +4264,220 @@ dstrect.x = (display_h - display_w) / 2;
 dstrect.y = (display_w - display_h) / 2;
 
 
+等到窗口显示后,使用
+static int screenW = 0;
+static int screenH = 0;
+SDL_GetRendererOutputSize(sdlRenderer, &screenW, &screenH);
+可以获得窗口的大小
+#if SDL_BYTEORDER != SDL_BIG_ENDIAN
+const UINT32 amask = 0xFF000000; //
+const UINT32 rmask = 0x00FF0000;
+const UINT32 gmask = 0x0000FF00;
+const UINT32 bmask = 0x000000FF;
+#else
+const UINT32 amask = 0x000000FF;
+const UINT32 rmask = 0x0000FF00;
+const UINT32 gmask = 0x00FF0000;
+const UINT32 bmask = 0xFF000000;
+#endif
+static SDL_Surface* screenshot = NULL;
+static SDL_Texture* screenshotTexture = NULL;
+screenshot = SDL_CreateRGBSurface(0, screenW, screenH, 32, rmask, gmask, bmask, amask);
+SDL_RenderReadPixels(sdlRenderer, NULL, SDL_PIXELFORMAT_ARGB8888, screenshot->pixels, screenshot->pitch);
+screenshotTexture = SDL_CreateTextureFromSurface(sdlRenderer, screenshot);
+SDL_FreeSurface(screenshot);
+screenshot = NULL;
+
+
+
+typedef void (*FilterFunc)(uint8_t*, uint32_t, uint8_t*, uint8_t*, uint32_t, int, int);
+FilterFunc filterFunction = nullptr;
+void hq4x32_32(unsigned char *pIn,  unsigned int srcPitch, unsigned char *, unsigned char *pOut, unsigned int dstPitch, int Xres, int Yres)
+{
+    hq4x32(pIn, srcPitch, 0, pOut, dstPitch, Xres, Yres);
+}
+filterFunction = hq4x32_32;
+void sdlStretch2x(uint8_t* srcPtr, uint32_t srcPitch, uint8_t* /* deltaPtr */, uint8_t* dstPtr, uint32_t dstPitch, int width, int height) {...}
+void sdlStretch3x(uint8_t* srcPtr, uint32_t srcPitch, uint8_t* /* deltaPtr */, uint8_t* dstPtr, uint32_t dstPitch, int width, int height) {...}
+void sdlStretch4x(uint8_t* srcPtr, uint32_t srcPitch, uint8_t* /* deltaPtr */, uint8_t* dstPtr, uint32_t dstPitch, int width, int height) {...}
+
+
+static SDL_Rect dstrect;
+uint8_t* pix = (uint8_t*)calloc(1, 4 * 241 * 162); // 关键变量[数据从何而来]
+int sizeX = 240;
+int sizeY = 160;
+int srcPitch = sizeX * 4 + 4; // 964
+int systemColorDepth = 32;
+uint8_t *delta = NULL; // 不使用
+uint8_t *screen = (uint8_t *) sdlSurface->pixels; // 把要渲染的数据填充到这个变量
+int destWidth = filter_enlarge * sizeX;  // filter_enlarge 是放大系数.值为 2(hq2x), 3(hq3x), 4(hq4x), 5(xbrz5x), 6(xbrz6x)
+int destHeight = filter_enlarge * sizeY; 
+unsigned int destPitch = destWidth * (systemColorDepth >> 3); // 1920 = 480 * (32 >> 3)
+
+
+SDL_LockSurface(sdlSurface);
+filterFunction(pix + srcPitch, srcPitch, delta, screen, destPitch, sizeX, sizeY);
+SDL_UnlockSurface(sdlSurface);
+
+SDL_RenderClear(sdlRenderer);
+SDL_UpdateTexture(sdlTexture, NULL, sdlSurface->pixels, sdlSurface->pitch);
+#if defined(UBUNTU)
+SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+#elif defined(__ANDROID__)
+SDL_RenderCopyEx(sdlRenderer, sdlTexture, NULL, &dstrect, 0, NULL, SDL_FLIP_NONE);
+#endif
+SDL_RenderPresent(sdlRenderer);
+
+
+
+
+#define MOD_KEYS (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_META)
+#define MOD_NOCTRL (KMOD_SHIFT | KMOD_ALT | KMOD_META)
+#define MOD_NOALT (KMOD_CTRL | KMOD_SHIFT | KMOD_META)
+#define MOD_NOSHIFT (KMOD_CTRL | KMOD_ALT | KMOD_META)
+
+// 监听事件
 SDL_Event event;
-while (SDL_PollEvent(&event))
-    switch (event.type)
-        case SDL_QUIT:
-        case SDL_WINDOWEVENT:
-            switch (event.window.event) 
-                case SDL_WINDOWEVENT_MINIMIZED:
-                case SDL_WINDOWEVENT_FOCUS_LOST:
-        case SDL_KEYDOWN:
-            switch (event.key.keysym.sym)
-                case SDLK_F1:
-                case SDLK_TAB:
-        case SDL_KEYUP:
-            switch (event.key.keysym.sym)
-                case SDLK_F12:
+while(1) {
+    // SDL_WaitEvent(...) 一直等待,直到取到消息才往下走
+    // SDL_PollEvent(...) 返回1说明有信息需要处理;返回0说明没有消息需要处理,退出循环
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+            case SDL_QUIT: {
+                break;
+            }
+            case SDL_WINDOWEVENT: {
+                switch (event.window.event) {
+                    case SDL_WINDOWEVENT_RESIZED:
+                    // 窗口最小化
+                    case SDL_WINDOWEVENT_MINIMIZED: {
+                        break;
+                    }
+                    // 窗口得到或者失去焦点时
+                    case SDL_WINDOWEVENT_FOCUS_GAINED:
+                    case SDL_WINDOWEVENT_FOCUS_LOST: {
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+            // 鼠标在窗口中移动时
+            case SDL_MOUSEMOTION: {
+                break;
+            }
+            // 鼠标按下抬起时
+            case SDL_MOUSEBUTTONUP:
+            case SDL_MOUSEBUTTONDOWN: {
+                break;
+            }
+            // 键盘上的按键按下抬起时
+            case SDL_KEYDOWN:
+            case SDL_KEYUP: {
+                switch (event.key.keysym.sym) {
+                    case SDLK_1:
+                    case SDLK_a: {
+                        break;
+                    }
+                    case SDLK_F1:
+                    case SDLK_ESCAPE: {
+                        break;
+                    }
+                    case SDLK_RETURN: { // Alt + Enter
+                        if (event.key.keysym.mod & KMOD_ALT) {
+                        }
+                        break;
+                    }
+                    case SDLK_TAB: {
+                        break;
+                    }
+                    case SDLK_r: { // Ctrl + r
+                        if (!(event.key.keysym.mod & MOD_NOCTRL) && (event.key.keysym.mod & KMOD_CTRL)) {
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+
+            case SDL_JOYHATMOTION:
+            case SDL_JOYBUTTONDOWN:
+            case SDL_JOYBUTTONUP:
+            case SDL_JOYAXISMOTION: {
+                break;
+            }
+            default:
+                break;
+        }
+    } // while SDL_PollEvent end
+
+    render();
+} // while end
+
+
+// 渲染 [简单设置一个白色的背景]
+void render() {
+    SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(sdlRenderer);
+    SDL_RenderPresent(sdlRenderer);
+}
 
 char path[1024];
 snprintf(path, sizeof(path), "%s/lib%s.so", dir, lib);
 
 
 
+1，strcpy函数 将一个字符串复制到另一个字符串。
+
+2，strncpy函数，将一个字符串的前n个字符复制到另一个字符串中。
+
+3，strcat函数，将两个字符串连接起来。
+
+4，strncat函数,用于将一个字符串的前n个字符追加到另一个字符串的末尾。
+
+5，strcmp函数,用于比较两个字符串 。
+
+6，strncmp函数，用于比较两个字符串的前n个字符。
+
+7，sprintf函数，将格式化的数据写入到字符串中。
+
+8，sscanf函数，用于从字符串中读取格式化的数据。
+
+9，strchr函数,用于在字符串中查找指定字符的首次出现。
+
+10，strstr函数,用于在字符串中查找子字符串的首次出现。
+
+11，strtok函数,用于将字符串按照指定的分隔符进行分割。
+
+12，atoi 函数，将字符串转整数。
+
+13，atof 函数，将字符串转float类型的数据。
+
+14，atol 函数，将字符串转long类型的数据。
+
+15，atoll 函数，将字符串转long long类型的数据。
+
+16，strlwr 函数，将字符串中的大写字母转换为小写字母。
+
+17，strupr 函数，将字符串中的小写字母转换为大写字母。
+
+18，puts函数， 将一个字符串输出到终端。
+
+19，gets 函数，从终端输入一个字符串到字符数组，并且得到一个函数值。
+
+20，strlen函数 ，测试字符串长度的函数不包括“\0”。
 
 
-
-
+#define INT_MIN     (-2147483647 - 1) // minimum (signed) int value
+#define INT_MAX       2147483647    // maximum (signed) int value
+#define UINT_MAX      0xffffffff    // maximum unsigned int value
+#define LONG_MIN    (-2147483647L - 1) // minimum (signed) long value
+#define LONG_MAX      2147483647L   // maximum (signed) long value
+#define ULONG_MAX     0xffffffffUL  // maximum unsigned long value
+#define LLONG_MAX     9223372036854775807i64       // maximum signed long long int value
+#define LLONG_MIN   (-9223372036854775807i64 - 1)  // minimum signed long long int value
+#define ULLONG_MAX    0xffffffffffffffffui64       // maximum unsigned long long int value
 
 
 

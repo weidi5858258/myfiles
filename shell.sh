@@ -1558,6 +1558,10 @@ adb shell pm list packages
 # 找到apk的位置
 adb shell pm path com.miui.fm
 
+点击屏幕
+adb shell input tap 50 250
+adb shell input tap 123 1047
+
 adb shell ls -alh /storage/3D5F-08A6/SonyTVCamera_photo
 ./system/vendor/bin/camera_recognition_daemon &
 
