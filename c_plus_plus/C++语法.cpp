@@ -4184,6 +4184,8 @@ unsigned int64  UINT64;
 
 ########################################SDL2########################################
 
+https://zhuanlan.zhihu.com/p/632714265
+
 SDL_Window* sdlWindow = nullptr;
 SDL_Renderer* sdlRenderer = nullptr;
 SDL_Surface* sdlSurface = nullptr;
@@ -4232,15 +4234,17 @@ SDL_SetWindowPosition(sdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED)
 sdlSurface = SDL_CreateRGBSurface(0, destWidth, destHeight, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STREAMING, destWidth, destHeight);
 
-sdlSurface = IMG_LoadJPG_RW(SDL_RWFromFile("***.jpg", "rb"));
-sdlTexture = SDL_CreateTextureFromSurface(sdlRenderer, sdlSurface);
-SDL_FreeSurface(sdlSurface); // 这种情况下可以释放了
-sdlSurface = NULL;
+tmpSurface = IMG_LoadJPG_RW(SDL_RWFromFile("***.jpg", "rb"));
+sdlTexture = SDL_CreateTextureFromSurface(sdlRenderer, tmpSurface);
+SDL_FreeSurface(tmpSurface); // 这种情况下可以释放了
+tmpSurface = NULL;
 int width = 0;
 int height = 0;
 SDL_QueryTexture(sdlTexture, NULL, NULL, &width, &height);
+SDL_RenderCopy(sdlRenderer, sdlTexture, nullptr, nullptr);
 
 sdlSurface = SDL_CreateRGBSurfaceWithFormat(0, destWidth, destHeight, 16, SDL_PIXELFORMAT_RGB565);
+// https://blog.csdn.net/qq_25333681/article/details/90083753
 sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, destWidth, destHeight);
 
 #define inline_font_width  128
@@ -4255,6 +4259,8 @@ sdlTexture = SDL_CreateTextureFromSurface(sdlRenderer, tmpSurface);
 int w = tmpSurface->w;
 int h = tmpSurface->h;
 SDL_FreeSurface(tmpSurface);
+tmpSurface = nullptr;
+SDL_RenderCopy(sdlRenderer, sdlTexture, nullptr, nullptr);
 
 可能重新设置显示内容的大小
 SDL_RestoreWindow(sdlWindow);       // If started fullscreen, switching to window can get maximized
@@ -4267,8 +4273,8 @@ dstrect.y = (display_w - display_h) / 2;
 等到窗口显示后,使用
 static int screenW = 0;
 static int screenH = 0;
-SDL_GetRendererOutputSize(sdlRenderer, &screenW, &screenH);
-可以获得窗口的大小
+SDL_GetRendererOutputSize(sdlRenderer, &screenW, &screenH); 可以获得窗口的大小
+
 #if SDL_BYTEORDER != SDL_BIG_ENDIAN
 const UINT32 amask = 0xFF000000; //
 const UINT32 rmask = 0x00FF0000;
@@ -4284,9 +4290,23 @@ static SDL_Surface* screenshot = NULL;
 static SDL_Texture* screenshotTexture = NULL;
 screenshot = SDL_CreateRGBSurface(0, screenW, screenH, 32, rmask, gmask, bmask, amask);
 SDL_RenderReadPixels(sdlRenderer, NULL, SDL_PIXELFORMAT_ARGB8888, screenshot->pixels, screenshot->pitch);
+// 把此时游戏界面的数据保存到 screenshotTexture 中去
 screenshotTexture = SDL_CreateTextureFromSurface(sdlRenderer, screenshot);
 SDL_FreeSurface(screenshot);
 screenshot = NULL;
+// 设置黑色背景色
+SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+SDL_RenderClear(sdlRenderer);
+// 把 screenshotTexture 中的数据由 title_texture_rect 这个位置渲染到 dest_title_texture_rect 这个位置
+SDL_RenderCopy(sdlRenderer, screenshotTexture, &title_texture_rect, &dest_title_texture_rect);
+// 设置字体颜色
+SDL_Color pal[1];
+pal[0].r = (Uint8)((0xfe8a71 & 0x00FF0000) >> 16);
+pal[0].g = (Uint8)((0xfe8a71 & 0x0000FF00) >> 8);
+pal[0].b = (Uint8)((0xfe8a71 & 0x000000FF));
+SDL_SetTextureColorMod(selected_font, pal[0].r, pal[0].g, pal[0].b);
+
+SDL_RenderPresent(sdlRenderer);
 
 
 
@@ -4315,18 +4335,70 @@ int destHeight = filter_enlarge * sizeY;
 unsigned int destPitch = destWidth * (systemColorDepth >> 3); // 1920 = 480 * (32 >> 3)
 
 
+SDL_Rect rect;
+rect.w = 50;
+rect.h = 50;
+rect.x = rand() % 600;
+rect.y = rand() % 400;
+
+sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 480); // 创建纹理
+
+SDL_SetRenderTarget(sdlRenderer, sdlTexture); // 设置渲染目标为纹理
+SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 0); // 纹理背景为黑色
+SDL_RenderClear(sdlRenderer); // 清屏
+
+SDL_RenderDrawRect(sdlRenderer, &rect); // 绘制一个长方形
+SDL_SetRenderDrawColor(sdlRenderer, 255, 255, 255, 255); // 长方形为白色
+SDL_RenderFillRect(sdlRenderer, &rect);
+// 上面这些内容都保存在 sdlTexture 中
+
+SDL_SetRenderTarget(sdlRenderer, NULL); // 恢复默认，设置渲染目标为窗口
+SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL); // 拷贝纹理到CPU
+
+SDL_RenderPresent(sdlRenderer); // 输出到目标窗口上
+
+// 测试.创建多个 SDL_Texture,在不同的 SDL_Texture 中绘制不同的内容,然后把多个 SDL_Texture 的内容都复制到 SDL_Renderer 进行渲染.
+// 比如窗口大小为 1920 * 1080, 一个 SDL_Texture 的大小为 640 * 480, 另一个 SDL_Texture 的大小为 320 * 240
+
+
+// 1. 把数据填充到 sdlSurface
 SDL_LockSurface(sdlSurface);
 filterFunction(pix + srcPitch, srcPitch, delta, screen, destPitch, sizeX, sizeY);
 SDL_UnlockSurface(sdlSurface);
 
 SDL_RenderClear(sdlRenderer);
+// 2. 把 sdlSurface 中的数据再转移到 sdlTexture
 SDL_UpdateTexture(sdlTexture, NULL, sdlSurface->pixels, sdlSurface->pitch);
+// 3. 把 sdlTexture 中的数据再复制到 sdlRenderer [拷贝纹理到渲染器]
 #if defined(UBUNTU)
 SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
 #elif defined(__ANDROID__)
 SDL_RenderCopyEx(sdlRenderer, sdlTexture, NULL, &dstrect, 0, NULL, SDL_FLIP_NONE);
 #endif
+// 4. 通知 sdlRenderer 进行显示 [渲染]
 SDL_RenderPresent(sdlRenderer);
+
+
+// 上面4个步骤中,我想不明白的是: 为什么先要把数据给到 sdlSurface, 然后从 sdlSurface 再给到 sdlTexture, 最后再从 sdlTexture 给到 sdlRenderer?
+// 这个 sdlSurface 在其中起到了什么作用?
+int SDLCALL SDL_UpdateTexture(SDL_Texture *texture, const SDL_Rect *rect, const void *pixels, int pitch);
+texture：目标纹理。
+rect：更新像素的矩形区域。设置为NULL的时候更新整个区域。
+pixels：像素数据。
+pitch：一行像素数据的字节数。一行的列数,就是数据的宽度.
+成功的话返回0，失败的话返回-1。
+
+// 下面是没有 SDL_Surface 的例子.
+FILE* pFile = fopen("little_prince_i420_960x540.yuv", "rb");
+unsigned char *m_yuv_data;
+int frameSize = HEIGHT * WIDTH * 12 / 8;
+m_yuv_data = (unsigned char*)malloc(frameSize * sizeof(unsigned char));
+sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STREAMING, WIDTH, HEIGHT); // 创建纹理
+SDL_UpdateTexture(sdlTexture, NULL, m_yuv_data, WIDTH); // 更新纹理
+SDL_RenderClear(sdlRenderer); // 清除渲染器
+SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL); // 拷贝纹理到渲染器
+SDL_RenderPresent(sdlRenderer); // 渲染
+// 上面这个例子中,应该是渲染一帧的数据.如果有很多帧的数据,那么应该不断的往 m_yuv_data 中填充数据,然后不断的调用 SDL_UpdateTexture 函数.
 
 
 
@@ -4336,9 +4408,15 @@ SDL_RenderPresent(sdlRenderer);
 #define MOD_NOALT (KMOD_CTRL | KMOD_SHIFT | KMOD_META)
 #define MOD_NOSHIFT (KMOD_CTRL | KMOD_ALT | KMOD_META)
 
+static Uint32 start_stick;
+static Uint32 end_stick;
+#define FPS 60
+static limit = 1000 / FPS;
 // 监听事件
 SDL_Event event;
 while(1) {
+    start_stick = SDL_GetTicks();
+
     // SDL_WaitEvent(...) 一直等待,直到取到消息才往下走
     // SDL_PollEvent(...) 返回1说明有信息需要处理;返回0说明没有消息需要处理,退出循环
     while (SDL_PollEvent(&event)) {
@@ -4413,6 +4491,15 @@ while(1) {
     } // while SDL_PollEvent end
 
     render();
+
+    end_stick = SDL_GetTicks();
+    if (limit > (end_stick - start_stick)) {
+        SDL_Delay(limit - (end_stick - start_stick)); // 单位: ms
+    }
+
+    std::chrono::time_point<std::chrono::system_clock> start = std::chrono::high_resolution_clock::now();
+    std::chrono::time_point<std::chrono::system_clock> end = std::chrono::high_resolution_clock::now();
+    LOGI("FPS = %d", (std::chrono::seconds(1) / (end - start)));
 } // while end
 
 
